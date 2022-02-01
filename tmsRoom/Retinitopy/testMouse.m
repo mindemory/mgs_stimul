@@ -48,7 +48,3 @@ WaitSecs(.5);
             break
         end
     end
-    
-    
-
-

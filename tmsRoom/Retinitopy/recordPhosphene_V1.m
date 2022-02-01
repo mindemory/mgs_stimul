@@ -8,12 +8,18 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
-%%
+%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
+    % Location of toolboxes on TMS Stimul Mac
+    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+    rmpath(genpath('/Users/curtislab/matlab/mgl'));
+    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
 end
 
+%%
 % function recordPhosphene()
 sca; clear; close all; clc;
 global parameters screen kbx mbx
@@ -33,8 +39,9 @@ FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter
     screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
 Screen('FillRect', screen.win, [0,0,128], FixCross');
 Screen('Flip', screen.win);
-
+KbStrokeWait;
 trialInd = 0;
+%%
 while 1
     ListenChar(-1);
     

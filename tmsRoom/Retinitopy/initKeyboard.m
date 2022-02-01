@@ -5,7 +5,7 @@ global kbx mbx tmsDaq;
 %   Enable unified mode of KbName, so KbName accepts identical key names on
 %   all operating systems:
 KbName('UnifyKeyNames');
-
+TeensyTrigger('i', '/dev/cu.usbmodem12341')
 %   get keyboard pointer
 devices = PsychHID('Devices');
 devIdx(1) = find([devices(:).usageValue] == 6);
