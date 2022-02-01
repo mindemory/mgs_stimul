@@ -1,5 +1,9 @@
-% clear all;
-close all;
+%% Edits by Mrugank (01/28/2022)
+% Added path for loading Psychtoolbox on Syndrome.
+
+clear; close all; clc;
+
+addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
 
 global parameters;
 global screen;
@@ -12,6 +16,8 @@ global bbx;
 %   Load parameters
 %--------------------------------------------------------------------------------------------------------------------------------------%
 loadParameters();
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+
 initScreen();
 %   Initialize the subject info
 %--------------------------------------------------------------------------------------------------------------------------------------%

@@ -1,10 +1,16 @@
-% clear all;
-close all;
+%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+
+sca; clear; close all;
+
+% addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
 
 global parameters;
 global screen;
 global kbx;
 global bbx;
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
@@ -15,7 +21,7 @@ loadParameters();
 initScreen();
 %   Initialize the subject info
 %--------------------------------------------------------------------------------------------------------------------------------------%
-initSubjectInfo();
+initSubjectInfo_trial(); %% mrugank (01/31/2022): For debugging
 initFiles();
 
 %   Load phosphene retinitopy data

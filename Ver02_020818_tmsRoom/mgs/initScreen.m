@@ -36,12 +36,10 @@ function initScreen()
     screen.ifi = Screen('GetFlipInterval', screen.win);
 
     % Retreive the maximum priority number
-    topPriorityLevel = MaxPriority(screen.win);
+    topPriorityLevel = MaxPriority(screen.win); %% mrugank (01/29/2022): topPriorityLevel computed but not implemented?
     Screen('BlendFunction', screen.win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; 
+    screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; % mrugank (01/30/2022): Is this right? Deg and pixel aren't linearly related?
     screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
-    
-
     
     %init the measurements in pixels:
     parameters.fixationCrossSizePix =parameters.fixationCrossSizeDeg * screen.pixels_per_deg_width; 

@@ -1,36 +1,43 @@
+%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
 % function recordPhosphene()
-clear all
+sca; clear; close all; clc;
 global parameters screen kbx mbx
 
+parameters = loadParameters_trial();
 parameters.Puls.Frequency = 30;
 parameters.Puls.num = 3;
 parameters.Puls.Duration = parameters.Puls.num/parameters.Puls.Frequency;
- 
 
-loadParameters()
-initScreen()
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+
+initScreen(parameters)
 initKeyboard()
 
 % fixation cross
-FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
-    screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
+FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
+    screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
 Screen('FillRect', screen.win, [0,0,128], FixCross');
 Screen('Flip', screen.win);
 
 trialInd = 0;
 while 1
     ListenChar(-1);
+    
     % wait fot "g" key to be pressed
-    [keyIsDown, keyCode]=KbQueueCheck(kbx);
+    [keyIsDown, keyCode] = KbQueueCheck(kbx);
     keyName = KbName(keyCode);
+    
     % fixation cross
     Screen('FillRect', screen.win, [0,0,128], FixCross');
     Screen('Flip', screen.win);
     
     if keyIsDown
         keyName = KbName(keyCode);
+        
         if strcmp(keyName,'g')
-            
+            beep
             trialInd = trialInd+1;
             strtTime.trial(trialInd) = GetSecs;
             %%%%%%%%%%%%%%%%%%%

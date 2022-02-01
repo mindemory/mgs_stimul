@@ -1,4 +1,7 @@
-% clear all;
+%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+clear all;
 close all;
 
 global parameters;
@@ -16,6 +19,7 @@ if parameters.EEG
     TeensyTrigger('i', '/dev/cu.usbmodem12341')
     TeensyTrigger('s', true, 1000)
 end
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 initScreen();
 %   Initialize the subject info
