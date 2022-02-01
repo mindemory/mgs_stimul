@@ -1,6 +1,19 @@
 %% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
-addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+
+%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');   
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+%%
+if strcmp(hostname, 'syndrome')
+    % Location of PTB on Syndrome
+    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+end
+
 % function recordPhosphene()
 sca; clear; close all; clc;
 global parameters screen kbx mbx
