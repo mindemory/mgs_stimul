@@ -5,11 +5,11 @@ global kbx mbx tmsDaq;
 %   Enable unified mode of KbName, so KbName accepts identical key names on
 %   all operating systems:
 KbName('UnifyKeyNames');
-TeensyTrigger('i', '/dev/cu.usbmodem12341')
+%TeensyTrigger('i', '/dev/cu.usbmodem12341')
 %   get keyboard pointer
 devices = PsychHID('Devices');
-devIdx(1) = find([devices(:).usageValue] == 6);
-tmp = find([devices(:).usageValue] == 2); % if more than one mouse
+devIdx(1) = find([devices(:).usageValue] == 6, 1, 'last');
+tmp = find([devices(:).usageValue] == 2, 1, 'last'); % if more than one mouse
 devIdx(2) = tmp(1);
 tmp = [];
 for i = 1:length(devices) % if more than one daq port availbale

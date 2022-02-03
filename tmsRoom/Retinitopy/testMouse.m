@@ -1,10 +1,32 @@
+%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
-clear all
+%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');   
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+%% Load PTB and toolboxes
+if strcmp(hostname, 'syndrome')
+    % Location of PTB on Syndrome
+    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
+    % Location of toolboxes on TMS Stimul Mac
+    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+    rmpath(genpath('/Users/curtislab/matlab/mgl'));
+    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+end
+
+sca; clear; close all; clc;
 global parameters
 global screen
 
-loadParameters()
-initScreen()
+parameters = loadParameters_trial();
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+
+initScreen(parameters)
 WaitSecs(.5);
     % wait for a left click
     while 1

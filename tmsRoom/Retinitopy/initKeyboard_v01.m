@@ -13,7 +13,7 @@ function initKeyboard_v01()
     devIdx(2) = tmp(1);
     tmp = [];
     for i = 1:length(devices) % if more than one daq port availbale
-        p =  devices(i).product;
+        p =  devices(i).product
         if strcmp(p,'USB-1208FS')
             tmp = [tmp i];
         end

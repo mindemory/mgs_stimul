@@ -25,9 +25,12 @@ KbName('UnifyKeyNames');
 %   get keyboard pointer
 devices = PsychHID('Devices');
 devIdx = find([devices(:).usageValue] == 6);
+
 %  Initialize keyboard
 if ~isempty(devIdx)
-    kbx = devIdx(1);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!
+    % For remote keyboard
+    kbx = devIdx(3);
+    %kbx = devIdx(3);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!
 else
     kbx = 0;
 end
@@ -61,6 +64,7 @@ for tc = 1:20
         while ~strcmp(cmndKey,'`~')
             [keyIsDown, keyCode ]=PsychHID('KbQueueCheck' ,kbx);
             cmndKey = KbName(keyCode);
+            disp(2)
         end
         
     else

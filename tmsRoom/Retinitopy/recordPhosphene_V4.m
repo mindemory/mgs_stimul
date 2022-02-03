@@ -79,7 +79,7 @@ while 1
                 cmndKey = KbName(keyCode);
             end
             if strcmp(cmndKey,'g')
-                ListenChar(-1);
+                % ListenChar(-1);
                 trialInd = trialInd+1;
                 strtTime.trial(trialInd) = GetSecs;
                 %%%%%%%%%%%%%%%%%%%
