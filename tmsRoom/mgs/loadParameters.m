@@ -5,7 +5,7 @@ function loadParameters()
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.EEG = 0; % set to 0 if there is no EEG recording
-    parameters.dummymode = 1; % set to 0 if you want to use eyetracker
+    parameters.dummymode = 0; % set to 0 if you want to use eyetracker
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.hideCursor = true;
     parameters.transparency = 0.8;

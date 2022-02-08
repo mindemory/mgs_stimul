@@ -1,7 +1,36 @@
+%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
+%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');   
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+%% Load PTB and toolboxes
+if strcmp(hostname, 'syndrome')
+    % Location of PTB on Syndrome
+    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
+    % Location of toolboxes on TMS Stimul Mac
+    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+    rmpath(genpath('/Users/curtislab/matlab/mgl'));
+    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+end
+
+% function recordPhosphene()
+sca; clear; close all; clc;
+global parameters;
+global screen;
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+
+% Eyelink('SeinitScreen()
+tAddress','192.168.1.5') % for the scanner room
+loadParameters()
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
 %run without eye tracker if dummymode set to 1
-if parameters.dummymode == 0
+if parameters.dummymode == 1
     % Provide Eyelink with details about the graphics environment
     % and perform some initializations. The information is returned
     % in a structure that also contains useful defaults
