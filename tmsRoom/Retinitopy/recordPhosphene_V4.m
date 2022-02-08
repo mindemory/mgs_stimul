@@ -79,7 +79,7 @@ while 1
                 cmndKey = KbName(keyCode);
             end
             if strcmp(cmndKey,'g')
-                % ListenChar(-1);
+                ListenChar(-1);
                 trialInd = trialInd+1;
                 strtTime.trial(trialInd) = GetSecs;
                 %%%%%%%%%%%%%%%%%%%
@@ -171,7 +171,7 @@ while 1
                 tmsRtnTpy.Duration = duration;
                 tmsRtnTpy.Response = Response;
                 tmsRtnTpy.StrtTime = strtTime;
-                
+            
             elseif strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
                 display(sprintf('\n\ta new coil location requested!'));

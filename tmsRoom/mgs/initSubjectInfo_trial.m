@@ -10,7 +10,7 @@ function initSubjectInfo_trial()
     session = 01; %input('Please type session number: ');
     run = 01; %input('Please type run number: ');
     task = 'pro'; %input('Please type task[pro/anti]: ','s');
-    coilLocInd = 02; %input('Please type coil location index: ');
+    coilLocInd = 01; %input('Please type coil location index: ');
     
     parameters.subject = subNum;
     parameters.session = session;

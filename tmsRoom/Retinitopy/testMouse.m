@@ -35,6 +35,7 @@ WaitSecs(.5);
         [x0,y0]=GetMouse(screen.win);
         [startClick,x_click,y_click,whichButton] = GetClicks(screen.win,.1);
         if startClick
+            disp('success')
             Screen('Flip', screen.win);
             break
 
