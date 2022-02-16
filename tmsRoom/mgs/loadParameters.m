@@ -5,10 +5,10 @@ function loadParameters()
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.EEG = 0; % set to 0 if there is no EEG recording
-    parameters.dummymode = 0; % set to 0 if you want to use eyetracker
-    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.dummymode = 1; % set to 0 if you want to use eyetracker
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     parameters.hideCursor = true;
-    parameters.transparency = 0.8;
+    parameters.transparency = 0.6; % transparency for debug mode
     parameters.viewingDistance = 58;%viewDist
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % study parameters
@@ -79,6 +79,6 @@ function loadParameters()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.greyFactor = 0.6; % to make screen background darker or lighter    
     parameters.fixationCrossSizeDeg = 0.3;
-    parameters.fixationCrossSizePix =12; % size of fixation cross in pixels by default        
+    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
     parameters.eyeTrackerOn = 0;
 end

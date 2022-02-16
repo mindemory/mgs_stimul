@@ -41,7 +41,7 @@ if parameters.dummymode == 0
 %     Eyelink('StartRecording');
 
     eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
-    if eye_used == el.BINOCULAR; % if both eyes are tracked
+    if eye_used == el.BINOCULAR % if both eyes are tracked
        eye_used = el.LEFT_EYE; % use left eye
     end
 end

@@ -1,6 +1,6 @@
 %%
 %FILE HANDLING
-function createDirectories(subNum, ALL_SUB,SUB_DIR,RESULTS_DIR,TASK_MAPS,EYE_DIR)
+function createDirectories(subNum, ALL_SUB, SUB_DIR, RESULTS_DIR, TASK_MAPS, EYE_DIR)
     %create "SubjectData" dir that will contain all the data for all subjects
     if exist(ALL_SUB,'dir')~=7
         mkdir(ALL_SUB);

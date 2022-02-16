@@ -1,15 +1,33 @@
-% clear all;
-close all;
+%% Initialization
+%%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
-global parameters;
-global screen;
-global kbx;
-global mbx;
-global tmsDaq;
+%%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');   
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
 
+%%% Load PTB and toolboxes
+if strcmp(hostname, 'syndrome')
+    % Location of PTB on Syndrome
+    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
+    % Location of toolboxes on TMS Stimul Mac
+    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+    rmpath(genpath('/Users/curtislab/matlab/mgl'));
+    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+end
+
+% function recordPhosphene()
+sca; clear; close all; clc;
+global parameters screen kbx mbx tmsDaq
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
-%   Load parameters
+
+%%   Load parameters
 %--------------------------------------------------------------------------------------------------------------------------------------%
 loadParameters();
 if parameters.EEG

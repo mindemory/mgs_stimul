@@ -1,4 +1,4 @@
-function [runVersion,startCurrentRunSession,currentRun,runRepeated] = enterRunToStart(allRuns,currentRun,runVersion)
+function [runVersion, startCurrentRunSession, currentRun, runRepeated] = enterRunToStart(allRuns, currentRun, runVersion)
     global parameters;
     global task;
     

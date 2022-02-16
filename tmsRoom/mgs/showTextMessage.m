@@ -1,3 +1,4 @@
+
 function showTextMessage(window, color, text, kbx)
     %Demonstrates given text on current window. Waits until user presses 
     %the SPACE key and moves to another window

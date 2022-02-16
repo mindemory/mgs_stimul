@@ -1,14 +1,15 @@
-%% Edits by Mrugank (01/29/2022)
+%% Initialization
+%%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
-%% Check the system name to ensure correct paths are added.
+%%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');   
 if ret ~= 0
     hostname = getenv('HOSTNAME');
 end
 hostname = strtrim(hostname);
 
-%% Load PTB and toolboxes
+%%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
@@ -22,12 +23,11 @@ end
 % function recordPhosphene()
 sca; clear; close all; clc;
 global parameters screen kbx mbx
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
 
-Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
-
-%   Load parameters
+%% Load stuff
 %--------------------------------------------------------------------------------------------------------------------------------------%
 loadParameters();
 initScreen();
@@ -38,8 +38,8 @@ initFiles();
 
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
-subjID = int2strz(parameters.subject,2);
-session = int2strz(parameters.session,2);
+subjID = int2strz(parameters.subject, 2);
+session = int2strz(parameters.session, 2);
 currentDIR = pwd;
 cd ..
 RtnTpyDIR = ['Retinitopy/Results/sub' subjID];
@@ -51,10 +51,10 @@ cd(currentDIR)
 %   Initialize taskMap
 %--------------------------------------------------------------------------------------------------------------------------------------%
 coilLocInd = parameters.coilLocInd;
-taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd);
+taskMap = generateTaskMap(Stim, tmsRtnTpy, coilLocInd);
 
-FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
-    screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
+FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
+    screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
 
 %  show load of experiment warning
 %--------------------------------------------------------------------------------------------------------------------------------------%
@@ -73,7 +73,7 @@ ListenChar(0);
 allRuns = ones(1,taskMap.trialNum);
 runVersion = 1;
 currentRun = parameters.run;
-[runVersion,startCurrentRunSession,currentRun,runRepeated] = enterRunToStart(allRuns,currentRun,runVersion);
+[runVersion, startCurrentRunSession, currentRun, runRepeated] = enterRunToStart(allRuns, currentRun, runVersion);
 
 reInitSubjectInfo(currentRun, runVersion);
 
@@ -95,7 +95,7 @@ else
         %perform calibration task before starting trials
         %--------------------------------------------------------------------------------------------------------------------------------------%
 
-          [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters.dummymode, parameters.fixationPrepInstructions,  el, eye_used, FixCross');
+        [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters.dummymode, parameters.fixationPrepInstructions, el, eye_used, FixCross');
         FlushEvents;
     else
         Eyelink('Openfile', parameters.edfFile);
@@ -106,7 +106,8 @@ end
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
 ListenChar(-1);
-showTTLWindow();
+% showTTLWindow(); %mrugank (02/15/2022): Commented out. Doesn't seem to be
+% serving any purpose here?
 ListenChar(0);
 if parameters.dummymode == 0
     Eyelink('StartRecording');
@@ -137,7 +138,7 @@ itiDurationArray = [];
 
 startExperimentTime = GetSecs();
 currentRunTrials = [1:taskMap.trialNum];
-for tc = 1: taskMap.trialNum
+for tc = 1:taskMap.trialNum
     
     texStartTime = GetSecs;
     
@@ -145,19 +146,18 @@ for tc = 1: taskMap.trialNum
     Loc_Sacc = [taskMap.saccLoc_pix(tc,1) taskMap.saccLoc_pix(tc,2)];
     
     texDuration = GetSecs - texStartTime;
-    texDurationArray = [texDurationArray,texDuration];
+    texDurationArray = [texDurationArray, texDuration];
     
     if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d "', currentRunTrials(tc), taskMap.trialNum);
         Eyelink('Message', 'TRIAL %d ', currentRunTrials(tc));
         
-        
         %--------------------------------------------------------------------------
         %re-initialize breakOfFixation variable -- assume there is no break of
         %fixation at the beginning of the trial
-        breakOfFixation =0;
+        breakOfFixation = 0;
         %
-        minPupil = 0.4*avgPupilSize;
+        minPupil = 0.4 * avgPupilSize; % mrugank (02/16/2022): Why is this the case? Why 40% of the average pupil size?
         %define a fixation boundary in case its not part of the input arguments
         fixationBoundary = 66;%pixels
         
@@ -192,7 +192,7 @@ for tc = 1: taskMap.trialNum
         fixBreak  = 0;
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             % get the sample in the form of an event structure
-            evt = Eyelink( 'NewestFloatSample');
+            evt = Eyelink('NewestFloatSample');
             if eye_used ~= -1 % do we know which eye to use yet?
                 gazeCheckCounter = gazeCheckCounter + 1; %use the counter to tag the fixation checks
                 %get eye position
@@ -288,7 +288,7 @@ for tc = 1: taskMap.trialNum
         delay1DurationArray = [delay1DurationArray,delay1Duration];
         % TMS pulse window
         %----------------------------------------------------------------------
-        %record to the edf file that noise mask is started
+        %record to the edf file that tms pulse window has started
         pulseStartTime = GetSecs();
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', currentRunTrials(tc), taskMap.trialNum);
@@ -336,7 +336,7 @@ for tc = 1: taskMap.trialNum
         respCueStartTime = GetSecs;
         flag = 0;
         while GetSecs()-respCueStartTime < parameters.respCueDuration
-            if ~flag % to do DarwTexture and Flip only once
+            if ~flag % to do DrawTexture and Flip only once
                 
                 Screen('FillRect', screen.win, [0 256 0], FixCross');
                 Screen('Flip', screen.win);
@@ -438,7 +438,7 @@ if parameters.dummymode == 0
         if status > 0
             %fprintf('ReceiveFile status %d\n', status);
         end
-        if 2==exist(parameters.edfFile, 'file')
+        if 2 == exist(parameters.edfFile, 'file')
             %fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
         end
     catch
@@ -451,18 +451,18 @@ end
 % save resoponse and time reports
 %--------------------------------------------------------------------------------------------------------------------------------------%
 for trialInd = 1:tc
-    timeReport(:,trialInd).texDuration =texDurationArray(trialInd);
-    timeReport(:,trialInd).sampleDuration =sampleDurationArray(trialInd);
-    timeReport(:,trialInd).delay1Duration =delay1DurationArray(trialInd);
-    timeReport(:,trialInd).delay2Duration =delay2DurationArray(trialInd);
-    timeReport(:,trialInd).pulseDuration =pulseDurationArray(trialInd);
-    timeReport(:,trialInd).respCueDuration =respCueDurationArray(trialInd);
-    timeReport(:,trialInd).respDuration =respDurationArray(trialInd);
-    timeReport(:,trialInd).feedbackDuration =feedbackDurationArray(trialInd);
-    timeReport(:,trialInd).itiDuration =itiDurationArray(trialInd);
-    timeReport(:,trialInd).trialDuration =trialDurationArray(trialInd);
+    timeReport(:,trialInd).texDuration = texDurationArray(trialInd);
+    timeReport(:,trialInd).sampleDuration = sampleDurationArray(trialInd);
+    timeReport(:,trialInd).delay1Duration = delay1DurationArray(trialInd);
+    timeReport(:,trialInd).delay2Duration = delay2DurationArray(trialInd);
+    timeReport(:,trialInd).pulseDuration = pulseDurationArray(trialInd);
+    timeReport(:,trialInd).respCueDuration = respCueDurationArray(trialInd);
+    timeReport(:,trialInd).respDuration = respDurationArray(trialInd);
+    timeReport(:,trialInd).feedbackDuration = feedbackDurationArray(trialInd);
+    timeReport(:,trialInd).itiDuration = itiDurationArray(trialInd);
+    timeReport(:,trialInd).trialDuration = trialDurationArray(trialInd);
 end
-totalTimeData{timeIdx}=timeReport;
+totalTimeData{timeIdx} = timeReport;
 
 timeIdx = timeIdx+1;
 ListenChar();
