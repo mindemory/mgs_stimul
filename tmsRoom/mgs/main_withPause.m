@@ -38,7 +38,7 @@ end
 initScreen();
 %   Initialize the subject info
 %--------------------------------------------------------------------------------------------------------------------------------------%
-initSubjectInfo();
+initSubjectInfo_trial();
 initFiles();
 initKeyboard();
 %   Load phosphene retinitopy data
@@ -109,7 +109,7 @@ end
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
 ListenChar(-1);
-showTTLWindow();
+% showTTLWindow(); mrugank (02/16/2022): What purpose doesth it serve?
 ListenChar(0);
 if parameters.dummymode == 0
     Eyelink('StartRecording');
@@ -525,4 +525,6 @@ if parameters.dummymode == 0
     Eyelink('Shutdown');
 end
 
-TeensyTrigger('x');
+if parameters.EEG
+    TeensyTrigger('x');
+end
