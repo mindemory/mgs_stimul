@@ -75,7 +75,7 @@ if parameters.dummymode == 0
     EyelinkDoTrackerSetup(el);
 
     %  do a final check of calibration using driftcorrection
-    EyelinkDoDriftCorrection(el);
+    % EyelinkDoDriftCorrection(el);
 
     WaitSecs(0.1);
 %     Eyelink('StartRecording');
