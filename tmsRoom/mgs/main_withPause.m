@@ -18,6 +18,8 @@ elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
     rmpath(genpath('/Users/curtislab/matlab/mgl'));
     addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+elseif strcmp(hostname, 'tmsubuntu')
+    addpath(genpath('/usr/lib/psychtoolbox-3'))
 end
 
 % function recordPhosphene()
