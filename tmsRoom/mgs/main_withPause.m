@@ -18,6 +18,8 @@ elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
     rmpath(genpath('/Users/curtislab/matlab/mgl'));
     addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+elseif strcmp(hostname, 'tmsubuntu')
+    addpath(genpath('/usr/lib/psychtoolbox-3'))
 end
 
 % function recordPhosphene()
@@ -38,7 +40,7 @@ end
 initScreen();
 %   Initialize the subject info
 %--------------------------------------------------------------------------------------------------------------------------------------%
-initSubjectInfo();
+initSubjectInfo_trial();
 initFiles();
 initKeyboard();
 %   Load phosphene retinitopy data
@@ -109,7 +111,7 @@ end
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
 ListenChar(-1);
-showTTLWindow();
+% showTTLWindow(); mrugank (02/16/2022): What purpose doesth it serve?
 ListenChar(0);
 if parameters.dummymode == 0
     Eyelink('StartRecording');
@@ -525,4 +527,6 @@ if parameters.dummymode == 0
     Eyelink('Shutdown');
 end
 
-TeensyTrigger('x');
+if parameters.EEG
+    TeensyTrigger('x');
+end
