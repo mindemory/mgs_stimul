@@ -484,16 +484,16 @@ if parameters.dummymode == 0
     Eyelink('CloseFile');
     % download data file
     try
-        %fprintf('Receiving data file ''%s''\n', parameters.edfFile );
+        fprintf('Receiving data file ''%s''\n', parameters.edfFile );
         status=Eyelink('ReceiveFile');
         if status > 0
-            %fprintf('ReceiveFile status %d\n', status);
+            fprintf('ReceiveFile status %d\n', status);
         end
         if 2==exist(parameters.edfFile, 'file')
-            %fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
+            fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
         end
     catch
-        %fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
+        fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
     end
     % Shutdown Eyelink:
     %         Eyelink('Shutdown');
