@@ -1,6 +1,7 @@
 %% Initialization
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+clear; close all; clc;% clear mex;
 
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');   
@@ -23,7 +24,7 @@ elseif strcmp(hostname, 'tmsubuntu')
 end
 
 % function recordPhosphene()
-sca; clear; close all; clc;
+sca; 
 global parameters screen kbx mbx tmsDaq
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
