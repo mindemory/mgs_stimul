@@ -13,11 +13,10 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     % Location of toolboxes on TMS Stimul Mac
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
-    rmpath(genpath('/Users/curtislab/matlab/mgl'));
-    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
     addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
@@ -45,7 +44,7 @@ initScreen();
 %--------------------------------------------------------------------------------------------------------------------------------------%
 initSubjectInfo_trial();
 initFiles();
-% initKeyboard_test();
+initKeyboard_test();
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
 subjID = int2strz(parameters.subject,2);
