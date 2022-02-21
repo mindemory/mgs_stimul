@@ -1,4 +1,4 @@
-function [inds_area, drwng_connected] = analyzeDrawing(drwng, tmsRtnTpy)
+function [inds_area, drwng_connected] = analyzeDrawing(drwng,tmsRtnTpy)
 
 % The part for calculating the area coordinates needs to be re-written.
 % Right now, some columns are missed in the calculated areas. 
