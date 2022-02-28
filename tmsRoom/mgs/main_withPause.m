@@ -69,7 +69,8 @@ FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;
 %  show load of experiment warning
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
-showLoadExperimentWindow();
+%showLoadExperimentWindow();
+showprompts('LoadExperimentWindow')
 ListenChar(-1);
 
 timeIdx = 1;
@@ -77,7 +78,8 @@ timeIdx = 1;
 %  init start of experiment procedures
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
-showSoeWindow();
+%showSoeWindow();
+showprompts('SoeWindow')
 ListenChar(0);
 
 allRuns = ones(1,taskMap.trialNum);
@@ -113,16 +115,18 @@ end
 %  init scanner
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %
-ListenChar(-1);
+%ListenChar(-1);
 % showTTLWindow(); mrugank (02/16/2022): What purpose doesth it serve?
-ListenChar(0);
+%ListenChar(0);
 if parameters.dummymode == 0
     Eyelink('StartRecording');
 end
 startExperimentTime = GetSecs();
 %  init start of experiment procedures
 %--------------------------------------------------------------------------------------------------------------------------------------%
-showStartOfRunWindow();
+%showStartOfRunWindow();
+showprompts('StartOfRunWindow')
+
 WaitSecs(parameters.dummyDuration); % dummy time
 ListenChar(-1);
 Screen('FillRect', screen.win, screen.white, FixCross');
@@ -147,7 +151,6 @@ startExperimentTime = GetSecs();
 currentRunTrials = [1:taskMap.trialNum];
 
 %% run over trials
-
 for tc = 1: taskMap.trialNum
     
     % EEG marker --> trial begins
@@ -179,19 +182,18 @@ for tc = 1: taskMap.trialNum
     Loc_Sacc = [taskMap.saccLoc_pix(tc,1) taskMap.saccLoc_pix(tc,2)];
     
     texDuration = GetSecs - texStartTime;
-    texDurationArray = [texDurationArray,texDuration];
+    texDurationArray = [texDurationArray, texDuration];
     
     if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d "', currentRunTrials(tc), taskMap.trialNum);
         Eyelink('Message', 'TRIAL %d ', currentRunTrials(tc));
         
-        
         %--------------------------------------------------------------------------
         %re-initialize breakOfFixation variable -- assume there is no break of
         %fixation at the beginning of the trial
-        breakOfFixation =0;
+        breakOfFixation = 0;
         %
-        minPupil = 0.4*avgPupilSize;
+        minPupil = 0.4 * avgPupilSize;
         %define a fixation boundary in case its not part of the input arguments
         fixationBoundary = 66;%pixels
         
@@ -294,7 +296,9 @@ for tc = 1: taskMap.trialNum
         while GetSecs-sampleStartTime<=parameters.sampleDuration
             if ~flag
                 %draw sample
-                Screen('FillOval',screen.win, screen.white,[Loc_Stim(1)-parameters.stimDiam Loc_Stim(2)-parameters.stimDiam Loc_Stim(1)+parameters.stimDiam Loc_Stim(2)+parameters.stimDiam] );
+                Screen('FillOval',screen.win, screen.white, ...
+                    [Loc_Stim(1)-parameters.stimDiam, Loc_Stim(2)-parameters.stimDiam, ...
+                    Loc_Stim(1)+parameters.stimDiam, Loc_Stim(2)+parameters.stimDiam]);
                 %draw the fixation dot
                 Screen('FillRect', screen.win, screen.white, FixCross');
                 Screen('Flip', screen.win);
@@ -302,7 +306,7 @@ for tc = 1: taskMap.trialNum
             end
         end
         sampleDuration = GetSecs-sampleStartTime;
-        sampleDurationArray = [sampleDurationArray,sampleDuration];
+        sampleDurationArray = [sampleDurationArray, sampleDuration];
         
         % Delay1 window
         %----------------------------------------------------------------------
@@ -338,16 +342,10 @@ for tc = 1: taskMap.trialNum
             Eyelink('Message', 'xDAT %d ', 3);
         end
         
-        if parameters.dummymode
-            
-        elseif parameters.EEG
+        if parameters.EEG
             % TMS trigger & EEG marker --> Delay1 begins
             %TeensyTrigger('t', 30);
             MarkStim('t', 30);
-        else
-            err=DaqAOut(tmsDaq,0,0);
-            err2=DaqAOut(tmsDaq,0,1);
-            err=DaqAOut(tmsDaq,0,0);
         end
         WaitSecs(taskMap.pulseDuration(tc));
         

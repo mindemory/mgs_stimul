@@ -4,7 +4,7 @@ function loadParameters()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.EEG = 1; % set to 0 if there is no EEG recording
+    parameters.EEG = 0; % set to 0 if there is no EEG recording
     parameters.dummymode = 0; % set to 0 if you want to use eyetracker
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.hideCursor = true;
@@ -26,7 +26,7 @@ function loadParameters()
     parameters.matfile = 'untitled.mat';
     parameters.taskMapFile = 'untitled_taskMap.mat';
     parameters.logFile = 'untitled_log.txt';
-    parameters.edfFile = 'untd.edf'; % can only be 4 characters long
+    % parameters.edfFile = 'untd.edf'; % can only be 4 characters long
     parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Stimulus parameters

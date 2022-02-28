@@ -1,11 +1,8 @@
-
 global parameters;
 global screen;
 % Eyelink('SetAddress','192.168.1.5') % for the scanner room
-
     
 %%
-
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
 %run without eye tracker if dummymode set to 1
 if parameters.dummymode == 0
@@ -20,8 +17,8 @@ if parameters.dummymode == 0
     el.msgfontcolour    = BlackIndex(el.window);
     el.imgtitlecolour = WhiteIndex(el.window);
     el.targetbeep = 0;
-    el.calibrationtargetcolour= WhiteIndex(el.window);
-    el.calibrationtargetsize= 0.5;
+    el.calibrationtargetcolour= BlackIndex(el.window);
+    el.calibrationtargetsize= 1;
     el.calibrationtargetwidth=0.15;
     el.displayCalResults = 1;
     el.eyeimgsize=30;
@@ -75,10 +72,10 @@ if parameters.dummymode == 0
     EyelinkDoTrackerSetup(el);
 
     %  do a final check of calibration using driftcorrection
-%    EyelinkDoDriftCorrection(el);
+    EyelinkDoDriftCorrection(el);
 
     WaitSecs(0.1);
-%     Eyelink('StartRecording');
+    %Eyelink('StartRecording');
 
     eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
     if eye_used == el.BINOCULAR; % if both eyes are tracked
