@@ -43,6 +43,7 @@ end
 initScreen();
 %   Initialize the subject info
 %--------------------------------------------------------------------------------------------------------------------------------------%
+
 initSubjectInfo_trial();
 initFiles();
 initKeyboard_test();
@@ -539,5 +540,6 @@ end
 
 if parameters.EEG
     %TeensyTrigger('x');
+    
     MarkStim('x');
 end
