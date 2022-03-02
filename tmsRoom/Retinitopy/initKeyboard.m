@@ -1,5 +1,7 @@
 function initKeyboard()
-global kbx mbx tmsDaq;
+
+% First try running LoadPsychHID on Ubuntu and see if that works
+global kbx mbx
 %     LoadPsychHID; %ry to get PsychHID linked and loaded on MS-Windows, no matter what.
 
 %   Enable unified mode of KbName, so KbName accepts identical key names on
@@ -7,20 +9,10 @@ global kbx mbx tmsDaq;
 KbName('UnifyKeyNames');
 %TeensyTrigger('i', '/dev/cu.usbmodem12341')
 %   get keyboard pointer
-devices = PsychHID('Devices');
-devIdx(1) = find([devices(:).usageValue] == 6, 1, 'last');
-tmp = find([devices(:).usageValue] == 2, 1, 'last'); % if more than one mouse
-devIdx(2) = tmp(1);
-tmp = [];
-for i = 1:length(devices) % if more than one daq port availbale
-    p =  devices(i).product;
-    if strcmp(p,'USB-1208FS')
-        tmp = [tmp i];
-    end
-end
-if ~isempty(tmp)
-    devIdx(3) = tmp(1);
-end
+devices_keyboard = PsychHID('Devices', 4);
+devices_mouse = PsychHID('Devices', 3);
+devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard') == 1);
+devIdx(2) = find(strcmp({devices_mouse(:).product},'PixArt Dell MS116 USB Optical Mouse') == 1);
 
 %  Initialize keyboard
 if ~isempty(devIdx(1))
@@ -39,10 +31,4 @@ end
 %   create keyboard events queue
 KbQueueCreate(kbx);
 KbQueueCreate(mbx);
-%     KbQueueStart(kbx);
-%     KbQueueStart(mbx);
-if length(devIdx) > 2
-    tmsDaq = devIdx(3);
-else
-    warning('NO TRIGGER DEVICE FOUND!');
 end

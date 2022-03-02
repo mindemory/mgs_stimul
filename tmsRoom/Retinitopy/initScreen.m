@@ -1,5 +1,5 @@
-function initScreen(parameters)
-    
+function initScreen()
+    global parameters;
     global screen;
     %   To make it transparent for working in demo mode
     if parameters.isDemoMode

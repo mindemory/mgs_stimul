@@ -1,15 +1,54 @@
 % TODO:
 % add eye tracking
-function [saveData] = recordPhosphene(subjID,session,parameters)
+function [saveData] = recordPhosphene(subjID,session)
+%% Initialization
+%%% Edits by Mrugank (01/29/2022)
+% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+%clear; close all; clc;% clear mex;
 
-global screen kbx mbx tmsDaq
- 
-% subjID = int2strz(input(sprintf('\nsubject: ')),2);
-% session = int2strz(input(sprintf('\nsession: ')),2);
+%%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');   
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
 
+%%% Load PTB and toolboxes
+if strcmp(hostname, 'syndrome')
+    % Location of PTB on Syndrome
+    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
+elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
+    % Location of toolboxes on TMS Stimul Mac
+    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+elseif strcmp(hostname, 'tmsubuntu')
+    addpath(genpath('/usr/lib/psychtoolbox-3'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
+end
+
+% function recordPhosphene()
+sca; 
+
+global parameters screen kbx mbx tmsDaq
+Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+
+%subjID = int2strz(input(sprintf('\nsubject: ')),2);
+%session = int2strz(input(sprintf('\nsession: ')),2);
+loadParameters(subjID, session);
 if parameters.EEG
-    TeensyTrigger('i', '/dev/cu.usbmodem12341')
-    TeensyTrigger('s', true, 1000)
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)]
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
+        end
+    end
+    trigger_id = ['/dev/', dev_name];
+    MarkStim('i', trigger_id)
+    MarkStim('s', true, 1000)
 end
 
 %%%% Create a directory to save all files with their times
@@ -18,7 +57,7 @@ if ~exist('saveDIR_auto','dir')
     mkdir(saveDIR_auto);
 end
 
-initScreen(parameters)
+initScreen()
 initKeyboard()
 
 % fixation cross
@@ -89,14 +128,8 @@ while 1
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
                 
-                
-                    err=DaqAOut(tmsDaq,0,0);
-                    err2=DaqAOut(tmsDaq,0,1);
-                    err=DaqAOut(tmsDaq,0,0);
-               
-                    
-                
-                
+                MarkStim('t', 168);
+
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
                 %%%%%%%%%%%%%%%%%%%
@@ -228,5 +261,5 @@ if strcmp(saveData,'y')
 end
 
 if parameters.EEG
-    TeensyTrigger('x');
+    MarkStim('x');
 end

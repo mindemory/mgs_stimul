@@ -36,7 +36,18 @@ loadParameters();
 if parameters.EEG
 %    TeensyTrigger('i', '/dev/cu.usbmodem12341')
 %    TeensyTrigger('s', true, 1000)
-    MarkStim('i', '/dev/ttyACM0')
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)]
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
+        end
+    end
+    trigger_id = ['/dev/', dev_name];
+    MarkStim('i', trigger_id)
     MarkStim('s', true, 1000)
 end
 
