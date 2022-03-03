@@ -1,5 +1,5 @@
 function calcPhospheneArea(subjID,session,overlapThresh)
-
+subjID
 % subjID = int2strz(input(sprintf('\nsubject: ')),2);
 % session = int2strz(input(sprintf('\nsession: ')),2);
 
