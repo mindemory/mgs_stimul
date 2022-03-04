@@ -11,7 +11,7 @@ KbName('UnifyKeyNames');
 %   get keyboard pointer
 devices_keyboard = PsychHID('Devices', 4);
 devices_mouse = PsychHID('Devices', 3);
-devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard') == 1);
+devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard System Control') == 1);
 devIdx(2) = find(strcmp({devices_mouse(:).product},'PixArt Dell MS116 USB Optical Mouse') == 1);
 
 %  Initialize keyboard

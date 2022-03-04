@@ -60,7 +60,7 @@ if ~exist('saveDIR_auto','dir')
 end
 
 initScreen()
-% initKeyboard()
+initKeyboard()
 
 % fixation cross
 FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
@@ -76,7 +76,10 @@ trialInd = 0;
 coilLocInd = 0;
 cmndKey = nan;
 
-yeskey = 
+yKey = KbName('y');
+nKey = KbName('n');
+gKey = KbName('g');
+qKey = KbName('q');
 
 while 1
     if ~strcmp(cmndKey,'n') || strcmp(cmndKey,'q')
@@ -94,14 +97,14 @@ while 1
         save(saveName,'tmsRtnTpy')
         
         while 1 % 
-            KbQueueStart(kbx);
+            %KbQueueStart(kbx);
             display(sprintf('\nmake the screen dark [y/n] ?! '))
-            [keyIsDown, keyCode]=KbQueueCheck(kbx);
+            [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
-                [keyIsDown, keyCode]=KbQueueCheck(kbx);
-                cmndKey = KbName(keyCode);
+                [keyIsDown, secs, keyCode]=KbCheck;
+                %cmndKey = KbName(keyCode);
             end
-            if strcmp(cmndKey,'y')
+            if keyCode(yKey)%strcmp(cmndKey,'y')
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
@@ -111,14 +114,14 @@ while 1
         end
         while 1
             
-            KbQueueStart(kbx);
+            %KbQueueStart(kbx);
             display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
-            [keyIsDown, keyCode]=KbQueueCheck(kbx);
+            [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
-                [keyIsDown, keyCode]=KbQueueCheck(kbx);
-                cmndKey = KbName(keyCode);
+                [keyIsDown, secs, keyCode]=KbCheck;
+                %cmndKey = KbName(keyCode);
             end
-            if strcmp(cmndKey,'g')
+            if keyCode('g')%strcmp(cmndKey,'g')
                 startFlag = 0;
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
@@ -146,7 +149,7 @@ while 1
                     
                     strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
-                    KbQueueStart(mbx);
+                    %KbQueueStart(mbx);
                     [mouseKlick, clickCode]=KbQueueCheck(mbx);
                     
                     SetMouse(screen.xCenter,screen.yCenter,screen.win);

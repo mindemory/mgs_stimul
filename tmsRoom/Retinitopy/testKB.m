@@ -2,6 +2,7 @@
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
 %% Check the system name to ensure correct paths are added.
+clear; close all; clc;
 [ret, hostname] = system('hostname');   
 if ret ~= 0
     hostname = getenv('HOSTNAME');
@@ -12,28 +13,40 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     % Location of toolboxes on TMS Stimul Mac
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
-    rmpath(genpath('/Users/curtislab/matlab/mgl'));
-    addpath(genpath('/Users/curtislab/Documents/MATLAB/mgl2'));
+elseif strcmp(hostname, 'tmsubuntu')
+    addpath(genpath('/usr/lib/psychtoolbox-3'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
+else
+    disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
-sca; clear; close all; clc;
+sca;
 KbName('UnifyKeyNames');
 
 %   get keyboard pointer
-devices = PsychHID('Devices');
-devIdx = find([devices(:).usageValue] == 6);
-
-%  Initialize keyboard
-if ~isempty(devIdx)
-    % For remote keyboard
-    kbx = devIdx(3);
-    %kbx = devIdx(3);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!
+if strcmp(hostname, 'tmsubuntu')
+    devices = PsychHID('Devices', 4);
+    devIdx = find(strcmp({devices(:).product}, ...
+        'Mitsumi Electric Apple Extended USB Keyboard') == 1);
+    kbx = 1
 else
-    kbx = 0;
+    devices = PsychHID('Devices');
+    devIdx = find([devices(:).usageValue] == 6);
+    %  Initialize keyboard
+    if ~isempty(devIdx)
+        % For remote keyboard
+        kbx = devIdx(3);
+        %kbx = devIdx(3);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!
+    else
+        kbx = 0;
+    end
 end
+
+
 
 %   create keyboard events queue
 PsychHID('KbQueueCreate',kbx);

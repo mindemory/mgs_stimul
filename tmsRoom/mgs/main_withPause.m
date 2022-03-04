@@ -58,6 +58,7 @@ initScreen();
 initSubjectInfo_trial();
 initFiles();
 initKeyboard_test();
+
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
 subjID = int2strz(parameters.subject,2);
@@ -176,6 +177,7 @@ for tc = 1: taskMap.trialNum
     if strcmp(cmndKey,'ESCAPE')
         break
     end
+    
     if strcmp(cmndKey,'`~')
         cmndKey = nan;
         display('Paused! Press backTick to resume this run')
@@ -217,8 +219,7 @@ for tc = 1: taskMap.trialNum
         fixationBreakInstance = 0;
         gazeDisFromCenter = 0;
         blinkTimeLowerBound = 0;
-        blinkTimeUpperBound = 0;
-        
+        blinkTimeUpperBound = 0;    
         %--------------------------------------------------------------------------
     end
     
@@ -402,7 +403,6 @@ for tc = 1: taskMap.trialNum
         flag = 0;
         while GetSecs()-respCueStartTime < parameters.respCueDuration
             if ~flag % to do DarwTexture and Flip only once
-                
                 Screen('FillRect', screen.win, [0 256 0], FixCross');
                 Screen('Flip', screen.win);
                 flag = 1;
