@@ -150,24 +150,25 @@ while 1
                     strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
                     %KbQueueStart(mbx);
-                    [mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    [x, y, buttons] = GetMouse(screen.win);
                     
                     SetMouse(screen.xCenter,screen.yCenter,screen.win);
                     HideCursor(screen.win);
                     
-                    while ~any(clickCode)
-                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
-                        [x,y,mousButton]=GetMouse(screen.win);
+                    while ~any(buttons)
+                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                        [x,y,buttons]=GetMouse(screen.win);
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         Screen('FillOval',screen.win,[128,0,0],[x-2 y-2 x+2 y+2] );
                         Screen('Flip', screen.win);
                     end
-                    KbQueueStop(mbx);
+                    %KbQueueStop(mbx);
                     duration.preResp(trialInd) = GetSecs - strtTime.preResp(trialInd);
                     Response.CoilLocation(trialInd) = coilLocInd;
                     % abort trial after subject's right click
-                    if clickCode(2)
+                    if buttons(2)%clickCode(2)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 0;
                         duration.drawing(trialInd) = nan;
@@ -176,22 +177,22 @@ while 1
                         break
                         
                         % start drawing after a left click
-                    elseif clickCode(1)
+                    elseif buttons(1)%clickCode(1)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         strtTime.drawing(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 1;
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         
-                        KbQueueStart(mbx);
-                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
+                        %KbQueueStart(mbx);
+                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
                         
-                        [x,y,mousButton]=GetMouse(screen.win);
+                        [x,y,buttons]=GetMouse(screen.win);
                         XY = [x y];
                         
-                        while ~clickCode(1) % end drawing if left click pressed
-                            [mouseKlick, clickCode]=KbQueueCheck(mbx);
-                            [x,y,mousButton]=GetMouse(screen.win);
+                        while ~buttons(1)%~clickCode(1) % end drawing if left click pressed
+                            %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                            [x,y,buttons]=GetMouse(screen.win);
                             XY = [XY; x y];
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
                                 Screen('DrawLine',screen.win,[128 0 0],XY(end-1,1),XY(end-1,2),XY(end,1),XY(end,2),1);
@@ -200,7 +201,7 @@ while 1
                         end
                         duration.drawing(trialInd) = GetSecs - strtTime.drawing(trialInd);
                         Response.Drawing.coords{trialInd} = XY;
-                        KbQueueStop(mbx);
+                        %KbQueueStop(mbx);
                         break
                         % end of recording the drawing process
                     end
@@ -216,7 +217,7 @@ while 1
                 tmsRtnTpy.Response = Response;
                 tmsRtnTpy.StrtTime = strtTime;
                 
-            elseif strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
+            elseif keyCode('n')%strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
                 display(sprintf('\n\ta new coil location requested!'));
                 if ~startFlag
@@ -226,7 +227,7 @@ while 1
                 end
                 
                 break
-            elseif strcmp(cmndKey,'q') % quit the task if "q" is pressed
+            elseif keyCode('q')%strcmp(cmndKey,'q') % quit the task if "q" is pressed
                 break
             end
             
@@ -235,19 +236,19 @@ while 1
             Screen('Flip', screen.win);
         end
         
-        if strcmp(cmndKey,'q') % quit the task if "q" is pressed
+        if keyCode('q')%strcmp(cmndKey,'q') % quit the task if "q" is pressed
             TimeStmp.ProgramTermination = GetSecs;
             display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
         
-    elseif strcmp(cmndKey,'q')
+    elseif keyCode('q')%strcmp(cmndKey,'q')
         TimeStmp.ProgramTermination = GetSecs;
         display(sprintf('\n\tprogram terminated by the experimenter!'));
         break
     end
 end
-KbQueueRelease;
+%KbQueueRelease;
 ListenChar(0);
 sca
 ShowCursor;
