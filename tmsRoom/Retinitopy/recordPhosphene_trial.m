@@ -17,13 +17,13 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/Retinotopy'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     % Location of toolboxes on TMS Stimul Mac
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/Retinotopy'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
@@ -98,13 +98,16 @@ while 1
         
         while 1 % 
             %KbQueueStart(kbx);
-            display(sprintf('\nmake the screen dark [y/n] ?! '))
-            [keyIsDown, secs, keyCode]=KbCheck;
-            while ~keyIsDown
-                [keyIsDown, secs, keyCode]=KbCheck;
+            %display(sprintf('\nmake the screen dark [y/n] ?! '))
+            cmndKey = input(sprintf('\nmake the screen dark [y/n] ?! '), 's');
+            %[keyIsDown, secs, keyCode]=KbCheck;
+            
+            %while ~keyIsDown
+                
+             %   [keyIsDown, secs, keyCode]=KbCheck;
                 %cmndKey = KbName(keyCode);
-            end
-            if keyCode(yKey)%strcmp(cmndKey,'y')
+            %end
+            if strcmp(cmndKey,'y')
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
@@ -115,13 +118,14 @@ while 1
         while 1
             
             %KbQueueStart(kbx);
-            display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
-            [keyIsDown, secs, keyCode]=KbCheck;
-            while ~keyIsDown
-                [keyIsDown, secs, keyCode]=KbCheck;
-                %cmndKey = KbName(keyCode);
-            end
-            if keyCode('g')%strcmp(cmndKey,'g')
+            cmndKey = input(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '), 's');
+%             display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
+%             [keyIsDown, secs, keyCode]=KbCheck;
+%             while ~keyIsDown
+%                 [keyIsDown, secs, keyCode]=KbCheck;
+%                 %cmndKey = KbName(keyCode);
+%             end
+            if strcmp(cmndKey,'g')
                 startFlag = 0;
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
@@ -135,7 +139,9 @@ while 1
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
                 
-                MarkStim('t', 168);
+                if parameters.EEG
+                    MarkStim('t', 168);
+                end
 
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
@@ -149,26 +155,26 @@ while 1
                     
                     strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
-                    %KbQueueStart(mbx);
-                    %[mouseKlick, clickCode]=KbQueueCheck(mbx);
-                    [x, y, buttons] = GetMouse(screen.win);
+                    KbQueueStart(mbx);
+                    [mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    %[x, y, buttons] = GetMouse(screen.win);
                     
                     SetMouse(screen.xCenter,screen.yCenter,screen.win);
                     HideCursor(screen.win);
                     
-                    while ~any(buttons)
-                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    while ~any(clickCode)
+                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
                         [x,y,buttons]=GetMouse(screen.win);
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         Screen('FillOval',screen.win,[128,0,0],[x-2 y-2 x+2 y+2] );
                         Screen('Flip', screen.win);
                     end
-                    %KbQueueStop(mbx);
+                    KbQueueStop(mbx);
                     duration.preResp(trialInd) = GetSecs - strtTime.preResp(trialInd);
                     Response.CoilLocation(trialInd) = coilLocInd;
                     % abort trial after subject's right click
-                    if buttons(2)%clickCode(2)
+                    if clickCode(2) %buttons(3)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 0;
                         duration.drawing(trialInd) = nan;
@@ -177,21 +183,22 @@ while 1
                         break
                         
                         % start drawing after a left click
-                    elseif buttons(1)%clickCode(1)
+                    elseif clickCode(1)%buttons(1)%
+                        KbWait;
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         strtTime.drawing(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 1;
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         
-                        %KbQueueStart(mbx);
-                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                        KbQueueStart(mbx);
+                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
                         
                         [x,y,buttons]=GetMouse(screen.win);
                         XY = [x y];
                         
-                        while ~buttons(1)%~clickCode(1) % end drawing if left click pressed
-                            %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                        while ~clickCode(1) %~buttons(1)% end drawing if left click pressed
+                            [mouseKlick, clickCode]=KbQueueCheck(mbx);
                             [x,y,buttons]=GetMouse(screen.win);
                             XY = [XY; x y];
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
@@ -201,7 +208,7 @@ while 1
                         end
                         duration.drawing(trialInd) = GetSecs - strtTime.drawing(trialInd);
                         Response.Drawing.coords{trialInd} = XY;
-                        %KbQueueStop(mbx);
+                        KbQueueStop(mbx);
                         break
                         % end of recording the drawing process
                     end
@@ -217,7 +224,7 @@ while 1
                 tmsRtnTpy.Response = Response;
                 tmsRtnTpy.StrtTime = strtTime;
                 
-            elseif keyCode('n')%strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
+            elseif strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
                 display(sprintf('\n\ta new coil location requested!'));
                 if ~startFlag
@@ -227,7 +234,7 @@ while 1
                 end
                 
                 break
-            elseif keyCode('q')%strcmp(cmndKey,'q') % quit the task if "q" is pressed
+            elseif strcmp(cmndKey,'q') % quit the task if "q" is pressed
                 break
             end
             
@@ -236,13 +243,13 @@ while 1
             Screen('Flip', screen.win);
         end
         
-        if keyCode('q')%strcmp(cmndKey,'q') % quit the task if "q" is pressed
+        if strcmp(cmndKey,'q') % quit the task if "q" is pressed
             TimeStmp.ProgramTermination = GetSecs;
             display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
         
-    elseif keyCode('q')%strcmp(cmndKey,'q')
+    elseif strcmp(cmndKey,'q')
         TimeStmp.ProgramTermination = GetSecs;
         display(sprintf('\n\tprogram terminated by the experimenter!'));
         break
