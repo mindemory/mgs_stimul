@@ -135,30 +135,31 @@ while 1
                 % wait for subject's response:
                 %           right click: not seen a phosphene, go to next trial
                 %           first left click: start drawing
-                %           second left click: end drawing
-                
+                %           second left click: end drawing 
+                while 1
                     
-                while 1                    
                     strtTime.preResp(trialInd) = GetSecs;
-                    SetMouse(screen.xCenter,screen.yCenter,screen.win);
+                    % show the mouse location and wait for subject's click
+                    %KbQueueStart(mbx);
+                    %[mouseKlick, clickCode]=KbQueueCheck(mbx);
                     [x, y, buttons] = GetMouse(screen.win);
                     
+                    SetMouse(screen.xCenter,screen.yCenter,screen.win);
                     HideCursor(screen.win);
                     
-                    while ~any(buttons)
-                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    while ~any(clickCode)
+                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
                         [x,y,buttons]=GetMouse(screen.win);
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         Screen('FillOval',screen.win,[128,0,0],[x-2 y-2 x+2 y+2] );
                         Screen('Flip', screen.win);
                     end
-                    %KbQueueStop(mbx);
+                    KbQueueStop(mbx);
                     duration.preResp(trialInd) = GetSecs - strtTime.preResp(trialInd);
                     Response.CoilLocation(trialInd) = coilLocInd;
-                    
                     % abort trial after subject's right click
-                    if buttons(3)
+                    if clickCode(2) %buttons(3)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 0;
                         duration.drawing(trialInd) = nan;
@@ -166,42 +167,36 @@ while 1
                         display(sprintf('\n\tsubject reported "no phosphene" '));
                         break
                         
-                    % start drawing after a left click
-                    
-                    elseif buttons(1)
+                        % start drawing after a left click
+                    elseif clickCode(1)%buttons(1)%
+                        %KbWait;
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         strtTime.drawing(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 1;
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         
-                        %KbQueueStart(mbx);
-                        %[mouseKlick, clickCode]=KbQueueCheck(mbx);
-                        while 1
+                        KbQueueStart(mbx);
+                        [mouseKlick, clickCode]=KbQueueCheck(mbx);
+                        
+                        [x,y,buttons]=GetMouse(screen.win);
+                        XY = [x y];
+                        disp('Test1')
+                        while ~clickCode(1) %~buttons(1)% end drawing if left click pressed
+                            disp('Test2')
+                            [mouseKlick, clickCode]=KbQueueCheck(mbx);
                             [x,y,buttons]=GetMouse(screen.win);
-                            if ~buttons(1)
-                                break
-                            end
-
-                            disp('Test1')
-                            [x,y,buttons]=GetMouse(screen.win);
-                            XY = [x y];
                             XY = [XY; x y];
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
                                 Screen('DrawLine',qscreen.win,[128 0 0],XY(end-1,1),XY(end-1,2),XY(end,1),XY(end,2),1);
                             end
                             Screen('Flip', screen.win,[],1);
                         end
-                        %while ~buttons(1) %~buttons(1)% end drawing if left click pressed
-                            %disp('Test2')
-                            %[mouseKlick, clickCode]=KbQueueCheck(mbx);
-                            
-                        %end
                         disp('Test3')
                         duration.drawing(trialInd) = GetSecs - strtTime.drawing(trialInd);
                         Response.Drawing.coords{trialInd} = XY;
-                        %KbQueueStop(mbx);
-                        %break
+                        KbQueueStop(mbx);
+                        break
                         % end of recording the drawing process
                     end
                 end

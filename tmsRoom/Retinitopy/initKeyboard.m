@@ -32,11 +32,14 @@ if strcmp(hostname, 'syndrome')
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     disp("Never worked on this!")
 elseif strcmp(hostname, 'tmsubuntu')
-    devices_keyboard = PsychHID('Devices', 4);
-    devices_mouse = PsychHID('Devices', 3);
-    devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard System Control') == 1);
-    devIdx(2) = find(strcmp({devices_mouse(:).product},'PixArt Dell MS116 USB Optical Mouse') == 1);
-
+%     devices_keyboard = PsychHID('Devices', 4);
+%     devices_mouse = PsychHID('Devices', 3);
+%     devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard System Control') == 1);
+%     devIdx(2) = find(strcmp({devices_mouse(:).product},'PixArt Dell MS116 USB Optical Mouse') == 1);
+    devices = PsychHID('Devices');
+    %devices_mouse = PsychHID('Devices');
+    devIdx(1) = find([devices(:).productID] == 523, 1, 'first');%find([devices(:).deviceIndex] == 16700);
+    devIdx(2) = find([devices(:).productID] == 523, 1, 'last');
     %  Initialize keyboard
     if ~isempty(devIdx(1))
         kbx = devIdx(1);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!

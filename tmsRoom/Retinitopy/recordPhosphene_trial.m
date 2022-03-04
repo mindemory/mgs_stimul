@@ -155,14 +155,15 @@ while 1
                     
                     strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
-                    %KbQueueStart(mbx);
-                    %[mouseKlick, clickCode]=KbQueueCheck(mbx);
+                    KbQueueStart(mbx);
+                    [mouseKlick, clickCode]=KbQueueCheck(mbx);
                     [x, y, buttons] = GetMouse(screen.win);
                     
                     SetMouse(screen.xCenter,screen.yCenter,screen.win);
                     HideCursor(screen.win);
                     
                     while ~any(clickCode)
+                        
                         [mouseKlick, clickCode]=KbQueueCheck(mbx);
                         [x,y,buttons]=GetMouse(screen.win);
                         
