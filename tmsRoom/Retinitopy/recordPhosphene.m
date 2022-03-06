@@ -17,13 +17,14 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/Retinotopy'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     % Location of toolboxes on TMS Stimul Mac
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/Retinotopy'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/markstim-master'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
@@ -31,7 +32,7 @@ end
 % function recordPhosphene()
 sca; 
 
-global parameters screen kbx mbx tmsDaq
+global parameters screen hostname kbx mbx tmsDaq
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 %subjID = int2strz(input(sprintf('\nsubject: ')),2);
@@ -60,7 +61,7 @@ if ~exist('saveDIR_auto','dir')
 end
 
 initScreen()
-% initKeyboard()
+initKeyboard()
 
 % fixation cross
 FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
@@ -75,8 +76,6 @@ tmsRtnTpy.Params.taskParams = parameters;
 trialInd = 0;
 coilLocInd = 0;
 cmndKey = nan;
-
-yeskey = 
 
 while 1
     if ~strcmp(cmndKey,'n') || strcmp(cmndKey,'q')
@@ -97,10 +96,12 @@ while 1
             KbQueueStart(kbx);
             display(sprintf('\nmake the screen dark [y/n] ?! '))
             [keyIsDown, keyCode]=KbQueueCheck(kbx);
+            
             while ~keyIsDown
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
+            
             if strcmp(cmndKey,'y')
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
@@ -113,7 +114,7 @@ while 1
             
             KbQueueStart(kbx);
             display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
-            [keyIsDown, keyCode]=KbQueueCheck(kbx);
+            [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
@@ -132,7 +133,10 @@ while 1
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
                 
-                MarkStim('t', 168);
+                if parameters.EEG
+                    disp('lolwa')
+                    MarkStim('t', 128);
+                end
 
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
@@ -149,12 +153,15 @@ while 1
                     KbQueueStart(mbx);
                     [mouseKlick, clickCode]=KbQueueCheck(mbx);
                     
+                    [x, y, buttons] = GetMouse(screen.win);
+                    
                     SetMouse(screen.xCenter,screen.yCenter,screen.win);
                     HideCursor(screen.win);
                     
                     while ~any(clickCode)
+                        
                         [mouseKlick, clickCode]=KbQueueCheck(mbx);
-                        [x,y,mousButton]=GetMouse(screen.win);
+                        [x,y,buttons]=GetMouse(screen.win);
                         
                         Screen('FillRect', screen.win, [128,0,0], FixCross');
                         Screen('FillOval',screen.win,[128,0,0],[x-2 y-2 x+2 y+2] );
@@ -163,8 +170,9 @@ while 1
                     KbQueueStop(mbx);
                     duration.preResp(trialInd) = GetSecs - strtTime.preResp(trialInd);
                     Response.CoilLocation(trialInd) = coilLocInd;
+                    
                     % abort trial after subject's right click
-                    if clickCode(2)
+                    if clickCode(3)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 0;
                         duration.drawing(trialInd) = nan;
@@ -183,12 +191,11 @@ while 1
                         KbQueueStart(mbx);
                         [mouseKlick, clickCode]=KbQueueCheck(mbx);
                         
-                        [x,y,mousButton]=GetMouse(screen.win);
+                        [x,y,buttons]=GetMouse(screen.win);
                         XY = [x y];
-                        
                         while ~clickCode(1) % end drawing if left click pressed
                             [mouseKlick, clickCode]=KbQueueCheck(mbx);
-                            [x,y,mousButton]=GetMouse(screen.win);
+                            [x,y,buttons]=GetMouse(screen.win);
                             XY = [XY; x y];
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
                                 Screen('DrawLine',screen.win,[128 0 0],XY(end-1,1),XY(end-1,2),XY(end,1),XY(end,2),1);

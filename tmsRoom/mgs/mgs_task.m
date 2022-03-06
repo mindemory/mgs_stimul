@@ -20,12 +20,13 @@ elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/mgs'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/markstim-master'))
 end
 
 % function recordPhosphene()
 sca; 
-global parameters screen kbx mbx tmsDaq
+global parameters screen kbx
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
@@ -57,7 +58,7 @@ initScreen();
 
 initSubjectInfo_trial();
 initFiles();
-initKeyboard_test();
+initKeyboard();
 
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%

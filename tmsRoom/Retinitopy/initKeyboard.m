@@ -32,14 +32,25 @@ if strcmp(hostname, 'syndrome')
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     disp("Never worked on this!")
 elseif strcmp(hostname, 'tmsubuntu')
-%     devices_keyboard = PsychHID('Devices', 4);
-%     devices_mouse = PsychHID('Devices', 3);
-%     devIdx(1) = find(strcmp({devices_keyboard(:).product},'Mitsumi Electric Apple Extended USB Keyboard System Control') == 1);
-%     devIdx(2) = find(strcmp({devices_mouse(:).product},'PixArt Dell MS116 USB Optical Mouse') == 1);
-    devices = PsychHID('Devices');
-    %devices_mouse = PsychHID('Devices');
-    devIdx(1) = find([devices(:).productID] == 523, 1, 'first');%find([devices(:).deviceIndex] == 16700);
-    devIdx(2) = find([devices(:).productID] == 523, 1, 'last');
+    [~, ~, kboards] = GetKeyboardIndices();
+    [~, ~, gpads] = GetGamepadIndices();
+    for i = 1:length(kboards)
+        if strcmp(kboards{1, i}.product, 'Mitsumi Electric Apple Extended USB Keyboard')
+            devIdx(1) = kboards{1, i}.index;
+        %else
+        %    error('External Keyboard not found')
+        end
+    end
+    
+    
+    for i = 1:length(gpads)
+        if strcmp(gpads{1, i}.product, 'PixArt Dell MS116 USB Optical Mouse')
+            devIdx(2) = gpads{1, i}.index;
+        %else
+        %    error('External Mouse not found')
+        end
+    end
+    
     %  Initialize keyboard
     if ~isempty(devIdx(1))
         kbx = devIdx(1);% MODIFY ACCORDING YOUR COMPUTER SETUP!!!
@@ -57,7 +68,6 @@ elseif strcmp(hostname, 'tmsubuntu')
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
-
 
 %   create keyboard events queue
 KbQueueCreate(kbx);
