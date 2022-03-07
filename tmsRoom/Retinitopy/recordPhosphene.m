@@ -1,13 +1,38 @@
-% TODO:
+%% Record Phoshpenes (mrugank: 03/07/2022)
+% The code has been originally written by Masih. It has been adapted to
+% make changes to suitably adjust to the new display, interact with the TMS
+% device using MarkStim trigger and few other changes.
+
+% The code creates a dark stimulus display with a red fixation cross. When
+% the TMS parameter is set to 1 in loadParameters(), the code interacts with
+% the Teensy trigger to first initiate a handshake. Make sure that the
+% orange light is turned on on the TeensyTrigger before running the code.
+% If the light is not on, reset the TeensyTrigger by pressing the orange
+% button.
+
+% It then asks for a new coil location, followed by whether the coil
+% location is new or the trial is new. For a new trial, it will make the
+% screen black and interact with the TMS device to send a pulse that is set
+% on the TMS machine. It then waits for the subject to report if phosphene
+% was seen. A left mouse-click implies a phosphene was seen while a right
+% mouse-click implies a phosphene was not seen. If a phosphene was seen, it
+% then activates a draw tool for the subject to draw the rough borders to
+% report the phosphene seen. The drawing is ended upon second left click.
+
+% The code runs till quit (q) is pressed by the experimenter. 
+
+% TODO (by Masih):
 % add eye tracking
 %function [saveData] = recordPhosphene(subjID,session)
+
 %% Initialization
 %%% Edits by Mrugank (01/29/2022)
-% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
+% Suppressed VBL Sync Error by PTB
+
 clear; close all; clc;% clear mex;
 subjID = '01'; session = '01';
 %%% Check the system name to ensure correct paths are added.
-[ret, hostname] = system('hostname');   
+[ret, hostname] = system('hostname');
 if ret ~= 0
     hostname = getenv('HOSTNAME');
 end
@@ -15,13 +40,15 @@ hostname = strtrim(hostname);
 
 %%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
-    % Location of PTB on Syndrome
-    addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+    % Syndrome Mac
+    addpath(genpath('/Users/Shared/Psychtoolbox'))
     addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/Retinotopy'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/markstim-master'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
-    % Location of toolboxes on TMS Stimul Mac
+    % Mac Stimulus Display
     addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
 elseif strcmp(hostname, 'tmsubuntu')
+    % Ubuntu Stimulus Display
     addpath(genpath('/usr/lib/psychtoolbox-3'))
     addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/Retinotopy'))
     addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/markstim-master'))
@@ -29,8 +56,7 @@ else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
-% function recordPhosphene()
-sca; 
+sca;
 
 global parameters screen hostname kbx mbx tmsDaq
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
@@ -38,7 +64,7 @@ Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL
 %subjID = int2strz(input(sprintf('\nsubject: ')),2);
 %session = int2strz(input(sprintf('\nsession: ')),2);
 loadParameters(subjID, session);
-if parameters.EEG
+if parameters.TMS
     dev_num = 0;
     devs = dir('/dev/');
     while 1
@@ -78,9 +104,13 @@ coilLocInd = 0;
 cmndKey = nan;
 
 while 1
-    if ~strcmp(cmndKey,'n') || strcmp(cmndKey,'q')
-        clear cmndKey
-        cmndKey = input(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '),'s');
+    KbQueueStart(kbx);
+    display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
+    [keyIsDown, keyCode]=KbQueueCheck(kbx);
+    
+    while ~keyIsDown
+        [keyIsDown, keyCode]=KbQueueCheck(kbx);
+        cmndKey = KbName(keyCode);
     end
     
     if strcmp(cmndKey,'n')
@@ -92,7 +122,7 @@ while 1
         saveName = [saveDIR_auto '/tmsRtnTpy_sub' subjID '_sess' session];
         save(saveName,'tmsRtnTpy')
         
-        while 1 % 
+        while 1 %
             KbQueueStart(kbx);
             display(sprintf('\nmake the screen dark [y/n] ?! '))
             [keyIsDown, keyCode]=KbQueueCheck(kbx);
@@ -133,11 +163,10 @@ while 1
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
                 
-                if parameters.EEG
-                    disp('lolwa')
+                if parameters.TMS
                     MarkStim('t', 128);
                 end
-
+                
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
                 %%%%%%%%%%%%%%%%%%%
@@ -145,7 +174,7 @@ while 1
                 % wait for subject's response:
                 %           right click: not seen a phosphene, go to next trial
                 %           first left click: start drawing
-                %           second left click: end drawing 
+                %           second left click: end drawing
                 while 1
                     
                     strtTime.preResp(trialInd) = GetSecs;
@@ -271,6 +300,6 @@ if strcmp(saveData,'y')
     save(saveName,'tmsRtnTpy')
 end
 
-if parameters.EEG
+if parameters.TMS
     MarkStim('x');
 end
