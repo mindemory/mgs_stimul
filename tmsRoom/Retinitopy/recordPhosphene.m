@@ -30,7 +30,7 @@
 % Suppressed VBL Sync Error by PTB
 
 clear; close all; clc;% clear mex;
-subjID = '01'; session = '01';
+subjID = '27'; session = '01';
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
 if ret ~= 0
@@ -76,8 +76,8 @@ if parameters.TMS
         end
     end
     trigger_id = ['/dev/', dev_name];
-    MarkStim('i', trigger_id)
-    MarkStim('s', true, 1000)
+    %MarkStim('i', trigger_id)
+   % MarkStim('s', true, 1000)
 end
 
 %%%% Create a directory to save all files with their times

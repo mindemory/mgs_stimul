@@ -356,11 +356,11 @@ for tc = 1: taskMap.trialNum
             Eyelink('Message', 'xDAT %d ', 3);
         end
         
-        if parameters.EEG
-            % TMS trigger & EEG marker --> Delay1 begins
-            %TeensyTrigger('t', 30);
-            MarkStim('t', 30);
-        end
+%         if parameters.EEG
+%             % TMS trigger & EEG marker --> Delay1 begins
+%             %TeensyTrigger('t', 30);
+%             MarkStim('t', 30);
+%         end
         WaitSecs(taskMap.pulseDuration(tc));
         
         pulseDuration = GetSecs - pulseStartTime;
@@ -457,7 +457,9 @@ for tc = 1: taskMap.trialNum
         flag = 0;
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             if ~flag
-                Screen('FillOval',screen.win,[],[Loc_Sacc(1)-parameters.stimDiam Loc_Sacc(2)-parameters.stimDiam Loc_Sacc(1)+parameters.stimDiam Loc_Sacc(2)+parameters.stimDiam] );
+                Screen('FillOval',screen.win,[], ...
+                    [Loc_Sacc(1)-parameters.stimDiam, Loc_Sacc(2)-parameters.stimDiam, ...
+                    Loc_Sacc(1)+parameters.stimDiam, Loc_Sacc(2)+parameters.stimDiam]);
                 %draw the fixation dot
                 Screen('FillRect', screen.win, screen.white, FixCross');
                 Screen('Flip', screen.win);
