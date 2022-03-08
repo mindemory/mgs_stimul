@@ -76,8 +76,8 @@ if parameters.TMS
         end
     end
     trigger_id = ['/dev/', dev_name];
-    %MarkStim('i', trigger_id)
-   % MarkStim('s', true, 1000)
+    MarkStim('i', trigger_id)
+    %MarkStim('s', true, 1000)
 end
 
 %%%% Create a directory to save all files with their times
