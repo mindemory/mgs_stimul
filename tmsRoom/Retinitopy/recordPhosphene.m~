@@ -105,7 +105,11 @@ cmndKey = nan;
 
 while 1
     KbQueueStart(kbx);
-    
+    Screen('TextSize', screen.win, 40);
+        DrawFormattedText(screen.win, parameters.thankYouMsg, 'center', 'center',white);
+        Screen('Flip', screen.win);
+        WaitSecs(5);
+        sca;
     display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     

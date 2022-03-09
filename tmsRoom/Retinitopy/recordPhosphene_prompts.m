@@ -106,6 +106,11 @@ cmndKey = nan;
 while 1
     KbQueueStart(kbx);
     
+    nq_msg = '\nn: new coil location.\nq : terminate this run!\nn/q?: ';
+    Screen('TextSize', screen.win, 40);
+    DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.grey);
+    Screen('Flip', screen.win);
+    
     display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     
@@ -125,6 +130,12 @@ while 1
         
         while 1 %
             KbQueueStart(kbx);
+            
+            yn_msg = '\nmake the screen dark [y/n] ?! ';
+            Screen('TextSize', screen.win, 40);
+            DrawFormattedText(screen.win, yn_msg, 'center', 'center', screen.grey);
+            Screen('Flip', screen.win);
+    
             display(sprintf('\nmake the screen dark [y/n] ?! '))
             [keyIsDown, keyCode]=KbQueueCheck(kbx);
             
@@ -144,6 +155,11 @@ while 1
         while 1
             
             KbQueueStart(kbx);
+            gnq_msg = 'g : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: ';
+            Screen('TextSize', screen.win, 40);
+            DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.black);
+            Screen('Flip', screen.win);
+    
             display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
             [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
@@ -207,6 +223,13 @@ while 1
                         Response.Detection(trialInd) = 0;
                         duration.drawing(trialInd) = nan;
                         Response.Drawing.coords{trialInd} = nan;
+                        
+                        no_phosph = 'subject reported "no phosphene';
+                        Screen('TextSize', screen.win, 40);
+                        DrawFormattedText(screen.win, no_phosph, 'center', 'center', screen.black);
+                        Screen('Flip', screen.win);
+                        WaitSecs(5);
+    
                         display(sprintf('\n\tsubject reported "no phosphene" '));
                         break
                         
@@ -252,6 +275,13 @@ while 1
                 
             elseif strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
+                
+                n_msg = 'new coil location requested';
+                Screen('TextSize', screen.win, 40);
+                DrawFormattedText(screen.win, n_msg, 'center', 'center', screen.black);
+                Screen('Flip', screen.win);
+    
+                
                 display(sprintf('\n\ta new coil location requested!'));
                 if ~startFlag
                     Screen('FillRect', screen.win,screen.grey);
@@ -271,12 +301,20 @@ while 1
         
         if strcmp(cmndKey,'q') % quit the task if "q" is pressed
             TimeStmp.ProgramTermination = GetSecs;
+            q_msg = 'program terminated by the experimenter!';
+            Screen('TextSize', screen.win, 40);
+            DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
+            Screen('Flip', screen.win);
             display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
         
     elseif strcmp(cmndKey,'q')
         TimeStmp.ProgramTermination = GetSecs;
+        q_msg = 'program terminated by the experimenter!';
+        Screen('TextSize', screen.win, 40);
+        DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
+        Screen('Flip', screen.win);
         display(sprintf('\n\tprogram terminated by the experimenter!'));
         break
     end
@@ -293,7 +331,7 @@ save(saveName,'tmsRtnTpy')
 saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
 if strcmp(saveData,'y')
     saveDIR = ['Results/sub' subjID];
-    if ~exist('saveDIR','dir')
+    if ~exist('saveDIR','dir')gq
         mkdir(saveDIR);
         mkdir([saveDIR '/Figures']);
     end
