@@ -1,6 +1,6 @@
 clear all; clc;
 
-subjID = '01'; session = '01';
+subjID = '01'; session = '02';
 %temp_tmsRtnTpy = load('Results/sub27/tmsRtnTpy_sub27_sess03.mat');
 temp_tmsRtnTpy = load('Results/backup/sub27/tmsRtnTpy_sub27_sess01.mat');
 
