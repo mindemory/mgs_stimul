@@ -2,7 +2,7 @@ clear all; clc;
 
 subjID = '01'; session = '01';
 %temp_tmsRtnTpy = load('Results/sub27/tmsRtnTpy_sub27_sess03.mat');
-temp_tmsRtnTpy = load('Results/backup/sub27/tmsRtnTpy_sub27_sess03.mat');
+temp_tmsRtnTpy = load('Results/backup/sub27/tmsRtnTpy_sub27_sess01.mat');
 
 loadDIR = ['Results/sub' subjID];
 

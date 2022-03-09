@@ -30,6 +30,7 @@
 % Suppressed VBL Sync Error by PTB
 
 clear; close all; clc;% clear mex;
+global parameters screen hostname kbx mbx
 subjID = '27'; session = '01';
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
@@ -58,7 +59,6 @@ end
 
 sca;
 
-global parameters screen hostname kbx mbx tmsDaq
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 %subjID = int2strz(input(sprintf('\nsubject: ')),2);

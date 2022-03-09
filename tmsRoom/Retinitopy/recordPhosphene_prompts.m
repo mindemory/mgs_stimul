@@ -30,7 +30,11 @@
 % Suppressed VBL Sync Error by PTB
 
 clear; close all; clc;% clear mex;
-subjID = '27'; session = '01';
+global parameters screen hostname kbx mbx
+
+subjID = '27';
+session = '01';
+
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
 if ret ~= 0
@@ -58,7 +62,6 @@ end
 
 sca;
 
-global parameters screen hostname kbx mbx tmsDaq
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 %subjID = int2strz(input(sprintf('\nsubject: ')),2);
@@ -105,16 +108,16 @@ cmndKey = nan;
 
 while 1
     KbQueueStart(kbx);
-    
+    ListenChar(-1)
     nq_msg = '\nn: new coil location.\nq : terminate this run!\nn/q?: ';
-    Screen('TextSize', screen.win, 40);
-    DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.grey);
-    Screen('Flip', screen.win);
-    
     display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
+    
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     
     while ~keyIsDown
+        Screen('TextSize', screen.win, 40);
+        DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.black);
+        Screen('Flip', screen.win);
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -132,14 +135,15 @@ while 1
             KbQueueStart(kbx);
             
             yn_msg = '\nmake the screen dark [y/n] ?! ';
-            Screen('TextSize', screen.win, 40);
-            DrawFormattedText(screen.win, yn_msg, 'center', 'center', screen.grey);
-            Screen('Flip', screen.win);
+            
     
             display(sprintf('\nmake the screen dark [y/n] ?! '))
             [keyIsDown, keyCode]=KbQueueCheck(kbx);
             
             while ~keyIsDown
+                Screen('TextSize', screen.win, 40);
+                DrawFormattedText(screen.win, yn_msg, 'center', 'center', screen.black);
+                Screen('Flip', screen.win);
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
@@ -156,13 +160,14 @@ while 1
             
             KbQueueStart(kbx);
             gnq_msg = 'g : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: ';
-            Screen('TextSize', screen.win, 40);
-            DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.black);
-            Screen('Flip', screen.win);
-    
+                
             display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
             [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
+                Screen('TextSize', screen.win, 40);
+                DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.white);
+                Screen('Flip', screen.win);
+
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
@@ -171,7 +176,7 @@ while 1
                 Screen('FillRect', screen.win,screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
-                ListenChar(-1);
+                %ListenChar(-1);
                 trialInd = trialInd+1;
                 strtTime.trial(trialInd) = GetSecs;
                 %%%%%%%%%%%%%%%%%%%
@@ -226,14 +231,14 @@ while 1
                         
                         no_phosph = 'subject reported "no phosphene';
                         Screen('TextSize', screen.win, 40);
-                        DrawFormattedText(screen.win, no_phosph, 'center', 'center', screen.black);
+                        DrawFormattedText(screen.win, no_phosph, 'center', 'center', screen.white);
                         Screen('Flip', screen.win);
-                        WaitSecs(5);
+                        WaitSecs(2);
     
                         display(sprintf('\n\tsubject reported "no phosphene" '));
                         break
                         
-                        % start drawing after a left click
+                        % start drawing after a left clicknyg
                     elseif clickCode(1)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         strtTime.drawing(trialInd) = GetSecs;
@@ -266,7 +271,7 @@ while 1
                 Screen('Flip', screen.win); % clear Flip buffer
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
-                ListenChar(0);
+                %ListenChar(0);
                 
                 tmsRtnTpy.TimeStmp = TimeStmp;
                 tmsRtnTpy.Duration = duration;
@@ -305,6 +310,7 @@ while 1
             Screen('TextSize', screen.win, 40);
             DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
             Screen('Flip', screen.win);
+            WaitSecs(2);
             display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
@@ -315,6 +321,7 @@ while 1
         Screen('TextSize', screen.win, 40);
         DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
         Screen('Flip', screen.win);
+        WaitSecs(2);
         display(sprintf('\n\tprogram terminated by the experimenter!'));
         break
     end
@@ -331,7 +338,7 @@ save(saveName,'tmsRtnTpy')
 saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
 if strcmp(saveData,'y')
     saveDIR = ['Results/sub' subjID];
-    if ~exist('saveDIR','dir')gq
+    if ~exist('saveDIR','dir')
         mkdir(saveDIR);
         mkdir([saveDIR '/Figures']);
     end
