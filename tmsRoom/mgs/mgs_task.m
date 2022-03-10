@@ -49,7 +49,7 @@ if parameters.EEG
     end
     trigger_id = ['/dev/', dev_name];
     MarkStim('i', trigger_id)
-    MarkStim('s', true, 1000)
+    %MarkStim('s', true, 1000)
 end
 
 initScreen();
@@ -85,7 +85,7 @@ FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;
 %
 %showLoadExperimentWindow();
 showprompts('LoadExperimentWindow')
-ListenChar(-1);
+%ListenChar(-1);
 
 timeIdx = 1;
 
@@ -94,7 +94,7 @@ timeIdx = 1;
 %
 %showSoeWindow();
 showprompts('SoeWindow')
-ListenChar(0);
+%ListenChar(0);
 
 allRuns = ones(1,taskMap.trialNum);
 runVersion = 1;
@@ -543,7 +543,7 @@ end
 totalTimeData{timeIdx}=timeReport;
 
 timeIdx = timeIdx+1;
-ListenChar();
+ListenChar(0);
 %   create keyboard events queue
 showEndOfCurrentRun(currentRun);
 allRuns(currentRun) = allRuns(currentRun)+1;
