@@ -32,7 +32,7 @@
 clear; close all; clc;% clear mex;
 global parameters screen hostname kbx mbx
 
-subjID = '27';
+subjID = '100';
 session = '01';
 
 %%% Check the system name to ensure correct paths are added.
@@ -64,9 +64,8 @@ sca;
 
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
-%subjID = int2strz(input(sprintf('\nsubject: ')),2);
-%session = int2strz(input(sprintf('\nsession: ')),2);
 loadParameters(subjID, session);
+
 if parameters.TMS
     dev_num = 0;
     devs = dir('/dev/');
@@ -80,17 +79,14 @@ if parameters.TMS
     end
     trigger_id = ['/dev/', dev_name];
     MarkStim('i', trigger_id)
-    %MarkStim('s', true, 1000)
 end
-
-
 
 initScreen()
 initKeyboard()
 
 % fixation cross
-FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
-    screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
+FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
+    screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
 Screen('FillRect', screen.win, [128,0,0], FixCross');
 Screen('Flip', screen.win);
 

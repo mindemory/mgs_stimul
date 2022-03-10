@@ -31,12 +31,12 @@ function initScreen()
     AssertOpenGL;
     % Set blend function for alpha blending
 
-    [screen.win, screen.screenRect] = PsychImaging('OpenWindow', screen.id,screen.grey, [], 32, 2, [], [], kPsychNeed32BPCFloat);
+    [screen.win, screen.screenRect] = PsychImaging('OpenWindow', screen.id,screen.black, [], 32, 2, [], [], kPsychNeed32BPCFloat);
     screen.ifi = Screen('GetFlipInterval', screen.win);
 
     % Retreive the maximum priority number
     topPriorityLevel = MaxPriority(screen.win);
     Screen('BlendFunction', screen.win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; 
-    screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
+    %screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; 
+    %screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
 end

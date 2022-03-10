@@ -1,4 +1,4 @@
-function initKeyboard()
+function initPeripherals()
 
 % First try running LoadPsychHID on Ubuntu and see if that works
 global kbx mbx hostname
