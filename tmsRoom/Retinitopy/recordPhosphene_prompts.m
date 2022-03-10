@@ -83,11 +83,7 @@ if parameters.TMS
     %MarkStim('s', true, 1000)
 end
 
-%%%% Create a directory to save all files with their times
-saveDIR_auto = ['Results_Auto/sub' subjID '/sess' session '/' datestr(now)];
-if ~exist('saveDIR_auto','dir')
-    mkdir(saveDIR_auto);
-end
+
 
 initScreen()
 initKeyboard()
@@ -330,6 +326,12 @@ KbQueueRelease;
 ListenChar(0);
 sca
 ShowCursor;
+
+%%%% Create a directory to save all files with their times
+saveDIR_auto = ['Results_Auto/sub' subjID '/sess' session '/' datestr(now)];
+if ~exist('saveDIR_auto','dir')
+    mkdir(saveDIR_auto);
+end
 
 saveName = [saveDIR_auto '/tmsRtnTpy_sub' subjID '_sess' session];
 save(saveName,'tmsRtnTpy')
