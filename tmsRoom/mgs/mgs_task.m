@@ -2,6 +2,7 @@
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 clear; close all; clc;% clear mex;
+global parameters screen kbx
 
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');   
@@ -26,7 +27,6 @@ end
 
 % function recordPhosphene()
 sca; 
-global parameters screen kbx
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
