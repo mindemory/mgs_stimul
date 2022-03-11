@@ -63,6 +63,10 @@ function initPeripherals()
 
         parameters.left_key = 1;
         parameters.right_key = 3;
+        
+        parameters.trial_key = '1';
+        parameters.newloc_key = '2';
+        parameters.quit_key = '3';
     else
         disp('Running on unknown device. Psychtoolbox might not be added correctly!')
     end

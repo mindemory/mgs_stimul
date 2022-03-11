@@ -101,19 +101,19 @@ cmndKey = nan;
 while 1
     KbQueueStart(kbx);
     ListenChar(-1)
-    nq_msg = '\nn: new coil location.\nq: terminate this run!\nn/q?: ';
+    nq_msg = '\n2: new coil location.\n3: terminate this run!\n2/3?: ';
     
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     
     while ~keyIsDown
         Screen('TextSize', screen.win, 30);
-        DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.grey);
+        DrawFormattedText(screen.win, nq_msg, 'center', 'center', [128 0 0]);
         Screen('Flip', screen.win);
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
     
-    if strcmp(cmndKey,'n')
+    if strcmp(cmndKey, parameters.newloc_key)
         display(sprintf('\n---------------------------------------------'));
         display(sprintf('\n\tnew coil location initiated.'));
         
@@ -149,24 +149,23 @@ while 1
 %         end
         while 1
             KbQueueStart(kbx);
-            gnq_msg = 'g: new trial.\nn: new coil location.\nq: terminate this run!\ng/n/q: ';
+            gnq_msg = '1: new trial.\n2: new coil location.\n3: terminate this run!\n1/2/3: ';
                 
             %display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
             [keyIsDown, keyCode]=KbQueueCheck(kbx);
             while ~keyIsDown
                 Screen('TextSize', screen.win, 30);
-                DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.grey);
+                DrawFormattedText(screen.win, gnq_msg, 'center', 'center', [128 0 0]);
                 Screen('Flip', screen.win);
 
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
-            if strcmp(cmndKey,'g')
+            if strcmp(cmndKey, parameters.trial_key)
                 startFlag = 0;
                 Screen('FillRect', screen.win, screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
-                %ListenChar(-1);
                 trialInd = trialInd+1;
                 strtTime.trial(trialInd) = GetSecs;
                 %%%%%%%%%%%%%%%%%%%
@@ -221,7 +220,7 @@ while 1
                         
                         no_phosph = 'subject reported no phosphene';
                         Screen('TextSize', screen.win, 30);
-                        DrawFormattedText(screen.win, no_phosph, 'center', 'center', screen.grey);
+                        DrawFormattedText(screen.win, no_phosph, 'center', 'center', [128 0 0]);
                         Screen('Flip', screen.win);
                         WaitSecs(2);
                         break
@@ -259,14 +258,13 @@ while 1
                 Screen('Flip', screen.win); % clear Flip buffer
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
-                %ListenChar(0);
                 
                 tmsRtnTpy.TimeStmp = TimeStmp;
                 tmsRtnTpy.Duration = duration;
                 tmsRtnTpy.Response = Response;
                 tmsRtnTpy.StrtTime = strtTime;
                 
-            elseif strcmp(cmndKey,'n') % get ready fo the next coil location if "n" is pressed
+            elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
                 
                 n_msg = 'new coil location requested';
@@ -275,13 +273,13 @@ while 1
                 Screen('Flip', screen.win);
     
                 if ~startFlag
-                    Screen('FillRect', screen.win,screen.grey);
+                    Screen('FillRect', screen.win, screen.black);
                     Screen('FillRect', screen.win, [128,0,0], FixCross');
                     Screen('Flip', screen.win);
                 end
                 break
             
-            elseif strcmp(cmndKey,'q') % quit the task if "q" is pressed
+            elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
             
@@ -290,22 +288,22 @@ while 1
             Screen('Flip', screen.win);
         end
         
-        if strcmp(cmndKey,'q') % quit the task if "q" is pressed
+        if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
             TimeStmp.ProgramTermination = GetSecs;
             q_msg = 'program terminated by the experimenter!';
             Screen('TextSize', screen.win, 30);
-            DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
+            DrawFormattedText(screen.win, q_msg, 'center', 'center', [128 0 0]);
             Screen('Flip', screen.win);
             WaitSecs(2);
             %display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
         
-    elseif strcmp(cmndKey,'q')
+    elseif strcmp(cmndKey, parameters.quit_key)
         TimeStmp.ProgramTermination = GetSecs;
         q_msg = 'program terminated by the experimenter!';
-        Screen('TextSize', screen.win, 40);
-        DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
+        Screen('TextSize', screen.win, 30);
+        DrawFormattedText(screen.win, q_msg, 'center', 'center', [128 0 0]);
         Screen('Flip', screen.win);
         WaitSecs(2);
         %display(sprintf('\n\tprogram terminated by the experimenter!'));
