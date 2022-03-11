@@ -82,7 +82,7 @@ if parameters.TMS
 end
 
 initScreen()
-initKeyboard()
+initPeripherals()
 
 % fixation cross
 FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
@@ -102,13 +102,13 @@ while 1
     KbQueueStart(kbx);
     ListenChar(-1)
     nq_msg = '\nn: new coil location.\nq : terminate this run!\nn/q?: ';
-    display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
+    %display(sprintf('\nn: new coil location.\nq : terminate this run!\nn/q?: '))
     
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     
     while ~keyIsDown
         Screen('TextSize', screen.win, 40);
-        DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.black);
+        DrawFormattedText(screen.win, nq_msg, 'center', 'center', screen.grey);
         Screen('Flip', screen.win);
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
@@ -120,44 +120,44 @@ while 1
         
         coilLocInd = coilLocInd+1;
         
-        saveName = [saveDIR_auto '/tmsRtnTpy_sub' subjID '_sess' session];
-        save(saveName,'tmsRtnTpy')
+        %saveName = [saveDIR_auto '/tmsRtnTpy_sub' subjID '_sess' session];
+        %save(saveName,'tmsRtnTpy')
         
-        while 1 %
-            KbQueueStart(kbx);
-            
-            yn_msg = '\nmake the screen dark [y/n] ?! ';
-            
-    
-            display(sprintf('\nmake the screen dark [y/n] ?! '))
-            [keyIsDown, keyCode]=KbQueueCheck(kbx);
-            
-            while ~keyIsDown
-                Screen('TextSize', screen.win, 40);
-                DrawFormattedText(screen.win, yn_msg, 'center', 'center', screen.black);
-                Screen('Flip', screen.win);
-                [keyIsDown, keyCode]=KbQueueCheck(kbx);
-                cmndKey = KbName(keyCode);
-            end
-            
-            if strcmp(cmndKey,'y')
-                Screen('FillRect', screen.win,screen.black);
-                Screen('FillRect', screen.win, [128,0,0], FixCross');
-                Screen('Flip', screen.win);
-                startFlag = 1;
-                break
-            end
-        end
+%         while 1 %
+%             KbQueueStart(kbx);
+%             
+%             yn_msg = '\nmake the screen dark [y/n] ?! ';
+%             
+%     
+%             %display(sprintf('\nmake the screen dark [y/n] ?! '))
+%             [keyIsDown, keyCode]=KbQueueCheck(kbx);
+%             
+%             while ~keyIsDown
+%                 Screen('TextSize', screen.win, 40);
+%                 DrawFormattedText(screen.win, yn_msg, 'center', 'center', screen.black);
+%                 Screen('Flip', screen.win);
+%                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
+%                 cmndKey = KbName(keyCode);
+%             end
+%             
+%             if strcmp(cmndKey,'y')
+%                 Screen('FillRect', screen.win,screen.black);
+%                 Screen('FillRect', screen.win, [128,0,0], FixCross');
+%                 Screen('Flip', screen.win);
+%                 startFlag = 1;
+%                 break
+%             end
+%         end
         while 1
             
             KbQueueStart(kbx);
             gnq_msg = 'g : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: ';
                 
-            display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
+            %display(sprintf('\ng : new trial.\nn : new coil location.\nq : terminate this run!\ng/n/q: '))
             [keyIsDown, secs, keyCode]=KbCheck;
             while ~keyIsDown
-                Screen('TextSize', screen.win, 40);
-                DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.white);
+                Screen('TextSize', screen.win, 30);
+                DrawFormattedText(screen.win, gnq_msg, 'center', 'center', screen.grey);
                 Screen('Flip', screen.win);
 
                 [keyIsDown, keyCode]=KbQueueCheck(kbx);
@@ -165,7 +165,7 @@ while 1
             end
             if strcmp(cmndKey,'g')
                 startFlag = 0;
-                Screen('FillRect', screen.win,screen.black);
+                Screen('FillRect', screen.win, screen.black);
                 Screen('FillRect', screen.win, [128,0,0], FixCross');
                 Screen('Flip', screen.win);
                 %ListenChar(-1);
@@ -186,9 +186,9 @@ while 1
                 %%%%%%%%%%%%%%%%%%%
                 
                 % wait for subject's response:
-                %           right click: not seen a phosphene, go to next trial
-                %           first left click: start drawing
-                %           second left click: end drawing
+                % right click: not seen a phosphene, go to next trial
+                % first left click: start drawing
+                % second left click: end drawing
                 while 1
                     
                     strtTime.preResp(trialInd) = GetSecs;
@@ -227,10 +227,10 @@ while 1
                         Screen('Flip', screen.win);
                         WaitSecs(2);
     
-                        display(sprintf('\n\tsubject reported "no phosphene" '));
+                        %display(sprintf('\n\tsubject reported "no phosphene" '));
                         break
                         
-                        % start drawing after a left clicknyg
+                    % start drawing after a left clicknyg
                     elseif clickCode(1)
                         TimeStmp.DetectionResp(trialInd) = GetSecs;
                         strtTime.drawing(trialInd) = GetSecs;
@@ -279,7 +279,7 @@ while 1
                 Screen('Flip', screen.win);
     
                 
-                display(sprintf('\n\ta new coil location requested!'));
+                %display(sprintf('\n\ta new coil location requested!'));
                 if ~startFlag
                     Screen('FillRect', screen.win,screen.grey);
                     Screen('FillRect', screen.win, [128,0,0], FixCross');
@@ -303,7 +303,7 @@ while 1
             DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
             Screen('Flip', screen.win);
             WaitSecs(2);
-            display(sprintf('\n\tprogram terminated by the experimenter!'));
+            %display(sprintf('\n\tprogram terminated by the experimenter!'));
             break
         end
         
@@ -314,7 +314,7 @@ while 1
         DrawFormattedText(screen.win, q_msg, 'center', 'center', screen.grey);
         Screen('Flip', screen.win);
         WaitSecs(2);
-        display(sprintf('\n\tprogram terminated by the experimenter!'));
+        %display(sprintf('\n\tprogram terminated by the experimenter!'));
         break
     end
 end
