@@ -27,6 +27,10 @@ function initPeripherals()
 
         parameters.left_key = 1;
         parameters.right_key = 2;
+        
+        parameters.trial_key = '1';
+        parameters.newloc_key = '2';
+        parameters.quit_key = '3';
 
     elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
         disp("Never worked on this!")
