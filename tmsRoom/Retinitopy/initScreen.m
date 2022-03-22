@@ -26,7 +26,7 @@ function initScreen()
 
     % screen init for PC and MAC
     screen.white = WhiteIndex(screen.id);
-    screen.black = BlackIndex(screen.id);
+    screen.black = -1;
     screen.grey = screen.white*0.5;
     AssertOpenGL;
     % Set blend function for alpha blending

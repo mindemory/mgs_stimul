@@ -33,7 +33,7 @@ clear; close all; clc;% clear mex;
 global parameters screen hostname kbx mbx
 
 subjID = '03';
-session = '01';
+session = '03';
 
 % Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
