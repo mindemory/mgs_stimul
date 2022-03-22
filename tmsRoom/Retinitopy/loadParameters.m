@@ -11,7 +11,7 @@ function parameters = loadParameters(subjID, session)
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.transparency = 0.6;
     parameters.viewingDistance = 55;%viewDist
-    parameters.waitBeforePulse = 1.00; % seconds
+    parameters.waitBeforePulse = 3.00; % seconds
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % study parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
