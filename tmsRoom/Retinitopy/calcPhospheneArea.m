@@ -1,5 +1,4 @@
 function calcPhospheneArea(subjID,session,overlapThresh)
-subjID
 % subjID = int2strz(input(sprintf('\nsubject: ')),2);
 % session = int2strz(input(sprintf('\nsession: ')),2);
 
@@ -93,6 +92,10 @@ saveDIR = dataDIR;
 saveName = [saveDIR '/PhospheneReport_sub' subjID '_sess' session];
 save(saveName,'PhosphReport')
 
+fig_dir = [saveDIR '/Figures/'];
+if ~exist(fig_dir, 'dir')
+    mkdir(fig_dir);
+end
 saveName = [saveDIR '/Figures/PhospheneReport_sub' subjID '_sess' session];
 saveas(fig,saveName,'fig')
 saveas(fig,saveName,'jpg')

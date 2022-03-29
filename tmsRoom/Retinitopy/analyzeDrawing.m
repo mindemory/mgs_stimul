@@ -26,6 +26,7 @@ drwng_uniqe = unique(drwng,'rows','stable');
 %% find the closest point to each point
 k = 1;
 drwng_tmp = drwng_uniqe;
+size(drwng_tmp)
 while size(drwng_tmp,1) > 1
     A = drwng_tmp(1,:);
     drwng_tmp(1,:) = [];
