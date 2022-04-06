@@ -1,4 +1,4 @@
-function data_dir = movefiles(subjID, session)
+function data_dir = copyfiles(subjID, session)
     git_dir = ['Results/sub' subjID];
     git_data = [git_dir '/tmsRtnTpy_sub' subjID '_sess' session '.mat'];
     

@@ -14,7 +14,7 @@ if ~strcmp(hostname, 'syndrome')
     disp('This code should only be run on Syndrome.')
 end
 
-data_dir = movefiles(subjID, session);
+data_dir = copyfiles(subjID, session);
 calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
 calcStimLocations(subjID,session, data_dir);
 
