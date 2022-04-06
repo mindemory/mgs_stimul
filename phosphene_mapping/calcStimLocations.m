@@ -1,13 +1,13 @@
-function calcStimLocations(subjID,session)
+function calcStimLocations(subjID,session, data_dir)
 
 % subjID = int2strz(input(sprintf('\nsubject: ')),2);
 % session = int2strz(input(sprintf('\nsession: ')),2);
 
-dataDIR = ['Results/sub' subjID];
+%data_dir = ['Results/sub' subjID];
 fileName = ['PhospheneReport_sub' subjID '_sess' session];
-data = [dataDIR '/' fileName];
+data = [data_dir '/' fileName];
 % check if PhospheneReport exists
-listing = dir(dataDIR);
+listing = dir(data_dir);
 flag = 0;
 for i = 1:length(listing)
     if strfind(listing(i).name,fileName)
@@ -19,7 +19,7 @@ if ~flag
 end
 load(data);
 
-data = [dataDIR '/tmsRtnTpy_sub' subjID '_sess' session];
+data = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data);
 
 stimN = 10;
@@ -91,11 +91,10 @@ for coilLocInd = 1:N
 end
 
 %% save results
-saveDIR = dataDIR;
-saveName = [saveDIR '/Stim_sub' subjID '_sess' session];
+saveName = [data_dir '/Stim_sub' subjID '_sess' session];
 save(saveName,'Stim')
 
-saveName = [saveDIR '/Figures/Stim_sub' subjID '_sess' session];
+saveName = [data_dir '/Figures/Stim_sub' subjID '_sess' session];
 saveas(fig,saveName,'fig')
 saveas(fig,saveName,'jpg')
 saveas(fig,saveName,'epsc')

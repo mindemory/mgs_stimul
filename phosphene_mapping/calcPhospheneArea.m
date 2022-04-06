@@ -1,7 +1,8 @@
-function calcPhospheneArea(subjID,session,overlapThresh)
+function calcPhospheneArea(subjID,session,overlapThresh, data_dir)
 
-dataDIR = ['Results/sub' subjID];
-data = [dataDIR '/tmsRtnTpy_sub' subjID '_sess' session];
+
+%dataDIR = ['Results/sub' subjID];
+data = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data);
 
 tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
@@ -49,7 +50,7 @@ for locInd = 1:length(phsphLocInds)
                     end
                 end
             end
-            PhosphReport{locInd}.overlap{i} = overlap; % each coordinate (corresponding to the phosphene at this coil location) repeted in how many trials.
+            PhosphReport{locInd}.overlap{i} = overlap; % each coordinate (corresponding to the phosphene at this coil location) repeated in how many trials.
             validInds = find(PhosphReport{locInd}.overlap{i}.counter >= overlapThresh);
             PhosphReport{locInd}.validInds{i} = validInds;
             PhosphReport{locInd}.overlapCoords.all = [PhosphReport{locInd}.overlapCoords.all;coords1(validInds,:)];
@@ -91,15 +92,15 @@ for locInd = 1:N
     end
 end
 %% save results
-saveDIR = dataDIR;
-saveName = [saveDIR '/PhospheneReport_sub' subjID '_sess' session];
-save(saveName,'PhosphReport', '-v7.3')
+saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
+%save(saveName,'PhosphReport', '-v7.3')
+save(saveName,'PhosphReport')
 
-fig_dir = [saveDIR '/Figures/'];
+fig_dir = [data_dir '/Figures/'];
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir);
 end
-saveName = [saveDIR '/Figures/PhospheneReport_sub' subjID '_sess' session];
+saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
 saveas(fig,saveName,'fig')
-saveas(fig,saveName,'jpg')
+saveas(fig,saveName,'png')
 saveas(fig,saveName,'epsc')
