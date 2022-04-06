@@ -46,8 +46,8 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/Retinotopy'))
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom/markstim-master'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
 elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
     % Mac Stimulus Display
     % This is probably deprecated now. Might not have any use from here on
@@ -56,8 +56,8 @@ elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/Retinotopy'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/markstim-master'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/phosphene_mapping'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/markstim-master'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
