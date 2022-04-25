@@ -23,4 +23,10 @@ function tmsRtnTpy = remove_invalid_trials(tmsRtnTpy)
         tmsRtnTpy.Response.Drawing.coords{trial} = NaN;
         tmsRtnTpy.StrtTime.drawing(trial) = 0;
     end
+    
+    for coilLocInd = unique(tmsRtnTpy.Response.CoilLocation)
+        detections = tmsRtnTpy.Response.Detection(tmsRtnTpy.Response.CoilLocation == coilLocInd);
+        
+        %if sum
+    end
 end

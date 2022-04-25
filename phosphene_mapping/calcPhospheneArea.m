@@ -1,7 +1,5 @@
 function calcPhospheneArea(subjID,session,overlapThresh, data_dir)
 
-
-%dataDIR = ['Results/sub' subjID];
 data = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data);
 
@@ -22,41 +20,48 @@ for locInd = 1:length(phsphLocInds)
             
             thisPhsph_totalTrialInd = phsphTrials_thisLoc(trialInd);
             PhosphReport{locInd}.trialInd(trialInd) = thisPhsph_totalTrialInd;
-            PhosphReport{locInd}.mouseCoords{trialInd} = tmsRtnTpy.Response.Drawing.coords{thisPhsph_totalTrialInd};
+            %PhosphReport{locInd}.mouseCoords{trialInd} = tmsRtnTpy.Response.Drawing.coords{thisPhsph_totalTrialInd};
             
-            tmp = PhosphReport{locInd}.mouseCoords{trialInd};
+            tmp = tmsRtnTpy.Response.Drawing.coords{thisPhsph_totalTrialInd};
+            trialInd
             [area, border] = analyzeDrawing(tmp, tmsRtnTpy);
             PhosphReport{locInd}.area{trialInd} = area;
             PhosphReport{locInd}.border{trialInd} = border;
         end
         
         %% calculate the overlaped areas
-        PhosphReport{locInd}.overlapCoords.all = [];
-        for i = 1:length(PhosphReport{locInd}.area)
-            
-            coords1 = PhosphReport{locInd}.area{i};
-            overlap.counter = zeros(size(coords1,1),1);
-            overlap.trialInd = cell(size(coords1,1),1);
-            
-            for j = 1:length(PhosphReport{locInd}.area)
-                
-                coords2 = PhosphReport{locInd}.area{j};
-                if i ~= j
-                    membInds = ismember(coords1,coords2,'rows');
-                    inds = find(membInds);
-                    overlap.counter(inds) = overlap.counter(inds) + 1;
-                    for k = 1:length(inds)
-                        overlap.trialInd{inds(k)} = [overlap.trialInd{inds(k)} j];
-                    end
-                end
-            end
-            PhosphReport{locInd}.overlap{i} = overlap; % each coordinate (corresponding to the phosphene at this coil location) repeated in how many trials.
-            validInds = find(PhosphReport{locInd}.overlap{i}.counter >= overlapThresh);
-            PhosphReport{locInd}.validInds{i} = validInds;
-            PhosphReport{locInd}.overlapCoords.all = [PhosphReport{locInd}.overlapCoords.all;coords1(validInds,:)];
+        overlap_area = PhosphReport{locInd}.area{1};
+        for trialInd = 2:length(PhosphReport{locInd}.area)
+            overlap_area = intersect(overlap_area, PhosphReport{locInd}.area{trialInd}, 'rows');
         end
         
-        PhosphReport{locInd}.overlapCoords.unique = unique(PhosphReport{locInd}.overlapCoords.all,'rows','stable');
+        PhosphReport{locInd}.overlapCoords = overlap_area;
+%         PhosphReport{locInd}.overlapCoords.all = [];
+%         for i = 1:length(PhosphReport{locInd}.area)
+%             
+%             coords1 = PhosphReport{locInd}.area{i};
+%             overlap.counter = zeros(size(coords1,1),1);
+%             overlap.trialInd = cell(size(coords1,1),1);
+%             
+%             for j = 1:length(PhosphReport{locInd}.area)
+%                 
+%                 coords2 = PhosphReport{locInd}.area{j};
+%                 if i ~= j
+%                     membInds = ismember(coords1,coords2,'rows');
+%                     inds = find(membInds);
+%                     overlap.counter(inds) = overlap.counter(inds) + 1;
+%                     for k = 1:length(inds)
+%                         overlap.trialInd{inds(k)} = [overlap.trialInd{inds(k)} j];
+%                     end
+%                 end
+%             end
+%             PhosphReport{locInd}.overlap{i} = overlap; % each coordinate (corresponding to the phosphene at this coil location) repeated in how many trials.
+%             validInds = find(PhosphReport{locInd}.overlap{i}.counter >= overlapThresh);
+%             PhosphReport{locInd}.validInds{i} = validInds;
+%             PhosphReport{locInd}.overlapCoords.all = [PhosphReport{locInd}.overlapCoords.all;coords1(validInds,:)];
+%         end
+%         
+%         PhosphReport{locInd}.overlapCoords.unique = unique(PhosphReport{locInd}.overlapCoords.all,'rows','stable');
     end
  
 end
@@ -87,20 +92,20 @@ for locInd = 1:N
             ylim([0 tmsRtnTpy.Params.screen.screenYpixels]);
             title(['Coil Location Index : ' num2str(CoilLoc_PosPhsph(locInd))]);
         end
-        hold on; plot(PhosphReport{locInd}.overlapCoords.unique(:,1),PhosphReport{locInd}.overlapCoords.unique(:,2),'.k')
+        hold on; plot(PhosphReport{locInd}.overlapCoords(:,1),PhosphReport{locInd}.overlapCoords(:,2),'.k')
         pbaspect([1 1 1]);
     end
 end
 %% save results
-saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
-%save(saveName,'PhosphReport', '-v7.3')
-save(saveName,'PhosphReport')
-
-fig_dir = [data_dir '/Figures/'];
-if ~exist(fig_dir, 'dir')
-    mkdir(fig_dir);
-end
-saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
-saveas(fig,saveName,'fig')
-saveas(fig,saveName,'png')
-saveas(fig,saveName,'epsc')
+% saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
+% %save(saveName,'PhosphReport', '-v7.3')
+% save(saveName,'PhosphReport')
+% 
+% fig_dir = [data_dir '/Figures/'];
+% if ~exist(fig_dir, 'dir')
+%     mkdir(fig_dir);
+% end
+% saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
+% saveas(fig,saveName,'fig')
+% saveas(fig,saveName,'png')
+% saveas(fig,saveName,'epsc')

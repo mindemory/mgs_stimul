@@ -6,25 +6,22 @@ function [XY] = connectPoints(XY1,XY2)
 % phosphene drawing constructed by the subject, it can probably be
 % imrpovised.
 
-nx = abs(XY2(1) - XY1(1));
-ny = abs(XY2(2) - XY1(2));
+x1 = XY1(1); x2 = XY2(1);
+y1 = XY1(2); y2 = XY2(2);
 
-sgnX = sign(XY2(1) - XY1(1));
-sgnY = sign(XY2(2) - XY1(2));
+if x1 == x2
+    Y = y1:y2;
+    X = x1 * ones(1, length(Y));
+elseif x1 < x2
+    slope = (y2-y1)/(x2-x1);
+    X = x1:x2;
+    Y = round(slope*(X - x1) + y1);
+elseif x1 > x2
+    slope = (y2-y1)/(x2-x1);
+    X = x1:-1:x2;
+    Y = round(slope*(X - x1) + y1);
+end
 
-XY = [];
-x = XY1(1);
-y = XY1(2);
+XY = [X; Y]';
 
-while nx>1  
-    if nx > 1
-       x = x + sgnX;
-       nx = nx - 1;
-       
-    end
-%     if ny > 0
-%        y = y + sgnY;
-%        ny = ny - 1;
-%     end
-    XY = [XY;[x y]];
 end

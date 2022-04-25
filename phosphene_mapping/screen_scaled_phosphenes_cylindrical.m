@@ -1,4 +1,7 @@
 %% Mrugank
+% This code was written to scale the phosphene maps from an old screen to a
+% new screen. The cylindrical version accounts for the change in the eye
+% distance from the screen.
 clear all; clc;
 
 subjID = '01'; session = '02';
