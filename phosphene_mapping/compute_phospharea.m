@@ -1,7 +1,7 @@
 clear; close all; clc;% clear mex;
 global parameters;
-subjID = '27';
-session = '01';
+subjID = '02';
+session = '02';
 parameters = loadParameters(subjID, session);
 
 [ret, hostname] = system('hostname');
