@@ -1,26 +1,11 @@
 function calcStimLocations(subjID,session, data_dir)
 
-% subjID = int2strz(input(sprintf('\nsubject: ')),2);
-% session = int2strz(input(sprintf('\nsession: ')),2);
-
-%data_dir = ['Results/sub' subjID];
 fileName = ['PhospheneReport_sub' subjID '_sess' session];
-data = [data_dir '/' fileName];
-% check if PhospheneReport exists
-listing = dir(data_dir);
-flag = 0;
-for i = 1:length(listing)
-    if strfind(listing(i).name,fileName)
-        flag = 1;
-    end
-end
-if ~flag
-    return
-end
-load(data);
+phosphene_report_path = [data_dir '/' fileName];
+load(phosphene_report_path);
 
-data = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
-load(data);
+tmsRtnTpy_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
+load(tmsRtnTpy_path);
 
 stimN = 10;
 %% estimate a 2D-normal matching the overlapped area for each trial

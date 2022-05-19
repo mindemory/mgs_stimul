@@ -1,8 +1,7 @@
-%% Mrugank
-% The function has been added to remove trials wherein the subject detects
-% phosphenes but accidently closes drawing phosphenes too early.
-
 function tmsRtnTpy = remove_invalid_trials(tmsRtnTpy)
+    % The function has been added to remove trials wherein the subject detects
+    % phosphenes but accidently ends drawing phosphenes too early.
+    
     total_trials = size(tmsRtnTpy.Response.Detection, 2);
     invalid_trials = [];
     
@@ -24,9 +23,15 @@ function tmsRtnTpy = remove_invalid_trials(tmsRtnTpy)
         tmsRtnTpy.StrtTime.drawing(trial) = 0;
     end
     
+    % Removing coil locations with 1 or no detections
     for coilLocInd = unique(tmsRtnTpy.Response.CoilLocation)
         detections = tmsRtnTpy.Response.Detection(tmsRtnTpy.Response.CoilLocation == coilLocInd);
-        
+        if sum (detections) <= 1
+            disp(['Coil location ', int2str(coilLocInd), ' has 1 or no detections.'])
+            %tmsRtnTpy.Response.CoilLocation(tmsRtnTpy.Response.CoilLocation == coilLocInd) = [];
+            %tmsRtnTpy.Response.Detection(tmsRtnTpy.Response.CoilLocation == coilLocInd) = [];
+            
+        end
         %if sum
     end
 end

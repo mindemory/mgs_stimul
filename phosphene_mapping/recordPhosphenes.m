@@ -48,11 +48,6 @@ if strcmp(hostname, 'syndrome')
     addpath(genpath('/Users/Shared/Psychtoolbox'))
     addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
     addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
-elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
-    % Mac Stimulus Display
-    % This is probably deprecated now. Might not have any use from here on
-    % (04/05/2022).
-    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/lib/psychtoolbox-3'))
@@ -71,9 +66,10 @@ initScreen()
 initPeripherals()
 
 %% TEENSY CHECK!
-% detect the TeensyTrigger and perform handshake
-% make sure that the orange light is turned on!
+% detect the TeensyTrigger and perform handshake make sure that the orange 
+% light is turned on! If not, press the black button on Teensy Trigger.
 if parameters.TMS
+    % Checks for possible identifiers of TeensyTrigger
     dev_num = 0;
     devs = dir('/dev/');
     while 1
@@ -127,8 +123,7 @@ while 1
     KbQueueStart(kbx);
     [keyIsDown, keyCode] = KbQueueCheck(kbx);
     
-    % wait for the subject to either indicate new coil location or
-    % terminate program
+    % Check for new or old coil location
     while ~keyIsDown
         Screen('TextSize', screen.win, parameters.font_size);
         DrawFormattedText(screen.win, parameters.first_msg, 'center', ...
@@ -139,7 +134,7 @@ while 1
         cmndKey = KbName(keyCode);
     end
     
-    % if the subject presses for a new coil location
+    % New coil location
     if strcmp(cmndKey, parameters.newloc_key)
         display(sprintf('\n---------------------------------------------'));
         display(sprintf('\n\tnew coil location initiated.'));
@@ -186,7 +181,6 @@ while 1
                 % first left click: start drawing
                 % second left click: end drawing
                 while 1
-                    
                     strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
                     KbQueueStart(mbx);
@@ -241,6 +235,7 @@ while 1
                             [mouseKlick, clickCode] = KbQueueCheck(mbx);
                             [x, y, buttons] = GetMouse(screen.win);
                             XY = [XY; x y];
+                            % Generate phosphene drawing
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
                                 Screen('DrawLine', screen.win, parameters.fixation_color, ...
                                     XY(end-1,1), XY(end-1,2), XY(end,1), XY(end,2),1);
@@ -263,7 +258,8 @@ while 1
                 tmsRtnTpy.Duration = duration;
                 tmsRtnTpy.Response = Response;
                 tmsRtnTpy.StrtTime = strtTime;
-                
+            
+            % New coil location
             elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
                 TimeStmp.ThisCoilLocationTermination = GetSecs;
                 
@@ -279,6 +275,7 @@ while 1
                 end
                 break
             
+            % Terminate the program
             elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
@@ -288,6 +285,7 @@ while 1
             Screen('Flip', screen.win);
         end
         
+        % Terminate the program
         if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
             TimeStmp.ProgramTermination = GetSecs;
             q_msg = 'program terminated by the experimenter!';
@@ -297,7 +295,8 @@ while 1
             WaitSecs(2);
             break
         end
-        
+    
+    % Terminate the program
     elseif strcmp(cmndKey, parameters.quit_key)
         TimeStmp.ProgramTermination = GetSecs;
         q_msg = 'program terminated by the experimenter!';
@@ -335,6 +334,9 @@ if strcmp(saveData,'y')
     save(saveName,'tmsRtnTpy')
 end
 
+%% Close MarkStim
+% This should end the handshake with MarkStim. Orange light should be back
+% on.
 if parameters.TMS
     MarkStim('x');
 end

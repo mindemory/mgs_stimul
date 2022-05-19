@@ -1,18 +1,31 @@
+% Using the dimensions of the screen, this script simulates phosphene
+% drawings. Play with the values of a, b and alpha to generate different
+% shaped phosphenes. The value of power can be modulated for manipulating
+% coarseness of phosphenes.
+
+%% Initialization
+% Screen size
 screen.screenXpixels = 1920;
 screen.screenYpixels = 1080;
+
+% Parameters
 power = 3;
+alpha = 4.2;
+a = 17;
+b = 3;
+
+%% Phosphene location
+% Creating a noise mask
 noisee = wgn(screen.screenYpixels, screen.screenXpixels, power);
 %noiseMask = imread(noisee);
 %figure();
 %imshow(noisee)
-mask_location = zeros(screen.screenYpixels, screen.screenXpixels);
 
+% Defining the location of the noise mask
+mask_location = zeros(screen.screenYpixels, screen.screenXpixels);
 xpixs = 1:screen.screenXpixels;  % plotting range from -5 to 5
 ypixs = 1:screen.screenXpixels;
 [x, y] = meshgrid(xpixs, ypixs);  % Get 2-D mesh for x and y based on r
-alpha = 4.2;
-a = 17;
-b = 3;
 delx = screen.xCenter;
 dely = screen.yCenter + 700;
 x = x - delx; y = y-dely;
@@ -20,7 +33,7 @@ ellipse_phosph = (((x.*cos(alpha) + y.*sin(alpha)).^2)./a) + ...
     (((x.*sin(alpha) - y.*cos(alpha)).^2)./b) - 150.*x < 0;
 
 
-
+%% Phosphene drawing
 output_phosph = ones(length(xpixs), length(ypixs)); % Initialize to 1
 
 output_phosph(~ellipse_phosph) = 0;
@@ -40,6 +53,7 @@ for xx = 1:outputx
     end
 end
 
+% Phosphene boundary
 for yy = 1:outputy
     if sum(output_phosph(:, yy) > 0)
         yy;

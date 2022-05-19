@@ -1,38 +1,37 @@
 function calcPhospheneArea(subjID,session,overlapThresh, data_dir)
 
-data = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
-load(data);
+data_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
+load(data_path);
 
 tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
 
-phsphTrialInds = find(tmsRtnTpy.Response.Detection);
-phsphLocInds = unique(tmsRtnTpy.Response.CoilLocation(phsphTrialInds));
+% Check for coil locations that have detections
+phsphLocInds = unique(tmsRtnTpy.Response.CoilLocation(tmsRtnTpy.Response.Detection == 1));
 
 CoilLoc_PosPhsph = [];
 for locInd = 1:length(phsphLocInds)
+    coilInd = phsphLocInds(locInd);
     %% calculate border and area of each phosphene report
-    phsphTrials_thisLoc = find(tmsRtnTpy.Response.CoilLocation == locInd & tmsRtnTpy.Response.Detection == 1);
+    phsphTrials_thisLoc = find(tmsRtnTpy.Response.CoilLocation == coilInd & tmsRtnTpy.Response.Detection == 1);
     if exist('phsphTrials_thisLoc', 'var') && ~isempty(phsphTrials_thisLoc)
-        PhosphReport{locInd}.coilLocInd = phsphLocInds(locInd);
-        CoilLoc_PosPhsph = [CoilLoc_PosPhsph locInd];
+        PhosphReport{locInd}.coilLocInd = coilInd;
+        CoilLoc_PosPhsph = [CoilLoc_PosPhsph coilInd];
         
-        for trialInd = 1:length(phsphTrials_thisLoc)
-            
-            thisPhsph_totalTrialInd = phsphTrials_thisLoc(trialInd);
-            PhosphReport{locInd}.trialInd(trialInd) = thisPhsph_totalTrialInd;
+        for ii = 1:length(phsphTrials_thisLoc)
+            trialInd = phsphTrials_thisLoc(ii);
+            PhosphReport{locInd}.trialInd(ii) = trialInd;
             %PhosphReport{locInd}.mouseCoords{trialInd} = tmsRtnTpy.Response.Drawing.coords{thisPhsph_totalTrialInd};
             
-            tmp = tmsRtnTpy.Response.Drawing.coords{thisPhsph_totalTrialInd};
-            trialInd
-            [area, border] = analyzeDrawing(tmp, tmsRtnTpy);
-            PhosphReport{locInd}.area{trialInd} = area;
-            PhosphReport{locInd}.border{trialInd} = border;
+            drawing = tmsRtnTpy.Response.Drawing.coords{trialInd};
+            [area, border] = analyzeDrawing(drawing, tmsRtnTpy);
+            PhosphReport{locInd}.area{ii} = area;
+            PhosphReport{locInd}.border{ii} = border;
         end
         
         %% calculate the overlaped areas
         overlap_area = PhosphReport{locInd}.area{1};
-        for trialInd = 2:length(PhosphReport{locInd}.area)
-            overlap_area = intersect(overlap_area, PhosphReport{locInd}.area{trialInd}, 'rows');
+        for ii = 2:length(PhosphReport{locInd}.area)
+            overlap_area = intersect(overlap_area, PhosphReport{locInd}.area{ii}, 'rows');
         end
         
         PhosphReport{locInd}.overlapCoords = overlap_area;
@@ -66,7 +65,7 @@ for locInd = 1:length(phsphLocInds)
  
 end
 
-%% visualize drawings
+%% Visualize Phosphene maps
 ScrSize = get(0,'screensize');
 fig = figure('Position',[100 round(ScrSize(4)/5) ScrSize(3)-200 round(3*ScrSize(4)/5)]);
 N = length(CoilLoc_PosPhsph);
@@ -81,12 +80,13 @@ else
     n1 = ceil(N/5);
     n2 = min([5 N]);
 end
+
 for locInd = 1:N
     if isfield(PhosphReport{locInd},'area')
         subplot(n1,n2,locInd);
-        for trialInd = 1:length(PhosphReport{locInd}.area)
+        for ii = 1:length(PhosphReport{locInd}.area)
             axis ij
-            hold on;plot(PhosphReport{locInd}.border{trialInd}(:,1),PhosphReport{locInd}.border{trialInd}(:,2));
+            hold on;plot(PhosphReport{locInd}.border{ii}(:,1),PhosphReport{locInd}.border{ii}(:,2));
             plot(tmsRtnTpy.Params.screen.xCenter,tmsRtnTpy.Params.screen.yCenter,'+r');
             xlim([0 tmsRtnTpy.Params.screen.screenXpixels]);
             ylim([0 tmsRtnTpy.Params.screen.screenYpixels]);
@@ -96,16 +96,17 @@ for locInd = 1:N
         pbaspect([1 1 1]);
     end
 end
-%% save results
-% saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
+
+%% Save results
+saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
 % %save(saveName,'PhosphReport', '-v7.3')
-% save(saveName,'PhosphReport')
+save(saveName,'PhosphReport')
 % 
-% fig_dir = [data_dir '/Figures/'];
-% if ~exist(fig_dir, 'dir')
-%     mkdir(fig_dir);
-% end
-% saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
-% saveas(fig,saveName,'fig')
-% saveas(fig,saveName,'png')
-% saveas(fig,saveName,'epsc')
+fig_dir = [data_dir '/Figures/'];
+if ~exist(fig_dir, 'dir')
+    mkdir(fig_dir);
+end
+saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
+saveas(fig,saveName,'fig')
+saveas(fig,saveName,'png')
+saveas(fig,saveName,'epsc')

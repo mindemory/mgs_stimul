@@ -1,8 +1,8 @@
-function data_dir = copyfiles(subjID, session)
+function copyfiles(subjID, session, data_dir)
+    % Copies files from github to data server, and returns new data path
     git_dir = ['Results/sub' subjID];
     git_data = [git_dir '/tmsRtnTpy_sub' subjID '_sess' session '.mat'];
     
-    data_dir = ['/d/DATA/hyper/experiments/Mrugank/TMS/Phosphene_data/sub' subjID];
     if ~exist(data_dir, 'dir')
         mkdir(data_dir)
     end
