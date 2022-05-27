@@ -2,8 +2,9 @@ clear; close all; clc;% clear mex;
 
 %% Initialization
 global parameters;
-subjID = '03';
-session = '01';
+subjID = '02';
+session = '02';
+stimN = 10;
 parameters = loadParameters(subjID, session);
 
 [ret, hostname] = system('hostname');
@@ -27,5 +28,5 @@ end
 calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
 
 %% Compute Stimulus Locations
-calcStimLocations(subjID,session, data_dir);
+calcStimLocations(subjID,session, data_dir, stimN);
 

@@ -32,8 +32,8 @@
 clear; close all; clc;% clear mex;
 global parameters screen hostname kbx mbx
 
-subjID = '02';
-session = '02';
+subjID = '100';
+session = '01';
 
 % Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
@@ -53,6 +53,9 @@ elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
     addpath(genpath('/home/curtislab/Desktop/mgs_stimul/phosphene_mapping'))
     addpath(genpath('/home/curtislab/Desktop/mgs_stimul/markstim-master'))
+elseif strcmp(hostname, 'mindemory.local')
+    addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
+    addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end

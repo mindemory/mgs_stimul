@@ -2,7 +2,12 @@
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 clear; close all; clc;% clear mex;
-global parameters screen kbx
+global parameters screen hostname kbx
+
+subjID = '02';
+session = '02';
+task = 'pro';
+coilLocInd = '01';
 
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');   
@@ -15,14 +20,14 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/tmsRoom'))
-elseif strcmp(hostname, 'tmsstim.cbi.fas.nyu.edu')
-    % Location of toolboxes on TMS Stimul Mac
-    addpath(genpath('/Users/curtislab/TMS_Priority/exp_materials/'))
+    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/mgs'))
+    pth_to_data = ['/d/DATA/hyper/experiments/Mrugank/TMS/data/phosphene_data/sub', subjID];
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/mgs'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/tmsRoom/markstim-master'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/mgs'))
+    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/markstim-master'))
+else
+    disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
 % function recordPhosphene()
@@ -31,12 +36,17 @@ Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
 
-%%   Load parameters
-%--------------------------------------------------------------------------------------------------------------------------------------%
-loadParameters();
-if parameters.EEG
-%    TeensyTrigger('i', '/dev/cu.usbmodem12341')
-%    TeensyTrigger('s', true, 1000)
+loadParameters(subjID, session, task, coilLocInd);
+initScreen();
+%initSubjectInfo_trial();
+initFiles();
+initPeripherals();
+
+%%   TEENSY CHECK!
+% detect the TeensyTrigger and perform handshake make sure that the orange 
+% light is turned on! If not, press the black button on Teensy Trigger.
+if parameters.TMS
+    % Checks for possible identifiers of TeensyTrigger
     dev_num = 0;
     devs = dir('/dev/');
     while 1
@@ -49,32 +59,18 @@ if parameters.EEG
     end
     trigger_id = ['/dev/', dev_name];
     MarkStim('i', trigger_id)
-    %MarkStim('s', true, 1000)
 end
 
-initScreen();
-%   Initialize the subject info
-%--------------------------------------------------------------------------------------------------------------------------------------%
-
-initSubjectInfo_trial();
-initFiles();
-initKeyboard();
 
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
-subjID = int2strz(parameters.subject,2);
-session = int2strz(parameters.session,2);
-currentDIR = pwd;
-cd ..
-RtnTpyDIR = ['Retinitopy/Results/sub' subjID];
-load([RtnTpyDIR '/PhospheneReport_sub' subjID '_sess' session])
-load([RtnTpyDIR '/tmsRtnTpy_sub' subjID '_sess' session])
-load([RtnTpyDIR '/Stim_sub' subjID '_sess' session])
-cd(currentDIR)
+
+load([pth_to_data '/PhospheneReport_sub' subjID '_sess' session])
+load([pth_to_data '/tmsRtnTpy_sub' subjID '_sess' session])
+load([pth_to_data '/Stim_sub' subjID '_sess' session])
 
 %   Initialize taskMap
 %--------------------------------------------------------------------------------------------------------------------------------------%
-coilLocInd = parameters.coilLocInd;
 taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd);
 
 FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...

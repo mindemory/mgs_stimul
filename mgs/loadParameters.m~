@@ -1,4 +1,4 @@
-function loadParameters(subjID, session, task, coilLocInd)
+function loadParameters(subjID, session, task,)
     %   loads experimental parameters
     global parameters;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     % study parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     parameters.currentStudy = 'MGS_TMS_VisulCortex';
-    parameters.currentStudyVersion = '01';
+    parameters.currentStudyVersion = 1;
     parameters.runNumber = 1;
     parameters.session = session;
     parameters.subject = subjID;
@@ -28,7 +28,9 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     parameters.datafile = 'unitled.csv';
     parameters.matfile = 'untitled.mat';
+    parameters.taskMapFile = 'untitled_taskMap.mat';
     parameters.logFile = 'untitled_log.txt';
+    % parameters.edfFile = 'untd.edf'; % can only be 4 characters long
     parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Stimulus parameters

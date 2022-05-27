@@ -19,30 +19,30 @@ function initSubjectInfo_trial()
     parameters.task = task;
     parameters.coilLocInd = coilLocInd;
 
-    % check if the inserted coil location has been already tested or not
-    listing = dir([pwd,'/SubjectData/',['sub' int2strz(parameters.subject,2)],'/',[ 'sess' int2strz(parameters.session,2)],'/', task ,'/TaskMaps' ,'/*.mat']);
-    while 1
-        repCoilLoc = nan;
-        i = 1;
-        while i < length(listing)+1
-            if strfind(listing(i).name,['coilLoc' int2strz(parameters.coilLocInd,2)])
-                display(sprintf('\n%s',['Coil location index: '  int2strz(parameters.coilLocInd,2)]));
-                display(sprintf('\n%s','You already have tested this coil location!'));
-                repCoilLoc = input(sprintf('\n\t%s',['Repeate coil location ' int2strz(parameters.coilLocInd,2) '?[y/n] : ']),'s');
-                break
-            end
-            i = i+1;
-        end
-        if isnan(repCoilLoc)
-            break;
-        end
-        if strcmp(repCoilLoc,'n') % mrugank (02/15/2022): can it be elif instead?
-            coilLocInd = input(sprintf('\n\t%s','Please type new coil location index: '),'s');
-            parameters.coilLocInd = str2num(coilLocInd);
-        else
-            break
-        end
-    end
+%     % check if the inserted coil location has been already tested or not
+%     listing = dir([pwd,'/SubjectData/',['sub' int2strz(parameters.subject,2)],'/',[ 'sess' int2strz(parameters.session,2)],'/', task ,'/TaskMaps' ,'/*.mat']);
+%     while 1
+%         repCoilLoc = nan;
+%         i = 1;
+%         while i < length(listing)+1
+%             if strfind(listing(i).name,['coilLoc' int2strz(parameters.coilLocInd,2)])
+%                 display(sprintf('\n%s',['Coil location index: '  int2strz(parameters.coilLocInd,2)]));
+%                 display(sprintf('\n%s','You already have tested this coil location!'));
+%                 repCoilLoc = input(sprintf('\n\t%s',['Repeate coil location ' int2strz(parameters.coilLocInd,2) '?[y/n] : ']),'s');
+%                 break
+%             end
+%             i = i+1;
+%         end
+%         if isnan(repCoilLoc)
+%             break;
+%         end
+%         if strcmp(repCoilLoc,'n') % mrugank (02/15/2022): can it be elif instead?
+%             coilLocInd = input(sprintf('\n\t%s','Please type new coil location index: '),'s');
+%             parameters.coilLocInd = str2num(coilLocInd);
+%         else
+%             break
+%         end
+%     end
     
     % Create all necessary directories (a directory for each subject, containg Results and TaskMaps)
     %--------------------------------------------------------------------------------------------------------------------------------------%

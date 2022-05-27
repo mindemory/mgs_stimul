@@ -1,7 +1,6 @@
 function initScreen()
-    
-    global screen;
     global parameters;
+    global screen;
     %   To make it transparent for working in demo mode
     if parameters.isDemoMode
         PsychDebugWindowConfiguration(0, parameters.transparency);
@@ -15,7 +14,7 @@ function initScreen()
     screen.screenHeight = screen.screenHeight/10; %mm to cm
     format short
        
-    screen.Hperdegree = screen.viewDist * tan(deg2rad(1)); %height for one degree in cm
+    screen.Hperdegree = screen.viewDist * tand(1); %height for one degree in cm
     screen.Wperdegree = screen.Hperdegree; %width for one degree in cm
     screen.pixWidth = screen.screenWidth/screen.screenXpixels; %cm/pixel
     screen.pixHeight = screen.screenHeight/screen.screenYpixels; %cm/pixel

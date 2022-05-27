@@ -3,6 +3,7 @@
 % Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 
 %%% Check the system name to ensure correct paths are added.
+clear; close all; clc;
 [ret, hostname] = system('hostname');   
 if ret ~= 0
     hostname = getenv('HOSTNAME');

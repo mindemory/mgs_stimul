@@ -1,4 +1,4 @@
-function calcStimLocations(subjID,session, data_dir, stimN)
+function calcStimLocations(subjID,session, data_dir)
 
 fileName = ['PhospheneReport_sub' subjID '_sess' session];
 phosphene_report_path = [data_dir '/' fileName];
@@ -7,11 +7,12 @@ load(phosphene_report_path);
 tmsRtnTpy_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(tmsRtnTpy_path);
 
+stimN = 10;
 %% estimate a 2D-normal matching the overlapped area for each trial
 
 for coilLocInd = 1:length(PhosphReport)
     
-    ValidCoords = PhosphReport{coilLocInd}.overlapCoords;
+    ValidCoords = PhosphReport{coilLocInd}.overlapCoords.unique;
     vc.coords = ValidCoords;
     vc.mean = [mean(ValidCoords(:,1)) mean(ValidCoords(:,2))];
     vc.std = [std(ValidCoords(:,1)) std(ValidCoords(:,2))];
