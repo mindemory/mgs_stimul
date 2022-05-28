@@ -26,14 +26,14 @@ function initFiles()
     dateStr = [num2str(currentYear) num2str(currentMonth, '%02d') num2str(currentDay,'%02d')];
     timestamp = [num2str(currentHour) num2str(currentMin,'%02d')];
 
-    subNumStr = parameters.subject;
-    task = parameters.task;
-    coilLocStr = parameters.coilLocInd; 
-    sessionNumStr = parameters.session;
+    %subNumStr = parameters.subject;
+    %task = parameters.task;
+    %coilLocStr = parameters.coilLocInd; 
+    %sessionNumStr = parameters.session;
     taskMapFile = [TASK_MAPS parameters.currentStudy parameters.currentStudyVersion...
-        '_sub' subNumStr '_sess' sessionNumStr '_' task '_coilLoc'...
-        coilLocStr '_' dateStr '_' timestamp '_taskMap.mat'];
-    edfFile = [subNumStr  sessionNumStr '.edf'];% can only be 4 characters long
+        '_sub' parameters.subject '_sess' parameters.session '_' parameters.task '_coilLoc'...
+        num2str(parameters.coilLocInd, '%02d') '_' dateStr '_' timestamp '_taskMap.mat'];
+    edfFile = [parameters.subject  parameters.session '.edf'];% can only be 4 characters long
 
     parameters.taskMapFile = taskMapFile;
     parameters.edfFile = edfFile;

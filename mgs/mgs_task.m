@@ -7,7 +7,7 @@ global parameters screen hostname kbx
 subjID = '02';
 session = '02';
 task = 'pro';
-coilLocInd = '01';
+coilLocInd = 1;
 
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');   
@@ -65,52 +65,41 @@ end
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
 
-load([pth_to_data '/PhospheneReport_sub' subjID '_sess' session])
-load([pth_to_data '/tmsRtnTpy_sub' subjID '_sess' session])
+%load([pth_to_data '/PhospheneReport_sub' subjID '_sess' session])
+%load([pth_to_data '/tmsRtnTpy_sub' subjID '_sess' session])
 load([pth_to_data '/Stim_sub' subjID '_sess' session])
 
 %   Initialize taskMap
 %--------------------------------------------------------------------------------------------------------------------------------------%
-taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd);
+taskMap = generateTaskMap(Stim,coilLocInd);
 
 FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
     screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
 
-%  show load of experiment warning
-%--------------------------------------------------------------------------------------------------------------------------------------%
-%
-%showLoadExperimentWindow();
+%  show load of experiment 
 showprompts('LoadExperimentWindow')
-%ListenChar(-1);
 
 timeIdx = 1;
 
 %  init start of experiment procedures
-%--------------------------------------------------------------------------------------------------------------------------------------%
-%
-%showSoeWindow();
 showprompts('SoeWindow')
-%ListenChar(0);
 
 allRuns = ones(1,taskMap.trialNum);
-runVersion = 1;
-currentRun = parameters.run;
-[runVersion,startCurrentRunSession,currentRun,runRepeated] = enterRunToStart(allRuns,currentRun,runVersion);
+runVersion = parameters.runVersion;
+currentRun = parameters.runNumber;
+[runVersion,currentRun] = enterRunToStart(allRuns,currentRun,runVersion);
 
 reInitSubjectInfo(currentRun, runVersion);
 
 parameters.runVersion = runVersion;
 
 %create inputs for dummy runs
-parameters.edfFile = [num2str(parameters.subject) num2str(parameters.session) num2str(currentRun) '_' parameters.task];
+parameters.edfFile = [parameters.subject parameters.session num2str(currentRun) '_' parameters.task];
 if parameters.dummymode == 1
     el = 1;
     eye_used = 1;
 else
-    % initialize Eye Tracker and perform calibration
-    %--------------------------------------------------------------------------------------------------------------------------------------%
-    %
-    
+    % initialize Eye Tracker and perform calibration  
     if ~parameters.eyeTrackerOn
         initEyeTracker_costomCalTargets;
         %perform calibration task before starting trials
@@ -122,12 +111,6 @@ else
     end
 end
 
-%  init scanner
-%--------------------------------------------------------------------------------------------------------------------------------------%
-%
-%ListenChar(-1);
-% showTTLWindow(); mrugank (02/16/2022): What purpose doesth it serve?
-%ListenChar(0);
 if parameters.dummymode == 0
     Eyelink('StartRecording');
 end

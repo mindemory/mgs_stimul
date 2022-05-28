@@ -1,9 +1,9 @@
-function [runVersion, currentRun] = ...
+function [runVersion, currentRun, runRepeated] = ...
     enterRunToStart(allRuns, currentRun, runVersion)
     global parameters;
     global task;
     
-    %runRepeated = 0;
+    runRepeated = 0;
     listing = dir([pwd,'/SubjectData/',num2str(parameters.subject), '/Results' ,'/*.mat']); 
     runsArray = [];
     runVersionsArray = [];

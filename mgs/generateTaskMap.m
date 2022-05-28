@@ -1,26 +1,22 @@
 % Questions: 1- intermix conditions or not?
 
-function taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd)
+function taskMap = generateTaskMap(Stim,coilLocInd)
     global parameters;
     global screen;
 
     % coilHemField --> 1: Right visual filed , 2: Left visual field
     % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
-
-    % screen = tmsRtnTpy.Params.screen; %mrugank (02/15/2022): Commented
-    % because it seems to be overwriting screen
-
     % listing = dir([pwd,'/SubjectData/',['sub' num2str(parameters.subject)],'/',[ 'sess' num2str(parameters.session)],'/TaskMaps' ,'/*.mat']);
-
 
     trial.stimLoc = Stim{coilLocInd}.pdfCoords;
     trial.coilHem = Stim{coilLocInd}.coilHemField;
-    trial.coilLoc = coilLocInd;
+    %trial.coilLoc = coilLocInd;
+    
     % stimulus inside the tms FOV / TMS
     inds = randi(length(trial.stimLoc),[parameters.numTrials.In 1]);
     stimLocSet_In = trial.stimLoc(inds,:);
     coilHem_In = repmat(trial.coilHem,[parameters.numTrials.In 1]);
-    coilLoc_In = repmat(trial.coilLoc,[parameters.numTrials.In 1]);
+    coilLoc_In = repmat(coilLocInd,[parameters.numTrials.In 1]);
     delay1_In = repmat(parameters.delay1Duration,[parameters.numTrials.In 1]);
     pulseDuration_In = repmat(parameters.Pulse.Duration,[parameters.numTrials.In 1]);
     delay2_In = Shuffle(repmat(parameters.delay2Duration,[1 parameters.numTrials.In/length(parameters.delay2Duration)])');
@@ -28,11 +24,10 @@ function taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd)
     cond_In = 1*ones(length(inds),1);
 
     % stimulus outside the tms FOV / TMS
-    %     inds = randi(length(trial.stimLoc),[parameters.numTrials.Out 1]);
     stimLocSet_Out(:,1) = screen.screenXpixels - stimLocSet_In(:,1); % mirror vertically
     stimLocSet_Out(:,2) = stimLocSet_In(:,2);
     coilHem_Out = repmat(trial.coilHem,[parameters.numTrials.Out 1]);
-    coilLoc_Out = repmat(trial.coilLoc,[parameters.numTrials.Out 1]);
+    coilLoc_Out = repmat(coilLocInd,[parameters.numTrials.Out 1]);
     delay1_Out = repmat(parameters.delay1Duration,[parameters.numTrials.Out 1]);
     pulseDuration_Out = repmat(parameters.Pulse.Duration,[parameters.numTrials.Out 1]);
     delay2_Out = Shuffle(repmat(parameters.delay2Duration,[1 parameters.numTrials.Out/length(parameters.delay2Duration)])');
@@ -43,7 +38,7 @@ function taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd)
     inds = randi(length(trial.stimLoc),[parameters.numTrials.shamIn 1]);
     stimLocSet_shamIn = trial.stimLoc(inds,:);
     coilHem_shamIn = repmat(trial.coilHem,[parameters.numTrials.shamIn 1]);
-    coilLoc_shamIn = repmat(trial.coilLoc,[parameters.numTrials.shamIn 1]);
+    coilLoc_shamIn = repmat(coilLocInd,[parameters.numTrials.shamIn 1]);
     delay1_shamIn = repmat(parameters.delay1Duration,[parameters.numTrials.shamIn 1]);
     pulseDuration_shamIn = repmat(parameters.Pulse.Duration,[parameters.numTrials.shamIn 1]);
     delay2_shamIn = repmat(parameters.delay2Duration,[1 parameters.numTrials.shamIn])';
@@ -57,7 +52,7 @@ function taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd)
     stimLocSet_shamOut = trial.stimLoc(inds,:);
     stimLocSet_shamOut(:,1) = screen.screenXpixels - stimLocSet_shamOut(:,1); % mirror vertically
     coilHem_shamOut = repmat(trial.coilHem,[parameters.numTrials.shamOut 1]);
-    coilLoc_shamOut = repmat(trial.coilLoc,[parameters.numTrials.shamOut 1]);
+    coilLoc_shamOut = repmat(coilLocInd,[parameters.numTrials.shamOut 1]);
     delay1_shamOut = repmat(parameters.delay1Duration,[parameters.numTrials.shamOut 1]);
     pulseDuration_shamOut = repmat(parameters.Pulse.Duration,[parameters.numTrials.shamOut 1]);
     delay2_shamOut = repmat(parameters.delay2Duration,[1 parameters.numTrials.shamOut])';
@@ -106,6 +101,4 @@ function taskMap = generateTaskMap(Stim,tmsRtnTpy,coilLocInd)
 
     save(parameters.taskMapFile, 'taskMap');
     % writetable(struct2table(taskMap),'taskMapWM.csv');
-
-
 end

@@ -21,7 +21,7 @@ if parameters.dummymode == 0
     el.calibrationtargetsize= 1;
     el.calibrationtargetwidth=0.15;
     el.displayCalResults = 1;
-    el.eyeimgsize=30;
+    %el.eyeimgsize=30;
     EyelinkUpdateDefaults(el);
 
     %Initialization of the connection with the Eyelink Gazetracker.
@@ -78,7 +78,7 @@ if parameters.dummymode == 0
     %Eyelink('StartRecording');
 
     eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
-    if eye_used == el.BINOCULAR; % if both eyes are tracked
+    if eye_used == el.BINOCULAR % if both eyes are tracked
        eye_used = el.LEFT_EYE; % use left eye
     end
 end
