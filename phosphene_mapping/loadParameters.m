@@ -4,9 +4,9 @@ function parameters = loadParameters(subjID, session)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
     parameters.dummymode = 1; % set to 0 if you want to use eyetracker
-    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.transparency = 0.6;
     parameters.viewingDistance = 55;%viewDist
     parameters.waitBeforePulse = 3.00; % seconds

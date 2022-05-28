@@ -343,3 +343,4 @@ end
 if parameters.TMS
     MarkStim('x');
 end
+sca;
