@@ -1,7 +1,7 @@
-function createDirectories(subNum, ALL_SUB, SUB_DIR, RESULTS_DIR, TASK_MAPS, EYE_DIR)
+function createDirectories(subNum, ALL_SUB_DIR, SUB_DIR, RESULTS_DIR, TASK_MAPS_DIR, EYE_DIR)
     %create "SubjectData" dir that will contain all the data for all subjects
-    if exist(ALL_SUB,'dir')~=7
-        mkdir(ALL_SUB);
+    if exist(ALL_SUB_DIR,'dir')~=7
+        mkdir(ALL_SUB_DIR);
     end
 
     %create a "SubNum" dir inside the "SubjectData" dir 
@@ -16,8 +16,8 @@ function createDirectories(subNum, ALL_SUB, SUB_DIR, RESULTS_DIR, TASK_MAPS, EYE
     end
     
     %create a "TaskMaps" dir inside the "SubNum" dir
-    if exist(TASK_MAPS,'dir')~=7 %if the "TaskMaps" directory doesn't exist, create one
-        mkdir(TASK_MAPS);
+    if exist(TASK_MAPS_DIR,'dir')~=7 %if the "TaskMaps" directory doesn't exist, create one
+        mkdir(TASK_MAPS_DIR);
         fprintf('making new task map directory for subject %s...\n',num2str(subNum))
     end
     

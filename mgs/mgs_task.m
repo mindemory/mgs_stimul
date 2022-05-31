@@ -42,11 +42,11 @@ initScreen();
 initFiles();
 initPeripherals();
 
-%%   TEENSY CHECK!
-% detect the TeensyTrigger and perform handshake make sure that the orange 
-% light is turned on! If not, press the black button on Teensy Trigger.
+%%   MarkStim CHECK!
+% detect the MarkStim and perform handshake make sure that the orange 
+% light is turned on! If not, press the black button on Teensy.
 if parameters.TMS
-    % Checks for possible identifiers of TeensyTrigger
+    % Checks for possible identifiers of Teensy
     dev_num = 0;
     devs = dir('/dev/');
     while 1
@@ -77,7 +77,7 @@ FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;
     screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
 
 %  show load of experiment 
-showprompts('LoadExperimentWindow')
+%showprompts('LoadExperimentWindow')
 
 timeIdx = 1;
 
@@ -85,16 +85,16 @@ timeIdx = 1;
 showprompts('SoeWindow')
 
 allRuns = ones(1,taskMap.trialNum);
-runVersion = parameters.runVersion;
-currentRun = parameters.runNumber;
-[runVersion,currentRun] = enterRunToStart(allRuns,currentRun,runVersion);
+%runVersion = parameters.runVersion;
+%currentRun = parameters.runNumber;
+%[runVersion,currentRun] = enterRunToStart(allRuns,currentRun,runVersion);
 
-reInitSubjectInfo(currentRun, runVersion);
+%reInitSubjectInfo(currentRun, runVersion);
 
-parameters.runVersion = runVersion;
+%parameters.runVersion = runVersion;
 
 %create inputs for dummy runs
-parameters.edfFile = [parameters.subject parameters.session num2str(currentRun) '_' parameters.task];
+%parameters.edfFile = [parameters.subject parameters.session num2str(currentRun) '_' parameters.task];
 if parameters.dummymode == 1
     el = 1;
     eye_used = 1;
@@ -147,12 +147,15 @@ currentRunTrials = [1:taskMap.trialNum];
 for tc = 1: taskMap.trialNum
     
     % EEG marker --> trial begins
-    %TeensyTrigger('t', 10); 
-    MarkStim('t', 10);
+    if parameters.TMS
+        MarkStim('t', 10);
+    end
+    
     % if backTick is pressed by the experimenter to pause the experiment
     KbQueueStart(kbx);
-    [keyIsDown, keyCode]=KbQueueCheck(kbx);
+    [keyIsDown, keyCode] = KbQueueCheck(kbx);
     cmndKey = KbName(keyCode);
+    
     % terminate the experiment if escape is pressed by the experimenter
     if strcmp(cmndKey,'ESCAPE')
         break
@@ -160,7 +163,7 @@ for tc = 1: taskMap.trialNum
     
     if strcmp(cmndKey,'`~')
         cmndKey = nan;
-        display('Paused! Press backTick to resume this run')
+        disp('Paused! Press backTick to resume this run')
         KbQueueStart(kbx);
         % wait for the experimenter to press backTick to resume experiment
         while ~strcmp(cmndKey,'`~')
@@ -277,8 +280,9 @@ for tc = 1: taskMap.trialNum
         end %end of if checking dummymode
         
         % EEG marker --> Sample begins
-        %TeensyTrigger('t', 20);
-        MarkStim('t', 20);
+        if parameters.TMS
+            MarkStim('t', 20);
+        end
         %record to the edf file that sample is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', currentRunTrials(tc), taskMap.trialNum);
@@ -304,8 +308,9 @@ for tc = 1: taskMap.trialNum
         % Delay1 window
         %----------------------------------------------------------------------
         % EEG marker --> Delay1 begins
-        %TeensyTrigger('t', 30);
-        MarkStim('t', 30);
+        if parameters.TMS
+            MarkStim('t', 30);
+        end
         %record to the edf file that delay1 is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', currentRunTrials(tc), taskMap.trialNum);
@@ -326,8 +331,9 @@ for tc = 1: taskMap.trialNum
         % TMS pulse window
         %----------------------------------------------------------------------
         % EEG marker --> TMS pulse begins
-        %TeensyTrigger('t', 168); % 128 for TMS + 40 for EEG marker
-        MarkStim('t', 168);
+        if parameters.TMS
+            MarkStim('t', 168); % 128 for TMS + 40 for EEG marker
+        end
         %record to the edf file that noise mask is started
         pulseStartTime = GetSecs();
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
@@ -337,7 +343,6 @@ for tc = 1: taskMap.trialNum
         
 %         if parameters.EEG
 %             % TMS trigger & EEG marker --> Delay1 begins
-%             %TeensyTrigger('t', 30);
 %             MarkStim('t', 30);
 %         end
         WaitSecs(taskMap.pulseDuration(tc));
@@ -348,8 +353,9 @@ for tc = 1: taskMap.trialNum
         % Delay2 window
         %----------------------------------------------------------------------
         % EEG marker --> Delay2 begins
-        %TeensyTrigger('t', 50);
-        MarkStim('t', 50);
+        if parameters.TMS
+            MarkStim('t', 50);
+        end
         %record to the edf file that delay2 is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', currentRunTrials(tc), taskMap.trialNum);
@@ -371,8 +377,9 @@ for tc = 1: taskMap.trialNum
         % response cue window
         %----------------------------------------------------------------------
         % EEG marker --> Response cue begins
-        %TeensyTrigger('t', 60);
-        MarkStim('t', 60);
+        if parameters.TMS
+            MarkStim('t', 60);
+        end
         %record to the edf file that response cue is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', currentRunTrials(tc), taskMap.trialNum);
@@ -394,8 +401,9 @@ for tc = 1: taskMap.trialNum
         % response window
         %----------------------------------------------------------------------
         % EEG marker --> response begins
-        %TeensyTrigger('t', 70);
-        MarkStim('t', 70);
+        if parameters.TMS
+            MarkStim('t', 70)
+        end
         %record to the edf file that response is started
         saccLoc_VA_x = taskMap.saccLoc_va(tc,1) * cosd(taskMap.saccLoc_va(tc,2));
         saccLoc_VA_y = taskMap.saccLoc_va(tc,1) * sind(taskMap.saccLoc_va(tc,2)); % the angle is +CCW with 0 at horizontal line twoards right.
@@ -424,8 +432,9 @@ for tc = 1: taskMap.trialNum
         % feedback window
         %----------------------------------------------------------------------
         % EEG marker --> feedback begins
-        %TeensyTrigger('t', 80);
-        MarkStim('t', 80);
+        if parameters.TMS
+            MarkStim('t', 80);
+        end
         %record to the edf file that feedback is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', currentRunTrials(tc), taskMap.trialNum);
@@ -457,8 +466,9 @@ for tc = 1: taskMap.trialNum
     % intertrial window
     %----------------------------------------------------------------------
     % EEG marker --> ITI begins
-    %TeensyTrigger('t', 90);
-    MarkStim('t', 90);
+    if parameters.TMS
+        MarkStim('t', 90);
+    end
     %record to the edf file that iti is started
     if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', currentRunTrials(tc), taskMap.trialNum);
@@ -532,7 +542,5 @@ if parameters.dummymode == 0
 end
 
 if parameters.EEG
-    %TeensyTrigger('x');
-    
     MarkStim('x');
 end

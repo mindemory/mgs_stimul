@@ -1,7 +1,7 @@
 function [runVersion, currentRun] = ...
     enterRunToStart(allRuns, currentRun, runVersion)
     global parameters;
-    global task;
+    %global task;
     
     %runRepeated = 0;
     listing = dir([pwd,'/SubjectData/',num2str(parameters.subject), '/Results' ,'/*.mat']); 
@@ -19,7 +19,9 @@ function [runVersion, currentRun] = ...
     if ~isempty(runIdx)
         runVersionIdx = find(runVersionsArray(runIdx) == runVersion);
  
-        startCurrentRunSession=input(['You were already running run # ', num2str(currentRun),'  ',num2str(length(runVersionsArray(runIdx))), ' times. Please enter 1 if you want to run it once more, 0 otherwise: ']);
+        startCurrentRunSession=input(['You were already running run # ', ...
+            num2str(currentRun),'  ',num2str(length(runVersionsArray(runIdx))), ...
+            ' times. Please enter 1 if you want to run it once more, 0 otherwise: ']);
 
         while (startCurrentRunSession~=1 && startCurrentRunSession~=0)
             startCurrentRunSession=input(['Invalid input. Please enter 1 if you want to run it once more, 0 otherwise: ']);

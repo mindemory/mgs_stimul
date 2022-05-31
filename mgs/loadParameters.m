@@ -15,7 +15,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % study parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    parameters.currentStudy = 'MGS_TMS_VisulCortex';
+    parameters.currentStudy = 'MGS_TMS_VisualCortex';
     parameters.currentStudyVersion = '01';
     parameters.runNumber = 1;
     parameters.session = session;
