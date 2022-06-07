@@ -42,6 +42,8 @@ initScreen();
 initFiles();
 initPeripherals();
 
+parameters.task = task;
+
 %%   MarkStim CHECK!
 % detect the MarkStim and perform handshake make sure that the orange 
 % light is turned on! If not, press the black button on Teensy.

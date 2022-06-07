@@ -4,18 +4,22 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    parameters.EEG = 0; % set to 0 if there is no EEG recording
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     parameters.dummymode = 1; % set to 0 if you want to use eyetracker
-    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
-    parameters.transparency = 0.6;
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    parameters.hideCursor = true;
+    parameters.transparency = 0.8; % transparency for debug mode
     parameters.viewingDistance = 55;%viewDist
     parameters.waitBeforePulse = 3.00; % seconds
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % study parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    parameters.currentStudy = 'TMS_vCortex';
+    parameters.currentStudy = 'MGS_TMS_VisualCortex';
+    parameters.currentStudyVersion = '01';
     parameters.session = session;
     parameters.subject = subjID;
+    parameters.runNumber = 1;
     parameters.coilLocInd = coilLocInd;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     % file parameters
@@ -24,12 +28,46 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     parameters.matfile = 'untitled.mat';
     parameters.taskMapFile = 'untitled_taskMap.mat';
     parameters.edfFile = 'untd.edf'; % can only be 4 characters long
+    parameters.logFile = 'untitled_log.txt';
+    parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % TMS Pulsee parameters
+    % Stimulus parameters
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.eccentricity = [10]; % visual degrees
+    parameters.stimDiam = 4; % pixels
+    parameters.StimContrast = 1;
+    parameters.StimColor = 1;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % number of trials for each condition 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.numTrials.all = 42;
+    %parameters.numTrials.shamIn = parameters.numTrials.all/6;
+    %parameters.numTrials.shamOut = parameters.numTrials.all/6;
+    parameters.numTrials.In = parameters.numTrials.all/3;
+    parameters.numTrials.Out = parameters.numTrials.all/3;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % TMS Pulse parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.Pulse.Frequency = 30;
     parameters.Pulse.num = 3;
     parameters.Pulse.Duration = parameters.Pulse.num/parameters.Pulse.Frequency;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % timing parameters
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.sampleDuration = 0.200; 
+    parameters.delayDuration = 4; %[3 4];    
+    parameters.dummyDuration = 1.5;
+    parameters.delay1Duration = 2;
+    parameters.delay2Duration = parameters.delayDuration - parameters.delay1Duration;
+    parameters.respCueDuration = 0.150;
+    parameters.respDuration = 0.700;
+    parameters.feedbackDuration = 0.500;
+    parameters.itiDuration = [2,3];
+    parameters.trialDuration = parameters.sampleDuration + parameters.delayDuration + ...
+        parameters.Pulse.Duration + parameters.respCueDuration + ...
+        parameters.respDuration + parameters.feedbackDuration + ...
+        mean(parameters.itiDuration);                           
+    parameters.runDuration = parameters.numTrials.all * parameters.trialDuration + parameters.dummyDuration;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % prompt parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,10 +86,22 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     parameters.no_phosph_msg = 'subject reported no phosphene';
     parameters.new_coil_msg = 'new coil location requested';
     parameters.quit_msg = 'program terminated by the experimenter!';
+    
+    parameters.welcomeMsg = sprintf('Please wait until the experimenter sets up parameters.');
+    parameters.thankYouMsg = sprintf('Thank you for your participation!');
+    parameters.ttlMsg = sprintf('Initializing Scanner...');
+    parameters.startOfRunMsg = sprintf('Get ready...');
+    parameters.fixationPrepInstructions = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  geometry parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.greyFactor = 0.5; % to make screen background darker or lighter
     parameters.overlapThreshold = 2; % count an area phosphened if in more than "overlapThreshold" number of trials the subject reports it.
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %  geometry parameters
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.greyFactor = 0.5; % to make screen background darker or lighter    
+    parameters.fixationCrossSizeDeg = 0.3;
+    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
+    parameters.eyeTrackerOn = 0;
 end
