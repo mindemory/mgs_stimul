@@ -1,4 +1,4 @@
-function parameters = loadParameters(subjID, session, coilLocInd)
+function parameters = loadParameters(subjID, session)
     %   loads experimental parameters
     global parameters;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,17 +20,16 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     parameters.session = session;
     parameters.subject = subjID;
     parameters.runNumber = 1;
-    parameters.coilLocInd = coilLocInd;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     % file parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    parameters.datafile = 'unitled.csv';
-    parameters.matfile = 'untitled.mat';
-    parameters.taskMapFile = 'untitled_taskMap.mat';
-    parameters.edfFile = 'untd.edf'; % can only be 4 characters long
-    parameters.logFile = 'untitled_log.txt';
-    parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     parameters.datafile = 'unitled.csv';
+%     parameters.matfile = 'untitled.mat';
+%     parameters.taskMapFile = 'untitled_taskMap.mat';
+%     parameters.edfFile = 'untd.edf'; % can only be 4 characters long
+%     parameters.logFile = 'untitled_log.txt';
+%     parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Stimulus parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.eccentricity = [10]; % visual degrees
@@ -92,11 +91,6 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     parameters.ttlMsg = sprintf('Initializing Scanner...');
     parameters.startOfRunMsg = sprintf('Get ready...');
     parameters.fixationPrepInstructions = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %  geometry parameters
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.greyFactor = 0.5; % to make screen background darker or lighter
-    parameters.overlapThreshold = 2; % count an area phosphened if in more than "overlapThreshold" number of trials the subject reports it.
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  geometry parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
