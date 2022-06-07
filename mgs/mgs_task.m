@@ -104,7 +104,7 @@ else
         initEyeTracker_costomCalTargets;
         %perform calibration task before starting trials
         %--------------------------------------------------------------------------------------------------------------------------------------%
-        [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters.dummymode, parameters.fixationPrepInstructions,  el, eye_used, FixCross');
+        [avgGazeCenter, avgPupilSize] = etFixCalibTask(el, eye_used, FixCross');
         FlushEvents;
     else
         Eyelink('Openfile', parameters.edfFile);
@@ -130,7 +130,7 @@ Screen('Flip', screen.win);
 topPriorityLevel = MaxPriority(screen.win);
 
 trialDurationArray = [];
-texDurationArray = [];
+texDurationArray = zeros(1, taskMap.trialNum);
 sampleDurationArray = [];
 delay1DurationArray = [];
 pulseDurationArray = [];
@@ -141,49 +141,50 @@ feedbackDurationArray = [];
 itiDurationArray = [];
 
 startExperimentTime = GetSecs();
-currentRunTrials = [1:taskMap.trialNum];
+trialArray = 1:taskMap.trialNum;
 
 %% run over trials
-for tc = 1: taskMap.trialNum
+for trial = trialArray
     
     % EEG marker --> trial begins
     if parameters.TMS
         MarkStim('t', 10);
     end
     
-    % if backTick is pressed by the experimenter to pause the experiment
-    KbQueueStart(kbx);
-    [keyIsDown, keyCode] = KbQueueCheck(kbx);
-    cmndKey = KbName(keyCode);
+%     % if backTick is pressed by the experimenter to pause the experiment
+%     KbQueueStart(kbx);
+%     [keyIsDown, keyCode] = KbQueueCheck(kbx);
+%     cmndKey = KbName(keyCode);
+%     
+%     % terminate the experiment if escape is pressed by the experimenter
+%     if strcmp(cmndKey,'ESCAPE')
+%         break
+%     end
+%     
+%     if strcmp(cmndKey,'`~')
+%         cmndKey = nan;
+%         disp('Paused! Press backTick to resume this run')
+%         KbQueueStart(kbx);
+%         % wait for the experimenter to press backTick to resume experiment
+%         while ~strcmp(cmndKey,'`~')
+%             [keyIsDown, keyCode]=KbQueueCheck(kbx);
+%             cmndKey = KbName(keyCode);
+%         end
+%     end
     
-    % terminate the experiment if escape is pressed by the experimenter
-    if strcmp(cmndKey,'ESCAPE')
-        break
-    end
-    
-    if strcmp(cmndKey,'`~')
-        cmndKey = nan;
-        disp('Paused! Press backTick to resume this run')
-        KbQueueStart(kbx);
-        % wait for the experimenter to press backTick to resume experiment
-        while ~strcmp(cmndKey,'`~')
-            [keyIsDown, keyCode]=KbQueueCheck(kbx);
-            cmndKey = KbName(keyCode);
-        end
-    end
-    
-    display(['runing trial  ' int2strz(tc) ' ....'])
+    disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
     texStartTime = GetSecs;
     
-    Loc_Stim = [taskMap.stimLoc_pix(tc,1) taskMap.stimLoc_pix(tc,2)];
-    Loc_Sacc = [taskMap.saccLoc_pix(tc,1) taskMap.saccLoc_pix(tc,2)];
+    Loc_Stim = taskMap.stimLoc_pix(trial,:);
+    Loc_Sacc = taskMap.saccLoc_pix(trial,:);
     
     texDuration = GetSecs - texStartTime;
-    texDurationArray = [texDurationArray, texDuration];
+    texDurationArray(trial) = texDuration;
     
     if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-        Eyelink('command', 'record_status_message "TRIAL %d/%d "', currentRunTrials(tc), taskMap.trialNum);
-        Eyelink('Message', 'TRIAL %d ', currentRunTrials(tc));
+        Eyelink('command', 'record_status_message "TRIAL %d/%d "', ...
+            trialArray(trial), taskMap.trialNum);
+        Eyelink('Message', 'TRIAL %d ', trialArray(trial));
         
         %--------------------------------------------------------------------------
         %re-initialize breakOfFixation variable -- assume there is no break of
@@ -215,7 +216,8 @@ for tc = 1: taskMap.trialNum
         Eyelink('Message', 'SYNCTIME');
     end
     
-    while GetSecs-trial_start<=parameters.sampleDuration + taskMap.delay1(tc) + taskMap.pulseDuration(tc) + taskMap.delay2(tc)
+    while GetSecs-trial_start<=parameters.sampleDuration + taskMap.delay1(trial) + ...
+          taskMap.pulseDuration(trial) + taskMap.delay2(trial)
         
         % sample window
         %----------------------------------------------------------------------
@@ -285,7 +287,7 @@ for tc = 1: taskMap.trialNum
         end
         %record to the edf file that sample is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 1);
         end
         
@@ -313,13 +315,13 @@ for tc = 1: taskMap.trialNum
         end
         %record to the edf file that delay1 is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 2);
         end
         
         delay1StartTime = GetSecs;
         flag = 0;
-        while GetSecs-delay1StartTime<=taskMap.delay1(tc)
+        while GetSecs-delay1StartTime<=taskMap.delay1(trial)
             if ~flag
                 Screen('FillRect', screen.win, screen.white, FixCross');
                 Screen('Flip', screen.win);
@@ -337,7 +339,7 @@ for tc = 1: taskMap.trialNum
         %record to the edf file that noise mask is started
         pulseStartTime = GetSecs();
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 3);
         end
         
@@ -345,7 +347,7 @@ for tc = 1: taskMap.trialNum
 %             % TMS trigger & EEG marker --> Delay1 begins
 %             MarkStim('t', 30);
 %         end
-        WaitSecs(taskMap.pulseDuration(tc));
+        WaitSecs(taskMap.pulseDuration(trial));
         
         pulseDuration = GetSecs - pulseStartTime;
         pulseDurationArray = [pulseDurationArray,pulseDuration];
@@ -358,13 +360,13 @@ for tc = 1: taskMap.trialNum
         end
         %record to the edf file that delay2 is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 4);
         end
         
         delay2StartTime = GetSecs;
         flag = 0;
-        while GetSecs-delay2StartTime<=taskMap.delay2(tc)
+        while GetSecs-delay2StartTime<=taskMap.delay2(trial)
             if ~flag
                 Screen('FillRect', screen.win, screen.white, FixCross');
                 Screen('Flip', screen.win);
@@ -382,7 +384,7 @@ for tc = 1: taskMap.trialNum
         end
         %record to the edf file that response cue is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 5);
         end
         
@@ -405,13 +407,13 @@ for tc = 1: taskMap.trialNum
             MarkStim('t', 70)
         end
         %record to the edf file that response is started
-        saccLoc_VA_x = taskMap.saccLoc_va(tc,1) * cosd(taskMap.saccLoc_va(tc,2));
-        saccLoc_VA_y = taskMap.saccLoc_va(tc,1) * sind(taskMap.saccLoc_va(tc,2)); % the angle is +CCW with 0 at horizontal line twoards right.
+        saccLoc_VA_x = taskMap.saccLoc_va(trial,1) * cosd(taskMap.saccLoc_va(trial,2));
+        saccLoc_VA_y = taskMap.saccLoc_va(trial,1) * sind(taskMap.saccLoc_va(trial,2)); % the angle is +CCW with 0 at horizontal line twoards right.
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 6);
             
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /saccadeCoords"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /saccadeCoords"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xTar %s ', num2str(saccLoc_VA_x));
             Eyelink('Message', 'yTar %s ', num2str(saccLoc_VA_y));
         end
@@ -437,7 +439,7 @@ for tc = 1: taskMap.trialNum
         end
         %record to the edf file that feedback is started
         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', currentRunTrials(tc), taskMap.trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 7);
         end
         
@@ -471,13 +473,13 @@ for tc = 1: taskMap.trialNum
     end
     %record to the edf file that iti is started
     if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
-        Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', currentRunTrials(tc), taskMap.trialNum);
+        Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', trialArray(trial), taskMap.trialNum);
         Eyelink('Message', 'xDAT %d ', 8);
     end
     
     itiStartTime = GetSecs;
     flag = 0;
-    while GetSecs()-itiStartTime < taskMap.ITI(tc)
+    while GetSecs()-itiStartTime < taskMap.ITI(trial)
         if ~flag
             Screen('FillRect', screen.win, screen.white, FixCross');
             Screen('Flip', screen.win);

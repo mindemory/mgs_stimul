@@ -8,21 +8,19 @@
 %make the duration an input argument? (not going to be straightforward as the 
 %size of the array and gaze position check is linked to the duration) 
 %get rid of kbs? 
-function [avgGazeCenter,avgPupilSize] = etFixCalibTask(dummymode, fixationPrepInstructions, el, eye_used, fix1) 
-    global screen;
-    global parameters;
-    global bbx;
+function [avgGazeCenter,avgPupilSize] = etFixCalibTask(el, eye_used, fix1) 
+    global screen parameters kbx
     %clear the event buffer
     FlushEvents;
     Screen('FillRect', screen.win, screen.grey, screen.screenRect);
     %create outputs for debugging without eye tracker
-    if dummymode == 1
+    if parameters.dummymode == 1
        avgGazeCenter = 0;
        avgPupilSize = 0;
     end
 
     %create instructions for the 5 second task
-    showTextMessage(screen.win, screen.white, fixationPrepInstructions, bbx);
+    showTextMessage(screen.win, screen.white, parameters.fixationPrepInstructions, kbx);
 
     %fixation dot white during the 5 second task. use the fixation image as
     %used in the regular trials
@@ -33,8 +31,16 @@ function [avgGazeCenter,avgPupilSize] = etFixCalibTask(dummymode, fixationPrepIn
     forAvgPupilSize = zeros(9,1);
     trialCounterFix = 1;
     while GetSecs < fixationStartT + 5 %get 9 instances of gaze position readings, put them in the array and then get an average reading. cant use exact times as refresh times vary, so have to go with screen.wins of 10 ms instead
-      if ((GetSecs - fixationStartT) < 0.41 && (GetSecs - fixationStartT) > 0.4) || ((GetSecs - fixationStartT) < 0.91 && (GetSecs - fixationStartT) > 0.9) || ((GetSecs - fixationStartT) < 1.41 && (GetSecs - fixationStartT) > 1.4) || ((GetSecs - fixationStartT) < 1.91 && (GetSecs - fixationStartT) > 1.9) || ((GetSecs - fixationStartT) < 2.41 && (GetSecs - fixationStartT) > 2.4) || ((GetSecs - fixationStartT) < 2.91 && (GetSecs - fixationStartT) > 2.9) || ((GetSecs - fixationStartT) < 3.41 && (GetSecs - fixationStartT) >3.4) || ((GetSecs - fixationStartT)  < 3.91 && (GetSecs - fixationStartT) > 3.9) || ((GetSecs - fixationStartT) < 4.41 && (GetSecs - fixationStartT) > 4.4)
-         if dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+      if ((GetSecs - fixationStartT) < 0.41 && (GetSecs - fixationStartT) > 0.4) ...
+         || ((GetSecs - fixationStartT) < 0.91 && (GetSecs - fixationStartT) > 0.9) ...
+         || ((GetSecs - fixationStartT) < 1.41 && (GetSecs - fixationStartT) > 1.4) ...
+         || ((GetSecs - fixationStartT) < 1.91 && (GetSecs - fixationStartT) > 1.9) ...
+         || ((GetSecs - fixationStartT) < 2.41 && (GetSecs - fixationStartT) > 2.4) ...
+         || ((GetSecs - fixationStartT) < 2.91 && (GetSecs - fixationStartT) > 2.9) ...
+         || ((GetSecs - fixationStartT) < 3.41 && (GetSecs - fixationStartT) > 3.4) ...
+         || ((GetSecs - fixationStartT) < 3.91 && (GetSecs - fixationStartT) > 3.9) ...
+         || ((GetSecs - fixationStartT) < 4.41 && (GetSecs - fixationStartT) > 4.4)
+         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
             % get the sample in the form of an event structure
             evt = Eyelink('NewestFloatSample');
             if eye_used ~= -1 % do we know which eye to use yet?
@@ -62,9 +68,6 @@ function [avgGazeCenter,avgPupilSize] = etFixCalibTask(dummymode, fixationPrepIn
     avgPupilSize = mean(forAvgPupilSize);
     %create end of the task screen
     %create instructions for the 5 second task
-    showTextMessage( screen.win, screen.white, 'Thank you. When ready, press key to continue.', bbx);
-
-
-
+    showTextMessage(screen.win, screen.white, 'Thank you. When ready, press key to continue.', kbx);
 end
         

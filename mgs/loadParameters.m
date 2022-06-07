@@ -39,8 +39,8 @@ function loadParameters(subjID, session, task, coilLocInd)
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.numTrials.all = 42;
-    parameters.numTrials.shamIn = parameters.numTrials.all/6;
-    parameters.numTrials.shamOut = parameters.numTrials.all/6;
+    %parameters.numTrials.shamIn = parameters.numTrials.all/6;
+    %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/3;
     parameters.numTrials.Out = parameters.numTrials.all/3;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,21 +49,23 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.Pulse.Frequency = 30;
     parameters.Pulse.num = 3;
     parameters.Pulse.Duration = parameters.Pulse.num/parameters.Pulse.Frequency;
-    parameters.Pulse.Hemisphere = [2 1]; %???
+    %parameters.Pulse.Hemisphere = [2 1]; %???
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % timing parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.delayDuration = [3 4];    
-    parameters.dummyDuration = 1.5;
     parameters.sampleDuration = 0.200; 
-    parameters.delay1Duration = .5;
+    parameters.delayDuration = 4; %[3 4];    
+    parameters.dummyDuration = 1.5;
+    parameters.delay1Duration = 2;
     parameters.delay2Duration = parameters.delayDuration - parameters.delay1Duration;
     parameters.respCueDuration = 0.150;
     parameters.respDuration = 0.700;
     parameters.feedbackDuration = 0.500;
     parameters.itiDuration = [2,3];
-    parameters.trialDuration = parameters.sampleDuration + mean(parameters.delayDuration) + parameters.Pulse.Duration + parameters.respCueDuration + ...
-                               parameters.respDuration + parameters.feedbackDuration + mean(parameters.itiDuration);                           
+    parameters.trialDuration = parameters.sampleDuration + parameters.delayDuration + ...
+        parameters.Pulse.Duration + parameters.respCueDuration + ...
+        parameters.respDuration + parameters.feedbackDuration + ...
+        mean(parameters.itiDuration);                           
     parameters.runDuration = parameters.numTrials.all * parameters.trialDuration + parameters.dummyDuration;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % text parameters

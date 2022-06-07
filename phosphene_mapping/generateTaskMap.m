@@ -16,7 +16,7 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     coilLoc_In = repmat(coilLocInd,[parameters.numTrials.In 1]);
     delay1_In = repmat(parameters.delay1Duration,[parameters.numTrials.In 1]);
     pulseDuration_In = repmat(parameters.Pulse.Duration,[parameters.numTrials.In 1]);
-    delay2_In = repmat(parameters.delay2Duration,[parameters.numTrials.In 1]);
+    delay2_In = Shuffle(repmat(parameters.delay2Duration,[1 parameters.numTrials.In/length(parameters.delay2Duration)])');
     iti_In = Shuffle(repmat(parameters.itiDuration,[1 parameters.numTrials.In/length(parameters.itiDuration)])');
     cond_In = 1*ones(length(inds),1);
 
@@ -27,13 +27,13 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     coilLoc_Out = repmat(coilLocInd,[parameters.numTrials.Out 1]);
     delay1_Out = repmat(parameters.delay1Duration,[parameters.numTrials.Out 1]);
     pulseDuration_Out = repmat(parameters.Pulse.Duration,[parameters.numTrials.Out 1]);
-    delay2_Out = repmat(parameters.delay2Duration,[parameters.numTrials.Out 1]);
+    delay2_Out = Shuffle(repmat(parameters.delay2Duration,[1 parameters.numTrials.Out/length(parameters.delay2Duration)])');
     iti_Out = Shuffle(repmat(parameters.itiDuration,[1 parameters.numTrials.Out/length(parameters.itiDuration)]))';
     cond_Out = 2*ones(length(inds),1);
 
     % concat all conditions
-    stimLocSet_pix = [stimLocSet_In; stimLocSet_Out];
-    [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(stimLocSet_pix(:,1),stimLocSet_pix(:,2),'ul');
+    stimLocSet_pix = [stimLocSet_In ; stimLocSet_Out];
+    [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(screen,stimLocSet_pix(:,1),stimLocSet_pix(:,2),'cntr');
 
     if strcmp(parameters.task,'pro')
         saccLocSet_pix = stimLocSet_pix;
@@ -41,15 +41,15 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
         saccLocSet_pix(:,1) = screen.screenXpixels - stimLocSet_pix(:,1);
         saccLocSet_pix(:,2) = stimLocSet_pix(:,2);
     end
-    [saccLocSet_va_ecc,saccLocSet_va_theta] = pixel2va(saccLocSet_pix(:,1),saccLocSet_pix(:,2),'ul');
+    [saccLocSet_va_ecc,saccLocSet_va_theta] = pixel2va(screen,saccLocSet_pix(:,1),saccLocSet_pix(:,2),'cntr');
 
-    coilHem = [coilHem_In; coilHem_Out];
-    coilLocInd_all = [coilLoc_In; coilLoc_Out];
-    delay1 = [delay1_In; delay1_Out];
-    pulseDuration = [pulseDuration_In; pulseDuration_Out];
-    delay2 = [delay2_In; delay2_Out];
-    ITI = [iti_In; iti_Out];
-    conditions = [cond_In; cond_Out];
+    coilHem = [coilHem_In ; coilHem_Out];
+    coilLocInd_all = [coilLoc_In ; coilLoc_Out];
+    delay1 = [delay1_In ; delay1_Out];
+    pulseDuration = [pulseDuration_In ; pulseDuration_Out];
+    delay2 = [delay2_In ; delay2_Out];
+    ITI = [iti_In ; iti_Out];
+    conditions = [cond_In ; cond_Out];
 
     % Set taskMap
     trialInds = randperm(size(stimLocSet_pix,1));

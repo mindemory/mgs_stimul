@@ -135,6 +135,7 @@ while 1
         
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
+        
     end
     
     % New coil location

@@ -29,4 +29,3 @@ calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
 
 %% Compute Stimulus Locations
 calcStimLocations(subjID,session, data_dir, stimN);
-

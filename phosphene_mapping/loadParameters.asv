@@ -31,6 +31,27 @@ function parameters = loadParameters(subjID, session, coilLocInd)
     parameters.Pulse.num = 3;
     parameters.Pulse.Duration = parameters.Pulse.num/parameters.Pulse.Frequency;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % number of trials for each condition
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.numTrials.all = 42;
+    parameters.numTrials.In = parameters.numTrials.all/2;
+    parameters.numTrials.Out = parameters.numTrials.all/2;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % timing parameters
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    parameters.sampleDuration = 0.200;
+    parameters.delayDuration = 4;
+    parameters.dummyDuration = 1.5;
+    parameters.delay1Duration = 2;
+    parameters.delay2Duration = parameters.delayDuration - parameters.delay1Duration;
+    parameters.respCueDuration = 0.150;
+    parameters.respDuration = 0.700;
+    parameters.feedbackDuration = 0.500;
+    parameters.itiDuration = [2, 3];
+    parameters.trialDuration = parameters.sampleDuration + parameters.delayDuration + ...
+        parameters.Pulse.Duration + parameters.respCueDuration + ...
+        parameters.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % prompt parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.font_size = 30;
