@@ -46,10 +46,10 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % TMS pulse parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.Pulse.Frequency = 50;
-    parameters.Pulse.num = 2;
+    parameters.Pulse.Frequency = 30;
+    parameters.Pulse.num = 3;
     parameters.Pulse.Duration = parameters.Pulse.num/parameters.Pulse.Frequency;
-    %parameters.Pulse.Hemisphere = [2 1]; %???
+    parameters.Pulse.Hemisphere = [2 1]; %???
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % timing parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +81,4 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.fixationCrossSizeDeg = 0.3;
     parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
     parameters.eyeTrackerOn = 0;
-    %define a fixation boundary in case its not part of the input arguments
-    parameters.fixationBoundary = 66;%pixels
 end
