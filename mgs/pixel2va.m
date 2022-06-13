@@ -19,4 +19,5 @@ function [ecc,theta] = pixel2va(x,y,ref)
     theta = atan2d(dy,dx);
     if theta < 0
         theta = 360 - abs(theta);
+    end
 end

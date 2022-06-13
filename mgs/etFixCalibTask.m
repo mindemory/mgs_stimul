@@ -14,7 +14,7 @@ function [avgGazeCenter,avgPupilSize] = etFixCalibTask(el, eye_used, fix1)
     FlushEvents;
     Screen('FillRect', screen.win, screen.grey, screen.screenRect);
     %create outputs for debugging without eye tracker
-    if parameters.dummymode == 1
+    if parameters.eyetracker == 0
        avgGazeCenter = 0;
        avgPupilSize = 0;
     end
@@ -40,7 +40,7 @@ function [avgGazeCenter,avgPupilSize] = etFixCalibTask(el, eye_used, fix1)
          || ((GetSecs - fixationStartT) < 3.41 && (GetSecs - fixationStartT) > 3.4) ...
          || ((GetSecs - fixationStartT) < 3.91 && (GetSecs - fixationStartT) > 3.9) ...
          || ((GetSecs - fixationStartT) < 4.41 && (GetSecs - fixationStartT) > 4.4)
-         if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             % get the sample in the form of an event structure
             evt = Eyelink('NewestFloatSample');
             if eye_used ~= -1 % do we know which eye to use yet?

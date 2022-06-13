@@ -42,8 +42,8 @@ initScreen();
 initFiles();
 initPeripherals();
 
-parameters.task = task;
-parameters.coilLocInd = coilLocInd;
+%parameters.task = task;
+%parameters.coilLocInd = coilLocInd;
 %%   MarkStim CHECK!
 % detect the MarkStim and perform handshake make sure that the orange 
 % light is turned on! If not, press the black button on Teensy.
@@ -83,7 +83,7 @@ timeIdx = 1;
 %  init start of experiment procedures
 showprompts('SoeWindow')
 
-allRuns = ones(1,taskMap.trialNum);
+%allRuns = ones(1,taskMap.trialNum);
 %runVersion = parameters.runVersion;
 %currentRun = parameters.runNumber;
 %[runVersion,currentRun] = enterRunToStart(allRuns,currentRun,runVersion);
@@ -94,7 +94,7 @@ allRuns = ones(1,taskMap.trialNum);
 
 %create inputs for dummy runs
 %parameters.edfFile = [parameters.subject parameters.session num2str(currentRun) '_' parameters.task];
-if parameters.dummymode == 1
+if parameters.eyetracker == 0
     el = 1;
     eye_used = 1;
 else
@@ -110,7 +110,7 @@ else
     end
 end
 
-if parameters.dummymode == 0
+if parameters.eyetracker
     Eyelink('StartRecording');
 end
 startExperimentTime = GetSecs();
@@ -129,10 +129,7 @@ Screen('Flip', screen.win);
 topPriorityLevel = MaxPriority(screen.win);
 
 trialDurationArray = [];
-<<<<<<< HEAD
 texDurationArray = zeros(1, taskMap.trialNum);
-=======
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
 sampleDurationArray = [];
 delay1DurationArray = [];
 pulseDurationArray = [];
@@ -141,14 +138,10 @@ respCueDurationArray = [];
 respDurationArray = [];
 feedbackDurationArray = [];
 itiDurationArray = [];
-texDurationArray = [];
+%texDurationArray = [];
 
 startExperimentTime = GetSecs();
-<<<<<<< HEAD
 trialArray = 1:taskMap.trialNum;
-=======
-currentRunTrials = 1:taskMap.trialNum;
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
 
 %% run over trials
 for trial = trialArray
@@ -158,7 +151,6 @@ for trial = trialArray
         MarkStim('t', 10);
     end
     
-<<<<<<< HEAD
 %     % if backTick is pressed by the experimenter to pause the experiment
 %     KbQueueStart(kbx);
 %     [keyIsDown, keyCode] = KbQueueCheck(kbx);
@@ -188,18 +180,8 @@ for trial = trialArray
     
     texDuration = GetSecs - texStartTime;
     texDurationArray(trial) = texDuration;
-=======
-    display(['runing trial  ' num2str(tc, '%02d') ' ....'])
-    texStartTime = GetSecs;
     
-%     Loc_Stim = taskMap.stimLoc_pix(tc,:);
-%     Loc_Sacc = taskMap.saccLoc_pix(tc,:);
-    
-    texDuration = GetSecs - texStartTime;
-    texDurationArray(tc) = texDuration;
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
-    
-    if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+    if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d "', ...
             trialArray(trial), taskMap.trialNum);
         Eyelink('Message', 'TRIAL %d ', trialArray(trial));
@@ -227,7 +209,7 @@ for trial = trialArray
     Priority(topPriorityLevel);
     trial_start = GetSecs();
     % synchronize time in edf file
-    if parameters.dummymode == 0
+    if parameters.eyetracker
         Eyelink('Message', 'SYNCTIME');
     end
     
@@ -239,7 +221,7 @@ for trial = trialArray
         sampleStartTime = GetSecs;
         %Track subject's break of fixation
         fixBreak  = 0;
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             % get the sample in the form of an event structure
             evt = Eyelink('NewestFloatSample');
             if eye_used ~= -1 % do we know which eye to use yet?
@@ -294,14 +276,14 @@ for trial = trialArray
             %count how many eye blinks occured
             thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;
             
-        end %end of if checking dummymode
+        end %end of if checking eyetracker
         
         % EEG marker --> Sample begins
         if parameters.TMS
             MarkStim('t', 20);
         end
         %record to the edf file that sample is started
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 1);
         end
@@ -314,8 +296,8 @@ for trial = trialArray
 %                     [Loc_Stim(1)-parameters.stimDiam, Loc_Stim(2)-parameters.stimDiam, ...
 %                     Loc_Stim(1)+parameters.stimDiam, Loc_Stim(2)+parameters.stimDiam]);
                 Screen('FillOval',screen.win, screen.white, ...
-                    [taskMap.stimLoc_pix(tc,:) - parameters.stimDiam, ...
-                    taskMap.stimLoc_pix(tc,:) + parameters.stimDiam]);
+                    [taskMap.stimLoc_pix(trial,:) - parameters.stimDiam, ...
+                    taskMap.stimLoc_pix(trial,:) + parameters.stimDiam]);
                 %draw the fixation dot
                 Screen('FillRect', screen.win, screen.white, FixCross');
                 Screen('Flip', screen.win);
@@ -332,7 +314,7 @@ for trial = trialArray
             MarkStim('t', 30);
         end
         %record to the edf file that delay1 is started
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 2);
         end
@@ -356,7 +338,7 @@ for trial = trialArray
         end
         %record to the edf file that noise mask is started
         pulseStartTime = GetSecs();
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 3);
         end
@@ -377,7 +359,7 @@ for trial = trialArray
             MarkStim('t', 50);
         end
         %record to the edf file that delay2 is started
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 4);
         end
@@ -401,7 +383,7 @@ for trial = trialArray
             MarkStim('t', 60);
         end
         %record to the edf file that response cue is started
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 5);
         end
@@ -427,7 +409,7 @@ for trial = trialArray
         %record to the edf file that response is started
         saccLoc_VA_x = taskMap.saccLoc_va(trial,1) * cosd(taskMap.saccLoc_va(trial,2));
         saccLoc_VA_y = taskMap.saccLoc_va(trial,1) * sind(taskMap.saccLoc_va(trial,2)); % the angle is +CCW with 0 at horizontal line twoards right.
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 6);
             
@@ -456,7 +438,7 @@ for trial = trialArray
             MarkStim('t', 80);
         end
         %record to the edf file that feedback is started
-        if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 7);
         end
@@ -479,7 +461,7 @@ for trial = trialArray
         
     end %end of while
     
-    if parameters.dummymode == 0
+    if parameters.eyetracker
         Eyelink('Message', 'TRIAL_RESULT  0')
     end
     
@@ -490,7 +472,7 @@ for trial = trialArray
         MarkStim('t', 90);
     end
     %record to the edf file that iti is started
-    if parameters.dummymode == 0 && Eyelink('NewFloatSampleAvailable') > 0
+    if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', trialArray(trial), taskMap.trialNum);
         Eyelink('Message', 'xDAT %d ', 8);
     end
@@ -515,7 +497,7 @@ totalTime = GetSecs()-startExperimentTime;
 %% saving and cleanning
 % stop eyelink
 %--------------------------------------------------------------------------------------------------------------------------------------%
-if parameters.dummymode == 0
+if parameters.eyetracker
     Eyelink('StopRecording');
     Eyelink('CloseFile');
     % download data file
@@ -554,10 +536,10 @@ totalTimeData{timeIdx}=timeReport;
 timeIdx = timeIdx+1;
 ListenChar(0);
 %   create keyboard events queue
-showEndOfCurrentRun(currentRun);
-allRuns(currentRun) = allRuns(currentRun)+1;
+% showEndOfCurrentRun(currentRun);
+% allRuns(currentRun) = allRuns(currentRun)+1;
 
-if parameters.dummymode == 0
+if parameters.eyetracker
     Eyelink('Shutdown');
 end
 

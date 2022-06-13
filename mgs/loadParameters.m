@@ -6,7 +6,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.EEG = 0; % set to 0 if there is no EEG recording
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
-    parameters.dummymode = 1; % set to 0 if you want to use eyetracker
+    parameters.eyetracker = 0; % set to 0 if there is no eyetracker
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     %parameters.hideCursor = true;
     parameters.transparency = 0.4; % transparency for debug mode
@@ -38,19 +38,11 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
-    parameters.numTrials.all = 42;
-    %parameters.numTrials.shamIn = parameters.numTrials.all/6;
-    %parameters.numTrials.shamOut = parameters.numTrials.all/6;
-    parameters.numTrials.In = parameters.numTrials.all/3;
-    parameters.numTrials.Out = parameters.numTrials.all/3;
-=======
-    parameters.numTrials.all = 40;
+    parameters.numTrials.all = 8;
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
     parameters.numTrials.Out = parameters.numTrials.all/2;
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % TMS pulse parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,30 +53,19 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % timing parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<<<<<< HEAD
-=======
     parameters.delayDuration = 4; %[3 4];    
     parameters.dummyDuration = 1.5; % what's the reason?
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
-    parameters.sampleDuration = 0.200; 
-    parameters.delayDuration = 4; %[3 4];    
-    parameters.dummyDuration = 1.5;
+    parameters.sampleDuration = 0.200;
     parameters.delay1Duration = 2;
     parameters.delay2Duration = parameters.delayDuration - parameters.delay1Duration;
     parameters.respCueDuration = 0.150;
     parameters.respDuration = 0.700;
     parameters.feedbackDuration = 0.500;
     parameters.itiDuration = [2,3];
-<<<<<<< HEAD
     parameters.trialDuration = parameters.sampleDuration + parameters.delayDuration + ...
         parameters.Pulse.Duration + parameters.respCueDuration + ...
         parameters.respDuration + parameters.feedbackDuration + ...
         mean(parameters.itiDuration);                           
-=======
-    parameters.trialDuration = parameters.sampleDuration + mean(parameters.delayDuration) + ...
-           parameters.Pulse.Duration + parameters.respCueDuration + parameters.respDuration + ...
-           parameters.feedbackDuration + mean(parameters.itiDuration);                           
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
     parameters.runDuration = parameters.numTrials.all * parameters.trialDuration + parameters.dummyDuration;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % text parameters

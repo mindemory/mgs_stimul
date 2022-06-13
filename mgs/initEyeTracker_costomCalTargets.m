@@ -4,8 +4,8 @@ global screen;
     
 %%
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
-%run without eye tracker if dummymode set to 1
-if parameters.dummymode == 0
+%run without eye tracker if eyetracker is 0
+if parameters.eyetracker
     % Provide Eyelink with details about the graphics environment
     % and perform some initializations. The information is returned
     % in a structure that also contains useful defaults
@@ -26,7 +26,7 @@ if parameters.dummymode == 0
 
     %Initialization of the connection with the Eyelink Gazetracker.
     %exit program if this fails.
-    if ~EyelinkInit(parameters.dummymode, 1)
+    if ~EyelinkInit(~parameters.eyetracker, 1)
         fprintf('Eyelink Init aborted.\n');
         cleanup;  % cleanup function
         return;

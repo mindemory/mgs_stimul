@@ -31,11 +31,6 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     iti_Out = Shuffle(repmat(parameters.itiDuration,[1 parameters.numTrials.Out/length(parameters.itiDuration)]))';
     cond_Out = 2*ones(length(inds),1);
 
-<<<<<<< HEAD
-    % concat all conditions
-    stimLocSet_pix = [stimLocSet_In; stimLocSet_Out];
-    [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(stimLocSet_pix(:,1),stimLocSet_pix(:,2),'ul');
-=======
 %     % stimulus inside the tms FOV / sham
 %     inds = randi(length(trial.stimLoc),[parameters.numTrials.shamIn 1]);
 %     stimLocSet_shamIn = trial.stimLoc(inds,:);
@@ -65,8 +60,7 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
 
     % concat all conditions
     stimLocSet_pix = [stimLocSet_In ; stimLocSet_Out];
-    [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(screen,stimLocSet_pix(:,1),stimLocSet_pix(:,2),'ul');
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
+    [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(stimLocSet_pix(:,1),stimLocSet_pix(:,2),'ul');
 
     if strcmp(parameters.task,'pro')
         saccLocSet_pix = stimLocSet_pix;
@@ -74,18 +68,8 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
         saccLocSet_pix(:,1) = screen.screenXpixels - stimLocSet_pix(:,1);
         saccLocSet_pix(:,2) = stimLocSet_pix(:,2);
     end
-<<<<<<< HEAD
+    
     [saccLocSet_va_ecc,saccLocSet_va_theta] = pixel2va(saccLocSet_pix(:,1),saccLocSet_pix(:,2),'ul');
-
-    coilHem = [coilHem_In; coilHem_Out];
-    coilLocInd_all = [coilLoc_In; coilLoc_Out];
-    delay1 = [delay1_In; delay1_Out];
-    pulseDuration = [pulseDuration_In; pulseDuration_Out];
-    delay2 = [delay2_In; delay2_Out];
-    ITI = [iti_In; iti_Out];
-    conditions = [cond_In; cond_Out];
-=======
-    [saccLocSet_va_ecc,saccLocSet_va_theta] = pixel2va(screen,saccLocSet_pix(:,1),saccLocSet_pix(:,2),'ul');
 
     coilHem = [coilHem_In ; coilHem_Out];
     coilLocInd_all = [coilLoc_In ; coilLoc_Out];
@@ -94,7 +78,6 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     delay2 = [delay2_In ; delay2_Out];
     ITI = [iti_In ; iti_Out];
     conditions = [cond_In ; cond_Out];
->>>>>>> c476b61dfc98ad7b5cf7e3e2576249743fa54b62
 
     % Set taskMap
     trialInds = randperm(size(stimLocSet_pix,1));
