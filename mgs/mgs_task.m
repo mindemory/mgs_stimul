@@ -32,7 +32,7 @@ if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
 elseif strcmp(hostname, 'tmsubuntu')
-    addpath(genpath('/usr/lib/psychtoolbox-3'))
+    addpath(genpath('/usr/share/psychtoolbox-3'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end

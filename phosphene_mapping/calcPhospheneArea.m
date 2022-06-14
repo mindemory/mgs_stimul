@@ -1,4 +1,4 @@
-function calcPhospheneArea(subjID,session,overlapThresh, data_dir)
+function calcPhospheneArea(subjID,session, data_dir)
 
 data_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data_path);

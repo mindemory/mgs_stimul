@@ -336,7 +336,7 @@ save(saveName,'tmsRtnTpy')
 %%% save results
 saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
 if strcmp(saveData,'y')
-    saveDIR = [data_path filesep 'Results/sub' subjID];
+    saveDIR = [data_path filesep 'sub' subjID];
     if exist('saveDIR', 'dir') ~= 7
         mkdir(saveDIR);
     end

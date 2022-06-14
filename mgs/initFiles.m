@@ -4,7 +4,7 @@ function initFiles(data_path)
     % Create all necessary directiries (a directory for each subject, containg Results and TaskMaps)
     %--------------------------------------------------------------------------------------------------------------------------------------%
     % specify the directories to be used
-    SUB_DIR = [data_path 'sub' parameters.subject '/' 'sess' ...
+    SUB_DIR = [data_path '/' 'sess' ...
         parameters.session '/' parameters.task '/']; % create a "SubNum" dir inside the "SubjectData" dir
     TASK_MAPS_DIR = [SUB_DIR 'TaskMaps/'];  % create a "TaskMaps" dir inside the "SubNum" dir
     RESULTS_DIR = [SUB_DIR 'Results/']; % create a "Results" dir inside the "SubNum" dir

@@ -14,18 +14,24 @@ end
 hostname = strtrim(hostname);
 
 if ~strcmp(hostname, 'syndrome')
-    disp('This code should only be run on Syndrome.')
+    disp('This code can only be run on Syndrome.')
+    return
 end
+
+curr_dir = pwd;
+mgs_dir = curr_dir(1:end-18);
+master_dir = mgs_dir(1:end-11);
+data_path = [master_dir filesep 'data/phosphene_data/Results/sub' subjID];
 
 %% Copy Files to DATA
-data_dir = ['/d/DATA/hyper/experiments/Mrugank/TMS/data/phosphene_data/sub' subjID];
-fname = [data_dir, '/tmsRtnTpy_sub' subjID '_sess' session '.mat'];
-if ~exist(fname, 'file')
-    copyfiles(subjID, session, data_dir);
-end
+fname = [data_path, '/tmsRtnTpy_sub' subjID '_sess' session '.mat'];
+% if ~exist(fname, 'file')
+%     copyfiles(subjID, session, data_path);
+% end
 
 %% Compute Overlapping Phosphene Area
-calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
+calcPhospheneArea(subjID,session, data_path);
+%calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
 
 %% Compute Stimulus Locations
-calcStimLocations(subjID,session, data_dir, stimN);
+calcStimLocations(subjID,session, data_path, stimN);
