@@ -38,7 +38,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 8;
+    parameters.numTrials.all = 4; % make sure this is a multiple of 4
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
