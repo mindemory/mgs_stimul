@@ -42,18 +42,20 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
+curr_dir = pwd;
+mgs_dir = curr_dir(1:end-18);
+master_dir = mgs_dir(1:end-11);
+markstim_path = [mgs_dir 'markstim-master'];
+data_path = [master_dir 'data'];
+addpath(genpath(markstim_path));
 % Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
     %addpath(genpath('/home/curtislab/Documents/Psychtoolbox'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/phosphene_mapping'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/markstim-master'))
 elseif strcmp(hostname, 'mindemory.local')
     addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
     addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
@@ -319,8 +321,9 @@ ShowCursor;
 
 %% Saving stuff
 %%%% Create a directory to save all files with their times
-saveDIR_auto = ['Results_Auto/sub' subjID '/sess' session '/' datestr(now)];
-if ~exist('saveDIR_auto','dir')
+saveDIR_auto = [pwd filesep 'Results_Auto/sub' subjID ...
+    '/sess' session '/' datestr(now, 'mm_dd_yy_HH_MM_SS')];
+if exist('saveDIR_auto', 'dir') ~= 7
     mkdir(saveDIR_auto);
 end
 
@@ -330,10 +333,9 @@ save(saveName,'tmsRtnTpy')
 %%% save results
 saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
 if strcmp(saveData,'y')
-    saveDIR = ['Results/sub' subjID];
-    if ~exist('saveDIR','dir')
+    saveDIR = [pwd filesep 'Results/sub' subjID];
+    if exist('saveDIR', 'dir') ~= 7
         mkdir(saveDIR);
-        mkdir([saveDIR '/Figures']);
     end
     saveName = [saveDIR '/tmsRtnTpy_sub' subjID '_sess' session];
     save(saveName,'tmsRtnTpy')
