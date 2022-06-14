@@ -45,9 +45,12 @@ hostname = strtrim(hostname);
 curr_dir = pwd;
 mgs_dir = curr_dir(1:end-18);
 master_dir = mgs_dir(1:end-11);
-markstim_path = [mgs_dir 'markstim-master'];
-data_path = [master_dir 'data'];
+markstim_path = [mgs_dir filesep 'markstim-master'];
+data_path = [master_dir filesep 'data/phosphene_data'];
 addpath(genpath(markstim_path));
+addpath(genpath(data_path));
+
+
 % Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Syndrome Mac
@@ -321,8 +324,8 @@ ShowCursor;
 
 %% Saving stuff
 %%%% Create a directory to save all files with their times
-saveDIR_auto = [pwd filesep 'Results_Auto/sub' subjID ...
-    '/sess' session '/' datestr(now, 'mm_dd_yy_HH_MM_SS')];
+saveDIR_auto = [data_path filesep 'Results_Auto/sub' subjID '/sess' session ...
+    filesep datestr(now, 'mm_dd_yy_HH_MM_SS')];
 if exist('saveDIR_auto', 'dir') ~= 7
     mkdir(saveDIR_auto);
 end
@@ -333,7 +336,7 @@ save(saveName,'tmsRtnTpy')
 %%% save results
 saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
 if strcmp(saveData,'y')
-    saveDIR = [pwd filesep 'Results/sub' subjID];
+    saveDIR = [data_path filesep 'Results/sub' subjID];
     if exist('saveDIR', 'dir') ~= 7
         mkdir(saveDIR);
     end

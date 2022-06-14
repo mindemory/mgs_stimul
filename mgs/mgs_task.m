@@ -16,21 +16,27 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
+%%% Adding all necessary paths
+curr_dir = pwd;
+mgs_dir = curr_dir(1:end-4);
+master_dir = mgs_dir(1:end-11);
+markstim_path = [mgs_dir filesep 'markstim-master'];
+phosphene_data_path = [master_dir filesep 'data/phosphene_data/sub' subjID];
+mgs_data_path = [master_dir filesep 'data/mgs_data/sub' subjID];
+addpath(genpath(markstim_path));
+addpath(genpath(phosphene_data_path));
+addpath(genpath(mgs_data_path));
+
 %%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
-    addpath(genpath('/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/mgs'))
-    pth_to_data = ['/d/DATA/hyper/experiments/Mrugank/TMS/data/phosphene_data/sub', subjID];
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/lib/psychtoolbox-3'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/mgs'))
-    addpath(genpath('/home/curtislab/Desktop/mgs_stimul/markstim-master'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
-% function recordPhosphene()
 sca; 
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
@@ -39,7 +45,7 @@ Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL
 loadParameters(subjID, session, task, coilLocInd);
 initScreen();
 %initSubjectInfo_trial();
-initFiles();
+initFiles(mgs_data_path);
 initPeripherals();
 
 %parameters.task = task;
@@ -66,7 +72,7 @@ end
 
 %   Load phosphene retinitopy data
 %--------------------------------------------------------------------------------------------------------------------------------------%
-load([pth_to_data '/Stim_sub' subjID '_sess' session])
+load([phosphene_data_path '/Stim_sub' subjID '_sess' session])
 
 %   Initialize taskMap
 %--------------------------------------------------------------------------------------------------------------------------------------%

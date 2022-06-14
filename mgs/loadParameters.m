@@ -9,7 +9,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.eyetracker = 0; % set to 0 if there is no eyetracker
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     %parameters.hideCursor = true;
-    parameters.transparency = 0.4; % transparency for debug mode
+    parameters.transparency = 0.7; % transparency for debug mode
     parameters.viewingDistance = 55;%viewDist
     parameters.waitBeforePulse = 3.00; % seconds
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,7 +38,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 4; % make sure this is a multiple of 4
+    parameters.numTrials.all = 40; % make sure this is a multiple of 4
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
