@@ -82,12 +82,7 @@ FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;
     screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
 
 %  show load of experiment 
-%showprompts('LoadExperimentWindow')
-
-timeIdx = 1;
-
-%  init start of experiment procedures
-showprompts('SoeWindow')
+showprompts('LoadExperimentWindow')
 
 %allRuns = ones(1,taskMap.trialNum);
 %runVersion = parameters.runVersion;
@@ -121,17 +116,17 @@ if parameters.eyetracker
 end
 %startExperimentTime = GetSecs();
 %  init start of experiment procedures
-%--------------------------------------------------------------------------------------------------------------------------------------%
-%showStartOfRunWindow();
-showprompts('StartOfRunWindow')
+%---------------------------
+aaac
+vv
+
+  121w')
 
 WaitSecs(parameters.dummyDuration); % dummy time
 ListenChar(-1);
 Screen('FillRect', screen.win, screen.white, FixCross');
 Screen('Flip', screen.win);
-%  iterate over all trials
-%--------------------------------------------------------------------------------------------------------------------------------------%
-%
+
 topPriorityLevel = MaxPriority(screen.win);
 
 texDurationArray = NaN(1, taskMap.trialNum);
@@ -416,7 +411,7 @@ for trial = trialArray
             Screen('FillRect', screen.win, screen.white, FixCross');
             Screen('Flip', screen.win);
         end
-        respDurationArray = GetSecs - respStartTime;
+        respDurationArray(trial) = GetSecs - respStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Feedback window
@@ -510,9 +505,9 @@ for trialInd = 1:length(sampleDurationArray)
     timeReport(:,trialInd).itiDuration =itiDurationArray(trialInd);
     timeReport(:,trialInd).trialDuration =trialDurationArray(trialInd);
 end
-totalTimeData{timeIdx}=timeReport;
+timeReport;
 
-timeIdx = timeIdx+1;
+
 ListenChar(0);
 %   create keyboard events queue
 % showEndOfCurrentRun(currentRun);
@@ -522,6 +517,6 @@ if parameters.eyetracker
     Eyelink('Shutdown');
 end
 
-if parameters.EEG
+if parameters.TMS
     MarkStim('x');
 end

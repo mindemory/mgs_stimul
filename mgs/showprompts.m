@@ -33,15 +33,9 @@ switch type
         WaitSecs(taskMap(:,tc).iti);
         
     case 'LoadExperimentWindow'
-        text = 'Loading the experiment, please wait...';
-        Screen('TextSize', screen.win, 40);
-        DrawFormattedText(screen.win, text, 'center', 'center', white);
-        Screen('Flip', screen.win);
-        
-    case 'SoeWindow'
         text = parameters.welcomeMsg;
         Screen('TextSize', screen.win, 40);
-        DrawFormattedText(screen.win, text, 'center', 'center',white);
+        DrawFormattedText(screen.win, text, 'center', 'center', white);
         Screen('Flip', screen.win);
         
     case 'StartOfRunWindow'
