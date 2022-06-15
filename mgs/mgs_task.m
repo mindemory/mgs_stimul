@@ -119,7 +119,7 @@ end
 if parameters.eyetracker
     Eyelink('StartRecording');
 end
-startExperimentTime = GetSecs();
+%startExperimentTime = GetSecs();
 %  init start of experiment procedures
 %--------------------------------------------------------------------------------------------------------------------------------------%
 %showStartOfRunWindow();
@@ -134,17 +134,16 @@ Screen('Flip', screen.win);
 %
 topPriorityLevel = MaxPriority(screen.win);
 
-trialDurationArray = [];
-texDurationArray = zeros(1, taskMap.trialNum);
-sampleDurationArray = [];
-delay1DurationArray = [];
-pulseDurationArray = [];
-delay2DurationArray = [];
-respCueDurationArray = [];
-respDurationArray = [];
-feedbackDurationArray = [];
-itiDurationArray = [];
-%texDurationArray = [];
+texDurationArray = NaN(1, taskMap.trialNum);
+sampleDurationArray = NaN(1, taskMap.trialNum);
+delay1DurationArray = NaN(1, taskMap.trialNum);
+pulseDurationArray = NaN(1, taskMap.trialNum);
+delay2DurationArray = NaN(1, taskMap.trialNum);
+respCueDurationArray = NaN(1, taskMap.trialNum);
+respDurationArray = NaN(1, taskMap.trialNum);
+feedbackDurationArray = NaN(1, taskMap.trialNum);
+itiDurationArray = NaN(1, taskMap.trialNum);
+trialDurationArray = NaN(1, taskMap.trialNum);
 
 startExperimentTime = GetSecs();
 trialArray = 1:taskMap.trialNum;
@@ -209,9 +208,6 @@ for trial = trialArray
         blinkTimeUpperBound = 0;    
         %--------------------------------------------------------------------------
     end
-    
-    % sample window
-    %----------------------------------------------------------------------
     Priority(topPriorityLevel);
     trial_start = GetSecs();
     % synchronize time in edf file
@@ -219,13 +215,14 @@ for trial = trialArray
         Eyelink('Message', 'SYNCTIME');
     end
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Run a trial
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     while GetSecs-trial_start<=parameters.sampleDuration + taskMap.delay1(trial) + ...
           taskMap.pulseDuration(trial) + taskMap.delay2(trial)
-        
-        % sample window
-        %----------------------------------------------------------------------
-        sampleStartTime = GetSecs;
-        %Track subject's break of fixation
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Track subject's break of fixation
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         fixBreak  = 0;
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             % get the sample in the form of an event structure
@@ -248,12 +245,8 @@ for trial = trialArray
                 end
                 % do we have valid data and is the pupil visible?
                 if gazePosX~=el.MISSING_DATA && gazePosY~=el.MISSING_DATA && pupilSize>0
-                    gazePosRelativeX = gazePosX-avgGazeCenter(1,1);
-                    gazePosRelativeY = gazePosY-avgGazeCenter(1,2);
-                    gazeDisFromCenter = (gazePosRelativeX^2 + gazePosRelativeY^2)^0.5;
-                    
-                    %check whether gaze position hasnt gone out of
-                    %a circle of set radius.
+                    gazeDisFromCenter = sqrt(([gazePosX, gazePosY] - avgGazeCenter).^2);
+                    %check whether gaze position hasnt gone out of a circle of set radius.
                     if gazeDisFromCenter > parameters.fixationBoundary %in pixels
                         fixBreak = fixBreak + 1;
                         %disp(gazeDisFromCenter)
@@ -262,13 +255,14 @@ for trial = trialArray
                         thisFixBreakCount = thisFixBreakCount + 1;
                     end
                 end
+                %this resets fixBreak back to zero in case of a blink
                 if fixationBreakInstance > blinkTimeLowerBound && fixationBreakInstance < blinkTimeUpperBound
-                    fixBreak = fixBreak - thisFixBreakCount; %this resets fixBreak back to zero in case of a blink
+                    fixBreak = fixBreak - thisFixBreakCount; 
                     thisFixBreakCount = 0;
                     fixationBreakInstance = 0;
                 end
-                
-                if gazeDisFromCenter < fixationBoundary   %reset thisFixBreakCount when the eye fixates again eg. after a blink
+                %reset thisFixBreakCount when the eye fixates again eg. after a blink
+                if gazeDisFromCenter < parameters.fixationBoundary   
                     thisFixBreakCount = 0;
                 end
             end
@@ -280,12 +274,15 @@ for trial = trialArray
                 breakOfFixation = 0;
             end
             %count how many eye blinks occured
-            thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;
-            
+            thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;    
         end %end of if checking eyetracker
         
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % sample window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        sampleStartTime = GetSecs;
         % EEG marker --> Sample begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 20);
         end
         %record to the edf file that sample is started
@@ -294,74 +291,69 @@ for trial = trialArray
             Eyelink('Message', 'xDAT %d ', 1);
         end
         
-        flag = 0;
-        while GetSecs-sampleStartTime<=parameters.sampleDuration
-            if ~flag
-                %draw sample
-%                 Screen('FillOval',screen.win, screen.white, ...
-%                     [Loc_Stim(1)-parameters.stimDiam, Loc_Stim(2)-parameters.stimDiam, ...
-%                     Loc_Stim(1)+parameters.stimDiam, Loc_Stim(2)+parameters.stimDiam]);
-                Screen('FillOval',screen.win, screen.white, ...
-                    [taskMap.stimLoc_pix(trial,:) - parameters.stimDiam, ...
-                    taskMap.stimLoc_pix(trial,:) + parameters.stimDiam]);
-                %draw the fixation dot
-                Screen('FillRect', screen.win, screen.white, FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
-            end
+        % draw sample and fixation cross
+        while GetSecs-sampleStartTime <= parameters.sampleDuration
+            Screen('FillOval',screen.win, screen.white, ...
+                [taskMap.stimLoc_pix(trial,:) - parameters.stimDiam, ...
+                taskMap.stimLoc_pix(trial,:) + parameters.stimDiam]);
+            Screen('FillRect', screen.win, screen.white, FixCross');
+            Screen('Flip', screen.win);
         end
-        sampleDuration = GetSecs-sampleStartTime;
-        sampleDurationArray = [sampleDurationArray, sampleDuration];
+        sampleDurationArray(trial) = GetSecs-sampleStartTime;
         
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Delay1 window
-        %----------------------------------------------------------------------
-        % EEG marker --> Delay1 begins
-        if parameters.TMS
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        delay1StartTime = GetSecs;
+        if parameters.EEG
             MarkStim('t', 30);
         end
+        
         %record to the edf file that delay1 is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 2);
         end
         
-        delay1StartTime = GetSecs;
-        flag = 0;
-        while GetSecs-delay1StartTime<=taskMap.delay1(trial)
-            if ~flag
-                Screen('FillRect', screen.win, screen.white, FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
+        % Draw fixation cross
+        while GetSecs-delay1StartTime <= taskMap.delay1(trial)
+            Screen('FillRect', screen.win, screen.white, FixCross');
+            Screen('Flip', screen.win);
+        end
+        delay1DurationArray(trial) = GetSecs - delay1StartTime;
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % TMS pulse window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        pulseStartTime = GetSecs();
+        % EEG marker --> TMS pulse begins
+        if parameters.EEG
+            if parameters.TMS
+                MarkStim('t', 168); % 128 for TMS + 40 for EEG marker
+            else
+                MarkStim('t', 40);
+            end
+        else
+            if parameters.TMS
+                MarkStim('t', 128); % 128 for TMS
             end
         end
-        delay1Duration = GetSecs - delay1StartTime;
-        delay1DurationArray = [delay1DurationArray,delay1Duration];
-        % TMS pulse window
-        %----------------------------------------------------------------------
-        % EEG marker --> TMS pulse begins
-        if parameters.TMS
-            MarkStim('t', 168); % 128 for TMS + 40 for EEG marker
-        end
+        
         %record to the edf file that noise mask is started
-        pulseStartTime = GetSecs();
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 3);
         end
         
-%         if parameters.EEG
-%             % TMS trigger & EEG marker --> Delay1 begins
-%             MarkStim('t', 30);
-%         end
         WaitSecs(taskMap.pulseDuration(trial));
+        pulseDurationArray(trial) = GetSecs - pulseStartTime;
         
-        pulseDuration = GetSecs - pulseStartTime;
-        pulseDurationArray = [pulseDurationArray,pulseDuration];
-        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Delay2 window
-        %----------------------------------------------------------------------
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        delay2StartTime = GetSecs;
         % EEG marker --> Delay2 begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 50);
         end
         %record to the edf file that delay2 is started
@@ -370,51 +362,46 @@ for trial = trialArray
             Eyelink('Message', 'xDAT %d ', 4);
         end
         
-        delay2StartTime = GetSecs;
-        flag = 0;
+        % Draw fixation cross
         while GetSecs-delay2StartTime<=taskMap.delay2(trial)
-            if ~flag
-                Screen('FillRect', screen.win, screen.white, FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
-            end
+            Screen('FillRect', screen.win, screen.white, FixCross');
+            Screen('Flip', screen.win); 
         end
-        delay2Duration = GetSecs - delay2StartTime;
-        delay2DurationArray = [delay2DurationArray,delay2Duration];
+        delay2DurationArray(trial) = GetSecs - delay2StartTime;
         
-        % response cue window
-        %----------------------------------------------------------------------
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Response Cue window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 60);
         end
+        
         %record to the edf file that response cue is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 5);
         end
         
-        respCueStartTime = GetSecs;
-        flag = 0;
+        % Draw green fixation cross
         while GetSecs()-respCueStartTime < parameters.respCueDuration
-            if ~flag % to do DarwTexture and Flip only once
-                Screen('FillRect', screen.win, [0 256 0], FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
-            end
+            Screen('FillRect', screen.win, [0 256 0], FixCross');
+            Screen('Flip', screen.win);
         end
-        respCueDuration = GetSecs - respCueStartTime;
-        respCueDurationArray = [respCueDurationArray,respCueDuration];
+        respCueDurationArray(trial) = GetSecs - respCueStartTime;
         
-        % response window
-        %----------------------------------------------------------------------
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Response window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        respStartTime = GetSecs;
         % EEG marker --> response begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 70)
         end
-        %record to the edf file that response is started
         saccLoc_VA_x = taskMap.saccLoc_va(trial,1) * cosd(taskMap.saccLoc_va(trial,2));
         saccLoc_VA_y = taskMap.saccLoc_va(trial,1) * sind(taskMap.saccLoc_va(trial,2)); % the angle is +CCW with 0 at horizontal line twoards right.
+        %record to the edf file that response is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 6);
@@ -424,23 +411,19 @@ for trial = trialArray
             Eyelink('Message', 'yTar %s ', num2str(saccLoc_VA_y));
         end
         
-        respStartTime = GetSecs;
-        flag = 0;
+        %draw the fixation dot
         while GetSecs-respStartTime<=parameters.respDuration
-            if ~flag
-                %draw the fixation dot
-                Screen('FillRect', screen.win, screen.white, FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
-            end
+            Screen('FillRect', screen.win, screen.white, FixCross');
+            Screen('Flip', screen.win);
         end
-        respDuration = GetSecs - respStartTime;
-        respDurationArray = [respDurationArray,respDuration];
+        respDurationArray = GetSecs - respStartTime;
         
-        % feedback window
-        %----------------------------------------------------------------------
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Feedback window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 80);
         end
         %record to the edf file that feedback is started
@@ -449,30 +432,25 @@ for trial = trialArray
             Eyelink('Message', 'xDAT %d ', 7);
         end
         
-        feedbackStartTime = GetSecs;
-        flag = 0;
+        % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
-            if ~flag
-                Screen('FillOval',screen.win,[], ...
-                    [Loc_Sacc(1)-parameters.stimDiam, Loc_Sacc(2)-parameters.stimDiam, ...
-                    Loc_Sacc(1)+parameters.stimDiam, Loc_Sacc(2)+parameters.stimDiam]);
-                %draw the fixation dot
-                Screen('FillRect', screen.win, screen.white, FixCross');
-                Screen('Flip', screen.win);
-                flag = 1;
-            end
-        end %end of sample window
-        feedbackDuration = GetSecs-feedbackStartTime;
-        feedbackDurationArray = [feedbackDurationArray,feedbackDuration];
-        
-    end %end of while
+            Screen('FillOval',screen.win,[], ...
+                [Loc_Sacc(1)-parameters.stimDiam, Loc_Sacc(2)-parameters.stimDiam, ...
+                Loc_Sacc(1)+parameters.stimDiam, Loc_Sacc(2)+parameters.stimDiam]);
+            
+            Screen('FillRect', screen.win, screen.white, FixCross');
+            Screen('Flip', screen.win);
+        end
+        feedbackDurationArray(trial) = GetSecs-feedbackStartTime;
+    end
     
     if parameters.eyetracker
         Eyelink('Message', 'TRIAL_RESULT  0')
     end
-    
-    % intertrial window
-    %----------------------------------------------------------------------
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Intertrial window
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    itiStartTime = GetSecs;
     % EEG marker --> ITI begins
     if parameters.TMS
         MarkStim('t', 90);
@@ -483,24 +461,19 @@ for trial = trialArray
         Eyelink('Message', 'xDAT %d ', 8);
     end
     
-    itiStartTime = GetSecs;
-    flag = 0;
+    % Draw a fixation cross
     while GetSecs()-itiStartTime < taskMap.ITI(trial)
-        if ~flag
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win);
-        end
+        Screen('FillRect', screen.win, screen.white, FixCross');
+        Screen('Flip', screen.win);
     end
-    itiDuration = GetSecs - itiStartTime;
-    itiDurationArray = [itiDurationArray,itiDuration];
+    itiDurationArray(trial) = GetSecs - itiStartTime;
     
-    trialDuration = GetSecs()-sampleStartTime;
-    trialDurationArray = [trialDurationArray;trialDuration];
-end %end iterating over current run trials
+    trialDurationArray(trial) = GetSecs()-sampleStartTime;
+end
 
 totalTime = GetSecs()-startExperimentTime;
 
-%% saving and cleanning
+%% Saving Data and Closing everything
 % stop eyelink
 %--------------------------------------------------------------------------------------------------------------------------------------%
 if parameters.eyetracker

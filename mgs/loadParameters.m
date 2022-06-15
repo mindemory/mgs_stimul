@@ -5,9 +5,9 @@ function loadParameters(subjID, session, task, coilLocInd)
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.EEG = 0; % set to 0 if there is no EEG recording
-    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     parameters.eyetracker = 0; % set to 0 if there is no eyetracker
-    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     %parameters.hideCursor = true;
     parameters.transparency = 0.7; % transparency for debug mode
     parameters.viewingDistance = 55;%viewDist
@@ -23,11 +23,6 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.runVersion = 1;
     parameters.task = task;
     parameters.coilLocInd = coilLocInd;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    % file parameters
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-    parameters.logFile = 'untitled_log.txt';
-    parameters.runTaskMapFile = 'untitled_runTaskMap.mat';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Stimulus parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,7 +33,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 40; % make sure this is a multiple of 4
+    parameters.numTrials.all = 4 ; % make sure this is a multiple of 4
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
