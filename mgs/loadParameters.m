@@ -5,9 +5,9 @@ function loadParameters(subjID, session, task, coilLocInd)
     % program basic settings
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.EEG = 0; % set to 0 if there is no EEG recording
-    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
-    parameters.eyetracker = 1; % set to 0 if there is no eyetracker
-    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    parameters.eyetracker = 0; % set to 0 if there is no eyetracker
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     %parameters.hideCursor = true;
     parameters.transparency = 0.7; % transparency for debug mode
     parameters.viewingDistance = 55;%viewDist
@@ -27,13 +27,19 @@ function loadParameters(subjID, session, task, coilLocInd)
     % Stimulus parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parameters.eccentricity = [10]; % visual degrees
-    parameters.stimDiam = 4; % pixels
+    parameters.stimDiam = 10; % pixels
     parameters.StimContrast = 1;
     parameters.StimColor = 1;
+    parameters.cuecolor = [0 256 0];
+    parameters.feebackcolor = [0 256 0];
+    parameters.greyFactor = 0.5; % to make screen background darker or lighter    
+    parameters.fixationCrossSizeDeg = 0.6;
+    %parameters.fixationlineWidth = 5;
+    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 4 ; % make sure this is a multiple of 4
+    parameters.numTrials.all = 4; % make sure this is a multiple of 4
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
@@ -73,9 +79,6 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  geometry parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.greyFactor = 0.5; % to make screen background darker or lighter    
-    parameters.fixationCrossSizeDeg = 0.3;
-    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
     parameters.eyeTrackerOn = 0;
     %define a fixation boundary in case its not part of the input arguments
     parameters.fixationBoundary = 66;%pixels

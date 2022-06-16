@@ -35,32 +35,6 @@ for locInd = 1:length(phsphLocInds)
         end
         
         PhosphReport{locInd}.overlapCoords = overlap_area;
-%         PhosphReport{locInd}.overlapCoords.all = [];
-%         for i = 1:length(PhosphReport{locInd}.area)
-%             
-%             coords1 = PhosphReport{locInd}.area{i};
-%             overlap.counter = zeros(size(coords1,1),1);
-%             overlap.trialInd = cell(size(coords1,1),1);
-%             
-%             for j = 1:length(PhosphReport{locInd}.area)
-%                 
-%                 coords2 = PhosphReport{locInd}.area{j};
-%                 if i ~= j
-%                     membInds = ismember(coords1,coords2,'rows');
-%                     inds = find(membInds);
-%                     overlap.counter(inds) = overlap.counter(inds) + 1;
-%                     for k = 1:length(inds)
-%                         overlap.trialInd{inds(k)} = [overlap.trialInd{inds(k)} j];
-%                     end
-%                 end
-%             end
-%             PhosphReport{locInd}.overlap{i} = overlap; % each coordinate (corresponding to the phosphene at this coil location) repeated in how many trials.
-%             validInds = find(PhosphReport{locInd}.overlap{i}.counter >= overlapThresh);
-%             PhosphReport{locInd}.validInds{i} = validInds;
-%             PhosphReport{locInd}.overlapCoords.all = [PhosphReport{locInd}.overlapCoords.all;coords1(validInds,:)];
-%         end
-%         
-%         PhosphReport{locInd}.overlapCoords.unique = unique(PhosphReport{locInd}.overlapCoords.all,'rows','stable');
     end
  
 end
@@ -99,9 +73,8 @@ end
 
 %% Save results
 saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
-% %save(saveName,'PhosphReport', '-v7.3')
 save(saveName,'PhosphReport')
-% 
+
 fig_dir = [data_dir '/Figures/'];
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir);

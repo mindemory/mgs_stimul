@@ -29,8 +29,6 @@ while size(drwng_tmp, 1) > 1
     A = drwng_tmp(1, :);
     drwng_tmp(1, :) = [];
     B = drwng_tmp;
-    % distances = sqrt(sum(bsxfun(@minus, B, A).^2,2)); % This was used by
-    % Masih. Mrugank is replacing this with simple subtraction.
     distances = sqrt(sum((B - A).^2, 2));
     % find the smallest distance and use that as an index into B:
     closest_tmp = B(distances == min(distances), :); % Masih used a find function which seemed redundant.
@@ -62,29 +60,6 @@ inds_area = [];
 for x = 1:scrW_pix
   
     indsY_thisX = find(drwng_connected(:,1) == x);
-    
-%     tmp = indsY_thisX;
-%     i = 1;
-%     while i < length(tmp)
-%         if abs(drwng_connected(tmp(i),2) - drwng_connected(tmp(i+1),2)) < 2
-%             tmp(i+1) = [];
-%         else
-%             i = i+1;
-%         end
-%     end
-%     indsY_thisX = tmp;
-    
-%     if mod(length(indsY_thisX),2) == 1
-%         indsY_thisX(end) = [];
-%     end
-%     if length(indsY_thisX) > 1
-%         for i = 1:2:length(indsY_thisX)
-%             y1 = min([drwng_connected(indsY_thisX(i),2) drwng_connected(indsY_thisX(i+1),2)]);
-%             y2 = max([drwng_connected(indsY_thisX(i),2) drwng_connected(indsY_thisX(i+1),2)]);
-%             inds_y = [y1:y2]';
-%             inds_area = [inds_area ; [repmat(x,[length(inds_y) 1 ]) inds_y] ];
-%         end
-%     end
     if length(indsY_thisX) > 1
         
         y1 = min(drwng_connected(indsY_thisX,2));

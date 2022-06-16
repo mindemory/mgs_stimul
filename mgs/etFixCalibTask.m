@@ -8,7 +8,7 @@
 %make the duration an input argument? (not going to be straightforward as the 
 %size of the array and gaze position check is linked to the duration) 
 %get rid of kbs? 
-function [avgGazeCenter,avgPupilSize] = etFixCalibTask(el, eye_used, fix1) 
+function [avgGazeCenter,avgPupilSize] = etFixCalibTask(el, eye_used) 
     global screen parameters kbx
     %clear the event buffer
     FlushEvents;

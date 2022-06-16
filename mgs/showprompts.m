@@ -1,4 +1,4 @@
-function showprompts(type)
+function showprompts(prompt_name)
 % Created by mrugank (02/17/2022):
 % Currently in temporary state. Has not yet been implemented in the code.
 % It is produced by merging the individual showxxxx functions to avoid
@@ -12,8 +12,8 @@ global taskMap;
 global exitProgram;
 white = screen.white;
 
-switch type
-    case 'EoeWindow'
+switch prompt_name
+    case 'EndOfExperimentWindow'
         Screen('TextSize', screen.win, 40);
         DrawFormattedText(screen.win, parameters.thankYouMsg, 'center', 'center',white);
         Screen('Flip', screen.win);

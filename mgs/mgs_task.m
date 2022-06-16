@@ -6,11 +6,11 @@ global parameters screen hostname kbx
 
 subjID = '02';
 session = '02';
-task = 'pro';
+task = 'anti';
 coilLocInd = 1;
 
 %%% Check the system name to ensure correct paths are added.
-[ret, hostname] = system('hostname');   
+[ret, hostname] = system('hostname');
 if ret ~= 0
     hostname = getenv('HOSTNAME');
 end
@@ -22,7 +22,7 @@ mgs_dir = curr_dir(1:end-4);
 master_dir = mgs_dir(1:end-11);
 markstim_path = [mgs_dir filesep 'markstim-master'];
 phosphene_data_path = [master_dir filesep 'data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir filesep 'data/mgs_data/sub' subjID];
+mgs_data_path = [master_dir filesep 'data/mgs_data/sub' subjID '/sess' session filesep task];
 addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
@@ -37,21 +37,18 @@ else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
-sca; 
+sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
 
 loadParameters(subjID, session, task, coilLocInd);
 initScreen();
-%initSubjectInfo_trial();
 initFiles(mgs_data_path);
 initPeripherals();
 
-%parameters.task = task;
-%parameters.coilLocInd = coilLocInd;
 %%   MarkStim CHECK!
-% detect the MarkStim and perform handshake make sure that the orange 
+% detect the MarkStim and perform handshake make sure that the orange
 % light is turned on! If not, press the black button on Teensy.
 if parameters.TMS
     % Checks for possible identifiers of Teensy
@@ -78,10 +75,7 @@ load([phosphene_data_path '/Stim_sub' subjID '_sess' session])
 %--------------------------------------------------------------------------------------------------------------------------------------%
 taskMap = generateTaskMap(Stim,coilLocInd);
 
-FixCross = [screen.xCenter-1,screen.yCenter-4,screen.xCenter+1,screen.yCenter+4;...
-    screen.xCenter-4,screen.yCenter-1,screen.xCenter+4,screen.yCenter+1];
-
-%  show load of experiment 
+%  show load of experiment
 showprompts('LoadExperimentWindow')
 
 %allRuns = ones(1,taskMap.trialNum);
@@ -99,12 +93,12 @@ if parameters.eyetracker == 0
     el = 1;
     eye_used = 1;
 else
-    % initialize Eye Tracker and perform calibration  
+    % initialize Eye Tracker and perform calibration
     if ~parameters.eyeTrackerOn
         initEyeTracker_costomCalTargets;
         %perform calibration task before starting trials
         %--------------------------------------------------------------------------------------------------------------------------------------%
-        [avgGazeCenter, avgPupilSize] = etFixCalibTask(el, eye_used, FixCross');
+        [avgGazeCenter, avgPupilSize] = etFixCalibTask(el, eye_used);
         FlushEvents;
     else
         Eyelink('Openfile', parameters.edfFile);
@@ -117,28 +111,23 @@ end
 %startExperimentTime = GetSecs();
 %  init start of experiment procedures
 %---------------------------
-aaac
-vv
-
-  121w')
 
 WaitSecs(parameters.dummyDuration); % dummy time
 ListenChar(-1);
-Screen('FillRect', screen.win, screen.white, FixCross');
-Screen('Flip', screen.win);
+drawTextures('FixationCross');
 
 topPriorityLevel = MaxPriority(screen.win);
 
-texDurationArray = NaN(1, taskMap.trialNum);
-sampleDurationArray = NaN(1, taskMap.trialNum);
-delay1DurationArray = NaN(1, taskMap.trialNum);
-pulseDurationArray = NaN(1, taskMap.trialNum);
-delay2DurationArray = NaN(1, taskMap.trialNum);
-respCueDurationArray = NaN(1, taskMap.trialNum);
-respDurationArray = NaN(1, taskMap.trialNum);
-feedbackDurationArray = NaN(1, taskMap.trialNum);
-itiDurationArray = NaN(1, taskMap.trialNum);
-trialDurationArray = NaN(1, taskMap.trialNum);
+fields = {'texDuration', 'sampleDuration', 'delay1Duration', 'pulseDuration', ...
+    'delay2Duration', 'respCueDuration', 'respDuration', 'feedbackDuration',  ...
+    'itiDuration', 'trialDuration'};
+% for ii = 1:length(fields)
+%     timeReport.(fields{ii}) = NaN(taskMap.trialNum, 1);
+% end
+for ii = 1:length(fields)
+    timeReport.(fields{ii}) = NaN;
+end
+timeReport = repmat(timeReport, [1, taskMap.trialNum]);
 
 startExperimentTime = GetSecs();
 trialArray = 1:taskMap.trialNum;
@@ -151,35 +140,32 @@ for trial = trialArray
         MarkStim('t', 10);
     end
     
-%     % if backTick is pressed by the experimenter to pause the experiment
-%     KbQueueStart(kbx);
-%     [keyIsDown, keyCode] = KbQueueCheck(kbx);
-%     cmndKey = KbName(keyCode);
-%     
-%     % terminate the experiment if escape is pressed by the experimenter
-%     if strcmp(cmndKey,'ESCAPE')
-%         break
-%     end
-%     
-%     if strcmp(cmndKey,'`~')
-%         cmndKey = nan;
-%         disp('Paused! Press backTick to resume this run')
-%         KbQueueStart(kbx);
-%         % wait for the experimenter to press backTick to resume experiment
-%         while ~strcmp(cmndKey,'`~')
-%             [keyIsDown, keyCode]=KbQueueCheck(kbx);
-%             cmndKey = KbName(keyCode);
-%         end
-%     end
+    %     % if backTick is pressed by the experimenter to pause the experiment
+    %     KbQueueStart(kbx);
+    %     [keyIsDown, keyCode] = KbQueueCheck(kbx);
+    %     cmndKey = KbName(keyCode);
+    %
+    %     % terminate the experiment if escape is pressed by the experimenter
+    %     if strcmp(cmndKey,'ESCAPE')
+    %         break
+    %     end
+    %
+    %     if strcmp(cmndKey,'`~')
+    %         cmndKey = nan;
+    %         disp('Paused! Press backTick to resume this run')
+    %         KbQueueStart(kbx);
+    %         % wait for the experimenter to press backTick to resume experiment
+    %         while ~strcmp(cmndKey,'`~')
+    %             [keyIsDown, keyCode]=KbQueueCheck(kbx);
+    %             cmndKey = KbName(keyCode);
+    %         end
+    %     end
     
     disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
-    texStartTime = GetSecs;
+    %texStartTime = GetSecs;
     
-    Loc_Stim = taskMap.stimLoc_pix(trial,:);
-    Loc_Sacc = taskMap.saccLoc_pix(trial,:);
-    
-    texDuration = GetSecs - texStartTime;
-    texDurationArray(trial) = texDuration;
+    %texDuration = GetSecs - texStartTime;
+    %timeReport(trial).texDuration = texDuration;
     
     if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
         Eyelink('command', 'record_status_message "TRIAL %d/%d "', ...
@@ -200,7 +186,7 @@ for trial = trialArray
         fixationBreakInstance = 0;
         gazeDisFromCenter = 0;
         blinkTimeLowerBound = 0;
-        blinkTimeUpperBound = 0;    
+        blinkTimeUpperBound = 0;
         %--------------------------------------------------------------------------
     end
     Priority(topPriorityLevel);
@@ -212,9 +198,9 @@ for trial = trialArray
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Run a trial
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     while GetSecs-trial_start<=parameters.sampleDuration + taskMap.delay1(trial) + ...
-          taskMap.pulseDuration(trial) + taskMap.delay2(trial)
+            taskMap.pulseDuration(trial) + taskMap.delay2(trial)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Track subject's break of fixation
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,12 +238,12 @@ for trial = trialArray
                 end
                 %this resets fixBreak back to zero in case of a blink
                 if fixationBreakInstance > blinkTimeLowerBound && fixationBreakInstance < blinkTimeUpperBound
-                    fixBreak = fixBreak - thisFixBreakCount; 
+                    fixBreak = fixBreak - thisFixBreakCount;
                     thisFixBreakCount = 0;
                     fixationBreakInstance = 0;
                 end
                 %reset thisFixBreakCount when the eye fixates again eg. after a blink
-                if gazeDisFromCenter < parameters.fixationBoundary   
+                if gazeDisFromCenter < parameters.fixationBoundary
                     thisFixBreakCount = 0;
                 end
             end
@@ -269,7 +255,7 @@ for trial = trialArray
                 breakOfFixation = 0;
             end
             %count how many eye blinks occured
-            thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;    
+            thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;
         end %end of if checking eyetracker
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,10 +277,10 @@ for trial = trialArray
             Screen('FillOval',screen.win, screen.white, ...
                 [taskMap.stimLoc_pix(trial,:) - parameters.stimDiam, ...
                 taskMap.stimLoc_pix(trial,:) + parameters.stimDiam]);
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win);
+            drawTextures('FixationCross');
+
         end
-        sampleDurationArray(trial) = GetSecs-sampleStartTime;
+        timeReport(trial).sampleDuration = GetSecs-sampleStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Delay1 window
@@ -312,11 +298,10 @@ for trial = trialArray
         
         % Draw fixation cross
         while GetSecs-delay1StartTime <= taskMap.delay1(trial)
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win);
+            drawTextures('FixationCross');
         end
-        delay1DurationArray(trial) = GetSecs - delay1StartTime;
-
+        timeReport(trial).delay1Duration = GetSecs - delay1StartTime;
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % TMS pulse window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -341,7 +326,7 @@ for trial = trialArray
         end
         
         WaitSecs(taskMap.pulseDuration(trial));
-        pulseDurationArray(trial) = GetSecs - pulseStartTime;
+        timeReport(trial).pulseDuration = GetSecs - pulseStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Delay2 window
@@ -359,10 +344,9 @@ for trial = trialArray
         
         % Draw fixation cross
         while GetSecs-delay2StartTime<=taskMap.delay2(trial)
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win); 
+            drawTextures('FixationCross');
         end
-        delay2DurationArray(trial) = GetSecs - delay2StartTime;
+        timeReport(trial).delay2Duration = GetSecs - delay2StartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Response Cue window
@@ -381,10 +365,9 @@ for trial = trialArray
         
         % Draw green fixation cross
         while GetSecs()-respCueStartTime < parameters.respCueDuration
-            Screen('FillRect', screen.win, [0 256 0], FixCross');
-            Screen('Flip', screen.win);
+            drawTextures('FixationCross', parameters.cuecolor);
         end
-        respCueDurationArray(trial) = GetSecs - respCueStartTime;
+        timeReport(trial).respCueDuration = GetSecs - respCueStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Response window
@@ -408,10 +391,9 @@ for trial = trialArray
         
         %draw the fixation dot
         while GetSecs-respStartTime<=parameters.respDuration
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win);
+            drawTextures('FixationCross');
         end
-        respDurationArray(trial) = GetSecs - respStartTime;
+        timeReport(trial).respDuration = GetSecs - respStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Feedback window
@@ -429,14 +411,12 @@ for trial = trialArray
         
         % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
-            Screen('FillOval',screen.win,[], ...
-                [Loc_Sacc(1)-parameters.stimDiam, Loc_Sacc(2)-parameters.stimDiam, ...
-                Loc_Sacc(1)+parameters.stimDiam, Loc_Sacc(2)+parameters.stimDiam]);
-            
-            Screen('FillRect', screen.win, screen.white, FixCross');
-            Screen('Flip', screen.win);
+            Screen('FillOval',screen.win, parameters.feebackcolor, ...
+                [taskMap.saccLoc_pix(trial,:) - parameters.stimDiam, ...
+                taskMap.saccLoc_pix(trial,:) + parameters.stimDiam]);
+            drawTextures('FixationCross');
         end
-        feedbackDurationArray(trial) = GetSecs-feedbackStartTime;
+        timeReport(trial).feedbackDuration = GetSecs-feedbackStartTime;
     end
     
     if parameters.eyetracker
@@ -458,12 +438,11 @@ for trial = trialArray
     
     % Draw a fixation cross
     while GetSecs()-itiStartTime < taskMap.ITI(trial)
-        Screen('FillRect', screen.win, screen.white, FixCross');
-        Screen('Flip', screen.win);
+        drawTextures('FixationCross');
     end
-    itiDurationArray(trial) = GetSecs - itiStartTime;
+    timeReport(trial).itiDuration = GetSecs - itiStartTime;
     
-    trialDurationArray(trial) = GetSecs()-sampleStartTime;
+    timeReport(trial).trialDuration = GetSecs()-sampleStartTime;
 end
 
 totalTime = GetSecs()-startExperimentTime;
@@ -487,31 +466,13 @@ if parameters.eyetracker
     catch
         fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
     end
-    % Shutdown Eyelink:
-    %         Eyelink('Shutdown');
 end
-
-% save resoponse and time reports
-%--------------------------------------------------------------------------------------------------------------------------------------%
-for trialInd = 1:length(sampleDurationArray)
-    timeReport(:,trialInd).texDuration =texDurationArray(trialInd);
-    timeReport(:,trialInd).sampleDuration =sampleDurationArray(trialInd);
-    timeReport(:,trialInd).delay1Duration =delay1DurationArray(trialInd);
-    timeReport(:,trialInd).delay2Duration =delay2DurationArray(trialInd);
-    timeReport(:,trialInd).pulseDuration =pulseDurationArray(trialInd);
-    timeReport(:,trialInd).respCueDuration =respCueDurationArray(trialInd);
-    timeReport(:,trialInd).respDuration =respDurationArray(trialInd);
-    timeReport(:,trialInd).feedbackDuration =feedbackDurationArray(trialInd);
-    timeReport(:,trialInd).itiDuration =itiDurationArray(trialInd);
-    timeReport(:,trialInd).trialDuration =trialDurationArray(trialInd);
-end
-timeReport;
-
-
 ListenChar(0);
-%   create keyboard events queue
+
+% save Response and time reports
 % showEndOfCurrentRun(currentRun);
 % allRuns(currentRun) = allRuns(currentRun)+1;
+showprompts('EndOfExperimentWindow');
 
 if parameters.eyetracker
     Eyelink('Shutdown');

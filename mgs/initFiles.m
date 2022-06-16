@@ -4,23 +4,32 @@ function initFiles(data_path)
     % Create all necessary directiries (a directory for each subject, containg Results and TaskMaps)
     %--------------------------------------------------------------------------------------------------------------------------------------%
     % specify the directories to be used
-    SUB_DIR = [data_path '/' 'sess' ...
-        parameters.session '/' parameters.task '/']; % create a "SubNum" dir inside the "SubjectData" dir
-    TASK_MAPS_DIR = [SUB_DIR 'TaskMaps/'];  % create a "TaskMaps" dir inside the "SubNum" dir
-    RESULTS_DIR = [SUB_DIR 'Results/']; % create a "Results" dir inside the "SubNum" dir
-    EYE_DIR = [SUB_DIR 'EyeData/']; % create a "EyeData" dir inside the "SubNum" dir
-
-    createDirectories(parameters.subject,SUB_DIR,RESULTS_DIR,TASK_MAPS_DIR,EYE_DIR);
-    parameters.subjectDIR = SUB_DIR;
-    % Initialize the files to write in
-    %--------------------------------------------------------------------------------------------------------------------------------------%
-    %specify naming format for the data file
+    TASK_MAPS_DIR = [data_path filesep 'TaskMaps/'];  % create a "TaskMaps" dir inside the "SubNum" dir
+    RESULTS_DIR = [data_path filesep 'Results/']; % create a "Results" dir inside the "SubNum" dir
+    EYE_DIR = [data_path filesep 'EyeData/']; % create a "EyeData" dir inside the "SubNum" dir
+    
+    %% Create directories and sub-directories
+    if exist(data_path,'dir')~=7 %if the "subNum" directory doesn't exist, create one
+        mkdir(data_path);
+    end
+    if exist(RESULTS_DIR,'dir')~=7 %if the "Results" directory doesn't exist, create one
+        mkdir(RESULTS_DIR);
+        fprintf('making new results directory for subject')
+    end
+    if exist(TASK_MAPS_DIR,'dir')~=7 %if the "TaskMaps" directory doesn't exist, create one
+        mkdir(TASK_MAPS_DIR);
+        fprintf('making new task map directory for subject')
+    end
+    if exist(EYE_DIR,'dir')~=7 %if the "TaskMaps" directory doesn't exist, create one
+        mkdir(EYE_DIR);
+        fprintf('making new log file directory for subject')
+    end
+    
+    parameters.subjectDIR = data_path;
+    
+    %% Initialize the files to write in
     date_time = datestr(now, 'mm_dd_yy_HH_MM_SS');
     
-    %subNumStr = parameters.subject;
-    %task = parameters.task;
-    %coilLocStr = parameters.coilLocInd; 
-    %sessionNumStr = parameters.session;
     taskMapFile = [TASK_MAPS_DIR parameters.currentStudy '_' ...
         parameters.currentStudyVersion '_sub' parameters.subject ...
         '_sess' parameters.session '_' parameters.task '_coilLoc'...
