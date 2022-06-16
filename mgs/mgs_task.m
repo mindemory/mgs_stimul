@@ -108,7 +108,6 @@ end
 if parameters.eyetracker
     Eyelink('StartRecording');
 end
-%startExperimentTime = GetSecs();
 %  init start of experiment procedures
 %---------------------------
 
@@ -210,10 +209,9 @@ for trial = trialArray
             evt = Eyelink('NewestFloatSample');
             if eye_used ~= -1 % do we know which eye to use yet?
                 gazeCheckCounter = gazeCheckCounter + 1; %use the counter to tag the fixation checks
-                %get eye position
+                % Get eye position and pupil size
                 gazePosX = evt.gx(eye_used+1); % +1 as we're accessing MATLAB array
                 gazePosY = evt.gy(eye_used+1);
-                %get pupil size
                 pupilSize = evt.pa(eye_used+1);
                 %once pupil size is available, check against the threshold
                 %for blink, and if it crosses threshold, create a range
@@ -230,7 +228,6 @@ for trial = trialArray
                     %check whether gaze position hasnt gone out of a circle of set radius.
                     if gazeDisFromCenter > parameters.fixationBoundary %in pixels
                         fixBreak = fixBreak + 1;
-                        %disp(gazeDisFromCenter)
                         fixationBreakInstance = gazeCheckCounter;
                         %have a counter here that gives information on how many +1s have already happened
                         thisFixBreakCount = thisFixBreakCount + 1;
@@ -271,7 +268,6 @@ for trial = trialArray
             Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 1);
         end
-        
         % draw sample and fixation cross
         while GetSecs-sampleStartTime <= parameters.sampleDuration
             Screen('FillOval',screen.win, screen.white, ...
@@ -289,13 +285,11 @@ for trial = trialArray
         if parameters.EEG
             MarkStim('t', 30);
         end
-        
         %record to the edf file that delay1 is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 2);
         end
-        
         % Draw fixation cross
         while GetSecs-delay1StartTime <= taskMap.delay1(trial)
             drawTextures('FixationCross');
@@ -318,13 +312,11 @@ for trial = trialArray
                 MarkStim('t', 128); % 128 for TMS
             end
         end
-        
         %record to the edf file that noise mask is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 3);
         end
-        
         WaitSecs(taskMap.pulseDuration(trial));
         timeReport(trial).pulseDuration = GetSecs - pulseStartTime;
         
@@ -341,7 +333,6 @@ for trial = trialArray
             Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 4);
         end
-        
         % Draw fixation cross
         while GetSecs-delay2StartTime<=taskMap.delay2(trial)
             drawTextures('FixationCross');
@@ -356,13 +347,11 @@ for trial = trialArray
         if parameters.EEG
             MarkStim('t', 60);
         end
-        
         %record to the edf file that response cue is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 5);
         end
-        
         % Draw green fixation cross
         while GetSecs()-respCueStartTime < parameters.respCueDuration
             drawTextures('FixationCross', parameters.cuecolor);
@@ -383,12 +372,10 @@ for trial = trialArray
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 6);
-            
             Eyelink('command', 'record_status_message "TRIAL %d/%d /saccadeCoords"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xTar %s ', num2str(saccLoc_VA_x));
             Eyelink('Message', 'yTar %s ', num2str(saccLoc_VA_y));
         end
-        
         %draw the fixation dot
         while GetSecs-respStartTime<=parameters.respDuration
             drawTextures('FixationCross');
@@ -408,7 +395,6 @@ for trial = trialArray
             Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 7);
         end
-        
         % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             Screen('FillOval',screen.win, parameters.feebackcolor, ...
@@ -435,13 +421,11 @@ for trial = trialArray
         Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', trialArray(trial), taskMap.trialNum);
         Eyelink('Message', 'xDAT %d ', 8);
     end
-    
     % Draw a fixation cross
     while GetSecs()-itiStartTime < taskMap.ITI(trial)
         drawTextures('FixationCross');
     end
     timeReport(trial).itiDuration = GetSecs - itiStartTime;
-    
     timeReport(trial).trialDuration = GetSecs()-sampleStartTime;
 end
 
