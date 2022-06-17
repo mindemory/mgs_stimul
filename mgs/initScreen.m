@@ -37,7 +37,8 @@ function initScreen()
     Screen('BlendFunction', screen.win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; % mrugank (01/30/2022): Is this right? Deg and pixel aren't linearly related?
     screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
-    
+    Priority(topPriorityLevel);
+
     %init the measurements in pixels:
     parameters.fixationCrossSizePix =parameters.fixationCrossSizeDeg * screen.pixels_per_deg_width; 
 

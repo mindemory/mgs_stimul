@@ -39,15 +39,20 @@ end
 
 sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
-% coilHemField --> 1: Right visual filed , 2: Left visual field
-% conditions: 1: Pulse/In , 2: Pulse/Out , 3: sham/In , 4: sham/Out
 
 loadParameters(subjID, session, task, coilLocInd);
 initScreen();
 initFiles(mgs_data_path);
 initPeripherals();
 
-%%   MarkStim CHECK!
+% Initialize taskMap
+load([phosphene_data_path '/Stim_sub' subjID '_sess' session])
+taskMap = generateTaskMap(Stim,coilLocInd);
+
+%% Start Experiment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% MarkStim CHECK!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MarkStim and perform handshake make sure that the orange
 % light is turned on! If not, press the black button on Teensy.
 if parameters.TMS
@@ -55,27 +60,20 @@ if parameters.TMS
     dev_num = 0;
     devs = dir('/dev/');
     while 1
-        dev_name = ['ttyACM', num2str(dev_num)]
+        dev_name = ['ttyACM', num2str(dev_num)];
         if any(strcmp({devs.name}, dev_name))
             break
         else
             dev_num = dev_num + 1;
         end
     end
-    trigger_id = ['/dev/', dev_name];
+    trigger_id = ['/dev/', dev_name]
     MarkStim('i', trigger_id)
 end
 
-
-%   Load phosphene retinitopy data
-%--------------------------------------------------------------------------------------------------------------------------------------%
-load([phosphene_data_path '/Stim_sub' subjID '_sess' session])
-
-%   Initialize taskMap
-%--------------------------------------------------------------------------------------------------------------------------------------%
-taskMap = generateTaskMap(Stim,coilLocInd);
-
-%  show load of experiment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Initialize eyetracker
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 showprompts('LoadExperimentWindow')
 
 %allRuns = ones(1,taskMap.trialNum);
@@ -93,11 +91,10 @@ if parameters.eyetracker == 0
     el = 1;
     eye_used = 1;
 else
-    % initialize Eye Tracker and perform calibration
+    % Initialize Eye Tracker and perform calibration
     if ~parameters.eyeTrackerOn
         initEyeTracker_costomCalTargets;
-        %perform calibration task before starting trials
-        %--------------------------------------------------------------------------------------------------------------------------------------%
+        % Perform calibration task before starting trials
         [avgGazeCenter, avgPupilSize] = etFixCalibTask(el, eye_used);
         FlushEvents;
     else
@@ -105,30 +102,18 @@ else
     end
 end
 
+% Init start of experiment procedures
 if parameters.eyetracker
     Eyelink('StartRecording');
 end
-%  init start of experiment procedures
-%---------------------------
-
-WaitSecs(parameters.dummyDuration); % dummy time
+WaitSecs(parameters.dummyDuration); % dummy time, why??
 ListenChar(-1);
 drawTextures('FixationCross');
 
-topPriorityLevel = MaxPriority(screen.win);
-
-fields = {'texDuration', 'sampleDuration', 'delay1Duration', 'pulseDuration', ...
-    'delay2Duration', 'respCueDuration', 'respDuration', 'feedbackDuration',  ...
-    'itiDuration', 'trialDuration'};
-% for ii = 1:length(fields)
-%     timeReport.(fields{ii}) = NaN(taskMap.trialNum, 1);
-% end
-for ii = 1:length(fields)
-    timeReport.(fields{ii}) = NaN;
-end
+timeReport = struct;
 timeReport = repmat(timeReport, [1, taskMap.trialNum]);
 
-startExperimentTime = GetSecs();
+startExperimentTime = GetSecs;
 trialArray = 1:taskMap.trialNum;
 
 %% run over trials
@@ -171,7 +156,6 @@ for trial = trialArray
             trialArray(trial), taskMap.trialNum);
         Eyelink('Message', 'TRIAL %d ', trialArray(trial));
         
-        %--------------------------------------------------------------------------
         %re-initialize breakOfFixation variable -- assume there is no break of
         %fixation at the beginning of the trial
         breakOfFixation = 0;
@@ -188,8 +172,7 @@ for trial = trialArray
         blinkTimeUpperBound = 0;
         %--------------------------------------------------------------------------
     end
-    Priority(topPriorityLevel);
-    trial_start = GetSecs();
+    trial_start = GetSecs;
     % synchronize time in edf file
     if parameters.eyetracker
         Eyelink('Message', 'SYNCTIME');
@@ -299,7 +282,7 @@ for trial = trialArray
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % TMS pulse window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        pulseStartTime = GetSecs();
+        pulseStartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
             if parameters.TMS
@@ -353,7 +336,7 @@ for trial = trialArray
             Eyelink('Message', 'xDAT %d ', 5);
         end
         % Draw green fixation cross
-        while GetSecs()-respCueStartTime < parameters.respCueDuration
+        while GetSecs-respCueStartTime < parameters.respCueDuration
             drawTextures('FixationCross', parameters.cuecolor);
         end
         timeReport(trial).respCueDuration = GetSecs - respCueStartTime;
@@ -422,14 +405,14 @@ for trial = trialArray
         Eyelink('Message', 'xDAT %d ', 8);
     end
     % Draw a fixation cross
-    while GetSecs()-itiStartTime < taskMap.ITI(trial)
+    while GetSecs-itiStartTime < taskMap.ITI(trial)
         drawTextures('FixationCross');
     end
     timeReport(trial).itiDuration = GetSecs - itiStartTime;
-    timeReport(trial).trialDuration = GetSecs()-sampleStartTime;
+    timeReport(trial).trialDuration = GetSecs-sampleStartTime;
 end
 
-totalTime = GetSecs()-startExperimentTime;
+totalTime = GetSecs-startExperimentTime;
 
 %% Saving Data and Closing everything
 % stop eyelink
@@ -453,6 +436,10 @@ if parameters.eyetracker
 end
 ListenChar(0);
 
+%%% save results
+resultsDIR = [mgs_data_path filesep 'Results'];
+saveName = [resultsDIR '/timeReport_subj' subjID '_sess' session '_task_' task];
+save(saveName,'timeReport')
 % save Response and time reports
 % showEndOfCurrentRun(currentRun);
 % allRuns(currentRun) = allRuns(currentRun)+1;
