@@ -8,14 +8,17 @@ tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
 % Check for coil locations that have detections
 phsphLocInds = unique(tmsRtnTpy.Response.CoilLocation(tmsRtnTpy.Response.Detection == 1));
 
-CoilLoc_PosPhsph = [];
+CoilLoc_PosPhsph = NaN(length(phsphLocInds), 1);
+PhosphReport = struct;
+PhosphReport = repmat(PhosphReport, [1, length(phsphLocInds)]);
+
 for locInd = 1:length(phsphLocInds)
     coilInd = phsphLocInds(locInd);
     %% calculate border and area of each phosphene report
     phsphTrials_thisLoc = find(tmsRtnTpy.Response.CoilLocation == coilInd & tmsRtnTpy.Response.Detection == 1);
     if exist('phsphTrials_thisLoc', 'var') && ~isempty(phsphTrials_thisLoc)
         PhosphReport{locInd}.coilLocInd = coilInd;
-        CoilLoc_PosPhsph = [CoilLoc_PosPhsph coilInd];
+        CoilLoc_PosPhsph(locInd) = coilInd;
         
         for ii = 1:length(phsphTrials_thisLoc)
             trialInd = phsphTrials_thisLoc(ii);

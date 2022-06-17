@@ -1,4 +1,4 @@
-function drawTextures(texture_name, color)
+function drawTextures(texture_name, color, eccentricity)
 % created by Mrugank (06/15/2022):
 % drawTexture can be called with texture_name to draw either a fixation
 % cross or a stimulus at periphery. color argument is optional. Default
@@ -14,8 +14,8 @@ switch texture_name
             fixcolor = color;
         end
         % Get pixel width and height for inner and outer circle based of VA
-        [r_pix_width, r_pix_height] = va2pixel(parameters.fixationCrossSizeDeg);
-        [inner_width, inner_height] = va2pixel(parameters.fixationCrossSizeDeg/3);
+        [r_pix_width, r_pix_height] = va2pixel(parameters.fixationCrossSizeDeg, 'fixation');
+        [inner_width, inner_height] = va2pixel(parameters.fixationCrossSizeDeg/3, 'fixation');
         
         % Coordinates for fixation cross
         xCoords = [-r_pix_width r_pix_width 0 0];
@@ -46,6 +46,7 @@ switch texture_name
         else
             stimcolor = color;
         end
+        [ecc1, ecc2] = va2pixel(eccentricity, 'fixation', parameters.stimulusSizeDeg);
         baseRect = [0 0 inner_width*2 inner_height*2];
         maxDiameter = ceil(max(baseRect) * 1.1);
         centeredRect = CenterRectOnPointd(baseRect, screen.xCenter, screen.yCenter);

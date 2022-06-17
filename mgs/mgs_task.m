@@ -356,8 +356,8 @@ for trial = trialArray
             Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
             Eyelink('Message', 'xDAT %d ', 6);
             Eyelink('command', 'record_status_message "TRIAL %d/%d /saccadeCoords"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xTar %s ', num2str(saccLoc_VA_x));
-            Eyelink('Message', 'yTar %s ', num2str(saccLoc_VA_y));
+            Eyelink('Message', 'TarX %s ', num2str(saccLoc_VA_x));
+            Eyelink('Message', 'TarY %s ', num2str(saccLoc_VA_y));
         end
         %draw the fixation dot
         while GetSecs-respStartTime<=parameters.respDuration

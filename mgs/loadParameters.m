@@ -34,12 +34,14 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.feebackcolor = [0 256 0];
     parameters.greyFactor = 0.5; % to make screen background darker or lighter    
     parameters.fixationCrossSizeDeg = 0.6;
+    parameters.stimulusSizeDeg = 0.6;
     %parameters.fixationlineWidth = 5;
-    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default        
+    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default            parameters.fixationCrossSizeDeg = 0.6;
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 4; % make sure this is a multiple of 4
+    parameters.numTrials.all = 40; % make sure this is a multiple of 4
     %parameters.numTrials.shamIn = parameters.numTrials.all/6;
     %parameters.numTrials.shamOut = parameters.numTrials.all/6;
     parameters.numTrials.In = parameters.numTrials.all/2;
@@ -54,10 +56,10 @@ function loadParameters(subjID, session, task, coilLocInd)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % timing parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.delayDuration = 4; %[3 4];    
+    parameters.delayDuration = 3; %[3 4];    
     parameters.dummyDuration = 1.5; % what's the reason?
     parameters.sampleDuration = 0.200;
-    parameters.delay1Duration = 2;
+    parameters.delay1Duration = parameters.delayDuration/2;
     parameters.delay2Duration = parameters.delayDuration - parameters.delay1Duration;
     parameters.respCueDuration = 0.150;
     parameters.respDuration = 0.700;

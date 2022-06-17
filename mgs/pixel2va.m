@@ -11,12 +11,12 @@ function [ecc,theta] = pixel2va(x,y,ref)
         dy = -(y - screen.yCenter);
     end
 
-    dx_va = dx./screen.pixels_per_deg_width;
-    dy_va = dy./screen.pixels_per_deg_height;
+    dx_cm = dx.*screen.pixWidth;
+    dy_cm = dy.*screen.pixWidth;
 
-    ecc = sqrt(dx_va.^2 + dy_va.^2);
+    ecc = sqrt(dx_cm.^2 + dy_cm.^2);
 
-    theta = atan2d(dy,dx);
+    theta = atan2d(dy_cm, dx_cm);
     if theta < 0
         theta = 360 - abs(theta);
     end
