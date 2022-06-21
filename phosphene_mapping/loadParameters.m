@@ -12,6 +12,7 @@ function parameters = loadParameters(subjID, session)
     parameters.transparency = 0.8; % transparency for debug mode
     parameters.viewingDistance = 55;%viewDist
     parameters.waitBeforePulse = 3.00; % seconds
+    parameters.rbuffer = 0.5; % degrees of visual angle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % study parameters
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  

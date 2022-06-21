@@ -21,8 +21,7 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     cond_In = 1*ones(length(inds),1);
 
     % stimulus outside the tms FOV / TMS
-    stimLocSet_Out(:,1) = screen.screenXpixels - stimLocSet_In(:,1); % mirror vertically
-    stimLocSet_Out(:,2) = stimLocSet_In(:,2);
+    stimLocSet_Out = [screen.screenXpixels screen.screenYpixels] - stimLocSet_In; % mirror diagonally
     coilHem_Out = repmat(trial.coilHem,[parameters.numTrials.Out 1]);
     coilLoc_Out = repmat(coilLocInd,[parameters.numTrials.Out 1]);
     delay1_Out = repmat(parameters.delay1Duration,[parameters.numTrials.Out 1]);
@@ -31,33 +30,6 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     iti_Out = Shuffle(repmat(parameters.itiDuration,[1 parameters.numTrials.Out/length(parameters.itiDuration)]))';
     cond_Out = 2*ones(length(inds),1);
 
-%     % stimulus inside the tms FOV / sham
-%     inds = randi(length(trial.stimLoc),[parameters.numTrials.shamIn 1]);
-%     stimLocSet_shamIn = trial.stimLoc(inds,:);
-%     coilHem_shamIn = repmat(trial.coilHem,[parameters.numTrials.shamIn 1]);
-%     coilLoc_shamIn = repmat(coilLocInd,[parameters.numTrials.shamIn 1]);
-%     delay1_shamIn = repmat(parameters.delay1Duration,[parameters.numTrials.shamIn 1]);
-%     pulseDuration_shamIn = repmat(parameters.Pulse.Duration,[parameters.numTrials.shamIn 1]);
-%     delay2_shamIn = repmat(parameters.delay2Duration,[1 parameters.numTrials.shamIn])';
-%     delay2_shamIn = Shuffle(delay2_shamIn(1:parameters.numTrials.shamIn));
-%     iti_shamIn = repmat(parameters.itiDuration,[1 parameters.numTrials.shamIn])';
-%     iti_shamIn = Shuffle(iti_shamIn(1:parameters.numTrials.shamIn));
-%     cond_shamIn = 3*ones(length(inds),1);
-% 
-%     % stimulus outside the tms FOV / sham
-%     inds = randi(length(trial.stimLoc),[parameters.numTrials.shamOut 1]);
-%     stimLocSet_shamOut = trial.stimLoc(inds,:);
-%     stimLocSet_shamOut(:,1) = screen.screenXpixels - stimLocSet_shamOut(:,1); % mirror vertically
-%     coilHem_shamOut = repmat(trial.coilHem,[parameters.numTrials.shamOut 1]);
-%     coilLoc_shamOut = repmat(coilLocInd,[parameters.numTrials.shamOut 1]);
-%     delay1_shamOut = repmat(parameters.delay1Duration,[parameters.numTrials.shamOut 1]);
-%     pulseDuration_shamOut = repmat(parameters.Pulse.Duration,[parameters.numTrials.shamOut 1]);
-%     delay2_shamOut = repmat(parameters.delay2Duration,[1 parameters.numTrials.shamOut])';
-%     delay2_shamOut = Shuffle(delay2_shamOut(1:parameters.numTrials.shamOut));
-%     iti_shamOut = repmat(parameters.itiDuration,[1 parameters.numTrials.shamOut])';
-%     iti_shamOut = Shuffle(iti_shamOut(1:parameters.numTrials.shamOut));
-%     cond_shamOut = 4*ones(length(inds),1);
-
     % concat all conditions
     stimLocSet_pix = [stimLocSet_In ; stimLocSet_Out];
     [stimLocSet_va_ecc,stimLocSet_va_theta] = pixel2va(stimLocSet_pix(:,1),stimLocSet_pix(:,2),'ul');
@@ -65,8 +37,7 @@ function taskMap = generateTaskMap(Stim,coilLocInd)
     if strcmp(parameters.task,'pro')
         saccLocSet_pix = stimLocSet_pix;
     elseif strcmp(parameters.task,'anti')
-        saccLocSet_pix(:,1) = screen.screenXpixels - stimLocSet_pix(:,1);
-        saccLocSet_pix(:,2) = stimLocSet_pix(:,2);
+        saccLocSet_pix = [screen.screenXpixels screen.screenYpixels] - stimLocSet_pix;
     end
     
     [saccLocSet_va_ecc,saccLocSet_va_theta] = pixel2va(saccLocSet_pix(:,1),saccLocSet_pix(:,2),'ul');

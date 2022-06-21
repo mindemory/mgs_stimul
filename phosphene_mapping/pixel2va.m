@@ -1,4 +1,4 @@
-function [r, ecc, theta] = pixel2va(x,y,ref)
+function [r_outer, r_inner, theta] = pixel2va(x,y,ref)
     % ref: 'cntr' if x and y are in regard to the screen center point([0 0])
     % ref: 'ul' if x and y are in regard to the upper left corner of the screen
     % positive x: left->right , positive y: up->down
@@ -11,13 +11,17 @@ function [r, ecc, theta] = pixel2va(x,y,ref)
         dy = -(y - screen.yCenter);
     end
 
-    dx_cm = dx.*screen.pixWidth;
-    dy_cm = dy.*screen.pixWidth;
+    %dx_cm = dx.*screen.pixWidth;
+    %dy_cm = dy.*screen.pixWidth;
 
-    r = sqrt(dx_cm.^2 + dy_cm.^2);
+    r = abs(sqrt(dx.^2 + dy.^2)); % in pixel
     
-    ecc = atan2d(r, parameters.viewingDistance);
-    theta = atan2d(dy_cm, dx_cm);
+    va = atan2d(r, parameters.viewingDistance);
+    
+    r_outer = parameters.viewingDistance * tand(va+parameters.rbuffer);
+    r_inner = parameters.viewingDistance * tand(va-parameters.rbuffer);
+    
+    theta = atan2d(dy, dx);
     if theta < 0
         theta = 360 - abs(theta);
     end

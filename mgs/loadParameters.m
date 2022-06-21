@@ -35,15 +35,13 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.greyFactor = 0.5; % to make screen background darker or lighter    
     parameters.fixationCrossSizeDeg = 0.6;
     parameters.stimulusSizeDeg = 0.6;
-    %parameters.fixationlineWidth = 5;
-    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default            parameters.fixationCrossSizeDeg = 0.6;
+    parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default            
+    parameters.fixationCrossSizeDeg = 0.6;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parameters.numTrials.all = 40; % make sure this is a multiple of 4
-    %parameters.numTrials.shamIn = parameters.numTrials.all/6;
-    %parameters.numTrials.shamOut = parameters.numTrials.all/6;
+    parameters.numTrials.all = 4; % make sure this is a multiple of 4
     parameters.numTrials.In = parameters.numTrials.all/2;
     parameters.numTrials.Out = parameters.numTrials.all/2;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

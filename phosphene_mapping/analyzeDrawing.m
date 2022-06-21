@@ -16,10 +16,10 @@ scrH_pix = tmsRtnTpy.Params.screen.screenYpixels;
 drwng_uniqe = unique(drwng,'rows','stable');
 % I1 = zeros(scrH_pix,scrW_pix);
 % for i = 1:length(drwng)
+%     disp(i);
 %     I1(drwng(i,2),drwng(i,1)) = 1;
 % end
-% %[a, b] = find(I1==1);
-% %drwng_uniqe = [a, b];
+% 
 % figure(); imagesc(I1);
 
 %% find the closest point to each point

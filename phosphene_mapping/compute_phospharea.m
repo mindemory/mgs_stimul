@@ -21,13 +21,7 @@ end
 curr_dir = pwd;
 mgs_dir = curr_dir(1:end-18);
 master_dir = mgs_dir(1:end-11);
-data_path = [master_dir filesep 'data/phosphene_data/Results/sub' subjID];
-
-%% Copy Files to DATA
-fname = [data_path, '/tmsRtnTpy_sub' subjID '_sess' session '.mat'];
-% if ~exist(fname, 'file')
-%     copyfiles(subjID, session, data_path);
-% end
+data_path = [master_dir filesep 'data/phosphene_data/sub' subjID];
 
 %% Compute Overlapping Phosphene Area
 calcPhospheneArea(subjID,session, data_path);
