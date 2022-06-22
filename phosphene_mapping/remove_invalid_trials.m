@@ -27,9 +27,20 @@ function tmsRtnTpy = remove_invalid_trials(tmsRtnTpy)
     for coilLocInd = unique(tmsRtnTpy.Response.CoilLocation)
         detections = tmsRtnTpy.Response.Detection(tmsRtnTpy.Response.CoilLocation == coilLocInd);
         if sum (detections) <= 1
-            disp(['Coil location ', int2str(coilLocInd), ' has 1 or no detections.'])
-            %tmsRtnTpy.Response.CoilLocation(tmsRtnTpy.Response.CoilLocation == coilLocInd) = [];
-            %tmsRtnTpy.Response.Detection(tmsRtnTpy.Response.CoilLocation == coilLocInd) = [];
+            disp(['Coil location ', int2str(coilLocInd), ' has 1 or no detections and will be eliminated.'])
+            inds = tmsRtnTpy1.Response.CoilLocation == coilLocInd;
+            tmsRtnTpy1.Response.CoilLocation(inds) = [];
+            tmsRtnTpy1.Response.Detection(inds) = [];
+            tmsRtnTpy1.Response.Drawing.coords(inds) = [];
+            
+            tmsRtnTpy1.StrtTime.trial(inds) = [];
+            tmsRtnTpy1.StrtTime.puls(inds) = [];
+            tmsRtnTpy1.StrtTime.preResp(inds) = [];
+            tmsRtnTpy1.StrtTime.drawing(inds) = [];
+            
+            tmsRtnTpy1.Duration.preResp(inds) = [];
+            tmsRtnTpy1.Duration.drawing(inds) = [];
+            tmsRtnTpy1.Duration.trial(inds) = [];
             
         end
         %if sum

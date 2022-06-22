@@ -36,7 +36,7 @@ function loadParameters(subjID, session, task, coilLocInd)
     parameters.fixationCrossSizeDeg = 0.6;
     parameters.stimulusSizeDeg = 0.6;
     parameters.fixationCrossSizePix = 12; % size of fixation cross in pixels by default            
-    parameters.fixationCrossSizeDeg = 0.6;
+    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % number of trials for each condition 

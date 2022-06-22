@@ -21,10 +21,6 @@
 
 % The code runs till quit (q) is pressed by the experimenter. 
 
-% TODO (by Masih):
-% add eye tracking
-%function [saveData] = recordPhosphene(subjID,session)
-
 %% Initialization
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB
@@ -58,10 +54,6 @@ if strcmp(hostname, 'syndrome')
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
-    %addpath(genpath('/home/curtislab/Documents/Psychtoolbox'))
-elseif strcmp(hostname, 'mindemory.local')
-    addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/phosphene_mapping'))
-    addpath(genpath('/Users/mrugankdake/remote/hyper/experiments/Mrugank/TMS/mgs_stimul/markstim-master'))
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
@@ -74,6 +66,11 @@ loadParameters(subjID, session);
 initScreen()
 initPeripherals()
 
+% store screen and subject parameters in tmsRtnTpy
+tmsRtnTpy.Params.ID = ['sub' subjID '_sess' session];
+tmsRtnTpy.Params.screen = screen;
+tmsRtnTpy.Params.taskParams = parameters;
+
 %% TEENSY CHECK!
 % detect the TeensyTrigger and perform handshake make sure that the orange 
 % light is turned on! If not, press the black button on Teensy Trigger.
@@ -82,28 +79,20 @@ if parameters.TMS
     dev_num = 0;
     devs = dir('/dev/');
     while 1
-        dev_name = ['ttyACM', num2str(dev_num)]
+        dev_name = ['ttyACM', num2str(dev_num)];
         if any(strcmp({devs.name}, dev_name))
             break
         else
             dev_num = dev_num + 1;
         end
     end
-    trigger_id = ['/dev/', dev_name];
+    trigger_id = ['/dev/', dev_name]
     MarkStim('i', trigger_id)
 end
 
 %% Create blank screen
-% draw fixation cross on a black screen
 FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
     screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
-Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-Screen('Flip', screen.win);
-
-% store screen and subject parameters in tmsRtnTpy
-tmsRtnTpy.Params.ID = ['sub' subjID '_sess' session];
-tmsRtnTpy.Params.screen = screen;
-tmsRtnTpy.Params.taskParams = parameters;
 
 % initialize trial and coil indices, incrementally increased on each run
 trialInd = 0;
@@ -115,11 +104,7 @@ while 1
     KbQueueStart(kbx);
     [keyIsDown, keyCode]=KbQueueCheck(kbx);
     while ~keyIsDown
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.instructions, 'center', ...
-            'center', parameters.text_color);
-        Screen('Flip', screen.win);
-        
+        showprompts('WelcomeWindow')
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -131,67 +116,41 @@ while 1
     % check for any keypresses
     KbQueueStart(kbx);
     [keyIsDown, keyCode] = KbQueueCheck(kbx);
-    
     % Check for new or old coil location
     while ~keyIsDown
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.first_msg, 'center', ...
-            'center', parameters.text_color);
-        Screen('Flip', screen.win);
-        
+        showprompts('FirstMessage')
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
-        
     end
-    
     % New coil location
     if strcmp(cmndKey, parameters.newloc_key)
         display(sprintf('\n---------------------------------------------'));
         display(sprintf('\n\tnew coil location initiated.'));
-        
         coilLocInd = coilLocInd+1;
-        startFlag = 1;
-
         while 1
             KbQueueStart(kbx);
             [keyIsDown, keyCode] = KbQueueCheck(kbx);
             while ~keyIsDown
-                Screen('TextSize', screen.win, parameters.font_size);
-                DrawFormattedText(screen.win, parameters.second_msg, ...
-                    'center', 'center', parameters.text_color);
-                Screen('Flip', screen.win);
-
+                showprompts('SecondMessage')
                 [keyIsDown, keyCode] = KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
-            
-            if strcmp(cmndKey, parameters.trial_key)
-                startFlag = 0;
-                
-                Screen('FillRect', screen.win, screen.black);
-                Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-                Screen('Flip', screen.win);
+            if strcmp(cmndKey, parameters.trial_key)                
+                drawTextures('FixationCross');
                 trialInd = trialInd+1;
-                strtTime.trial(trialInd) = GetSecs;
-                
                 display(sprintf('\n\tready for puls'));
-                strtTime.puls(trialInd) = GetSecs;
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
-                
                 if parameters.TMS
                     MarkStim('t', 128);
                 end
-                
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
-                
                 % wait for subject's response:
                 % right click: not seen a phosphene, go to next trial
                 % first left click: start drawing
                 % second left click: end drawing
                 while 1
-                    strtTime.preResp(trialInd) = GetSecs;
                     % show the mouse location and wait for subject's click
                     KbQueueStart(mbx);
                     [mouseKlick, clickCode] = KbQueueCheck(mbx);
@@ -204,38 +163,25 @@ while 1
                     while ~any(clickCode)
                         [mouseKlick, clickCode] = KbQueueCheck(mbx);
                         [x,y,buttons]=GetMouse(screen.win);
-                        
-                        Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
                         Screen('FillOval', screen.win, parameters.fixation_color, [x-2 y-2 x+2 y+2]);
-                        Screen('Flip', screen.win);
+                        drawTextures('FixationCross');
                     end
                     
                     KbQueueStop(mbx);
-                    duration.preResp(trialInd) = GetSecs - strtTime.preResp(trialInd);
                     Response.CoilLocation(trialInd) = coilLocInd;
                     
                     % abort trial after subject's right click
                     if clickCode(parameters.right_key)
-                        TimeStmp.DetectionResp(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 0;
-                        duration.drawing(trialInd) = nan;
-                        Response.Drawing.coords{trialInd} = nan;
-                        
-                        Screen('TextSize', screen.win, parameters.font_size);
-                        DrawFormattedText(screen.win, parameters.no_phosph_msg, ...
-                            'center', 'center', parameters.text_color);
-                        Screen('Flip', screen.win);
+                        Response.Drawing{trialInd} = nan;
+                        showprompts('NoPhosphene');
                         WaitSecs(2);
                         break
                         
                     % start drawing after a left click
                     elseif clickCode(parameters.left_key)
-                        TimeStmp.DetectionResp(trialInd) = GetSecs;
-                        strtTime.drawing(trialInd) = GetSecs;
                         Response.Detection(trialInd) = 1;
-                        
                         Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-                        
                         KbQueueStart(mbx);
                         [mouseKlick, clickCode] = KbQueueCheck(mbx);
                         
@@ -247,72 +193,40 @@ while 1
                             XY = [XY; x y];
                             % Generate phosphene drawing
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
+                                Screen('FillOval', screen.win, parameters.fixation_color, [x-2 y-2 x+2 y+2]);
                                 Screen('DrawLine', screen.win, parameters.fixation_color, ...
                                     XY(end-1,1), XY(end-1,2), XY(end,1), XY(end,2),1);
                             end
                             Screen('Flip', screen.win,[],1);
                         end
-                        duration.drawing(trialInd) = GetSecs - strtTime.drawing(trialInd);
-                        Response.Drawing.coords{trialInd} = XY;
+                        Response.Drawing{trialInd} = XY;
                         KbQueueStop(mbx);
                         break
                         % end of recording the drawing process
                     end
                 end
-                duration.trial(trialInd) = GetSecs - strtTime.trial(trialInd);
                 Screen('Flip', screen.win); % clear Flip buffer
-                Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-                Screen('Flip', screen.win);
-                
-                tmsRtnTpy.TimeStmp = TimeStmp;
-                tmsRtnTpy.Duration = duration;
+                drawTextures('FixationCross');
                 tmsRtnTpy.Response = Response;
-                tmsRtnTpy.StrtTime = strtTime;
-            
             % New coil location
             elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
-                TimeStmp.ThisCoilLocationTermination = GetSecs;
-                
-                Screen('TextSize', screen.win, parameters.font_size);
-                DrawFormattedText(screen.win, parameters.new_coil_msg, ...
-                    'center', 'center', screen.black);
-                Screen('Flip', screen.win);
-    
-                if ~startFlag
-                    Screen('FillRect', screen.win, screen.black);
-                    Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-                    Screen('Flip', screen.win);
-                end
+                showprompts('NewLocation');
                 break
-            
             % Terminate the program
             elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
-            
-            Screen('FillRect', screen.win,screen.black);
-            Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
-            Screen('Flip', screen.win);
+            drawTextures('FixationCross');
         end
-        
         % Terminate the program
         if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
-            TimeStmp.ProgramTermination = GetSecs;
-            q_msg = 'program terminated by the experimenter!';
-            Screen('TextSize', screen.win, parameters.font_size);
-            DrawFormattedText(screen.win, parameters.quit_msg, 'center', 'center', parameters.text_color);
-            Screen('Flip', screen.win);
+            showprompts('Quit');
             WaitSecs(2);
             break
-        end
-    
+        end   
     % Terminate the program
     elseif strcmp(cmndKey, parameters.quit_key)
-        TimeStmp.ProgramTermination = GetSecs;
-        q_msg = 'program terminated by the experimenter!';
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.quit_msg, 'center', 'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        showprompts('Quit');
         WaitSecs(2);
         break
     end

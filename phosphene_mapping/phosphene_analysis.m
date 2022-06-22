@@ -4,7 +4,6 @@ clear; close all; clc;% clear mex;
 global parameters;
 subjID = '02';
 session = '02';
-stimN = 10;
 parameters = loadParameters(subjID, session);
 
 [ret, hostname] = system('hostname');
@@ -24,8 +23,10 @@ master_dir = mgs_dir(1:end-11);
 data_path = [master_dir filesep 'data/phosphene_data/sub' subjID];
 
 %% Compute Overlapping Phosphene Area
-calcPhospheneArea(subjID,session, data_path);
-%calcPhospheneArea(subjID,session,parameters.overlapThreshold, data_dir);
+calcPhospheneArea(subjID, session, data_path);
 
 %% Compute Stimulus Locations
-calcStimLocations(subjID,session, data_path, stimN);
+%calcStimLocations(subjID, session, data_path);
+
+choosenCoilLoc = input('Enter choosen coil location: ');
+generateTaskMaps(subjID, session, data_path, choosenCoilLoc);

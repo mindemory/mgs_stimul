@@ -11,10 +11,10 @@ phsphLocInds = unique(tmsRtnTpy.Response.CoilLocation(tmsRtnTpy.Response.Detecti
 CoilLoc_PosPhsph = NaN(length(phsphLocInds), 1);
 PhosphReport = struct;
 PhosphReport = repmat(PhosphReport, [1, length(phsphLocInds)]);
+%% Calculate border and area of each phosphene report
 
 for locInd = 1:length(phsphLocInds)
     coilInd = phsphLocInds(locInd);
-    %% calculate border and area of each phosphene report
     phsphTrials_thisLoc = find(tmsRtnTpy.Response.CoilLocation == coilInd & tmsRtnTpy.Response.Detection == 1);
     if exist('phsphTrials_thisLoc', 'var') && ~isempty(phsphTrials_thisLoc)
         PhosphReport(locInd).coilLocInd = coilInd;
@@ -29,7 +29,7 @@ for locInd = 1:length(phsphLocInds)
             PhosphReport(locInd).border{ii} = border;
         end
         
-        %% calculate the overlaped areas
+        % calculate the overlaped areas
         overlap_area = PhosphReport(locInd).area{1};
         for ii = 2:length(PhosphReport(locInd).area)
             overlap_area = intersect(overlap_area, PhosphReport(locInd).area{ii}, 'rows');
@@ -37,7 +37,49 @@ for locInd = 1:length(phsphLocInds)
         
         PhosphReport(locInd).overlapCoords = overlap_area;
     end
- 
+end
+
+%% Calculate possible target coordinates
+Stim = struct;
+Stim = repmat(Stim, [1, length(PhosphReport)]);
+
+for ii = 1:length(PhosphReport)
+    coilLocInd = PhosphReport(ii).coilLocInd;
+    Stim(ii).coilLocInd = coilLocInd;
+    
+    vc.coords = PhosphReport(ii).overlapCoords;
+    vc.mean = [mean(vc.coords(:,1)) mean(vc.coords(:,2))];
+    vc.std = [std(vc.coords(:,1)) std(vc.coords(:,2))];
+        
+    [r_outer, r_inner, theta] = pixel2va(vc.mean(1),vc.mean(2),'ul', tmsRtnTpy); % r in pixel
+    theta_range = theta-45:1:theta+45;
+    for jj = 1:length(theta_range)
+        theta_temp = theta_range(jj);
+        if theta_temp < 0
+            theta_temp = 360 - abs(theta_temp);
+            theta_range(jj) = theta_temp;
+        end 
+    end
+    coords_outer = polar2pixel(r_outer, theta_range, tmsRtnTpy);
+    coords_inner = polar2pixel(r_inner, theta_range, tmsRtnTpy);
+    
+    edge1 = connectPoints(coords_outer(1, :), coords_inner(1, :));
+    edge2 = connectPoints(coords_outer(end, :), coords_inner(end, :));
+    
+    coords_all = [edge1; coords_outer; flip(edge2); flip(coords_inner)];
+    coords_all = round(coords_all);
+    
+    [area_bound, ~] = analyzeDrawing(coords_all, tmsRtnTpy);
+    
+    area_common = intersect(area_bound, vc.coords, 'rows');
+    
+    Stim(ii).StimuliSampleSpace = area_common;
+        
+    if vc.mean(1) > tmsRtnTpy.Params.screen.xCenter
+        Stim(ii).coilHemField = 1; % Right visual field
+    else
+        Stim(ii).coilHemField = 2; % Left visual field
+    end
 end
 
 %% Visualize Phosphene maps
@@ -73,14 +115,17 @@ for locInd = 1:N
 end
 
 %% Save results
-saveName = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
-save(saveName,'PhosphReport')
+saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
+save(saveName_phosph,'PhosphReport')
+
+saveName_stim = [data_dir '/Stim_sub' subjID '_sess' session];
+save(saveName_stim,'Stim')
 
 fig_dir = [data_dir '/Figures/'];
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir);
 end
-saveName = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
-saveas(fig,saveName,'fig')
-saveas(fig,saveName,'png')
-saveas(fig,saveName,'epsc')
+saveName_phosph_fig = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
+saveas(fig,saveName_phosph_fig,'fig')
+saveas(fig,saveName_phosph_fig,'png')
+saveas(fig,saveName_phosph_fig,'epsc')
