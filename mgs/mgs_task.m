@@ -4,8 +4,9 @@
 clear; close all; clc;% clear mex;
 global parameters screen hostname kbx
 
-subjID = '02';
-session = '02';
+subjID = '20';
+session = '01';
+block = '01';
 task = 'anti';
 coilLocInd = 1;
 

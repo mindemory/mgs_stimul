@@ -12,12 +12,9 @@ function initScreen()
     [screen.screenWidth, screen.screenHeight] = Screen('DisplaySize',screen.id); %get screen width and height in mm
     screen.screenWidth = screen.screenWidth/10; %mm to cm
     screen.screenHeight = screen.screenHeight/10; %mm to cm
-    format short
-       
-    screen.Hperdegree = screen.viewDist * tand(1); %height for one degree in cm
-    screen.Wperdegree = screen.Hperdegree; %width for one degree in cm
-    screen.pixWidth = screen.screenWidth/screen.screenXpixels; %cm/pixel
-    screen.pixHeight = screen.screenHeight/screen.screenYpixels; %cm/pixel
+    pixWidth = screen.screenWidth/screen.screenXpixels; %cm/pixel
+    pixHeight = screen.screenHeight/screen.screenYpixels; %cm/pixel
+    screen.pixSize = mean([pixWidth, pixHeight]); %cm/pixel
     screen.xCenter = screen.screenXpixels/2;
     screen.yCenter = screen.screenYpixels/2;
 

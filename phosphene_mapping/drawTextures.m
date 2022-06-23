@@ -8,38 +8,37 @@ global screen parameters;
 %% Fixation Cross
 fixcolor = screen.black;
 % Get pixel width and height for inner and outer circle based of VA
-[r_pix_width, r_pix_height] = va2pixel(parameters.fixationCrossSizeDeg);
-[inner_width, inner_height] = va2pixel(parameters.fixationCrossSizeDeg/3);
+r_pix_outer = va2pixel(parameters.fixationCrossSizeDeg);
+r_pix_inner = va2pixel(parameters.fixationCrossSizeDeg/3);
 
 % Coordinates for fixation cross
-xCoords = [-r_pix_width r_pix_width 0 0];
-yCoords = [0 0 -r_pix_height r_pix_height];
+xCoords = [-r_pix_outer r_pix_outer 0 0];
+yCoords = [0 0 -r_pix_outer r_pix_outer];
 allCoords = [xCoords; yCoords];
 
 % Coordinates for outer circle
-baseRect_outer = [0 0 r_pix_width*2 r_pix_height*2];
+baseRect_outer = [0 0 r_pix_outer*2 r_pix_outer*2];
 maxDiameter_outer = ceil(max(baseRect_outer) * 1.1);
 centeredRect_outer = CenterRectOnPointd(baseRect_outer, screen.xCenter, screen.yCenter);
 
 % Coordinates for inner circle
-baseRect_inner = [0 0 inner_width*2 inner_height*2];
+baseRect_inner = [0 0 r_pix_inner*2 r_pix_inner*2];
 maxDiameter_inner = ceil(max(baseRect_inner) * 1.1);
 centeredRect_inner = CenterRectOnPointd(baseRect_inner, screen.xCenter, screen.yCenter);
 
 % Draw Textures
 switch texture_name
-    
     case 'FixationCross'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(inner_width*1.5), ...
+        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
             fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
     case 'MousePointer'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(inner_width*1.5), ...
+        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
             fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         % Drawing Mouse Pointer
@@ -49,7 +48,7 @@ switch texture_name
     case 'PhospheneDrawing'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(inner_width*1.5), ...
+        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
             fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         % Drawing Mouse Pointer

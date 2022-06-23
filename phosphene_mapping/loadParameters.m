@@ -11,7 +11,7 @@ function loadParameters(subjID, session)
     parameters.transparency = 0.7; % transparency for debug mode
     parameters.viewingDistance = 55; % viewDist in cm
     parameters.waitBeforePulse = 2.00; % seconds
-    parameters.rbuffer = 0.5; % degrees of visual angle
+    parameters.rbuffer = 2; % degrees of visual angle
     parameters.pointerSize = 5; % in pixels
     parameters.fixationCrossSizeDeg = 0.6; % degrees of visual angle
     parameters.eyeTrackerOn = 0;

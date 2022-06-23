@@ -1,6 +1,6 @@
-function generateTaskMap(subjID, session, data_dir, choosenCoilLoc)
+function generateTaskMap(subjID, session, data_dir, coilLocInd)
 global parameters;
-fileName = ['Stim_sub' subjID '_sess' session];
+fileName = ['PhospheneReport_sub' subjID '_sess' session];
 stimuli_report_path = [data_dir '/' fileName];
 load(stimuli_report_path);
 
@@ -9,8 +9,8 @@ load(tmsRtnTpy_path);
 
 % coilHemField --> 1: Right visual filed , 2: Left visual field
 % conditions: 1: Pulse/In , 2: Pulse/Out 
-trial.stimLoc = Stim(coilLocInd).StimuliSampleSpace;
-trial.coilHem = Stim(coilLocInd).coilHemField;
+trial.stimLoc = PhosphReport(coilLocInd).StimuliSampleSpace;
+trial.coilHem = PhosphReport(coilLocInd).coilHemField;
 %trial.coilLoc = coilLocInd;
 
 % stimulus inside the tms FOV / TMS

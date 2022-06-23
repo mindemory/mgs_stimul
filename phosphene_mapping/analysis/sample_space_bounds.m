@@ -1,0 +1,50 @@
+function coords_all = sample_space_bounds(XY, tmsRtnTpy)
+dx = XY(1) - tmsRtnTpy.Params.screen.xCenter;
+dy = -(XY(2) - tmsRtnTpy.Params.screen.yCenter);
+
+% convert pixel distance to cm
+dx_cm = dx.*tmsRtnTpy.Params.screen.pixSize;
+dy_cm = dy.*tmsRtnTpy.Params.screen.pixSize;
+
+% compute euclidean distance of XY from center in cm
+r = abs(sqrt(dx_cm.^2 + dy_cm.^2));
+
+% compute visual angle subtended by XY
+va = atan2d(r, tmsRtnTpy.Params.taskParams.viewingDistance);
+
+% compute r given a buffer of visual angle
+r_outer_cm = tmsRtnTpy.Params.taskParams.viewingDistance * tand(va+tmsRtnTpy.Params.taskParams.rbuffer); % in cm
+r_inner_cm = tmsRtnTpy.Params.taskParams.viewingDistance * tand(va-tmsRtnTpy.Params.taskParams.rbuffer); % in cm
+
+% compute r_outer and r_inner in pixel
+r_outer = r_outer_cm./tmsRtnTpy.Params.screen.pixSize;
+r_inner = r_inner_cm./tmsRtnTpy.Params.screen.pixSize;
+
+% polar angle of XY
+theta = atan2d(dy_cm, dx_cm);
+
+% boundary of polar angles possible
+theta_range = theta-60:1:theta+60; % assuming phosphenes cannot span more than 120 degrees
+theta_range(theta_range<0) = 360 + theta_range(theta_range<0); % accounting for angles between 0 to 360
+
+% compute border of outer arc
+x_outer = r_outer.*cosd(theta_range) + tmsRtnTpy.Params.screen.xCenter; % in pixel
+y_outer = (-r_outer.*sind(theta_range) + tmsRtnTpy.Params.screen.yCenter); % in pixel
+coords_outer = [x_outer; y_outer]';
+
+% compute border of inner arc
+x_inner = r_inner.*cosd(theta_range) + tmsRtnTpy.Params.screen.xCenter; % in pixel
+y_inner = (-r_inner.*sind(theta_range) + tmsRtnTpy.Params.screen.yCenter); % in pixel
+coords_inner = [x_inner; y_inner]';
+
+% compute edges that connect outer and inner arcs
+edge1 = connectPoints(coords_outer(1, :), coords_inner(1, :));
+edge1 = connect_missing_points(edge1);
+edge2 = connectPoints(coords_outer(end, :), coords_inner(end, :));
+edge2 = connect_missing_points(edge2);
+
+% create a giant matrix of all coordinates of probably span of
+% phosphene map within which target locations will be drawn
+coords_all = [edge1; coords_outer; flip(edge2); flip(coords_inner)];
+coords_all = round(coords_all);
+end

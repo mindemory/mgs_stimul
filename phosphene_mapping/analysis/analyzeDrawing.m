@@ -1,9 +1,7 @@
-function [inds_area, drawing_connected] = analyzeDrawing(drawing, tmsRtnTpy)
-
+function [area, border] = analyzeDrawing(drawing, screenXpixels)
 % The part for calculating the area coordinates needs to be re-written.
 % Right now, some columns are missed in the calculated areas. 
-
-% drwng = round(drwng); % Mrugank (04/11/2022): What's the point of this?
+drawing = round(drawing); % In case pixels are not already rounded.
 % scrH_pix = tmsRtnTpy.Params.screen.screenYpixels;
 % scrW_pix = tmsRtnTpy.Params.screen.screenXpixels;
 drawing(drawing <= 0) = 1;
@@ -27,24 +25,24 @@ while size(drawing_tmp, 1) > 1
     B = drawing_tmp;
     distances = sqrt(sum((B - A).^2, 2));
     % find the smallest distance and use that as an index into B:
-    closest_tmp = B(distances == min(distances), :); % Masih used a find function which seemed redundant.
+    closest_tmp = B(distances == min(distances), :);
     closest(k, :) = closest_tmp(1, :);
     k = k + 1;
 end
 
 %% connect the each point to it's closest point
-drawing_connected = [];
+border = [];
 for i = 1:size(closest,1)
     xy1 = drawing_unique(i,:);
     xy2 = closest(i,:);
     xyConnected = connectPoints(xy1, xy2);
-    drawing_connected = [drawing_connected; xyConnected];
+    border = [border; xyConnected];
 end
 
-drawing_connected = connect_missing_points(drawing_connected);
+border = connect_missing_points(border);
 
 % throw away redundant coordinates
-drawing_connected = unique(drawing_connected,'rows','stable');
+border = unique(border,'rows','stable');
 % I1 = zeros(scrH_pix,scrW_pix);
 % for i = 1:length(drwng_connected)
 %     I1(drwng_connected(i,2),drwng_connected(i,1)) = 1;
@@ -52,19 +50,18 @@ drawing_connected = unique(drawing_connected,'rows','stable');
 % figure(); imagesc(I1);
 
 %% fill in the shape
-inds_area = [];
-for x = 1:tmsRtnTpy.Params.screen.screenXpixels
-  
-    indsY = find(drawing_connected(:,1) == x);
+area = [];
+for x = 1:screenXpixels
+    indsY = find(border(:,1) == x);
     if length(indsY) > 1
-        
-        y1 = min(drawing_connected(indsY,2));
-        y2 = max(drawing_connected(indsY,2));
+        y1 = min(border(indsY,2));
+        y2 = max(border(indsY,2));
         inds_y = y1:y2;
-        inds_area = [inds_area ; [repmat(x,[length(inds_y) 1 ]) inds_y'] ];
+        area = [area ; [repmat(x,[length(inds_y) 1 ]) inds_y'] ];
     end
 end
-inds_area = unique(inds_area,'rows','stable');
+% throw away redundant coordinates
+area = unique(area,'rows','stable');
 
 % I1 = zeros(scrH_pix,scrW_pix);
 % for i = 1:length(inds_area)
