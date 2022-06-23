@@ -1,3 +1,4 @@
+function recordPhosphenes(subjID, session)
 %% Record Phoshpenes (mrugank: 03/07/2022)
 % The code has been originally written by Masih. It has been adapted to
 % make changes to suitably adjust to the new display, interact with the TMS
@@ -24,12 +25,10 @@
 %% Initialization
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB
-
-clear; close all; clc;% clear mex;
+clearvars -except subjID session; close all; clc;% clear mex;
 global parameters screen hostname kbx mbx
-
-subjID = '100';
-session = '01';
+subjID = num2str(subjID, '%02d');
+session = num2str(session, '%02d');
 
 % Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
@@ -45,7 +44,6 @@ markstim_path = [mgs_dir filesep 'markstim-master'];
 data_path = [master_dir filesep 'data/phosphene_data'];
 addpath(genpath(markstim_path));
 addpath(genpath(data_path));
-
 
 % Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
@@ -90,10 +88,6 @@ if parameters.TMS
     MarkStim('i', trigger_id)
 end
 
-%% Create blank screen
-FixCross = [screen.xCenter-1, screen.yCenter-4, screen.xCenter+1, screen.yCenter+4;...
-    screen.xCenter-4, screen.yCenter-1, screen.xCenter+4, screen.yCenter+1];
-
 % initialize trial and coil indices, incrementally increased on each run
 trialInd = 0;
 coilLocInd = 0;
@@ -102,7 +96,7 @@ ListenChar(-1) % prevent inputs from keyboard and mouse on main screen
 %% Instructions for the subject
 while 1
     KbQueueStart(kbx);
-    [keyIsDown, keyCode]=KbQueueCheck(kbx);
+    [keyIsDown, ~]=KbQueueCheck(kbx);
     while ~keyIsDown
         showprompts('WelcomeWindow')
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
@@ -115,26 +109,31 @@ end
 while 1
     % check for any keypresses
     KbQueueStart(kbx);
-    [keyIsDown, keyCode] = KbQueueCheck(kbx);
+    [keyIsDown, ~] = KbQueueCheck(kbx);
     % Check for new or old coil location
     while ~keyIsDown
         showprompts('FirstMessage')
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % New coil location
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if strcmp(cmndKey, parameters.newloc_key)
         display(sprintf('\n---------------------------------------------'));
         display(sprintf('\n\tnew coil location initiated.'));
         coilLocInd = coilLocInd+1;
         while 1
             KbQueueStart(kbx);
-            [keyIsDown, keyCode] = KbQueueCheck(kbx);
+            [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
                 showprompts('SecondMessage')
                 [keyIsDown, keyCode] = KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % New trial
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if strcmp(cmndKey, parameters.trial_key)                
                 drawTextures('FixationCross');
                 trialInd = trialInd+1;
@@ -146,85 +145,89 @@ while 1
                 end
                 WaitSecs(parameters.Pulse.Duration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % wait for subject's response:
                 % right click: not seen a phosphene, go to next trial
                 % first left click: start drawing
                 % second left click: end drawing
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 while 1
                     % show the mouse location and wait for subject's click
                     KbQueueStart(mbx);
-                    [mouseKlick, clickCode] = KbQueueCheck(mbx);
-                    
-                    [x, y, buttons] = GetMouse(screen.win);
-                    
+                    [~, clickCode] = KbQueueCheck(mbx);
                     SetMouse(screen.xCenter, screen.yCenter, screen.win);
                     HideCursor(screen.win);
-                    
                     while ~any(clickCode)
-                        [mouseKlick, clickCode] = KbQueueCheck(mbx);
-                        [x,y,buttons]=GetMouse(screen.win);
-                        Screen('FillOval', screen.win, parameters.fixation_color, [x-2 y-2 x+2 y+2]);
-                        drawTextures('FixationCross');
+                        [~, clickCode] = KbQueueCheck(mbx);
+                        [x,y,~]=GetMouse(screen.win);
+                        drawTextures('MousePointer', x, y);
                     end
-                    
                     KbQueueStop(mbx);
                     Response.CoilLocation(trialInd) = coilLocInd;
-                    
-                    % abort trial after subject's right click
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Abort Trial
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     if clickCode(parameters.right_key)
                         Response.Detection(trialInd) = 0;
                         Response.Drawing{trialInd} = nan;
                         showprompts('NoPhosphene');
                         WaitSecs(2);
                         break
-                        
-                    % start drawing after a left click
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Start Drawing
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     elseif clickCode(parameters.left_key)
                         Response.Detection(trialInd) = 1;
-                        Screen('FillRect', screen.win, parameters.fixation_color, FixCross');
                         KbQueueStart(mbx);
-                        [mouseKlick, clickCode] = KbQueueCheck(mbx);
-                        
-                        [x, y, buttons] = GetMouse(screen.win);
+                        [~, clickCode] = KbQueueCheck(mbx);
+                        [x, y, ~] = GetMouse(screen.win);
                         XY = [x y];
-                        while ~clickCode(parameters.left_key) % end drawing if left click pressed
-                            [mouseKlick, clickCode] = KbQueueCheck(mbx);
-                            [x, y, buttons] = GetMouse(screen.win);
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                        % Finish Drawing
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                        while ~clickCode(parameters.left_key)
+                            [~, clickCode] = KbQueueCheck(mbx);
+                            [x, y, ~] = GetMouse(screen.win);
                             XY = [XY; x y];
                             % Generate phosphene drawing
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
-                                Screen('FillOval', screen.win, parameters.fixation_color, [x-2 y-2 x+2 y+2]);
-                                Screen('DrawLine', screen.win, parameters.fixation_color, ...
-                                    XY(end-1,1), XY(end-1,2), XY(end,1), XY(end,2),1);
+                                drawTextures('PhospheneDrawing', x, y, XY);
                             end
                             Screen('Flip', screen.win,[],1);
                         end
-                        Response.Drawing{trialInd} = XY;
+                        Response.Drawing{trialInd} = round(XY);
                         KbQueueStop(mbx);
                         break
-                        % end of recording the drawing process
-                    end
+                    end % end of recording the drawing process
                 end
                 Screen('Flip', screen.win); % clear Flip buffer
                 drawTextures('FixationCross');
                 tmsRtnTpy.Response = Response;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % New coil location
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
                 showprompts('NewLocation');
                 break
-            % Terminate the program
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % End run
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
             drawTextures('FixationCross');
         end
-        % Terminate the program
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % End run
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
             showprompts('Quit');
             WaitSecs(2);
             break
         end   
-    % Terminate the program
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % End run
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     elseif strcmp(cmndKey, parameters.quit_key)
         showprompts('Quit');
         WaitSecs(2);
@@ -265,3 +268,4 @@ if parameters.TMS
     MarkStim('x');
 end
 sca;
+end

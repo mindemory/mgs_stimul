@@ -1,10 +1,9 @@
 function [XY] = connectPoints(XY1,XY2)
 
-% Mrugank (description): The code was adapated from Masih. As of this
-% working, the code only attempts to join the points along the x-axis.
-% Though this does not appear to be hampering the shape or the area of the
-% phosphene drawing constructed by the subject, it can probably be
-% imrpovised.
+% Created by Mrugank:
+% The data points are connected using linear regression. Three conditions
+% are considered wherein the two points have same x-coordinates, first
+% point has a smaller co-ordinate than the second, and vice versa.
 
 x1 = XY1(1); x2 = XY2(1);
 y1 = XY1(2); y2 = XY2(2);
@@ -21,7 +20,5 @@ elseif x1 > x2
     X = x1:-1:x2;
     Y = round(slope*(X - x1) + y1);
 end
-
 XY = [X; Y]';
-
 end

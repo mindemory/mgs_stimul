@@ -37,6 +37,5 @@ function initScreen()
     % Retreive the maximum priority number
     topPriorityLevel = MaxPriority(screen.win);
     Screen('BlendFunction', screen.win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    %screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; 
-    %screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
+    Priority(topPriorityLevel);
 end

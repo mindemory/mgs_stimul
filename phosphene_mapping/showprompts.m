@@ -1,12 +1,6 @@
 function showprompts(prompt_name)
 % Created by mrugank (02/17/2022):
-% Currently in temporary state. Has not yet been implemented in the code.
-% It is produced by merging the individual showxxxx functions to avoid
-% redundancy. Further testing is needed before implementing in the main
-% code.
-
 global screen parameters;
-
 
 switch prompt_name
     case 'WelcomeWindow'
