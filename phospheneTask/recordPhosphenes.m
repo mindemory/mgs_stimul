@@ -37,7 +37,7 @@ end
 hostname = strtrim(hostname);
 
 curr_dir = pwd;
-mgs_dir = curr_dir(1:end-18);
+mgs_dir = curr_dir(1:end-14);
 master_dir = mgs_dir(1:end-11);
 markstim_path = [mgs_dir filesep 'markstim-master'];
 data_path = [master_dir filesep 'data/phosphene_data'];
