@@ -1,4 +1,4 @@
-function [area, border] = analyzeDrawing(drawing, screenXpixels)
+function [area, border] = analyzeDrawing(drawing, parameters)
 % The part for calculating the area coordinates needs to be re-written.
 % Right now, some columns are missed in the calculated areas. 
 drawing = round(drawing); % In case pixels are not already rounded.
@@ -51,7 +51,7 @@ border = unique(border,'rows','stable');
 
 %% fill in the shape
 area = [];
-for x = 1:screenXpixels
+for x = 1:parameters.screenXpixels
     indsY = find(border(:,1) == x);
     if length(indsY) > 1
         y1 = min(border(indsY,2));

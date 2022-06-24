@@ -14,8 +14,8 @@ switch texture_name
             fixcolor = color;
         end
         % Get pixel width and height for inner and outer circle based of VA
-        [r_pix_width, r_pix_height] = va2pixel(parameters.fixationCrossSizeDeg, 'fixation');
-        [inner_width, inner_height] = va2pixel(parameters.fixationCrossSizeDeg/3, 'fixation');
+        [r_pix_width, r_pix_height] = va2pixel(parameters.fixationSizeDeg, 'fixation');
+        [inner_width, inner_height] = va2pixel(parameters.fixationSizeDeg/3, 'fixation');
         
         % Coordinates for fixation cross
         xCoords = [-r_pix_width r_pix_width 0 0];

@@ -1,15 +1,14 @@
-function drawTextures(texture_name, x, y, XY)
+function drawTextures(parameters, screen, texture_name, x, y, XY)
 % created by Mrugank (06/15/2022):
 % drawTexture can be called with texture_name to draw either a fixation
 % cross or a stimulus at periphery. color argument is optional. Default
 % color for either stimulus is white.
-global screen parameters;
 
 %% Fixation Cross
 fixcolor = screen.black;
 % Get pixel width and height for inner and outer circle based of VA
-r_pix_outer = va2pixel(parameters.fixationCrossSizeDeg);
-r_pix_inner = va2pixel(parameters.fixationCrossSizeDeg/3);
+r_pix_outer = va2pixel(parameters, screen, parameters.fixationCrossSizeDeg);
+r_pix_inner = va2pixel(parameters, screen, parameters.fixationCrossSizeDeg/3);
 
 % Coordinates for fixation cross
 xCoords = [-r_pix_outer r_pix_outer 0 0];

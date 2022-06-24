@@ -26,7 +26,6 @@ function recordPhosphenes(subjID, session)
 %%% Edits by Mrugank (01/29/2022)
 % Suppressed VBL Sync Error by PTB
 clearvars -except subjID session; close all; clc;% clear mex;
-global parameters screen hostname kbx mbx
 subjID = num2str(subjID, '%02d');
 session = num2str(session, '%02d');
 
@@ -60,9 +59,9 @@ sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 % initialize parameters, screen parameters and detect peripherals
-loadParameters(subjID, session);
-initScreen()
-initPeripherals()
+parameters = loadParameters(subjID, session);
+screen = initScreen(parameters);
+[kbx, mbx, parameters] = initPeripherals(parameters, hostname);
 
 % store screen and subject parameters in tmsRtnTpy
 tmsRtnTpy.Params.ID = ['sub' subjID '_sess' session];
@@ -98,7 +97,7 @@ while 1
     KbQueueStart(kbx);
     [keyIsDown, ~]=KbQueueCheck(kbx);
     while ~keyIsDown
-        showprompts('WelcomeWindow')
+        showprompts(parameters, screen, 'WelcomeWindow')
         [keyIsDown, keyCode]=KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -112,7 +111,7 @@ while 1
     [keyIsDown, ~] = KbQueueCheck(kbx);
     % Check for new or old coil location
     while ~keyIsDown
-        showprompts('FirstMessage')
+        showprompts(parameters, screen, 'FirstMessage')
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -127,7 +126,7 @@ while 1
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                showprompts('SecondMessage')
+                showprompts(parameters, screen, 'SecondMessage')
                 [keyIsDown, keyCode] = KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
@@ -135,7 +134,7 @@ while 1
             % New trial
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if strcmp(cmndKey, parameters.trial_key)                
-                drawTextures('FixationCross');
+                drawTextures(parameters, screen, 'FixationCross');
                 trialInd = trialInd+1;
                 display(sprintf('\n\tready for puls'));
                 % send a signal to the a USB to trigger the TMS pulse
@@ -143,7 +142,7 @@ while 1
                 if parameters.TMS
                     MarkStim('t', 128);
                 end
-                WaitSecs(parameters.Pulse.Duration);
+                WaitSecs(parameters.PulseDuration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % wait for subject's response:
@@ -160,7 +159,7 @@ while 1
                     while ~any(clickCode)
                         [~, clickCode] = KbQueueCheck(mbx);
                         [x,y,~]=GetMouse(screen.win);
-                        drawTextures('MousePointer', x, y);
+                        drawTextures(parameters, screen, 'MousePointer', x, y);
                     end
                     KbQueueStop(mbx);
                     Response.CoilLocation(trialInd) = coilLocInd;
@@ -170,7 +169,7 @@ while 1
                     if clickCode(parameters.right_key)
                         Response.Detection(trialInd) = 0;
                         Response.Drawing{trialInd} = nan;
-                        showprompts('NoPhosphene');
+                        showprompts(parameters, screen, 'NoPhosphene');
                         WaitSecs(2);
                         break
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +190,7 @@ while 1
                             XY = [XY; x y];
                             % Generate phosphene drawing
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
-                                drawTextures('PhospheneDrawing', x, y, XY);
+                                drawTextures(parameters, screen, 'PhospheneDrawing', x, y, XY);
                             end
                             Screen('Flip', screen.win,[],1);
                         end
@@ -201,13 +200,13 @@ while 1
                     end % end of recording the drawing process
                 end
                 Screen('Flip', screen.win); % clear Flip buffer
-                drawTextures('FixationCross');
+                drawTextures(parameters, screen, 'FixationCross');
                 tmsRtnTpy.Response = Response;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % New coil location
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
-                showprompts('NewLocation');
+                showprompts(parameters, screen, 'NewLocation');
                 break
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % End run
@@ -215,13 +214,13 @@ while 1
             elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
-            drawTextures('FixationCross');
+            drawTextures(parameters, screen, 'FixationCross');
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % End run
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
-            showprompts('Quit');
+            showprompts(parameters, screen, 'Quit');
             WaitSecs(2);
             break
         end   
@@ -229,7 +228,7 @@ while 1
     % End run
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     elseif strcmp(cmndKey, parameters.quit_key)
-        showprompts('Quit');
+        showprompts(parameters, screen, 'Quit');
         WaitSecs(2);
         break
     end

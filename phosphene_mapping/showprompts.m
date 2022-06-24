@@ -1,6 +1,6 @@
-function showprompts(prompt_name)
+function showprompts(parameters, screen, prompt_name)
 % Created by mrugank (02/17/2022):
-global screen parameters;
+%global screen parameters;
 
 switch prompt_name
     case 'WelcomeWindow'

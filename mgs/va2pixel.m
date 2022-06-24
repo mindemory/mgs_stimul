@@ -16,13 +16,12 @@ switch stimulus
     case 'fixation'
         rho = parameters.viewingDistance;
         r_cm = rho * tand(phi/2);
-        pix1 = round(r_cm/screen.pixWidth); % convert cm to pixels
-        pix2 = round(r_cm/screen.pixHeight); % convert cm to pixels
+        pix1 = round(r_cm/screen.pixSize); % convert cm to pixels
     case 'stimulus'
         rho = parameters.viewingDistance;
         ecc1_cm = rho * tand(phi);
         ecc2_cm = rho * (tand(phi + theta) - tand(phi));
-        pix1 = round(ecc1_cm/screen.pixWidth);
+        pix1 = round(ecc1_cm/screen.pixSize);
         pix2 = round(ecc2_cm/screen.pixWidth);
 end
 

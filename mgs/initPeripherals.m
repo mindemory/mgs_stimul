@@ -15,15 +15,6 @@ function initPeripherals()
         parameters.newloc_key = '2';
         parameters.quit_key = '3';
     
-    elseif strcmp(hostname, 'mindemory.local')
-        % get keyboard and mouse pointers for the current setup
-        devices = PsychHID('Devices');
-        devIdx(1) = find([devices(:).usageValue] == 6);
-        
-        parameters.trial_key = '1';
-        parameters.newloc_key = '2';
-        parameters.quit_key = '3';
-        
     %% Ubuntu Optimized
     elseif strcmp(hostname, 'tmsubuntu')
         % Ubuntu does not support PsychHID. Instead GetKeyboardIndices and

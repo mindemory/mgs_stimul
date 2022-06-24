@@ -11,12 +11,9 @@ function initScreen()
     [screen.screenWidth, screen.screenHeight] = Screen('DisplaySize',screen.id); %get screen width and height in mm
     screen.screenWidth = screen.screenWidth/10; %mm to cm
     screen.screenHeight = screen.screenHeight/10; %mm to cm
-    format short
-       
-    screen.Hperdegree = screen.viewDist * tand(1); %height for one degree in cm
-    screen.Wperdegree = screen.Hperdegree; %width for one degree in cm
-    screen.pixWidth = screen.screenWidth/screen.screenXpixels; %cm/pixel
-    screen.pixHeight = screen.screenHeight/screen.screenYpixels; %cm/pixel
+    pixWidth = screen.screenWidth/screen.screenXpixels; %cm/pixel
+    pixHeight = screen.screenHeight/screen.screenYpixels; %cm/pixel
+    screen.pixSize = mean([pixWidth, pixHeight]); %cm/pixel
     screen.xCenter = screen.screenXpixels/2;
     screen.yCenter = screen.screenYpixels/2;
 
@@ -35,11 +32,5 @@ function initScreen()
     % Retreive the maximum priority number
     topPriorityLevel = MaxPriority(screen.win); %% mrugank (01/29/2022): topPriorityLevel computed but not implemented?
     Screen('BlendFunction', screen.win, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    screen.pixels_per_deg_width = screen.screenXpixels/screen.deg_width; % mrugank (01/30/2022): Is this right? Deg and pixel aren't linearly related?
-    screen.pixels_per_deg_height = screen.screenYpixels/screen.deg_height;
     Priority(topPriorityLevel);
-
-    %init the measurements in pixels:
-    parameters.fixationCrossSizePix =parameters.fixationCrossSizeDeg * screen.pixels_per_deg_width; 
-
 end

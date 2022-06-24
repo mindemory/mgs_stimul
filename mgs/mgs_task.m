@@ -6,8 +6,7 @@ global parameters screen hostname kbx
 
 subjID = '20';
 session = '01';
-block = '01';
-task = 'anti';
+block = 1;
 coilLocInd = 1;
 
 %%% Check the system name to ensure correct paths are added.
@@ -23,7 +22,7 @@ mgs_dir = curr_dir(1:end-4);
 master_dir = mgs_dir(1:end-11);
 markstim_path = [mgs_dir filesep 'markstim-master'];
 phosphene_data_path = [master_dir filesep 'data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir filesep 'data/mgs_data/sub' subjID '/sess' session filesep task];
+mgs_data_path = [master_dir filesep 'data/mgs_data/sub' subjID '/block' num2str(block, "%02d")];
 addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
@@ -41,15 +40,15 @@ end
 sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
-loadParameters(subjID, session, task, coilLocInd);
+loadParameters(subjID, block, coilLocInd);
 initScreen();
 initFiles(mgs_data_path);
 initPeripherals();
 
 % Initialize taskMap
-load([phosphene_data_path '/Stim_sub' subjID '_sess' session])
-taskMap = generateTaskMap(Stim,coilLocInd);
-
+load([phosphene_data_path '/PhospheneReport_sub' subjID '_sess' session])
+taskMap = PhosphReport(coilLocInd).taskMap(block);
+trialNum = length(taskMap.stimLocpix);
 %% Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % MarkStim CHECK!
@@ -77,24 +76,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 showprompts('LoadExperimentWindow')
 
-%allRuns = ones(1,taskMap.trialNum);
-%runVersion = parameters.runVersion;
-%currentRun = parameters.runNumber;
-%[runVersion,currentRun] = enterRunToStart(allRuns,currentRun,runVersion);
-
-%reInitSubjectInfo(currentRun, runVersion);
-
-%parameters.runVersion = runVersion;
-
-%create inputs for dummy runs
-%parameters.edfFile = [parameters.subject parameters.session num2str(currentRun) '_' parameters.task];
 if parameters.eyetracker == 0
     el = 1;
     eye_used = 1;
 else
     % Initialize Eye Tracker and perform calibration
     if ~parameters.eyeTrackerOn
-        initEyeTracker_costomCalTargets;
+        initEyeTracker;
         % Perform calibration task before starting trials
         [avgGazeCenter, avgPupilSize] = etFixCalibTask(el, eye_used);
         FlushEvents;
@@ -107,24 +95,21 @@ end
 if parameters.eyetracker
     Eyelink('StartRecording');
 end
-WaitSecs(parameters.dummyDuration); % dummy time, why??
 ListenChar(-1);
 drawTextures('FixationCross');
 
 timeReport = struct;
-timeReport = repmat(timeReport, [1, taskMap.trialNum]);
+timeReport = repmat(timeReport, [1, trialNum]);
 
 startExperimentTime = GetSecs;
-trialArray = 1:taskMap.trialNum;
-
+trialArray = 1:trialNum;
+ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
 %% run over trials
 for trial = trialArray
-    
     % EEG marker --> trial begins
     if parameters.TMS
         MarkStim('t', 10);
     end
-    
     %     % if backTick is pressed by the experimenter to pause the experiment
     %     KbQueueStart(kbx);
     %     [keyIsDown, keyCode] = KbQueueCheck(kbx);
@@ -147,15 +132,11 @@ for trial = trialArray
     %     end
     
     disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
-    %texStartTime = GetSecs;
-    
-    %texDuration = GetSecs - texStartTime;
-    %timeReport(trial).texDuration = texDuration;
     
     if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-        Eyelink('command', 'record_status_message "TRIAL %d/%d "', ...
-            trialArray(trial), taskMap.trialNum);
-        Eyelink('Message', 'TRIAL %d ', trialArray(trial));
+        Eyelink('command', 'record_status_message "TRIAL %i/%i "', ...
+            trial, trialNum);
+        Eyelink('Message', 'TRIAL %i ', trial);
         
         %re-initialize breakOfFixation variable -- assume there is no break of
         %fixation at the beginning of the trial
@@ -182,8 +163,7 @@ for trial = trialArray
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Run a trial
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    while GetSecs-trial_start<=parameters.sampleDuration + taskMap.delay1(trial) + ...
-            taskMap.pulseDuration(trial) + taskMap.delay2(trial)
+    while GetSecs-trial_start<=parameters.sampleDuration+parameters.delayDuration
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Track subject's break of fixation
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,14 +229,14 @@ for trial = trialArray
         end
         %record to the edf file that sample is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /sample"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 1);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 1);
         end
         % draw sample and fixation cross
         while GetSecs-sampleStartTime <= parameters.sampleDuration
             Screen('FillOval',screen.win, screen.white, ...
-                [taskMap.stimLoc_pix(trial,:) - parameters.stimDiam, ...
-                taskMap.stimLoc_pix(trial,:) + parameters.stimDiam]);
+                [taskMap.stimLocpix(trial,:) - parameters.stimDiam, ...
+                taskMap.stimLocpix(trial,:) + parameters.stimDiam]);
             drawTextures('FixationCross');
 
         end
@@ -271,11 +251,11 @@ for trial = trialArray
         end
         %record to the edf file that delay1 is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay1"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 2);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 2);
         end
         % Draw fixation cross
-        while GetSecs-delay1StartTime <= taskMap.delay1(trial)
+        while GetSecs-delay1StartTime <= parameters.delay1Duration
             drawTextures('FixationCross');
         end
         timeReport(trial).delay1Duration = GetSecs - delay1StartTime;
@@ -298,10 +278,10 @@ for trial = trialArray
         end
         %record to the edf file that noise mask is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /tmsPulse"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 3);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /tmsPulse"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 3);
         end
-        WaitSecs(taskMap.pulseDuration(trial));
+        WaitSecs(parameters.pulseDuration);
         timeReport(trial).pulseDuration = GetSecs - pulseStartTime;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -314,11 +294,11 @@ for trial = trialArray
         end
         %record to the edf file that delay2 is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /delay2"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 4);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 4);
         end
         % Draw fixation cross
-        while GetSecs-delay2StartTime<=taskMap.delay2(trial)
+        while GetSecs-delay2StartTime<=parameters.delay2Duration
             drawTextures('FixationCross');
         end
         timeReport(trial).delay2Duration = GetSecs - delay2StartTime;
@@ -333,8 +313,8 @@ for trial = trialArray
         end
         %record to the edf file that response cue is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /responseCue"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 5);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 5);
         end
         % Draw green fixation cross
         while GetSecs-respCueStartTime < parameters.respCueDuration
@@ -350,15 +330,18 @@ for trial = trialArray
         if parameters.EEG
             MarkStim('t', 70)
         end
-        saccLoc_VA_x = taskMap.saccLoc_va(trial,1) * cosd(taskMap.saccLoc_va(trial,2));
-        saccLoc_VA_y = taskMap.saccLoc_va(trial,1) * sind(taskMap.saccLoc_va(trial,2)); % the angle is +CCW with 0 at horizontal line twoards right.
+        %saccLoc_VA_x = taskMap.saccLoc_va(trial,1) * cosd(taskMap.saccLoc_va(trial,2));
+        %saccLoc_VA_y = taskMap.saccLoc_va(trial,1) * sind(taskMap.saccLoc_va(trial,2)); % the angle is +CCW with 0 at horizontal line twoards right.
+        saccLoc = taskMap.saccLocpix(trial);
         %record to the edf file that response is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /response"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 6);
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /saccadeCoords"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'TarX %s ', num2str(saccLoc_VA_x));
-            Eyelink('Message', 'TarY %s ', num2str(saccLoc_VA_y));
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 6);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
+%             Eyelink('Message', 'TarX %s ', num2str(saccLoc_VA_x));
+%             Eyelink('Message', 'TarY %s ', num2str(saccLoc_VA_y));
+            Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
+            Eyelink('Message', 'TarX %s ', num2str(saccLoc(2)));
         end
         %draw the fixation dot
         while GetSecs-respStartTime<=parameters.respDuration
@@ -376,14 +359,14 @@ for trial = trialArray
         end
         %record to the edf file that feedback is started
         if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %d/%d /feedback"', trialArray(trial), taskMap.trialNum);
-            Eyelink('Message', 'xDAT %d ', 7);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 7);
         end
         % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             Screen('FillOval',screen.win, parameters.feebackcolor, ...
-                [taskMap.saccLoc_pix(trial,:) - parameters.stimDiam, ...
-                taskMap.saccLoc_pix(trial,:) + parameters.stimDiam]);
+                [taskMap.saccLocpix(trial,:) - parameters.stimDiam, ...
+                taskMap.saccLocpix(trial,:) + parameters.stimDiam]);
             drawTextures('FixationCross');
         end
         timeReport(trial).feedbackDuration = GetSecs-feedbackStartTime;
@@ -402,11 +385,11 @@ for trial = trialArray
     end
     %record to the edf file that iti is started
     if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-        Eyelink('command', 'record_status_message "TRIAL %d/%d /iti"', trialArray(trial), taskMap.trialNum);
-        Eyelink('Message', 'xDAT %d ', 8);
+        Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
+        Eyelink('Message', 'XDAT %i ', 8);
     end
     % Draw a fixation cross
-    while GetSecs-itiStartTime < taskMap.ITI(trial)
+    while GetSecs-itiStartTime < ITI(trial)
         drawTextures('FixationCross');
     end
     timeReport(trial).itiDuration = GetSecs - itiStartTime;
@@ -426,7 +409,7 @@ if parameters.eyetracker
         fprintf('Receiving data file ''%s''\n', parameters.edfFile );
         status=Eyelink('ReceiveFile');
         if status > 0
-            fprintf('ReceiveFile status %d\n', status);
+            fprintf('ReceiveFile status %i\n', status);
         end
         if 2==exist(parameters.edfFile, 'file')
             fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
@@ -439,7 +422,7 @@ ListenChar(0);
 
 %%% save results
 resultsDIR = [mgs_data_path filesep 'Results'];
-saveName = [resultsDIR '/timeReport_subj' subjID '_sess' session '_task_' task];
+saveName = [resultsDIR '/timeReport_subj' subjID '_block' num2str(block, "%02d")];
 save(saveName,'timeReport')
 % save Response and time reports
 % showEndOfCurrentRun(currentRun);

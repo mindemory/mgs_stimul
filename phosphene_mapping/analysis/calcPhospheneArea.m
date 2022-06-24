@@ -13,16 +13,13 @@ LocInds = unique(tmsRtnTpy.Response.CoilLocation);
 PhosphReport = struct;
 PhosphReport = repmat(PhosphReport, [1, length(LocInds)]);
 
+parameters = loadParameters(tmsRtnTpy);
 % Extract parameters from tmsRtnTpy
-trialsIn = tmsRtnTpy.Params.taskParams.numTrials.In;
-trialsOut = tmsRtnTpy.Params.taskParams.numTrials.Out;
-numBlocks = tmsRtnTpy.Params.taskParams.numBlocks;
-xCenter = tmsRtnTpy.Params.screen.xCenter;
-yCenter = tmsRtnTpy.Params.screen.yCenter;
-screenXpixels = tmsRtnTpy.Params.screen.screenXpixels;
-screenYpixels = tmsRtnTpy.Params.screen.screenYpixels;
-conditions = ["pro", "anti"];
-conditions_by_block = Shuffle(repmat(conditions, [1, numBlocks/2]));
+
+conds = ["pro", "anti"];
+conds = repmat(conds, [1, parameters.numBlocks/2]);
+condsIdx = randperm(length(conds));
+condsByBlock = conds(condsIdx);
 
 %% Calculate border and area of each phosphene report
 for coilInd = 1:length(LocInds)
@@ -33,7 +30,7 @@ for coilInd = 1:length(LocInds)
     for trial = 1:length(phsphTrials)
         trialInd = phsphTrials(trial);
         drawing = tmsRtnTpy.Response.Drawing{trialInd};
-        [area, border] = analyzeDrawing(drawing, screenXpixels);
+        [area, border] = analyzeDrawing(drawing, parameters);
         PhosphReport(coilInd).area{trial} = area;
         PhosphReport(coilInd).border{trial} = border;
     end
@@ -48,10 +45,10 @@ for coilInd = 1:length(LocInds)
     %% Calculate Target Sample-space
     overlap_area_mean = [mean(overlap_area(:, 1)) mean(overlap_area(:, 2))];
     % compute buffer of r and polar angle of mean.
-    coords_all = sample_space_bounds(overlap_area_mean, tmsRtnTpy); % r in pixel
+    coords_all = sample_space_bounds(overlap_area_mean, parameters); % r in pixel
     
     % compute area for expected bounds
-    [area_bound, ~] = analyzeDrawing(coords_all, screenXpixels);
+    [area_bound, ~] = analyzeDrawing(coords_all, parameters);
     
     % compute the overlapping area between expected bounds and overlapping
     % phosphene area. This is the StimuliSampleSpace from which stimuli
@@ -60,30 +57,33 @@ for coilInd = 1:length(LocInds)
     PhosphReport(coilInd).StimuliSampleSpace = area_common;
     
     % Store coilHemifield
-    if overlap_area_mean(1) > xCenter
+    if overlap_area_mean(1) > parameters.xCenter
         PhosphReport(coilInd).coilHemifield = 1; % Right visual field
     else
         PhosphReport(coilInd).coilHemifield = 2; % Left visual field
     end
     
     % Compute taskMaps
-    for block = 1:numBlocks
-        inds = randi(length(area_common),[trialsIn 1]);
+    for block = 1:parameters.numBlocks
+        inds = randi(length(area_common),[parameters.numTrials/2 1]);
         % stimulus inside the tms FOV / TMS
-        stimLocSet_In = area_common(inds, :);
+        stimLocSetIn = area_common(inds, :);
         % stimulus outside the tms FOV / TMS
-        stimLocSet_Out = [screenXpixels screenYpixels] - stimLocSet_In; % mirror diagonally
+        stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
         % concat all conditions
-        stimLocSet_pix = [stimLocSet_In; stimLocSet_Out];
-        cond = convertStringsToChars(conditions_by_block(block));
-        PhosphReport(coilInd).taskMap(block).condition = cond;
-        if strcmp(cond,'pro')
-            saccLocSet_pix = stimLocSet_pix;
-        elseif strcmp(cond,'anti')
-            saccLocSet_pix = [screenXpixels screenYpixels] - stimLocSet_pix;
+        stimLocpix = [stimLocSetIn; stimLocSetOut];
+        trialInds = randperm(parameters.numTrials);
+        stimLocpix = stimLocpix(trialInds');
+        condthisBlock = convertStringsToChars(condsByBlock(block));
+        PhosphReport(coilInd).taskMap(block).condition = condthisBlock;
+        if strcmp(condthisBlock,'pro')
+            saccLocpix = stimLocpix;
+        elseif strcmp(condthisBlock,'anti')
+            saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
         end
-        PhosphReport(coilInd).taskMap(block).stimLocSet_pix = stimLocSet_pix;
-        PhosphReport(coilInd).taskMap(block).saccLocSet_pix = saccLocSet_pix;
+        
+        PhosphReport(coilInd).taskMap(block).stimLocpix = stimLocpix;
+        PhosphReport(coilInd).taskMap(block).saccLocpix = saccLocpix;
     end
 end
 
@@ -102,14 +102,14 @@ end
 
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
-    plot(xCenter, yCenter,'+k');
+    plot(parameters.xCenter, parameters.yCenter,'+k');
     for trial = 1:length(PhosphReport(coilInd).area)
         axis ij; hold on;
-        plot(PhosphReport(coilInd).border{trial}(:,1),PhosphReport(coilInd).border{trial}(:,2));
+        plot(PhosphReport(coilInd).border{trial}(:,1), PhosphReport(coilInd).border{trial}(:,2));
     end
-    plot(PhosphReport(coilInd).overlapCoords(:,1),PhosphReport(coilInd).overlapCoords(:,2),'.k')
-    xlim([0 screenXpixels]);
-    ylim([0 screenYpixels]);
+    plot(PhosphReport(coilInd).overlapCoords(:,1), PhosphReport(coilInd).overlapCoords(:,2), '.k')
+    xlim([0 parameters.screenXpixels]);
+    ylim([0 parameters.screenYpixels]);
     title(['Coil Location Index : ' num2str(coilInd)]);
     pbaspect([1 1 1]);
 end
@@ -118,14 +118,13 @@ end
 fig2 = figure();
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
-    plot(xCenter, yCenter,'+k');
+    plot(parameters.xCenter, parameters.yCenter,'+k');
     axis ij;
     hold on; plot(PhosphReport(coilInd).StimuliSampleSpace(:,1), ...
-        PhosphReport(coilInd).StimuliSampleSpace(:,2),'.', 'Color', [0, 0, 1, 1])
-    %plot(PhosphReport(coilInd).overlapCoords(:,1),PhosphReport(coilInd).overlapCoords(:,2),'.', 'Color', [1, 0, 0, 0.2])
+        PhosphReport(coilInd).StimuliSampleSpace(:,2), '.', 'Color', [0, 0, 1, 1])
     
-    xlim([0 screenXpixels]);
-    ylim([0 screenYpixels]);
+    xlim([0 parameters.screenXpixels]);
+    ylim([0 parameters.screenYpixels]);
     title(['Coil Location Index : ' num2str(coilInd)]);
     pbaspect([1 1 1]);
 end
