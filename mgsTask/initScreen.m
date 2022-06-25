@@ -1,5 +1,4 @@
-function initScreen()
-    global parameters screen;
+function screen = initScreen(parameters)
     %   To make it transparent for working in demo mode
     if parameters.isDemoMode
         PsychDebugWindowConfiguration(0, parameters.transparency);

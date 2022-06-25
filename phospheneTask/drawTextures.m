@@ -18,12 +18,12 @@ allCoords = [xCoords; yCoords];
 % Coordinates for outer circle
 baseRect_outer = [0 0 r_pix_outer*2 r_pix_outer*2];
 maxDiameter_outer = ceil(max(baseRect_outer) * 1.1);
-centeredRect_outer = CenterRectOnPointd(baseRect_outer, screen.xCenter, screen.yCenter);
+centeredRect_outer = CenterRectOnPoint(baseRect_outer, screen.xCenter, screen.yCenter);
 
 % Coordinates for inner circle
 baseRect_inner = [0 0 r_pix_inner*2 r_pix_inner*2];
 maxDiameter_inner = ceil(max(baseRect_inner) * 1.1);
-centeredRect_inner = CenterRectOnPointd(baseRect_inner, screen.xCenter, screen.yCenter);
+centeredRect_inner = CenterRectOnPoint(baseRect_inner, screen.xCenter, screen.yCenter);
 
 % Draw Textures
 switch texture_name

@@ -73,7 +73,7 @@ for coilInd = 1:length(LocInds)
         % concat all conditions
         stimLocpix = [stimLocSetIn; stimLocSetOut];
         trialInds = randperm(parameters.numTrials);
-        stimLocpix = stimLocpix(trialInds');
+        stimLocpix = stimLocpix(trialInds', :);
         condthisBlock = convertStringsToChars(condsByBlock(block));
         PhosphReport(coilInd).taskMap(block).condition = condthisBlock;
         if strcmp(condthisBlock,'pro')
@@ -81,8 +81,11 @@ for coilInd = 1:length(LocInds)
         elseif strcmp(condthisBlock,'anti')
             saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
         end
-        
+        dotSizeStim = computeDotSize(parameters, stimLocpix);
+        dotSizeSacc = computeDotSize(parameters, saccLocpix);
         PhosphReport(coilInd).taskMap(block).stimLocpix = stimLocpix;
+        PhosphReport(coilInd).taskMap(block).dotSizeStim = dotSizeStim;
+        PhosphReport(coilInd).taskMap(block).dotSizeSacc = dotSizeSacc;
         PhosphReport(coilInd).taskMap(block).saccLocpix = saccLocpix;
     end
 end

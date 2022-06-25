@@ -1,7 +1,5 @@
-global parameters;
-global screen;
 % Eyelink('SetAddress','192.168.1.5') % for the scanner room
-    
+function initEyeTracker(parameters, screen)    
 %%
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
 %run without eye tracker if eyetracker is 0
@@ -81,4 +79,5 @@ if parameters.eyetracker
     if eye_used == el.BINOCULAR % if both eyes are tracked
        eye_used = el.LEFT_EYE; % use left eye
     end
+end
 end

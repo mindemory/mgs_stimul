@@ -98,8 +98,7 @@ while 1
     [keyIsDown, ~]=KbQueueCheck(kbx);
     while ~keyIsDown
         showprompts(parameters, screen, 'WelcomeWindow')
-        [keyIsDown, keyCode]=KbQueueCheck(kbx);
-        cmndKey = KbName(keyCode);
+        [keyIsDown, ~]=KbQueueCheck(kbx);
     end
     break;
 end

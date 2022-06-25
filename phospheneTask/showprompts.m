@@ -4,32 +4,25 @@ function showprompts(parameters, screen, prompt_name)
 
 switch prompt_name
     case 'WelcomeWindow'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.instructions, 'center', ...
-            'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        text =  parameters.instructions;
+        text_color = parameters.text_color;
     case 'FirstMessage'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.first_msg, 'center', ...
-            'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        text =  parameters.first_msg;
+        text_color = parameters.text_color;
     case 'SecondMessage'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.second_msg, ...
-            'center', 'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        text =  parameters.second_msg;
+        text_color = parameters.text_color;
     case 'NewLocation'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.new_coil_msg, ...
-            'center', 'center', screen.black);
-        Screen('Flip', screen.win);
+        text =  parameters.new_coil_msg;
+        text_color = screen.black;
     case 'NoPhosphene'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.no_phosph_msg, ...
-            'center', 'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        text = parameters.no_phosph_msg;
+        text_color = parameters.text_color;
     case 'Quit'
-        Screen('TextSize', screen.win, parameters.font_size);
-        DrawFormattedText(screen.win, parameters.quit_msg, 'center', 'center', parameters.text_color);
-        Screen('Flip', screen.win);
+        text = parameters.quit_msg;
+        text_color = parameters.text_color;
+end
+Screen('TextSize', screen.win, parameters.font_size);
+DrawFormattedText(screen.win, text, 'center', 'center', text_color);
+Screen('Flip', screen.win);
 end

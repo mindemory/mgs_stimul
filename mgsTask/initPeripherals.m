@@ -1,8 +1,6 @@
-function initPeripherals()
+function [kbx, parameters] = initPeripherals(parameters, hostname)
     % Detects peripherals: mouse and keyboard and runs KbQueueCreate on
     % each of them. Code is adapted for Mac and Ubuntu.
-    
-    global parameters kbx hostname
     KbName('UnifyKeyNames');
     
     %% Mac Optimized
@@ -11,9 +9,8 @@ function initPeripherals()
         devices = PsychHID('Devices');
         devIdx(1) = find([devices(:).usageValue] == 6);
         
-        parameters.trial_key = '1';
-        parameters.newloc_key = '2';
-        parameters.quit_key = '3';
+        parameters.space_key = 'space';
+        parameters.exit_key = 'ESCAPE';
     
     %% Ubuntu Optimized
     elseif strcmp(hostname, 'tmsubuntu')
@@ -27,9 +24,8 @@ function initPeripherals()
             end
         end
 
-        parameters.trial_key = '1';
-        parameters.newloc_key = '2';
-        parameters.quit_key = '3';
+        parameters.space_key = '1';
+        parameters.exit_key = '2';
     
     %% Undetected device
     else
