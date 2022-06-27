@@ -38,14 +38,13 @@ end
 
 sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+parameters = loadParameters(subjID, coilLocInd);
+screen = initScreen(parameters);
+[kbx, parameters] = initPeripherals(parameters, hostname);
 
 for block = start_block:42
-    parameters = loadParameters(subjID, block, coilLocInd);
-    screen = initScreen(parameters);
-    [kbx, parameters] = initPeripherals(parameters, hostname);
+    parameters.block = block;
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
-    
-    
     % Initialize taskMap
     load([phosphene_data_path '/PhospheneReport_sub' subjID '_sess' session])
     taskMap = PhosphReport(coilLocInd).taskMap(block);
@@ -429,7 +428,6 @@ for block = start_block:42
         cmndKey = KbName(keyCode);
     end
     if strcmp(cmndKey, parameters.space_key)
-        
         continue;
     elseif strcmp(cmndKey, parameters.exit_key)
         sca;
@@ -437,4 +435,6 @@ for block = start_block:42
     end
 end % end of block
 showprompts(screen, 'EndExperiment');
+WaitSecs(2);
+sca;
 end

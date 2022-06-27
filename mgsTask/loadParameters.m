@@ -1,4 +1,4 @@
-function parameters = loadParameters(subjID, block, coilLocInd)
+function parameters = loadParameters(subjID, coilLocInd)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % program basic settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,6 @@ parameters.waitBeforePulse = 3.00; % seconds
 parameters.currentStudy = 'MGS_TMS_VisualCortex';
 parameters.currentStudyVersion = '01';
 parameters.subject = subjID;
-parameters.block = block;
 parameters.coilLocInd = coilLocInd;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Stimulus parameters
