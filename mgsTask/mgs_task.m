@@ -95,9 +95,9 @@ for block = start_block:42
     else
         % Initialize Eye Tracker and perform calibration
         if ~parameters.eyeTrackerOn
-            initEyeTracker(parameters, screen);
+            [el, eye_used] = initEyeTracker(parameters, screen);
             % Perform calibration task before starting trials
-            [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters, screen, el, eye_used);
+            [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters, screen, kbx, el, eye_used);
             FlushEvents;
         else
             Eyelink('Openfile', parameters.edfFile);
@@ -390,30 +390,28 @@ for block = start_block:42
     %--------------------------------------------------------------------------------------------------------------------------------------%
     if parameters.eyetracker
         Eyelink('StopRecording');
-        Eyelink('CloseFile');
+        %Eyelink('CloseFile');
         % download data file
-        try
-            fprintf('Receiving data file ''%s''\n', parameters.edfFile );
-            status=Eyelink('ReceiveFile');
-            if status > 0
-                fprintf('ReceiveFile status %i\n', status);
-            end
-            if 2==exist(parameters.edfFile, 'file')
-                fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
-            end
-        catch
-            fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
-        end
+%         try
+%             fprintf('Receiving data file ''%s''\n', parameters.edfFile );
+%             status=Eyelink('ReceiveFile');
+%             if status > 0
+%                 fprintf('ReceiveFile status %i\n', status);
+%             end
+%             if 2==exist(parameters.edfFile, 'file')
+%                 fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
+%             end
+%         catch
+%             fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
+%         end
+        Eyelink('ReceiveFile', 'temp.edf');
+        movefile('temp.edf', parameters.edfFile);
+        Eyelink('Shutdown');
     end
     ListenChar(0);
     
     %%% save results
     save(parameters.timeReportFile,'timeReport')
-    
-    % close eyetracker
-    if parameters.eyetracker
-        Eyelink('Shutdown');
-    end
     
     % end Teensy handshake
     if parameters.TMS

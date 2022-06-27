@@ -24,8 +24,8 @@ function [kbx, parameters] = initPeripherals(parameters, hostname)
             end
         end
 
-        parameters.space_key = '1';
-        parameters.exit_key = '2';
+        parameters.space_key = 'space';
+        parameters.exit_key = 'ESCAPE';
     
     %% Undetected device
     else

@@ -20,6 +20,10 @@ switch prompt_name
         text = ['Trial = ' num2str(num)];
     case 'BlockEnd'
         text = ['End of block ' num2str(num) '. Please take a break. Press any key to continue.'];
+    case 'EyeCalibStart'
+        text = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');
+    case 'EyeCalibEnd'
+        text = sprintf('Thank you. When ready, press key to continue.');
     case 'EndExperiment'
         text = 'Thank you for your participation!';
 end

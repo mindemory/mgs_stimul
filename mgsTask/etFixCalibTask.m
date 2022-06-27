@@ -8,23 +8,23 @@
 %make the duration an input argument? (not going to be straightforward as the 
 %size of the array and gaze position check is linked to the duration) 
 %get rid of kbs? 
-function [avgGazeCenter,avgPupilSize] = etFixCalibTask(parameters, screen, el, eye_used) 
+function [avgGazeCenter,avgPupilSize] = etFixCalibTask(parameters, screen, kbx, el, eye_used) 
     %clear the event buffer
     FlushEvents;
-    Screen('FillRect', screen.win, screen.grey, screen.screenRect);
-    %create outputs for debugging without eye tracker
-    if parameters.eyetracker == 0
-       avgGazeCenter = 0;
-       avgPupilSize = 0;
-    end
+    %Screen('FillRect', screen.win, screen.grey, screen.screenRect);
 
     %create instructions for the 5 second task
-    showTextMessage(screen.win, screen.white, parameters.fixationPrepInstructions, kbx);
-
+    KbQueueFlush(kbx);
+    KbQueueStart(kbx);
+    [keyIsDown, ~]=KbQueueCheck(kbx);
+    while ~keyIsDown
+        showprompts(screen, 'EyeCalibStart');
+        [keyIsDown, ~]=KbQueueCheck(kbx);
+    end
     %fixation dot white during the 5 second task. use the fixation image as
     %used in the regular trials
-    Screen('FillRect', screen.win, screen.white, fix1);
-    Screen('Flip', screen.win);
+    drawTextures(parameters, screen, 'FixationCross');
+    
     fixationStartT = GetSecs;
     forAvgGazeCenter = zeros(9,2);
     forAvgPupilSize = zeros(9,1);
@@ -67,6 +67,13 @@ function [avgGazeCenter,avgPupilSize] = etFixCalibTask(parameters, screen, el, e
     avgPupilSize = mean(forAvgPupilSize);
     %create end of the task screen
     %create instructions for the 5 second task
-    showTextMessage(screen.win, screen.white, 'Thank you. When ready, press key to continue.', kbx);
+    KbQueueFlush(kbx);
+    KbQueueStart(kbx);
+    [keyIsDown, ~]=KbQueueCheck(kbx);
+    while ~keyIsDown
+        showprompts(screen, 'EyeCalibEnd');
+        [keyIsDown, ~]=KbQueueCheck(kbx);
+    end
+
 end
         

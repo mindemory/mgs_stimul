@@ -45,12 +45,12 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
     end
     
     %% Initialize the files to write in
-    date_time = datestr(now, 'mm_dd_yy_HH_MM_SS');
+    date_time = datestr(now, 'mmddyy_HHMM');
     %edfFile = [parameters.subject parameters.session '.edf'];% can only be 4 characters long
-    edfFile = [EYE_DIR parameters.subject '_' parameters.block '.edf'];
-    eegFile = [EEG_DIR parameters.subject '_' parameters.block '.edf'];
-    datafile = [RESULTS_DIR parameters.subject '_' parameters.block '_' date_time '.csv'];
-    matfile = [RESULTS_DIR parameters.subject '_' parameters.block '_' date_time '.mat'];
+    edfFile = [EYE_DIR parameters.subject num2str(parameters.block, '%02d') date_time '.edf'];
+    eegFile = [EEG_DIR parameters.subject '_' num2str(parameters.block, '%02d') '_' date_time '.edf'];
+    datafile = [RESULTS_DIR parameters.subject '_' num2str(parameters.block, '%02d') '_' date_time '.csv'];
+    matfile = [RESULTS_DIR parameters.subject '_' num2str(parameters.block, '%02d') '_' date_time '.mat'];
     timeReportFile = [RESULTS_DIR 'timeReport_subj' parameters.subject '_block' num2str(parameters.block, "%02d")];
   
     parameters.edfFile = edfFile;
