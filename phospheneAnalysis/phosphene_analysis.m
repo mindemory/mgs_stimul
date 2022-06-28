@@ -4,7 +4,7 @@ clear; close all; clc;% clear mex;
 %% Initialization
 %global parameters;
 subjID = '20';
-session = '01';
+session = '02';
 curr_dir = pwd;
 %phsph_map_dir = curr_dir(1:end-27);
 mgs_dir = curr_dir(1:end-18);
