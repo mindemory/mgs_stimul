@@ -27,7 +27,7 @@ switch prompt_name
     case 'EndExperiment'
         text = 'Thank you for your participation!';
 end
-fontsize = 40;
+fontsize = 30;
 text_color = screen.white;
 Screen('TextSize', screen.win, fontsize);
 DrawFormattedText(screen.win, text, 'center', 'center', text_color);

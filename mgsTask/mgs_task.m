@@ -86,8 +86,6 @@ for block = start_block:42
             break;
         end
     end
-    showprompts(screen, 'BlockStart', block, taskMap.condition)
-    WaitSecs(2);
     
     if parameters.eyetracker == 0
         el = 1;
@@ -109,6 +107,8 @@ for block = start_block:42
         Eyelink('StartRecording');
     end
     ListenChar(-1);
+    showprompts(screen, 'BlockStart', block, taskMap.condition)
+    WaitSecs(2);
     drawTextures(parameters, screen, 'FixationCross');
     
     timeReport = struct;
@@ -323,7 +323,7 @@ for block = start_block:42
             if parameters.EEG
                 MarkStim('t', 70)
             end
-            saccLoc = taskMap.saccLocpix(trial);
+            saccLoc = taskMap.saccLocpix(trial, :);
             %record to the edf file that response is started
             if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
