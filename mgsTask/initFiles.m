@@ -12,25 +12,25 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
         mkdir(data_path);
     end
     
-%     if exist(BLOCK_DIR,'dir')==7
-%         KbQueueFlush(kbx);
-%         [keyIsDown, ~] = KbQueueCheck(kbx);
-%         while ~keyIsDown
-%             showprompts(screen, 'BlockExists', block);
-%             [keyIsDown, keyCode] = KbQueueCheck(kbx);
-%             cmndKey = KbName(keyCode)
-%         end
-%         while 1
-%             if strcmp(cmndKey, parameters.space_key)
-%                 continue;
-%             elseif strcmp(cmndKey, parameters.exit_key)
-%                 return;
-%             end
-%             break;
-%         end
-%     else
-%         mkdir(BLOCK_DIR);
-%     end
+    if exist(BLOCK_DIR,'dir')==7
+        KbQueueFlush(kbx);
+        [keyIsDown, ~] = KbQueueCheck(kbx);
+        while ~keyIsDown
+            showprompts(screen, 'BlockExists', block);
+            [keyIsDown, keyCode] = KbQueueCheck(kbx);
+            cmndKey = KbName(keyCode)
+        end
+        while 1
+            if strcmp(cmndKey, parameters.space_key)
+                continue;
+            elseif strcmp(cmndKey, parameters.exit_key)
+                return;
+            end
+            break;
+        end
+    else
+        mkdir(BLOCK_DIR);
+    end
     if exist(BLOCK_DIR,'dir')~=7 %if the "Results" directory doesn't exist, create one
         mkdir(BLOCK_DIR);
     end
