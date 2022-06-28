@@ -391,19 +391,6 @@ for block = start_block:42
     if parameters.eyetracker
         Eyelink('StopRecording');
         %Eyelink('CloseFile');
-        % download data file
-%         try
-%             fprintf('Receiving data file ''%s''\n', parameters.edfFile );
-%             status=Eyelink('ReceiveFile');
-%             if status > 0
-%                 fprintf('ReceiveFile status %i\n', status);
-%             end
-%             if 2==exist(parameters.edfFile, 'file')
-%                 fprintf('Data file ''%s'' can be found in ''%s''\n', parameters.edfFile, pwd );
-%             end
-%         catch
-%             fprintf('Problem receiving data file ''%s''\n', parameters.edfFile );
-%         end
         Eyelink('ReceiveFile', 'temp.edf');
         movefile('temp.edf', parameters.edfFile);
         Eyelink('Shutdown');

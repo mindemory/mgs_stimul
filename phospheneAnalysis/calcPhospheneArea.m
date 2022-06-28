@@ -140,7 +140,7 @@ if ~exist(fig_dir, 'dir')
     mkdir(fig_dir);
 end
 saveName_phosph_fig = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
-saveName_samplespace_fig = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
+saveName_samplespace_fig = [data_dir '/Figures/SampleSpace_sub' subjID '_sess' session];
 
 saveas(fig1,saveName_phosph_fig,'fig')
 saveas(fig1,saveName_phosph_fig,'png')
