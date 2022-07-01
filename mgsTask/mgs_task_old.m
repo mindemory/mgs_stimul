@@ -90,13 +90,16 @@ for block = start_block:42
         end
     end
     
-    if parameters.eyetracker ~= 0
+    if parameters.eyetracker == 0
+        el = 1;
+        eye_used = 1;
+    else
         % Initialize Eye Tracker and perform calibration
         if ~parameters.eyeTrackerOn
-            ListenChar(0);
-            initEyeTracker(parameters, screen);
+            [el, eye_used] = initEyeTracker(parameters, screen);
+            % Perform calibration task before starting trials
+            [avgGazeCenter, avgPupilSize] = etFixCalibTask(parameters, screen, kbx, el, eye_used);
             FlushEvents;
-            ListenChar(-1);
         else
             Eyelink('Openfile', parameters.edfFile);
         end
@@ -125,13 +128,29 @@ for block = start_block:42
         if parameters.TMS
             MarkStim('t', 10);
         end
+        %showprompts(screen, 'TrialCount', trial)
         
         disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
         
-        if parameters.eyetracker
+        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i "', ...
                 trial, trialNum);
             Eyelink('Message', 'TRIAL %i ', trial);
+            
+            %re-initialize breakOfFixation variable -- assume there is no break of
+            %fixation at the beginning of the trial
+            breakOfFixation = 0;
+            minPupil = 0.4 * avgPupilSize;
+            %initialize required variables
+            thisFixBreakCountCummulative = 0; %variable for storing the total number of eye blinks
+            gazeCheckCounter = 0;
+            %fixBreak = 0;
+            thisFixBreakCount = 0;
+            fixationBreakInstance = 0;
+            gazeDisFromCenter = 0;
+            blinkTimeLowerBound = 0;
+            blinkTimeUpperBound = 0;
+            %--------------------------------------------------------------------------
         end
         trial_start = GetSecs;
         
@@ -139,6 +158,61 @@ for block = start_block:42
         % Run a trial
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         while GetSecs-trial_start<=parameters.sampleDuration+parameters.delayDuration
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Track subject's break of fixation
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            fixBreak  = 0;
+            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+                % get the sample in the form of an event structure
+                evt = Eyelink('NewestFloatSample');
+                if eye_used ~= -1 % do we know which eye to use yet?
+                    gazeCheckCounter = gazeCheckCounter + 1; %use the counter to tag the fixation checks
+                    % Get eye position and pupil size
+                    gazePosX = evt.gx(eye_used+1); % +1 as we're accessing MATLAB array
+                    gazePosY = evt.gy(eye_used+1);
+                    pupilSize = evt.pa(eye_used+1);
+                    %once pupil size is available, check against the threshold
+                    %for blink, and if it crosses threshold, create a range
+                    %around the current instance of fixation break. use this
+                    %range to mark all breaks of fixations in this time period as
+                    %part of the blink
+                    if pupilSize < minPupil
+                        blinkTimeUpperBound = gazeCheckCounter + 5;
+                        blinkTimeLowerBound = gazeCheckCounter - 5;
+                    end
+                    % do we have valid data and is the pupil visible?
+                    if gazePosX~=el.MISSING_DATA && gazePosY~=el.MISSING_DATA && pupilSize>0
+                        gazeDisFromCenter = sqrt(([gazePosX, gazePosY] - avgGazeCenter).^2);
+                        %check whether gaze position hasnt gone out of a circle of set radius.
+                        if gazeDisFromCenter > parameters.fixationBoundary %in pixels
+                            fixBreak = fixBreak + 1;
+                            fixationBreakInstance = gazeCheckCounter;
+                            %have a counter here that gives information on how many +1s have already happened
+                            thisFixBreakCount = thisFixBreakCount + 1;
+                        end
+                    end
+                    %this resets fixBreak back to zero in case of a blink
+                    if fixationBreakInstance > blinkTimeLowerBound && fixationBreakInstance < blinkTimeUpperBound
+                        fixBreak = fixBreak - thisFixBreakCount;
+                        thisFixBreakCount = 0;
+                        fixationBreakInstance = 0;
+                    end
+                    %reset thisFixBreakCount when the eye fixates again eg. after a blink
+                    if gazeDisFromCenter < parameters.fixationBoundary
+                        thisFixBreakCount = 0;
+                    end
+                end
+                %if gaze position goes out of a circle around centre of a set
+                %radius in pixels, count it as a break in fixation
+                if fixBreak > 0
+                    breakOfFixation = 1;
+                else
+                    breakOfFixation = 0;
+                end
+                %count how many eye blinks occured
+                thisFixBreakCountCummulative = thisFixBreakCountCummulative + thisFixBreakCount;
+            end %end of if checking eyetracker
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % sample window
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,7 +395,7 @@ for block = start_block:42
         Eyelink('Shutdown');
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end
-    ListenChar(1);
+    ListenChar(0);
     
     % save timeReport
     matFile.parameters = parameters;

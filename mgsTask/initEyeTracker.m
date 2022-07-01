@@ -1,4 +1,4 @@
-function [el, eye_used] = initEyeTracker(parameters, screen)
+function initEyeTracker(parameters, screen)
 %%
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
 %run without eye tracker if eyetracker is 0
