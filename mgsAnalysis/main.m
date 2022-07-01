@@ -43,7 +43,7 @@ for block = 1:2
 
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = ii_preproc(edfFile,ifgFile,preproc_fn,ii_params);
+    [ii_data, ii_cfg, ii_sacc] = eye_preprocess(edfFile,ifgFile,preproc_fn,ii_params);
 
     if block == 1
         % plot some features of the data
@@ -58,7 +58,6 @@ for block = 1:2
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    %[ii_trial{ff},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc); 
-    
+    [ii_trial{block},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc);  
 end
- 
+ii_sess = ii_combineruns(ii_trial);

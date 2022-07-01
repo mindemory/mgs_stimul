@@ -151,6 +151,8 @@ for block = start_block:42
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 1);
+                Eyelink('Message', 'TarX %s ', screen.xCenter);
+                Eyelink('Message', 'TarY %s ', screen.yCenter);
             end
             % draw sample and fixation cross
             while GetSecs-sampleStartTime <= parameters.sampleDuration
@@ -231,10 +233,13 @@ for block = start_block:42
             if parameters.EEG
                 MarkStim('t', 60);
             end
+            saccLoc = taskMap.saccLocpix(trial, :);
             %record to the edf file that response cue is started
             if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 5);
+                Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
+                Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
             end
             % Draw green fixation cross
             while GetSecs-respCueStartTime < parameters.respCueDuration
@@ -250,14 +255,11 @@ for block = start_block:42
             if parameters.EEG
                 MarkStim('t', 70)
             end
-            saccLoc = taskMap.saccLocpix(trial, :);
             %record to the edf file that response is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 6);
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
-                Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
-                Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
             end
             %draw the fixation dot
             while GetSecs-respStartTime<=parameters.respDuration
@@ -303,6 +305,8 @@ for block = start_block:42
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 8);
+            Eyelink('Message', 'TarX %s ', screen.xCenter);
+            Eyelink('Message', 'TarY %s ', screen.yCenter);
         end
         % Draw a fixation cross
         while GetSecs-itiStartTime < ITI(trial)
