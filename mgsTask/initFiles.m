@@ -9,8 +9,7 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
         mkdir(data_path);
     end
     
-    if ~exist(BLOCK_DIR,'dir')==7   
-        
+    if exist(BLOCK_DIR,'dir')~=7
         mkdir(BLOCK_DIR);
     end
     

@@ -43,7 +43,7 @@ pixHeight = screenHeight/screenYpixels; %cm/pixel
 ppd = Wperdegree/pixWidth;
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-VAs = 1:1:20;
+VAs = 12:1:13;
 for va = VAs
     theta = 0:0.1:360;
     r_old = va * ppd;
@@ -88,7 +88,7 @@ for va = VAs
     DrawFormattedText(window, MSG, 'center', ...
         'center', [0 255 0]);
     Screen('Flip', window);
-    WaitSecs(.5);
+    WaitSecs(1.5);
 
     % Flip to the screen. This command basically draws all of our previous
     % commands onto the screen. See later demos in the animation section on more
