@@ -151,8 +151,8 @@ for block = start_block:42
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 1);
-                Eyelink('Message', 'TarX %s ', screen.xCenter);
-                Eyelink('Message', 'TarY %s ', screen.yCenter);
+                %Eyelink('Message', 'TarX %s ', screen.xCenter);
+                %Eyelink('Message', 'TarY %s ', screen.yCenter);
             end
             % draw sample and fixation cross
             while GetSecs-sampleStartTime <= parameters.sampleDuration
@@ -305,8 +305,8 @@ for block = start_block:42
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 8);
-            Eyelink('Message', 'TarX %s ', screen.xCenter);
-            Eyelink('Message', 'TarY %s ', screen.yCenter);
+            %Eyelink('Message', 'TarX %s ', screen.xCenter);
+            %Eyelink('Message', 'TarY %s ', screen.yCenter);
         end
         % Draw a fixation cross
         while GetSecs-itiStartTime < ITI(trial)
