@@ -30,15 +30,18 @@ if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    Screen('Preference','SkipSyncTests', 1)
+
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    PsychDefaultSetup(1);
+
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
 sca;
-Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 screen = initScreen(parameters);
 [kbx, parameters] = initPeripherals(parameters, hostname);
 
@@ -105,6 +108,9 @@ for block = start_block:42
     % Init start of experiment procedures
     if parameters.eyetracker
         Eyelink('StartRecording');
+        WaitSecs(0.1);
+        % synchronize time in edf file
+        Eyelink('Message', 'SYNCTIME');
     end
     ListenChar(-1);
     showprompts(screen, 'BlockStart', block, taskMap.condition)
@@ -135,7 +141,6 @@ for block = start_block:42
             %fixation at the beginning of the trial
             breakOfFixation = 0;
             minPupil = 0.4 * avgPupilSize;
-            
             %initialize required variables
             thisFixBreakCountCummulative = 0; %variable for storing the total number of eye blinks
             gazeCheckCounter = 0;
@@ -148,10 +153,6 @@ for block = start_block:42
             %--------------------------------------------------------------------------
         end
         trial_start = GetSecs;
-        % synchronize time in edf file
-        if parameters.eyetracker
-            Eyelink('Message', 'SYNCTIME');
-        end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Run a trial
@@ -392,6 +393,7 @@ for block = start_block:42
         Eyelink('ReceiveFile', 'temp.edf');
         movefile('temp.edf', parameters.edfFile);
         Eyelink('Shutdown');
+        disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end
     ListenChar(0);
     
