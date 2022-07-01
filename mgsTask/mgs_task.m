@@ -257,7 +257,7 @@ for block = start_block:42
                 Eyelink('Message', 'XDAT %i ', 6);
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
                 Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
-                Eyelink('Message', 'TarX %s ', num2str(saccLoc(2)));
+                Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
             end
             %draw the fixation dot
             while GetSecs-respStartTime<=parameters.respDuration
