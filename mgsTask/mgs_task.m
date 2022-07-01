@@ -221,7 +221,7 @@ for block = start_block:42
                 MarkStim('t', 20);
             end
             %record to the edf file that sample is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 1);
             end
@@ -243,7 +243,7 @@ for block = start_block:42
                 MarkStim('t', 30);
             end
             %record to the edf file that delay1 is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 2);
             end
@@ -270,7 +270,7 @@ for block = start_block:42
                 end
             end
             %record to the edf file that noise mask is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /tmsPulse"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 3);
             end
@@ -286,7 +286,7 @@ for block = start_block:42
                 MarkStim('t', 50);
             end
             %record to the edf file that delay2 is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 4);
             end
@@ -305,7 +305,7 @@ for block = start_block:42
                 MarkStim('t', 60);
             end
             %record to the edf file that response cue is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 5);
             end
@@ -325,7 +325,7 @@ for block = start_block:42
             end
             saccLoc = taskMap.saccLocpix(trial, :);
             %record to the edf file that response is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 6);
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
@@ -347,7 +347,7 @@ for block = start_block:42
                 MarkStim('t', 80);
             end
             %record to the edf file that feedback is started
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 7);
             end
@@ -373,7 +373,7 @@ for block = start_block:42
             MarkStim('t', 90);
         end
         %record to the edf file that iti is started
-        if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 8);
         end
