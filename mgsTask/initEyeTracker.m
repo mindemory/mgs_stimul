@@ -40,9 +40,10 @@ if parameters.eyetracker
     
     % make sure that we get event data from the Eyelink
     Eyelink('command', 'file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON');
-    Eyelink('command', 'link_sample_data  = LEFT,RIGHT,GAZE,AREA');
+    Eyelink('command', 'file_sample_data = LEFT,RIGHT,GAZE,AREA,GAZERES,STATUS');
+    Eyelink('command', 'link_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,BUTTON');
+    Eyelink('command', 'link_sample_data  = LEFT,RIGHT,GAZE,GAZERES,AREA,BUTTON');
     Eyelink('command', 'link_event_data = GAZE,GAZERES,HREF,AREA,VELOCITY');
-    Eyelink('command', 'link_event_filter = LEFT,RIGHT,FIXATION,BLINK,SACCADE,BUTTON');
     
     % open file to record data to
     Eyelink('Openfile', 'temp.edf');
