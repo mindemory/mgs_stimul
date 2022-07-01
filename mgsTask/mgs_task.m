@@ -1,7 +1,5 @@
 function mgs_task(subjID, session, coilLocInd, start_block)
 %% Initialization
-%%% Edits by Mrugank (01/29/2022)
-% Suppressed VBL Sync Error by PTB, added sca, clear; close all;
 clearvars -except subjID session coilLocInd start_block;
 close all; clc;% clear mex;
 
@@ -26,24 +24,26 @@ addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
+parameters = loadParameters(subjID, coilLocInd);
 %%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
+    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
 sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
-parameters = loadParameters(subjID, coilLocInd);
 screen = initScreen(parameters);
 [kbx, parameters] = initPeripherals(parameters, hostname);
 
 for block = start_block:42
-    parameters.block = block;
+    parameters.block = num2str(block, "%02d");
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
     % Initialize taskMap
     load([phosphene_data_path '/PhospheneReport_sub' subjID '_sess' session])
@@ -386,25 +386,26 @@ for block = start_block:42
     end
         
     %% Saving Data and Closing everything
-    % stop eyelink
-    %--------------------------------------------------------------------------------------------------------------------------------------%
+    % stop eyelink and save eyelink data
     if parameters.eyetracker
         Eyelink('StopRecording');
-        %Eyelink('CloseFile');
         Eyelink('ReceiveFile', 'temp.edf');
         movefile('temp.edf', parameters.edfFile);
         Eyelink('Shutdown');
     end
     ListenChar(0);
     
-    %%% save results
-    save(parameters.timeReportFile,'timeReport')
-    
+    % save timeReport
+    matFile.parameters = parameters;
+    matFile.screen = screen;
+    matFile.timeReport = timeReport;
+    save(parameters.matFile,'matFile')
     % end Teensy handshake
     if parameters.TMS
         MarkStim('x');
     end
     
+    % check for end of block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
     while ~keyIsDown

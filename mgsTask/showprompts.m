@@ -1,6 +1,5 @@
 function showprompts(screen, prompt_name, num, cond)
 % Created by mrugank (02/17/2022):
-%global screen parameters;
 
 switch prompt_name
     case 'WelcomeWindow'

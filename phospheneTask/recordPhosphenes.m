@@ -44,13 +44,16 @@ data_path = [master_dir filesep 'data/phosphene_data'];
 addpath(genpath(markstim_path));
 addpath(genpath(data_path));
 
+parameters = loadParameters(subjID, session);
 % Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
+    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
@@ -59,7 +62,6 @@ sca;
 Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
 
 % initialize parameters, screen parameters and detect peripherals
-parameters = loadParameters(subjID, session);
 screen = initScreen(parameters);
 [kbx, mbx, parameters] = initPeripherals(parameters, hostname);
 

@@ -6,7 +6,6 @@ parameters.EEG = 1; % set to 0 if there is no EEG recording
 parameters.TMS = 1; % set to 0 if there is no TMS stimulation
 parameters.eyetracker = 1; % set to 0 if there is no eyetracker
 parameters.eyeTrackerOn = 0;
-parameters.isDemoMode = false; %set to true if you want the screen to be transparent
 parameters.transparency = 0.7; % transparency for debug mode
 parameters.viewingDistance = 55;%viewDist
 parameters.waitBeforePulse = 3.00; % seconds
