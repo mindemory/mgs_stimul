@@ -23,8 +23,6 @@ function recordPhosphenes(subjID, session)
 % The code runs till quit (q) is pressed by the experimenter. 
 
 %% Initialization
-%%% Edits by Mrugank (01/29/2022)
-% Suppressed VBL Sync Error by PTB
 clearvars -except subjID session; close all; clc;% clear mex;
 subjID = num2str(subjID, '%02d');
 session = num2str(session, '%02d');
@@ -50,16 +48,18 @@ if strcmp(hostname, 'syndrome')
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
 
 sca;
-Screen('Preference','SkipSyncTests', 1) %% mrugank (01/29/2022): To suppress VBL Sync Error by PTB
+Screen('Preference','SkipSyncTests', 1)
 
 % initialize parameters, screen parameters and detect peripherals
 screen = initScreen(parameters);
@@ -99,7 +99,7 @@ while 1
     KbQueueStart(kbx);
     [keyIsDown, ~]=KbQueueCheck(kbx);
     while ~keyIsDown
-        showprompts(parameters, screen, 'WelcomeWindow')
+        showprompts(screen, 'WelcomeWindow')
         [keyIsDown, ~]=KbQueueCheck(kbx);
     end
     break;
@@ -112,7 +112,7 @@ while 1
     [keyIsDown, ~] = KbQueueCheck(kbx);
     % Check for new or old coil location
     while ~keyIsDown
-        showprompts(parameters, screen, 'FirstMessage')
+        showprompts(screen, 'FirstMessage')
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -127,7 +127,7 @@ while 1
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                showprompts(parameters, screen, 'SecondMessage')
+                showprompts(screen, 'SecondMessage')
                 [keyIsDown, keyCode] = KbQueueCheck(kbx);
                 cmndKey = KbName(keyCode);
             end
@@ -170,7 +170,7 @@ while 1
                     if clickCode(parameters.right_key)
                         Response.Detection(trialInd) = 0;
                         Response.Drawing{trialInd} = nan;
-                        showprompts(parameters, screen, 'NoPhosphene');
+                        showprompts(screen, 'NoPhosphene');
                         WaitSecs(2);
                         break
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +207,7 @@ while 1
             % New coil location
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             elseif strcmp(cmndKey, parameters.newloc_key) % get ready fo the next coil location if "n" is pressed
-                showprompts(parameters, screen, 'NewLocation');
+                showprompts(screen, 'NewLocation');
                 break
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % End run
@@ -221,7 +221,7 @@ while 1
         % End run
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
-            showprompts(parameters, screen, 'Quit');
+            showprompts(screen, 'Quit');
             WaitSecs(2);
             break
         end   
@@ -229,7 +229,7 @@ while 1
     % End run
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     elseif strcmp(cmndKey, parameters.quit_key)
-        showprompts(parameters, screen, 'Quit');
+        showprompts(screen, 'Quit');
         WaitSecs(2);
         break
     end

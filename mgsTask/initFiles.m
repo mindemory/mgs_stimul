@@ -46,7 +46,6 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
     
     %% Initialize the files to write in
     date_time = datestr(now, 'mmddyy_HHMM');
-    %edfFile = [parameters.subject parameters.session '.edf'];% can only be 4 characters long
     edfFile = [EYE_DIR 'subj' parameters.subject '_block' parameters.block '_' date_time '.edf'];
     eegFile = [EEG_DIR 'subj' parameters.subject '_block' parameters.block '_' date_time '.edf'];
     datafile = [RESULTS_DIR 'subj' parameters.subject '_block' parameters.block '_' date_time '.csv'];

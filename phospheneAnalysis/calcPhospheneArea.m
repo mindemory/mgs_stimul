@@ -1,4 +1,4 @@
-function calcPhospheneArea(subjID, session, data_dir)
+function calcPhospheneArea(subjID, session, data_dir, figures_dir)
 
 data_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data_path);
@@ -135,12 +135,11 @@ end
 saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
 save(saveName_phosph,'PhosphReport')
 
-fig_dir = [data_dir '/Figures/'];
-if ~exist(fig_dir, 'dir')
-    mkdir(fig_dir);
+if ~exist(figures_dir, 'dir')
+    mkdir(figures_dir);
 end
-saveName_phosph_fig = [data_dir '/Figures/PhospheneReport_sub' subjID '_sess' session];
-saveName_samplespace_fig = [data_dir '/Figures/SampleSpace_sub' subjID '_sess' session];
+saveName_phosph_fig = [figures_dir '/PhospheneReport_sub' subjID '_sess' session];
+saveName_samplespace_fig = [figures_dir '/SampleSpace_sub' subjID '_sess' session];
 
 saveas(fig1,saveName_phosph_fig,'fig')
 saveas(fig1,saveName_phosph_fig,'png')
