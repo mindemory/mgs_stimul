@@ -14,11 +14,6 @@ if parameters.eyetracker
     el.msgfontcolour = BlackIndex(el.window);
     el.imgtitlecolour = WhiteIndex(el.window);
     el.targetbeep = 0;
-    el.calibrationtargetcolour = BlackIndex(el.window);
-    el.calibrationtargetsize = 1;
-    el.calibrationtargetwidth = 0.15;
-    el.displayCalResults = 1;
-    %el.eyeimgsize=30;
     EyelinkUpdateDefaults(el);
     
     %Initialization of the connection with the Eyelink Gazetracker.
@@ -32,11 +27,23 @@ if parameters.eyetracker
     %%%%%%%%%%%%%%%%%%%%%%%
     % set calibration type.
     %%%%%%%%%%%%%%%%%%%%%%%
-    [v vs]=Eyelink('GetTrackerVersion');
-    fprintf('Running experiment on a ''%s'' tracker.\n', vs);
+    [~, version]=Eyelink('GetTrackerVersion');
+    fprintf('Running experiment on a ''%s'' tracker.\n', version);
     Eyelink('command', 'sample_rate = 1000');
     Eyelink('command', 'calibration_type = HV9');
-    Eyelink('command', 'generate_default_targets = YES');    
+    Eyelink('command', 'generate_default_targets = NO');
+    width = screen.screenXpixels;
+    height = screen.screenYpixels;
+    Eyelink('command', 'calibration_sequence = 0,1,2,3,4,5,6,7,8');
+    Eyelink('command', 'calibration_targets = %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d', ...
+        width/2,height/2, width/2,height*0.2, width/2,height-height*0.2, width*0.2,height/2, ...
+        width-width*0.2,height/2, width*0.2,height*0.2, width-width*0.2,height*0.2, ...
+        width*0.2,height-height*0.2, width-width*0.2,height-height*0.2);
+    Eyelink('command', 'validation_sequence = 0,1,2,3,4,5,6,7,8');
+    Eyelink('command', 'validation_targets = %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d', ...
+        width/2,height/2, width/2,height*0.2, width/2,height-height*0.2, width*0.2,height/2, ...
+        width-width*0.2,height/2, width*0.2,height*0.2, width-width*0.2,height*0.2, ...
+        width*0.2,height-height*0.2, width-width*0.2,height-height*0.2);
     
     % make sure that we get event data from the Eyelink
     Eyelink('command', 'file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON');
@@ -50,6 +57,9 @@ if parameters.eyetracker
     
     % Calibrate the eye tracker
     EyelinkDoTrackerSetup(el);
+    
+    % do a final check of calibration using driftcorrection
+    EyelinkDoDriftCorrection(el);
     
     eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
     if eye_used == el.BINOCULAR % if both eyes are tracked
