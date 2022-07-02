@@ -1,24 +1,33 @@
-function coords_all = sample_space_bounds(XY, parameters)
-dx = XY(1) - parameters.xCenter;
-dy = -(XY(2) - parameters.yCenter);
+function coords_all = sample_space_bounds(X_mean, Y_mean, parameters)
+dx = X_mean - parameters.xCenter;
+dy = -(Y_mean - parameters.yCenter);
 
 % convert pixel distance to cm
 dx_cm = dx.*parameters.pixSize;
 dy_cm = dy.*parameters.pixSize;
 
 % compute euclidean distance of XY from center in cm
-r = abs(sqrt(dx_cm.^2 + dy_cm.^2));
+r = abs(sqrt(dx_cm.^2 + dy_cm.^2))
 
 % compute visual angle subtended by XY
 va = atan2d(r, parameters.viewingDistance);
+disp(['Visual angle for mean of phosphene overlap = ' num2str(va, "%02f")]);
 
 % compute r given a buffer of visual angle
 r_outer_cm = parameters.viewingDistance * tand(va+parameters.rbuffer); % in cm
 r_inner_cm = parameters.viewingDistance * tand(va-parameters.rbuffer); % in cm
+r_outer_max_cm = parameters.viewingDistance * tand(parameters.maxRadius); % in cm
+r_inner_min_cm = parameters.viewingDistance * tand(parameters.minRadius); % in cm
 
 % compute r_outer and r_inner in pixel
 r_outer = r_outer_cm./parameters.pixSize;
 r_inner = r_inner_cm./parameters.pixSize;
+r_outer_max = r_outer_max_cm./parameters.pixSize;
+r_inner_min = r_inner_min_cm./parameters.pixSize;
+
+% r_outer and r_inner within permissible bounds
+r_outer = min([r_outer, r_outer_max]);
+r_inner = max([r_inner, r_inner_min]);
 
 % polar angle of XY
 theta = atan2d(dy_cm, dx_cm);

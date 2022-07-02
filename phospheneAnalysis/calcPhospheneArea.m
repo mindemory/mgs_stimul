@@ -30,31 +30,34 @@ for coilInd = 1:length(LocInds)
     for trial = 1:length(phsphTrials)
         trialInd = phsphTrials(trial);
         drawing = tmsRtnTpy.Response.Drawing{trialInd};
-        [area, border] = analyzeDrawing(drawing, parameters);
-        PhosphReport(coilInd).area{trial} = area;
-        PhosphReport(coilInd).border{trial} = border;
+        poly_shape = polyshape(drawing);
+        %[area, border] = analyzeDrawing(drawing, parameters);
+        PhosphReport(coilInd).polyshape{trial} = poly_shape;
+        %PhosphReport(coilInd).border{trial} = border;
     end
     
     % calculate the overlapping area across all phosphenes for this coilLocation
-    overlap_area = PhosphReport(coilInd).area{1};
-    for trial = 2:length(PhosphReport(coilInd).area)
-        overlap_area = intersect(overlap_area, PhosphReport(coilInd).area{trial}, 'rows');
+    overlap_polyshape = PhosphReport(coilInd).polyshape{1};
+    for trial = 2:length(PhosphReport(coilInd).polyshape)
+        overlap_polyshape = intersect(overlap_polyshape, PhosphReport(coilInd).polyshape{trial});
     end
-    PhosphReport(coilInd).overlapCoords = overlap_area;
+    PhosphReport(coilInd).overlapPolyshape = overlap_polyshape;
     
     %% Calculate Target Sample-space
-    overlap_area_mean = [mean(overlap_area(:, 1)) mean(overlap_area(:, 2))];
+    [X_mean, Y_mean] = centroid(overlap_polyshape);
     % compute buffer of r and polar angle of mean.
-    coords_all = sample_space_bounds(overlap_area_mean, parameters); % r in pixel
+    coords_all = sample_space_bounds(X_mean, Y_mean, parameters); % r in pixel
     
     % compute area for expected bounds
-    [area_bound, ~] = analyzeDrawing(coords_all, parameters);
-    
+    %[area_bound, ~] = analyzeDrawing(coords_all, parameters);
+    polyshape_bound = polyshape(coords_all);
     % compute the overlapping area between expected bounds and overlapping
     % phosphene area. This is the StimuliSampleSpace from which stimuli
     % would be drawn.
-    area_common = intersect(area_bound, overlap_area, 'rows');
-    PhosphReport(coilInd).StimuliSampleSpace = area_common;
+    polyshape_common = intersect(polyshape_bound, overlap_polyshape);
+    
+    PhosphReport(coilInd).StimuliSampleSpace = polyshape_common;
+    
     
     % Store coilHemifield
     if overlap_area_mean(1) > parameters.xCenter
@@ -65,9 +68,16 @@ for coilInd = 1:length(LocInds)
     
     % Compute taskMaps
     for block = 1:parameters.numBlocks
-        inds = randi(length(area_common),[parameters.numTrials/2 1]);
+        [X_pixx, Y_pixx] = meshgrid(1:tmsRtnTpy.Params.screen.screenXpixels, ...
+            1:tmsRtnTpy.Params.screen.screenYpixels);
+        X_pixx = X_pixx(:);
+        Y_pixx = Y_pixx(:);
+        inds = randi(length(X_pixx),[parameters.numTrials/2 1]);
+        
+        TFin = isinterior(polyshape_common, X_pixx(inds), Y_pixx(inds));
+        inds = randi(length(polyshape_common),[parameters.numTrials/2 1]);
         % stimulus inside the tms FOV / TMS
-        stimLocSetIn = area_common(inds, :);
+        stimLocSetIn = polyshape_common(inds, :);
         % stimulus outside the tms FOV / TMS
         stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
         % concat all conditions

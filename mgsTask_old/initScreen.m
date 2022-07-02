@@ -25,7 +25,7 @@ function screen = initScreen(parameters)
     screen.grey = screen.white*0.5;
     AssertOpenGL;
     % Set blend function for alpha blending
-    [screen.win, screen.screenRect] = PsychImaging('OpenWindow', screen.id,screen.black, [], 32, 2, [], [], kPsychNeed32BPCFloat);
+    [screen.win, screen.screenRect] = PsychImaging('OpenWindow', screen.id,screen.grey, [], 32, 2, [], [], kPsychNeed32BPCFloat);
     screen.ifi = Screen('GetFlipInterval', screen.win);
 
     % Retreive the maximum priority number

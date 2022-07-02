@@ -4,6 +4,8 @@ function parameters = loadParameters(tmsRtnTpy)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parameters.rbuffer = 2; % degrees of visual angle
 parameters.dotSize = 0.6; % degrees of visual angle
+parameters.maxRadius = 14.5; % degrees of visual angle
+parameters.minRadius = 5; % degrees of visual angle
 parameters.xCenter = tmsRtnTpy.Params.screen.xCenter;
 parameters.yCenter = tmsRtnTpy.Params.screen.yCenter;
 parameters.screenXpixels = tmsRtnTpy.Params.screen.screenXpixels;
