@@ -6,7 +6,7 @@ parameters.eyeTrackerOn = 0;
 parameters.transparency = 0.7; % transparency for debug mode
 parameters.viewingDistance = 55;%viewDist
 parameters.waitBeforePulse = 3.00; % seconds
-parameters.apertureSize = 30; % in degrees of visual angle
+parameters.apertureSize = 28; % in degrees of visual angle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % study parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

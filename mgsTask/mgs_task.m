@@ -160,8 +160,8 @@ for block = start_block:42
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
                 Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
                 Eyelink('Message', 'XDAT %i ', 1);
-                %Eyelink('Message', 'TarX %s ', screen.xCenter);
-                %Eyelink('Message', 'TarY %s ', screen.yCenter);
+                Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
+                Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
             end
             % draw sample and fixation cross
             while GetSecs-sampleStartTime <= parameters.sampleDuration
@@ -319,8 +319,8 @@ for block = start_block:42
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 8);
-            %Eyelink('Message', 'TarX %s ', screen.xCenter);
-            %Eyelink('Message', 'TarY %s ', screen.yCenter);
+            Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
+            Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
         while GetSecs-itiStartTime < ITI(trial)
@@ -336,11 +336,10 @@ for block = start_block:42
     if parameters.eyetracker
         Eyelink('StopRecording');
         Eyelink('ReceiveFile', parameters.edfFile);
-        copyyfile(parameters.edfFile, [parameters.block_dir filesep parameters.edfFile]);
+        copyfile([parameters.edfFile '.edf'], [parameters.block_dir filesep parameters.edfFile '.edf']);
         Eyelink('Shutdown');
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end
-    ListenChar(1);
     
     % save timeReport
     matFile.parameters = parameters;
@@ -364,10 +363,12 @@ for block = start_block:42
         continue;
     elseif strcmp(cmndKey, parameters.exit_key)
         sca;
+        ListenChar(1);
         return;
     end
 end % end of block
 showprompts(screen, 'EndExperiment');
+ListenChar(1);
 WaitSecs(2);
 sca;
 end

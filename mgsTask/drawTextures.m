@@ -16,6 +16,7 @@ switch texture_name
         centeredRect_aperture = CenterRectOnPoint(baseRect_aperture, screen.xCenter, screen.yCenter);
   
         % Draw Aperture
+        Screen('FillRect', screen.win, screen.black);
         Screen('FillOval', screen.win, screen.grey, centeredRect_aperture, maxDiameter_aperture)
     
     % Drawing Fixation Cross
