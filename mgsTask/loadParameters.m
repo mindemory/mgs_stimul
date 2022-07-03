@@ -6,12 +6,11 @@ parameters.eyeTrackerOn = 0;
 parameters.transparency = 0.7; % transparency for debug mode
 parameters.viewingDistance = 55;%viewDist
 parameters.waitBeforePulse = 3.00; % seconds
-parameters.apertureSize = 14; % in degrees of visual angle
+parameters.apertureSize = 30; % in degrees of visual angle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % study parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-parameters.currentStudy = 'MGS_TMS_VisualCortex';
-parameters.currentStudyVersion = '01';
+parameters.studyname = 'MGS_TMS_V1';
 parameters.subject = subjID;
 parameters.coilLocInd = coilLocInd;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,8 +21,7 @@ parameters.anticolor = [256 0 0];
 parameters.cuecolor = [0 256 0];
 parameters.feebackcolor = [0 256 0];
 parameters.fixationSizeDeg = 0.6;
-parameters.fixationBoundary = 66;%pixels
-parameters.stimulusSizeDeg = 0.6;
+parameters.stimulusSizeDeg = 0.3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TMS pulse parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

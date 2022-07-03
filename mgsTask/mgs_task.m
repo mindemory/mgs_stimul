@@ -335,8 +335,8 @@ for block = start_block:42
     % stop eyelink and save eyelink data
     if parameters.eyetracker
         Eyelink('StopRecording');
-        Eyelink('ReceiveFile', 'temp.edf');
-        movefile('temp.edf', parameters.edfFile);
+        Eyelink('ReceiveFile', parameters.edfFile);
+        copyyfile(parameters.edfFile, [parameters.block_dir filesep parameters.edfFile]);
         Eyelink('Shutdown');
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end
@@ -346,7 +346,7 @@ for block = start_block:42
     matFile.parameters = parameters;
     matFile.screen = screen;
     matFile.timeReport = timeReport;
-    save(parameters.matFile,'matFile')
+    save([parameters.block_dir filesep parameters.matFile],'matFile')
     % end Teensy handshake
     if parameters.TMS
         MarkStim('x');

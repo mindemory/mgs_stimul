@@ -17,6 +17,7 @@ switch texture_name
   
         % Draw Aperture
         Screen('FillOval', screen.win, screen.grey, centeredRect_aperture, maxDiameter_aperture)
+    
     % Drawing Fixation Cross
     case 'FixationCross'
         if nargin < 4

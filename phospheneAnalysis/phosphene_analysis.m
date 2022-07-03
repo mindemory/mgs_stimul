@@ -1,6 +1,7 @@
 function phosphene_analysis(subjID, session)
 clearvars -except subjID session; close all; clc;
 % NOTE: This code can only run on Syndrome
+warning('off','all')
 
 subjID = num2str(subjID, "%02d");
 session = num2str(session, "%02d");

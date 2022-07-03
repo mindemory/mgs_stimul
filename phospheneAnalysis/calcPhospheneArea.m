@@ -55,12 +55,14 @@ for coilInd = 1:length(LocInds)
     % phosphene area. This is the StimuliSampleSpace from which stimuli
     % would be drawn.
     polyshape_common = intersect(polyshape_bound, overlap_polyshape);
-    
-    PhosphReport(coilInd).StimuliSampleSpace = polyshape_common;
-    
+    %polyshape_common.Vertices = round(polyshape_common.Vertices(sum(isnan(...
+    %    polyshape_common.Vertices), 2)==0, :));
+
+    StimuliSampleSpace = fillshape(polyshape_common, parameters.screenYpixels);
+    PhosphReport(coilInd).StimuliSampleSpace = StimuliSampleSpace;
     
     % Store coilHemifield
-    if overlap_area_mean(1) > parameters.xCenter
+    if X_mean > parameters.xCenter
         PhosphReport(coilInd).coilHemifield = 1; % Right visual field
     else
         PhosphReport(coilInd).coilHemifield = 2; % Left visual field
@@ -68,16 +70,9 @@ for coilInd = 1:length(LocInds)
     
     % Compute taskMaps
     for block = 1:parameters.numBlocks
-        [X_pixx, Y_pixx] = meshgrid(1:tmsRtnTpy.Params.screen.screenXpixels, ...
-            1:tmsRtnTpy.Params.screen.screenYpixels);
-        X_pixx = X_pixx(:);
-        Y_pixx = Y_pixx(:);
-        inds = randi(length(X_pixx),[parameters.numTrials/2 1]);
-        
-        TFin = isinterior(polyshape_common, X_pixx(inds), Y_pixx(inds));
-        inds = randi(length(polyshape_common),[parameters.numTrials/2 1]);
+        inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
         % stimulus inside the tms FOV / TMS
-        stimLocSetIn = polyshape_common(inds, :);
+        stimLocSetIn = StimuliSampleSpace(inds, :);
         % stimulus outside the tms FOV / TMS
         stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
         % concat all conditions
@@ -116,13 +111,18 @@ end
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
     plot(parameters.xCenter, parameters.yCenter,'+k');
-    for trial = 1:length(PhosphReport(coilInd).area)
-        axis ij; hold on;
-        plot(PhosphReport(coilInd).border{trial}(:,1), PhosphReport(coilInd).border{trial}(:,2));
+    for trial = 1:length(PhosphReport(coilInd).polyshape)
+        hold on;
+        pg = plot(PhosphReport(coilInd).polyshape{trial});
+        pg.FaceColor = 'w';
+        ax = gca; ax.YDir = 'reverse'; axis off;
     end
-    plot(PhosphReport(coilInd).overlapCoords(:,1), PhosphReport(coilInd).overlapCoords(:,2), '.k')
+    pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
+    pg1.FaceColor = 'k';
+    plot(X_mean, Y_mean, 'g*');
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
+    suptitle('Overlapping Phosphenes');
     title(['Coil Location Index : ' num2str(coilInd)]);
     pbaspect([1 1 1]);
 end
@@ -132,12 +132,16 @@ fig2 = figure();
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
     plot(parameters.xCenter, parameters.yCenter,'+k');
-    axis ij;
-    hold on; plot(PhosphReport(coilInd).StimuliSampleSpace(:,1), ...
+    hold on; 
+    pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
+    pg1.FaceColor = 'k';
+    pg1.FaceAlpha = 0.5;
+    plot(PhosphReport(coilInd).StimuliSampleSpace(:,1), ...
         PhosphReport(coilInd).StimuliSampleSpace(:,2), '.', 'Color', [0, 0, 1, 1])
-    
+    ax = gca; ax.YDir = 'reverse'; axis off;
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
+    suptitle('Stimuli Sample Space')
     title(['Coil Location Index : ' num2str(coilInd)]);
     pbaspect([1 1 1]);
 end

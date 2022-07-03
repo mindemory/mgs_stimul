@@ -4,7 +4,6 @@ if parameters.isDemoMode
     PsychDebugWindowConfiguration(0, parameters.transparency);
 end
 % degree of VA to pixel calculation
-screen.viewDist = parameters.viewingDistance; %the distance from the screen, in cm
 screen.id = max(Screen('Screens')); %get the screen
 [screen.screenXpixels, screen.screenYpixels] = Screen('WindowSize', screen.id); %get x and y pixels of screen
 [screen.screenWidth, screen.screenHeight] = Screen('DisplaySize',screen.id); %get screen width and height in mm
@@ -16,8 +15,8 @@ screen.pixSize = mean([pixWidth, pixHeight]); %cm/pixel
 screen.xCenter = screen.screenXpixels/2;
 screen.yCenter = screen.screenYpixels/2;
 
-screen.deg_width = atand(screen.screenWidth/2 / screen.viewDist) * 2;
-screen.deg_height = atand(screen.screenHeight/2 / screen.viewDist) * 2;
+screen.deg_width = atand(screen.screenWidth/2 / parameters.viewingDistance) * 2;
+screen.deg_height = atand(screen.screenHeight/2 / parameters.viewingDistance) * 2;
 
 % screen init for PC and MAC
 screen.white = WhiteIndex(screen.id);

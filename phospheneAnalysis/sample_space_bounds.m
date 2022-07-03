@@ -7,7 +7,7 @@ dx_cm = dx.*parameters.pixSize;
 dy_cm = dy.*parameters.pixSize;
 
 % compute euclidean distance of XY from center in cm
-r = abs(sqrt(dx_cm.^2 + dy_cm.^2))
+r = abs(sqrt(dx_cm.^2 + dy_cm.^2));
 
 % compute visual angle subtended by XY
 va = atan2d(r, parameters.viewingDistance);
@@ -48,9 +48,9 @@ coords_inner = [x_inner; y_inner]';
 
 % compute edges that connect outer and inner arcs
 edge1 = connectPoints(coords_outer(1, :), coords_inner(1, :));
-edge1 = connect_missing_points(edge1);
+%edge1 = connect_missing_points(edge1);
 edge2 = connectPoints(coords_outer(end, :), coords_inner(end, :));
-edge2 = connect_missing_points(edge2);
+%edge2 = connect_missing_points(edge2);
 
 % create a giant matrix of all coordinates of probably span of
 % phosphene map within which target locations will be drawn

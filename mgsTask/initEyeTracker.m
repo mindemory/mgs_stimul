@@ -53,7 +53,8 @@ if parameters.eyetracker
     Eyelink('command', 'link_event_data = GAZE,GAZERES,HREF,AREA,VELOCITY');
     
     % open file to record data to
-    Eyelink('Openfile', 'temp.edf');
+    %Eyelink('Openfile', 'temp.edf');
+    Eyelink('Openfile', parameters.edfFile);
     
     % Calibrate the eye tracker
     EyelinkDoTrackerSetup(el);

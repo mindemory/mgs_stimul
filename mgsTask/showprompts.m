@@ -3,22 +3,13 @@ function showprompts(screen, prompt_name, num, cond)
 
 switch prompt_name
     case 'WelcomeWindow'
-        text =  ['Welcome to the task.\n The task is arranged in blocks.\n'...
-            'A block can either be "pro" or "anti" signaled by a black or white dot respectively, at the start of the block.\n'...
-            'Each block consists of 42 trials which have a stimulus (a white dot) displayed at a location on the screen\n'...
-            'which disappears for 4 seconds delay. Your task is to remember the location of the dot while fixating on the\n'...
-            'central fixation cross. The fixation cross will turn green at the end of the delay which is the signal to make saccade.\n'...
-            'In a "pro" block, correct saccade is the one made to the stimulus location, while in an "anti" block, correct\n'...
-            'saccade is the one made to the direction opposite to the stimulus location. After each trial, feedback will be\n'...
-            'provided by a green dot. Press any key to continue ...'];
+        text =  ['Welcome to the task. Press SPACE to continue ...'];
     case 'BlockExists'
-        text = ['Block ' num2str(num) ' already exists. Press space if you still want to continue.'];
+        text = ['Block ' num2str(num) ' already exists. Press SPACE if you still want to continue, or ESCAPE to quit.'];
     case 'BlockStart'
         text = ['Block = ' num2str(num) '\nBlock type = ' cond];
-    case 'TrialCount'
-        text = ['Trial = ' num2str(num)];
     case 'BlockEnd'
-        text = ['End of block ' num2str(num) '. Please take a break. Press any key to continue.'];
+        text = ['End of block ' num2str(num) '. Please take a break. Press SPACE to continue.'];
     case 'EyeCalibStart'
         text = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');
     case 'EyeCalibEnd'
