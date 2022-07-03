@@ -30,7 +30,7 @@ for coilInd = 1:length(LocInds)
     for trial = 1:length(phsphTrials)
         trialInd = phsphTrials(trial);
         drawing = tmsRtnTpy.Response.Drawing{trialInd};
-        poly_shape = polyshape(drawing);
+        poly_shape = rmholes(polyshape(drawing));
         %[area, border] = analyzeDrawing(drawing, parameters);
         PhosphReport(coilInd).polyshape{trial} = poly_shape;
         %PhosphReport(coilInd).border{trial} = border;
@@ -41,16 +41,18 @@ for coilInd = 1:length(LocInds)
     for trial = 2:length(PhosphReport(coilInd).polyshape)
         overlap_polyshape = intersect(overlap_polyshape, PhosphReport(coilInd).polyshape{trial});
     end
+    overlap_polyshape = rmholes(overlap_polyshape);
     PhosphReport(coilInd).overlapPolyshape = overlap_polyshape;
     
     %% Calculate Target Sample-space
     [X_mean, Y_mean] = centroid(overlap_polyshape);
+    PhosphReport(coilInd).polyshape_centroid = [X_mean, Y_mean];
     % compute buffer of r and polar angle of mean.
     coords_all = sample_space_bounds(X_mean, Y_mean, parameters); % r in pixel
     
     % compute area for expected bounds
     %[area_bound, ~] = analyzeDrawing(coords_all, parameters);
-    polyshape_bound = polyshape(coords_all);
+    polyshape_bound = rmholes(polyshape(coords_all));
     % compute the overlapping area between expected bounds and overlapping
     % phosphene area. This is the StimuliSampleSpace from which stimuli
     % would be drawn.
@@ -119,7 +121,7 @@ for coilInd = 1:N
     end
     pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
     pg1.FaceColor = 'k';
-    plot(X_mean, Y_mean, 'g*');
+    plot(PhosphReport(coilInd).polyshape_centroid(1), PhosphReport(coilInd).polyshape_centroid(2), 'g*');
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
     suptitle('Overlapping Phosphenes');
