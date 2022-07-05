@@ -25,17 +25,17 @@ ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't act
 
     
 for block = 1:2
-    matFile = [mgs_data_path '/block' num2str(block,"%02d") '/subj' subjID '_block' num2str(block,"%02d") '.mat'];
+    block_path = [mgs_data_path '/block' num2str(block,"%02d")];
+    matFile_extract = dir(fullfile(block_path, '*.mat'));
+    matFile = [block_path filesep matFile_extract.name];
     load(matFile);
     parameters = matFile.parameters;
     screen = matFile.screen;
     timeReport = matFile.timeReport;
     ii_params.resolution = [screen.screenXpixels screen.screenYpixels];
     ii_params.ppd = parameters.viewingDistance * tand(1) / screen.pixSize;
-    edfFileUbuntuPath = parameters.edfFile;
-    filesepinds = strfind(edfFileUbuntuPath,filesep);
-    edfFileName = edfFileUbuntuPath(filesepinds(end):end);
-    edfFile = [mgs_data_path '/block' num2str(block,"%02d") edfFileName];
+    edfFileName = parameters.edfFile;
+    edfFile = [block_path filesep edfFileName '.edf'];
 
     
     % what is the output filename?
