@@ -131,7 +131,7 @@ for block = start_block:42
     %% run over trials
     for trial = trialArray
         % EEG marker --> trial begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 10);
         end
         
