@@ -1,6 +1,8 @@
 function saveTaskMap(subjID, session, coilLocInd)
 % Choose a session and coilLocInd that needs to be used for a given subject
 %%% Adding all necessary paths
+subjID = num2str(subjID, "%02d");
+session = num2str(session, "%02d");
 curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
