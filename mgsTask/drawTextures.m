@@ -48,7 +48,7 @@ switch texture_name
         % Draw Fixation cross
         Screen('FillOval', screen.win, screen.black, centeredRect_outer, maxDiameter_outer);
         Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+            fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
         

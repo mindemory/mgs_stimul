@@ -60,7 +60,7 @@ if parameters.eyetracker
     EyelinkDoTrackerSetup(el);
     
     % do a final check of calibration using driftcorrection
-    EyelinkDoDriftCorrection(el);
+    %EyelinkDoDriftCorrection(el);
     
     eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
     if eye_used == el.BINOCULAR % if both eyes are tracked
