@@ -1,9 +1,10 @@
-function mgs_task(subjID, start_block)
+function mgs_practice(subjID, session, coilLocInd, start_block)
 %% Initialization
 clearvars -except subjID session coilLocInd start_block;
 close all; clc;% clear mex;
 
 subjID = num2str(subjID, "%02d");
+session = num2str(session, "%02d");
 
 %%% Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
@@ -23,7 +24,7 @@ addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
-parameters = loadParameters(subjID);
+parameters = loadParameters(subjID, coilLocInd);
 %%% Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
@@ -49,11 +50,12 @@ screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters, hostname);
 
-for block = start_block:start_block+10-1
+for block = start_block:42
     parameters.block = num2str(block, "%02d");
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
     % Initialize taskMap
-    load([phosphene_data_path '/taskMap_sub' subjID])
+    load([phosphene_data_path '/PhospheneReport_sub' subjID '_sess' session])
+    taskMap = PhosphReport(coilLocInd).taskMap(block);
     trialNum = length(taskMap.stimLocpix);
     %% Start Experiment
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
