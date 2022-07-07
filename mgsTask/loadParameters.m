@@ -3,7 +3,7 @@ function parameters = loadParameters(subjID)
 % program basic settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parameters.eyeTrackerOn = 0;
-parameters.transparency = 0.7; % transparency for debug mode
+parameters.transparency = 0.6; % transparency for debug mode
 parameters.viewingDistance = 55;%viewDist
 parameters.waitBeforePulse = 3.00; % seconds
 parameters.apertureSize = 28; % in degrees of visual angle
@@ -20,7 +20,6 @@ parameters.anticolor = [256 0 0];
 parameters.cuecolor = [0 256 0];
 parameters.feebackcolor = [0 256 0];
 parameters.fixationSizeDeg = 0.6;
-parameters.stimulusSizeDeg = 0.3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TMS pulse parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

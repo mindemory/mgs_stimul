@@ -12,7 +12,10 @@ addpath(genpath(phosphene_data_path));
 
 load([phosphene_data_path '/PhospheneReport_sub' subjID '_sess' session])
 taskMap = PhosphReport(coilLocInd).taskMap;
+taskMapPractice = PhosphReport(coilLocInd).taskMapPractice;
 %% Save results
 saveName_taskMap = [phosphene_data_path '/taskMap_sub' subjID];
 save(saveName_taskMap,'taskMap')
+saveName_taskMapPractice = [phosphene_data_path '/taskMapPractice_sub' subjID];
+save(saveName_taskMapPractice,'taskMapPractice')
 end

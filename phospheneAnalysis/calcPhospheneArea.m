@@ -90,6 +90,32 @@ for coilInd = 1:length(LocInds)
         PhosphReport(coilInd).taskMap(block).dotSizeSacc = dotSizeSacc;
         PhosphReport(coilInd).taskMap(block).saccLocpix = saccLocpix;
     end
+    
+    % Compute taskMaps for Practice
+    for block = 1:parameters.numBlocksPractice
+        inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
+        % stimulus inside the tms FOV / TMS
+        stimLocSetIn = StimuliSampleSpace(inds, :);
+        % stimulus outside the tms FOV / TMS
+        stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
+        % concat all conditions
+        stimLocpix = [stimLocSetIn; stimLocSetOut];
+        trialInds = randperm(parameters.numTrials);
+        stimLocpix = stimLocpix(trialInds', :);
+        condthisBlock = convertStringsToChars(condsByBlock(block));
+        PhosphReport(coilInd).taskMapPractice(block).condition = condthisBlock;
+        if strcmp(condthisBlock,'pro')
+            saccLocpix = stimLocpix;
+        elseif strcmp(condthisBlock,'anti')
+            saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+        end
+        dotSizeStim = computeDotSize(parameters, stimLocpix);
+        dotSizeSacc = computeDotSize(parameters, saccLocpix);
+        PhosphReport(coilInd).taskMapPractice(block).stimLocpix = stimLocpix;
+        PhosphReport(coilInd).taskMapPractice(block).dotSizeStim = dotSizeStim;
+        PhosphReport(coilInd).taskMapPractice(block).dotSizeSacc = dotSizeSacc;
+        PhosphReport(coilInd).taskMapPractice(block).saccLocpix = saccLocpix;
+    end
 end
 
 %% Visualize Phosphene maps

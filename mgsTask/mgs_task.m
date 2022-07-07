@@ -1,4 +1,4 @@
-function mgs_task(subjID, start_block)
+function mgs_task(subjID, TMSon, start_block)
 %% Initialization
 clearvars -except subjID session coilLocInd start_block;
 close all; clc;% clear mex;
@@ -37,7 +37,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.EEG = 1; % set to 0 if there is no EEG recording
-    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    parameters.TMS = TMSon; % set to 0 if there is no TMS stimulation
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
@@ -54,6 +54,7 @@ for block = start_block:start_block+10-1
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
     % Initialize taskMap
     load([phosphene_data_path '/taskMap_sub' subjID])
+    taskMap = taskMap(1, block);
     trialNum = length(taskMap.stimLocpix);
     %% Start Experiment
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +76,7 @@ for block = start_block:start_block+10-1
         end
         trigger_id = ['/dev/', dev_name]
         MarkStim('i', trigger_id)
+        MarkStim('s', true, 50); %time-window of pulse (in ms), minimum is 38ms
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +124,7 @@ for block = start_block:start_block+10-1
     drawTextures(parameters, screen, 'FixationCross');
     
     timeReport = struct;
-    timeReport = repmat(timeReport, [1, trialNum]);
+    %timeReport = repmat(timeReport, [1, trialNum]);
     
     trialArray = 1:trialNum;
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
@@ -130,7 +132,7 @@ for block = start_block:start_block+10-1
     for trial = trialArray
         % EEG marker --> trial begins
         if parameters.EEG
-            MarkStim('t', 10);
+            MarkStim('t', 1);
         end
         
         disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
@@ -152,7 +154,7 @@ for block = start_block:start_block+10-1
             sampleStartTime = GetSecs;
             % EEG marker --> Sample begins
             if parameters.EEG
-                MarkStim('t', 20);
+                MarkStim('t', 2);
             end
             %record to the edf file that sample is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -169,14 +171,14 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            timeReport(trial).sampleDuration = GetSecs-sampleStartTime;
+            timeReport.sampleDuration(trial) = GetSecs-sampleStartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Delay1 window
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             delay1StartTime = GetSecs;
             if parameters.EEG
-                MarkStim('t', 30);
+                MarkStim('t', 3);
             end
             %record to the edf file that delay1 is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -188,7 +190,7 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            timeReport(trial).delay1Duration = GetSecs - delay1StartTime;
+            timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % TMS pulse window
@@ -197,9 +199,9 @@ for block = start_block:start_block+10-1
             % EEG marker --> TMS pulse begins
             if parameters.EEG
                 if parameters.TMS
-                    MarkStim('t', 168); % 128 for TMS + 40 for EEG marker
+                    MarkStim('t', 132); % 128 for TMS + 4 for EEG marker
                 else
-                    MarkStim('t', 40);
+                    MarkStim('t', 4);
                 end
             else
                 if parameters.TMS
@@ -212,7 +214,7 @@ for block = start_block:start_block+10-1
                 Eyelink('Message', 'XDAT %i ', 3);
             end
             WaitSecs(parameters.pulseDuration);
-            timeReport(trial).pulseDuration = GetSecs - pulseStartTime;
+            timeReport.pulseDuration(trial) = GetSecs - pulseStartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Delay2 window
@@ -220,7 +222,7 @@ for block = start_block:start_block+10-1
             delay2StartTime = GetSecs;
             % EEG marker --> Delay2 begins
             if parameters.EEG
-                MarkStim('t', 50);
+                MarkStim('t', 5);
             end
             %record to the edf file that delay2 is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -232,7 +234,7 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            timeReport(trial).delay2Duration = GetSecs - delay2StartTime;
+            timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Response Cue window
@@ -240,7 +242,7 @@ for block = start_block:start_block+10-1
             respCueStartTime = GetSecs;
             % EEG marker --> Response cue begins
             if parameters.EEG
-                MarkStim('t', 60);
+                MarkStim('t', 6);
             end
             saccLoc = taskMap.saccLocpix(trial, :);
             %record to the edf file that response cue is started
@@ -255,7 +257,7 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
             end
-            timeReport(trial).respCueDuration = GetSecs - respCueStartTime;
+            timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Response window
@@ -263,7 +265,7 @@ for block = start_block:start_block+10-1
             respStartTime = GetSecs;
             % EEG marker --> response begins
             if parameters.EEG
-                MarkStim('t', 70)
+                MarkStim('t', 7)
             end
             %record to the edf file that response is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -276,7 +278,7 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            timeReport(trial).respDuration = GetSecs - respStartTime;
+            timeReport.respDuration(trial) = GetSecs - respStartTime;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Feedback window
@@ -284,7 +286,7 @@ for block = start_block:start_block+10-1
             feedbackStartTime = GetSecs;
             % EEG marker --> feedback begins
             if parameters.EEG
-                MarkStim('t', 80);
+                MarkStim('t', 8);
             end
             %record to the edf file that feedback is started
             if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -299,7 +301,7 @@ for block = start_block:start_block+10-1
                 drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            timeReport(trial).feedbackDuration = GetSecs-feedbackStartTime;
+            timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         end
         
         if parameters.eyetracker
@@ -311,7 +313,7 @@ for block = start_block:start_block+10-1
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
         if parameters.TMS
-            MarkStim('t', 90);
+            MarkStim('t', 9);
         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -325,8 +327,8 @@ for block = start_block:start_block+10-1
             drawTextures(parameters, screen, 'Aperture');
             drawTextures(parameters, screen, 'FixationCross');
         end
-        timeReport(trial).itiDuration = GetSecs - itiStartTime;
-        timeReport(trial).trialDuration = GetSecs-sampleStartTime;
+        timeReport.itiDuration(trial) = GetSecs - itiStartTime;
+        timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
     end
         
     %% Saving Data and Closing everything
