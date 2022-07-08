@@ -18,7 +18,7 @@ filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
 markstim_path = [master_dir '/markstim-master'];
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
+mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
 addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));

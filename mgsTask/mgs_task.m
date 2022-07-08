@@ -1,6 +1,6 @@
 function mgs_task(subjID, TMSon, start_block)
 %% Initialization
-clearvars -except subjID session coilLocInd start_block;
+clearvars -except subjID session TMSon coilLocInd start_block;
 close all; clc;% clear mex;
 
 subjID = num2str(subjID, "%02d");
