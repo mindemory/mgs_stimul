@@ -13,11 +13,14 @@ mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
+EEGpath_temp = '/hyper/experiments/Masih/EEG_MGS/VisualCortex-grant/data/eeg/sub01_session02';
+EEGfile_temp = [EEGpath_temp '/s1s2_r1_pro.vhdr'];
 EEGpath = [mgs_data_path '/EEGData'];
 EEGfile = dir(fullfile(EEGpath, '*.vhdr'));
 EEGfile.name
 cfg = [];
-cfg.dataset = [EEGpath filesep EEGfile.name];
+%cfg.dataset = [EEGpath filesep EEGfile.name];
+cfg.dataset = EEGfile_temp;
 data_eeg = ft_preprocessing(cfg);
 
 cfg.trialdef.eventtype = 'Stimulus';
