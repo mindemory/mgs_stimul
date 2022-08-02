@@ -3,9 +3,8 @@ function saveTaskMap(subjID, session, coilLocInd)
 %%% Adding all necessary paths
 subjID = num2str(subjID, "%02d");
 session = num2str(session, "%02d");
-curr_dir = pwd;
-filesepinds = strfind(curr_dir,filesep);
-master_dir = curr_dir(1:(filesepinds(end-1)-1));
+
+master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
 
 addpath(genpath(phosphene_data_path));
