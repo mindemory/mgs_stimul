@@ -7,9 +7,10 @@ subjID = num2str(subjID, "%02d");
 session = num2str(session, "%02d");
 curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
-master_dir = curr_dir(1:(filesepinds(end-1)-1));
+local_master_dir = curr_dir(1:(filesepinds(end-1)-1));
+master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 data_path = [master_dir '/data/phosphene_data/sub' subjID];
-figures_path = [master_dir '/Figures/phosphene_data/sub' subjID];
+figures_path = [local_master_dir '/Figures/phosphene_data/sub' subjID];
 
 %% Compute Overlapping Phosphene Area and Target Locations
 calcPhospheneArea(subjID, session, data_path, figures_path);
