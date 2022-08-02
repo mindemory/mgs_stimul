@@ -3,6 +3,7 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
 %--------------------------------------------------------------------------------------------------------------------------------------%
 % specify the directories to be used
 block_dir = [data_path '/block' num2str(block, "%02d")];
+eye_dir = [block_dir '/EyeData'];
 
 %% Create directories and sub-directories
 if exist(data_path,'dir')~=7 %if the "subNum" directory doesn't exist, create one
@@ -33,6 +34,7 @@ eegFile = ['subj' parameters.subject '_block' parameters.block '_' date_time '.e
 matFile = ['subj' parameters.subject '_block' parameters.block '.mat'];
 
 parameters.block_dir = block_dir;
+parameters.eye_dir = eye_dir;
 parameters.edfFile = edfFile;
 parameters.eegFile = eegFile;
 parameters.matFile = matFile;

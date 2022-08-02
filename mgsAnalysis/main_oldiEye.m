@@ -5,7 +5,7 @@ master_dir = tmp(1:(tmp2(end-2)-1));
 mgs_dir = '/datc/MD_TMS_EEG/data/mgs_data';
 %master_dir = mgs_dir(1:end-11);
 
-iEye_path = [master_dir '/iEye_md'];
+iEye_path = [master_dir '/iEye'];
 %phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
 mgs_data_path = [mgs_dir '/sub' subjID];
 addpath(genpath(iEye_path));
@@ -25,7 +25,7 @@ ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 
     
-for block = 1:2
+for block = 1:20
     block_path = [mgs_data_path '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(block_path, '*.mat'));
     matFile = [block_path filesep matFile_extract.name];
@@ -34,9 +34,9 @@ for block = 1:2
     screen = matFile.screen;
     timeReport = matFile.timeReport;
     ii_params.resolution = [screen.screenXpixels screen.screenYpixels];
-    ii_params.viewingDistance = parameters.viewingDistance;
-    ii_params.pixSize = screen.pixSize;
-    %ii_params.ppd = parameters.viewingDistance * tand(1) / screen.pixSize;
+    %ii_params.viewingDistance = parameters.viewingDistance;
+    %ii_params.pixSize = screen.pixSize;
+    ii_params.ppd = parameters.viewingDistance * tand(1) / screen.pixSize;
     edfFileName = parameters.edfFile;
     edfFile = [block_path '/EyeData/' edfFileName '.edf'];
     
@@ -44,7 +44,7 @@ for block = 1:2
     preproc_fn = edfFile(1:end-4);
 
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = eye_preprocess(edfFile, ifgFile, preproc_fn, ii_params);
+    [ii_data, ii_cfg, ii_sacc] = ii_preproc(edfFile, ifgFile, preproc_fn, ii_params);
 
     if block == 1
         % plot some features of the data

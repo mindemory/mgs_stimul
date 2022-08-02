@@ -336,7 +336,7 @@ for block = start_block:start_block+10-1
     if parameters.eyetracker
         Eyelink('StopRecording');
         Eyelink('ReceiveFile', parameters.edfFile);
-        copyfile([parameters.edfFile '.edf'], [parameters.block_dir filesep parameters.edfFile '.edf']);
+        copyfile([parameters.edfFile '.edf'], [parameters.eye_dir filesep parameters.edfFile '.edf']);
         Eyelink('Shutdown');
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end

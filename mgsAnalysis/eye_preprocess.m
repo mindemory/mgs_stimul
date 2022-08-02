@@ -1,4 +1,5 @@
-function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
+function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn, cfg_fn, preproc_fn, ...
+    ii_params, trialinfo, skip_steps)
 % ii_preproc Performs default pre-processing stream
 %
 % For preprocessing saccade data (specifically, memory-guided saccade
@@ -50,7 +51,6 @@ function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn,cfg_fn,preproc_fn,ii_p
 % initialize iEye - make sure paths are correct, etc
 ii_init;
 
-
 if nargin < 4 || isempty(ii_params)
     ii_params = ii_loadparams;
 end
@@ -66,31 +66,25 @@ end
 
 
 % import data
-[ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
-
+[ii_data,ii_cfg] = ii_import_edf(edf_fn, cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
 %imported_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 
 % truncate data to relevant XDATs
-[ii_data,ii_cfg] = ii_trim(ii_data,ii_cfg,ii_params.valid_epochs,ii_params.epoch_chan);
-
+[ii_data,ii_cfg] = ii_trim(ii_data, ii_cfg, ii_params.valid_epochs, ii_params.epoch_chan);
 %trim_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
-% rescale X, Y based on screen info
-[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
-[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'TarX','TarY'},ii_params.resolution,ii_params.ppd);
 
-%rescale_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
-
-% Invert Y channel (the eye-tracker spits out flipped Y values)
-[ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'Y');
-[ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'TarY');
-
-%invert_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 % remove extreme-valued X,Y channels (further than the screen edges)
-[ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
-    {[-0.5 0.5]*ii_params.resolution(1)/ii_params.ppd,...
-     [-0.5 0.5]*ii_params.resolution(2)/ii_params.ppd});
+%[ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
+%    {[0 ii_params.resolution(1)],[0 ii_params.resolution(2)]});
+%censor_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 
-%censor_plot = plot_data(ii_data,{'X','Y'})
+% rescale X, Y based on screen info
+[ii_data, ii_cfg] = ii_rescale_invert(ii_data, ii_cfg, {'X', 'Y'}, ii_params);
+[ii_data, ii_cfg] = ii_rescale_invert(ii_data, ii_cfg, {'TarX', 'TarY'}, ii_params);
+
+% rescale_invert_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
+plot_data_polar(ii_data, {'XY'}, 'va');
+plot_data_polar(ii_data, {'XY'}, 'r');
 
 % Correct for blinks
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
