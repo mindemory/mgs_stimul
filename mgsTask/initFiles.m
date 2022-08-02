@@ -27,6 +27,10 @@ else
     mkdir(block_dir);
 end
 
+if exist(eye_dir,'dir')~=7 %if the "subNum" directory doesn't exist, create one
+    mkdir(eye_dir);
+end
+
 %% Initialize the files to write in
 date_time = datestr(now, 'mmddyy_HHMM');
 edfFile = [parameters.subject parameters.block date_time(1:4)];
