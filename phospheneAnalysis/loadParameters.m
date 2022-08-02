@@ -18,5 +18,5 @@ parameters.viewingDistance = tmsRtnTpy.Params.taskParams.viewingDistance;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parameters.numTrials = 40; % make sure it is a multiple of 2
 parameters.numBlocks = 30;
-parameters.numBlocksPractice = 10;
+parameters.numBlocksPractice = 3;
 end
