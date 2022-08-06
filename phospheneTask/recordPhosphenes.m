@@ -1,4 +1,4 @@
-function recordPhosphenes(subjID, session)
+ function recordPhosphenes(subjID, session)
 %% Record Phoshpenes (mrugank: 03/07/2022)
 % The code has been originally written by Masih. It has been adapted to
 % make changes to suitably adjust to the new display, interact with the TMS

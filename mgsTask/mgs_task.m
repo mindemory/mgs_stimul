@@ -1,4 +1,4 @@
-function mgs_task(subjID, TMSon, start_block)
+function mgs_task(subjID, start_block)
 %% Initialization
 clearvars -except subjID session TMSon coilLocInd start_block;
 close all; clc;% clear mex;
@@ -37,7 +37,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.EEG = 1; % set to 0 if there is no EEG recording
-    parameters.TMS = TMSon; % set to 0 if there is no TMS stimulation
+    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
@@ -115,12 +115,12 @@ for block = start_block:start_block+10-1
         Eyelink('Message', 'SYNCTIME');
     end
     ListenChar(-1);
-    drawTextures(parameters, screen, 'Aperture');
+    %drawTextures(parameters, screen, 'Aperture');
     showprompts(screen, 'BlockStart', block, taskMap.condition)
     
     WaitSecs(2);
     
-    drawTextures(parameters, screen, 'Aperture');
+    %drawTextures(parameters, screen, 'Aperture');
     drawTextures(parameters, screen, 'FixationCross');
     
     timeReport = struct;
@@ -141,6 +141,9 @@ for block = start_block:start_block+10-1
             Eyelink('command', 'record_status_message "TRIAL %i/%i "', ...
                 trial, trialNum);
             Eyelink('Message', 'TRIAL %i ', trial);
+        end
+        if trial == 1
+            WaitSecs(2);
         end
         trial_start = GetSecs;
         
@@ -167,7 +170,7 @@ for block = start_block:start_block+10-1
             while GetSecs-sampleStartTime <= parameters.sampleDuration
                 dotSize = taskMap.dotSizeStim(trial);
                 dotCenter = taskMap.stimLocpix(trial, :);
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
@@ -187,7 +190,7 @@ for block = start_block:start_block+10-1
             end
             % Draw fixation cross
             while GetSecs-delay1StartTime <= parameters.delay1Duration
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
@@ -231,7 +234,7 @@ for block = start_block:start_block+10-1
             end
             % Draw fixation cross
             while GetSecs-delay2StartTime<=parameters.delay2Duration
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
@@ -254,7 +257,7 @@ for block = start_block:start_block+10-1
             end
             % Draw green fixation cross
             while GetSecs-respCueStartTime < parameters.respCueDuration
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
             end
             timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
@@ -275,7 +278,7 @@ for block = start_block:start_block+10-1
             end
             %draw the fixation dot
             while GetSecs-respStartTime<=parameters.respDuration
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.respDuration(trial) = GetSecs - respStartTime;
@@ -297,7 +300,7 @@ for block = start_block:start_block+10-1
             while GetSecs-feedbackStartTime<=parameters.feedbackDuration
                 dotSize = taskMap.dotSizeSacc(trial);
                 dotCenter = taskMap.saccLocpix(trial, :);
-                drawTextures(parameters, screen, 'Aperture');
+                %drawTextures(parameters, screen, 'Aperture');
                 drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
@@ -324,7 +327,7 @@ for block = start_block:start_block+10-1
         end
         % Draw a fixation cross
         while GetSecs-itiStartTime < ITI(trial)
-            drawTextures(parameters, screen, 'Aperture');
+            %drawTextures(parameters, screen, 'Aperture');
             drawTextures(parameters, screen, 'FixationCross');
         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
