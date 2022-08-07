@@ -24,7 +24,6 @@ ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 
-    
 for block = 1:20
     block_path = [mgs_data_path '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(block_path, '*.mat'));
@@ -44,7 +43,7 @@ for block = 1:20
     preproc_fn = edfFile(1:end-4);
 
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = ii_preproc(edfFile, ifgFile, preproc_fn, ii_params);
+    [ii_data, ii_cfg, ii_sacc] = eye_preprocess_old(edfFile, ifgFile, preproc_fn, ii_params);
 
     if block == 1
         % plot some features of the data
