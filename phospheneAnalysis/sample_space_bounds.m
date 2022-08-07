@@ -26,8 +26,8 @@ r_outer_max = r_outer_max_cm./parameters.pixSize;
 r_inner_min = r_inner_min_cm./parameters.pixSize;
 
 % r_outer and r_inner within permissible bounds
-r_outer = min([r_outer, r_outer_max]);
-r_inner = max([r_inner, r_inner_min]);
+%r_outer = min([r_outer, r_outer_max])
+%r_inner = max([r_inner, r_inner_min])
 
 % polar angle of XY
 theta = atan2d(dy_cm, dx_cm);

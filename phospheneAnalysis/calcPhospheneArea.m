@@ -13,13 +13,12 @@ LocInds = unique(tmsRtnTpy.Response.CoilLocation);
 PhosphReport = struct;
 PhosphReport = repmat(PhosphReport, [1, length(LocInds)]);
 
-parameters = loadParameters(tmsRtnTpy);
 % Extract parameters from tmsRtnTpy
+parameters = loadParameters(tmsRtnTpy);
+tms_notms = [0, 1, 1];
+tms_notms_Idx = randperm(length(tms_notms));
+tms_notms = tms_notms(tms_notms_Idx);
 
-conds = ["pro", "anti"];
-conds = repmat(conds, [1, parameters.numBlocks/2]);
-condsIdx = randperm(length(conds));
-condsByBlock = conds(condsIdx);
 
 %% Calculate border and area of each phosphene report
 for coilInd = 1:length(LocInds)
@@ -54,7 +53,7 @@ for coilInd = 1:length(LocInds)
     % phosphene area. This is the StimuliSampleSpace from which stimuli
     % would be drawn.
     polyshape_common = intersect(polyshape_bound, overlap_polyshape);
-
+    
     StimuliSampleSpace = fillshape(polyshape_common, parameters.screenYpixels);
     PhosphReport(coilInd).StimuliSampleSpace = StimuliSampleSpace;
     
@@ -64,62 +63,72 @@ for coilInd = 1:length(LocInds)
     else
         PhosphReport(coilInd).coilHemifield = 2; % Left visual field
     end
-    
-    % Compute taskMaps
-    for block = 1:parameters.numBlocks
-        inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
-        % stimulus inside the tms FOV / TMS
-        stimLocSetIn = StimuliSampleSpace(inds, :);
-        % stimulus outside the tms FOV / TMS
-        stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
-        % concat all conditions
-        stimLocpix = [stimLocSetIn; stimLocSetOut];
-        trialInds = randperm(parameters.numTrials);
-        stimLocpix = stimLocpix(trialInds', :);
-        condthisBlock = convertStringsToChars(condsByBlock(block));
-        PhosphReport(coilInd).taskMap(block).condition = condthisBlock;
-        if strcmp(condthisBlock,'pro')
-            saccLocpix = stimLocpix;
-        elseif strcmp(condthisBlock,'anti')
-            saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+    for day = 1:parameters.days
+        TMScond = tms_notms(day);
+        conds = ["pro", "anti"];
+        conds = repmat(conds, [1, parameters.numBlocks/2]);
+        condsIdx = randperm(length(conds));
+        condsByBlock = conds(condsIdx);
+        % Compute taskMaps
+        for block = 1:parameters.numBlocks
+            inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
+            % stimulus inside the tms FOV / TMS
+            stimLocSetIn = StimuliSampleSpace(inds, :);
+            % stimulus outside the tms FOV / TMS
+            stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
+            % concat all conditions
+            stimLocpix = [stimLocSetIn; stimLocSetOut];
+            trialInds = randperm(parameters.numTrials);
+            stimLocpix = stimLocpix(trialInds', :);
+            condthisBlock = convertStringsToChars(condsByBlock(block));
+            PhosphReport(coilInd).taskMap(day, block).TMScond = TMScond;
+            PhosphReport(coilInd).taskMap(day, block).condition = condthisBlock;
+            if strcmp(condthisBlock,'pro')
+                saccLocpix = stimLocpix;
+            elseif strcmp(condthisBlock,'anti')
+                saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+            end
+            dotSizeStim = computeDotSize(parameters, stimLocpix);
+            dotSizeSacc = computeDotSize(parameters, saccLocpix);
+            PhosphReport(coilInd).taskMap(day, block).stimLocpix = stimLocpix;
+            PhosphReport(coilInd).taskMap(day, block).dotSizeStim = dotSizeStim;
+            PhosphReport(coilInd).taskMap(day, block).dotSizeSacc = dotSizeSacc;
+            PhosphReport(coilInd).taskMap(day, block).saccLocpix = saccLocpix;
         end
-        dotSizeStim = computeDotSize(parameters, stimLocpix);
-        dotSizeSacc = computeDotSize(parameters, saccLocpix);
-        PhosphReport(coilInd).taskMap(block).stimLocpix = stimLocpix;
-        PhosphReport(coilInd).taskMap(block).dotSizeStim = dotSizeStim;
-        PhosphReport(coilInd).taskMap(block).dotSizeSacc = dotSizeSacc;
-        PhosphReport(coilInd).taskMap(block).saccLocpix = saccLocpix;
-    end
-    
-    % Compute taskMaps for Practice
-    for block = 1:parameters.numBlocksPractice
-        inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
-        % stimulus inside the tms FOV / TMS
-        stimLocSetIn = StimuliSampleSpace(inds, :);
-        % stimulus outside the tms FOV / TMS
-        stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
-        % concat all conditions
-        stimLocpix = [stimLocSetIn; stimLocSetOut];
-        trialInds = randperm(parameters.numTrials);
-        stimLocpix = stimLocpix(trialInds', :);
-        condthisBlock = convertStringsToChars(condsByBlock(block));
-        PhosphReport(coilInd).taskMapPractice(block).condition = condthisBlock;
-        if strcmp(condthisBlock,'pro')
-            saccLocpix = stimLocpix;
-        elseif strcmp(condthisBlock,'anti')
-            saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+        % Compute taskMaps for Practice
+        for block = 1:parameters.numBlocksPractice
+            inds = randi(length(StimuliSampleSpace),[parameters.numTrials/2 1]);
+            % stimulus inside the tms FOV / TMS
+            stimLocSetIn = StimuliSampleSpace(inds, :);
+            % stimulus outside the tms FOV / TMS
+            stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
+            % concat all conditions
+            stimLocpix = [stimLocSetIn; stimLocSetOut];
+            trialInds = randperm(parameters.numTrials);
+            stimLocpix = stimLocpix(trialInds', :);
+            if rem(block, 2) == 1
+                condthisBlock = 'pro';
+                saccLocpix = stimLocpix;
+            else
+                condthisBlock = 'anti';
+                saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+            end
+            PhosphReport(coilInd).taskMapPractice(block).condition = condthisBlock;
+
+            dotSizeStim = computeDotSize(parameters, stimLocpix);
+            dotSizeSacc = computeDotSize(parameters, saccLocpix);
+            PhosphReport(coilInd).taskMapPractice(block).stimLocpix = stimLocpix;
+            PhosphReport(coilInd).taskMapPractice(block).dotSizeStim = dotSizeStim;
+            PhosphReport(coilInd).taskMapPractice(block).dotSizeSacc = dotSizeSacc;
+            PhosphReport(coilInd).taskMapPractice(block).saccLocpix = saccLocpix;
         end
-        dotSizeStim = computeDotSize(parameters, stimLocpix);
-        dotSizeSacc = computeDotSize(parameters, saccLocpix);
-        PhosphReport(coilInd).taskMapPractice(block).stimLocpix = stimLocpix;
-        PhosphReport(coilInd).taskMapPractice(block).dotSizeStim = dotSizeStim;
-        PhosphReport(coilInd).taskMapPractice(block).dotSizeSacc = dotSizeSacc;
-        PhosphReport(coilInd).taskMapPractice(block).saccLocpix = saccLocpix;
     end
 end
 
+
 %% Visualize Phosphene maps
 fig1 = figure();
+fig1.Position = [50 50 1000 1000];
 N = length(LocInds);
 N1 = [1, 1, 2, 2, 2, 2, 3, 2, 3, 3, 3, 3];
 N2 = [1, 2, 2, 2, 3, 3, 3, 4, 3, 4, 4, 4];
@@ -138,34 +147,44 @@ for coilInd = 1:N
         hold on;
         pg = plot(PhosphReport(coilInd).polyshape{trial});
         pg.FaceColor = 'w';
-        ax = gca; ax.YDir = 'reverse'; axis off;
+        ax = gca; ax.YDir = 'reverse'; %axis off;
     end
+    
     pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
     pg1.FaceColor = 'k';
+    ax = gca;
+    ax.FontSize = 16;
     plot(PhosphReport(coilInd).polyshape_centroid(1), PhosphReport(coilInd).polyshape_centroid(2), 'g*');
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
-    suptitle('Overlapping Phosphenes');
-    title(['Coil Location Index : ' num2str(coilInd)]);
+    xticks(parameters.screenXpixels * [0 1/4 1/2 3/4 1]);
+    yticks(parameters.screenYpixels * [0 1/4 1/2 3/4 1]);
+    hh = suptitle('Overlapping Phosphenes');
+    set(hh, 'FontSize', 24, 'FontWeight', 'bold');
+    title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
     pbaspect([1 1 1]);
 end
 
 %% Visualize Stimulus space
 fig2 = figure();
+fig2.Position = [1000 1000 1000 1000];
+
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
     plot(parameters.xCenter, parameters.yCenter,'+k');
-    hold on; 
+    hold on;
     pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
     pg1.FaceColor = 'k';
     pg1.FaceAlpha = 0.5;
     plot(PhosphReport(coilInd).StimuliSampleSpace(:,1), ...
         PhosphReport(coilInd).StimuliSampleSpace(:,2), '.', 'Color', [0, 0, 1, 1])
-    ax = gca; ax.YDir = 'reverse'; axis off;
+    ax = gca; ax.YDir = 'reverse';
+    ax.FontSize = 16;
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
-    suptitle('Stimuli Sample Space')
-    title(['Coil Location Index : ' num2str(coilInd)]);
+    hh1 = suptitle('Stimuli Sample Space');
+    set(hh1, 'FontSize', 24, 'FontWeight', 'bold');
+    title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
     pbaspect([1 1 1]);
 end
 %% Save results
@@ -184,4 +203,5 @@ saveas(fig1,saveName_phosph_fig,'epsc')
 saveas(fig2,saveName_samplespace_fig,'fig')
 saveas(fig2,saveName_samplespace_fig,'png')
 saveas(fig2,saveName_samplespace_fig,'epsc')
+end
 

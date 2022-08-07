@@ -1,6 +1,6 @@
-function mgs_task(subjID, start_block)
+function mgs_task(subjID, day, start_block)
 %% Initialization
-clearvars -except subjID session TMSon coilLocInd start_block;
+clearvars -except subjID session day coilLocInd start_block;
 close all; clc;% clear mex;
 
 subjID = num2str(subjID, "%02d");
@@ -37,7 +37,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.EEG = 1; % set to 0 if there is no EEG recording
-    parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    %parameters.TMS = 1; % set to 0 if there is no TMS stimulation
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
@@ -49,11 +49,17 @@ screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters, hostname);
 
-for block = start_block:start_block+10-1
+for block = start_block:12
     parameters.block = num2str(block, "%02d");
-    parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
+    datapath = [mgs_data_path '/day' num2str(day, "%02d")];
+    parameters = initFiles(parameters, screen, datapath, kbx, block);
     % Initialize taskMap
-    load([phosphene_data_path '/taskMap_sub' subjID])
+    load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d")])
+    if taskMap(1).TMScond == 1
+        parameters.TMS = 1;
+    elseif taskMap(1).TMScond == 0
+        parameters.TMS = 0;
+    end
     taskMap = taskMap(1, block);
     trialNum = length(taskMap.stimLocpix);
     %% Start Experiment
@@ -117,9 +123,7 @@ for block = start_block:start_block+10-1
     ListenChar(-1);
     %drawTextures(parameters, screen, 'Aperture');
     showprompts(screen, 'BlockStart', block, taskMap.condition)
-    
     WaitSecs(2);
-    
     %drawTextures(parameters, screen, 'Aperture');
     drawTextures(parameters, screen, 'FixationCross');
     

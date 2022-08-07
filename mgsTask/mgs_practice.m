@@ -49,7 +49,7 @@ screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters, hostname);
 
-for block = start_block:3
+for block = start_block:4
     parameters.block = num2str(block, "%02d");
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
     % Initialize taskMap
