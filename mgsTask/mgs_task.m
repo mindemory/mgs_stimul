@@ -68,7 +68,7 @@ for block = start_block:12
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % detect the MarkStim and perform handshake make sure that the orange
     % light is turned on! If not, press the black button on Teensy.
-    if parameters.TMS
+    if parameters.EEG
         % Checks for possible identifiers of Teensy
         dev_num = 0;
         devs = dir('/dev/');
@@ -354,7 +354,7 @@ for block = start_block:12
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     % end Teensy handshake
-    if parameters.TMS
+    if parameters.EEG
         MarkStim('x');
     end
     
