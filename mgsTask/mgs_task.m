@@ -94,7 +94,7 @@ for block = start_block:12
             KbQueueStart(kbx);
             [keyIsDown, ~]=KbQueueCheck(kbx);
             while ~keyIsDown
-                showprompts(screen, 'WelcomeWindow')
+                showprompts(screen, 'WelcomeWindow', parameters.TMS)
                 [keyIsDown, ~]=KbQueueCheck(kbx);
             end
             break;
