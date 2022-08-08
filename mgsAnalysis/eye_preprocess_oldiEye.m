@@ -1,4 +1,4 @@
-function [ii_data,ii_cfg,ii_sacc] = ii_preproc(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
+function [ii_data,ii_cfg,ii_sacc] = eye_preprocess_oldiEye(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
 % ii_preproc Performs default pre-processing stream
 %
 % For preprocessing saccade data (specifically, memory-guided saccade
@@ -202,9 +202,9 @@ end
 
 % and plot the final full timeseries
 if ii_params.show_plots == 1
-    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'});
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'});
 else
-    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'},'nofigure');
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'},'nofigure');
 end
 saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
 
