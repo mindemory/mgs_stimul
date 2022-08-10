@@ -319,7 +319,7 @@ for block = start_block:12
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 9);
         end
         %record to the edf file that iti is started

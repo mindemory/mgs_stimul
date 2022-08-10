@@ -21,7 +21,7 @@ tms_notms = tms_notms(tms_notms_Idx);
 
 
 %% Calculate border and area of each phosphene report
-for coilInd = 1:length(LocInds)
+for coilInd = 2:length(LocInds)
     % list of trials for given CoilLocation with detections
     phsphTrials = find(tmsRtnTpy.Response.CoilLocation == coilInd & tmsRtnTpy.Response.Detection == 1);
     PhosphReport(coilInd).trialInd = phsphTrials;
@@ -140,7 +140,7 @@ else
     n2 = min([5 N]);
 end
 
-for coilInd = 1:N
+for coilInd = 2:N
     subplot(n1,n2,coilInd);
     plot(parameters.xCenter, parameters.yCenter,'+k');
     for trial = 1:length(PhosphReport(coilInd).polyshape)
@@ -169,7 +169,7 @@ end
 fig2 = figure();
 fig2.Position = [1000 1000 1000 1000];
 
-for coilInd = 1:N
+for coilInd = 2:N
     subplot(n1,n2,coilInd);
     plot(parameters.xCenter, parameters.yCenter,'+k');
     hold on;
