@@ -1,38 +1,90 @@
-clear; close all; clc;
-subjID = '00';
-day = 1;
-master_dir = '/d/DATC/datc/MD_TMS_EEG';
-
+function [task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
+    eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
+    antiintoVF_idx, antioutVF_idx)
 addpath /Users/mrugank/Documents/fieldtrip;
 ft_defaults;
 
-phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir '/data/mgs_data/sub' subjID '/day' num2str(day, "%02d")];
-addpath(genpath(phosphene_data_path));
-addpath(genpath(mgs_data_path));
-
-EEGpath = [master_dir '/EEGData/sub' subjID];
-EEGfile = 'block01.vhdr'; %'sub01_day01.vhdr';
 cfg = [];
-cfg.dataset = [EEGpath filesep EEGfile];
+cfg.dataset = [direct.EEG filesep EEGfile];
+%cfg.demean = 'yes';
+cfg.continuous = 'yes';
 data_eeg = ft_preprocessing(cfg);
 
-% Visualizing the data
-figure()
-plot(data_eeg.time{1}, data_eeg.trial{1}(1:63, :))
-xlabel('Time (s)')
-ylabel('Channel Amplitude (uV)')
-legend(data_eeg.label(1:63))
+% Removing NAN timepoint
+data_eeg.time{1} = data_eeg.time{1}(2:end);
+data_eeg.sampleinfo = [1,12835950];
+data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
+data_eeg.hdr.nSamples = 12835950;
+data_eeg.cfg.trl = [1,12835950,0];
+
+% downsample data
+cfg = [];
+cfg.detrend = 'no';
+cfg.demean = 'yes';
+cfg.resamplefs = 500;
+data_eeg = ft_resampledata(cfg, data_eeg);
+
+% Removing line noise
+cfg = [];
+%cfg.hpfilter = 'yes';
+%cfg.hpfreq = 0.5;
+%cfg.hpfiltord = 5;
+cfg.demean = 'yes';
+cfg.dftfilter = 'yes';
+cfg.dftfreq = [50 100 150];
+data_eeg = ft_preprocessing(cfg, data_eeg);
+
+% Epoching the data
+cfg = [];
+cfg.dataset = [direct.EEG filesep EEGfile];
+cfg.trialfun = 'ft_trialfun_general';
+cfg.trialdef.eventtype = 'Stimulus';
+cfg.trialdef.eventvalue = {'S  1'};
+cfg.trialdef.prestim = 0.5;
+cfg.trialdef.poststim = 7.65;
+cfg = ft_definetrial(cfg);
+data_eeg = ft_redefinetrial(cfg, data_eeg);
+
+% Rejecting trials
+cfg = [];
+cfg.method = 'summary';
+cfg.layout = 'acticap-64_md.mat';
+cfg.channel = 'all';
+data_eeg = ft_rejectvisual(cfg, data_eeg);
+
+% % Removing LM and RM electrodes
 % cfg = [];
-% cfg.dataset = [EEGpath filesep EEGfile];
-% %cfg.trialfun = 'ft_trialfun_general';
-% cfg.trialdef.eventtype = 'Stimulus';
-% cfg.trialdef.eventvalue = {'S  1'};
-% %cfg.trialdef.prestim = 1;
-% %cfg.trialdef.poststim = 1;
-% cfg = ft_definetrial(cfg);
+% cfg.channel = setdiff(1:66, [64, 65]);
+% data_eeg = ft_selectdata(cfg, data_eeg);
 % 
-% data_new = ft_redefinetrial(cfg, data_eeg);
+% % Referencing to Mastoids
+% cfg = [];
+% cfg.channel = 'all';
+% cfg.reref = 'yes';
+% cfg.implicitref = 'Cz';
+% cfg.refchannel = {'TP9', 'TP10'};
+% data_eeg = ft_preprocessing(cfg, data_eeg);
+
+cfg_prointoVF = [];
+cfg_prointoVF.trails = prointoVF_idx;
+task_prointoVF = ft_timelockanalysis(cfg_prointoVF, data_eeg);
+
+cfg_prooutVF = [];
+cfg_prooutVF.trails = prooutVF_idx;
+task_prooutVF = ft_timelockanalysis(cfg_prooutVF, data_eeg);
+
+cfg_antiintoVF = [];
+cfg_antiintoVF.trails = antiintoVF_idx;
+task_antiintoVF = ft_timelockanalysis(cfg_antiintoVF, data_eeg);
+
+cfg_antioutVF = [];
+cfg_antioutVF.trails = antioutVF_idx;
+task_antioutVF = ft_timelockanalysis(cfg_antioutVF, data_eeg);
+
+end
+
+
+
 %figure();
 %plot(data_eeg.time{1}, data_eeg.trial{1});
 %hold on;

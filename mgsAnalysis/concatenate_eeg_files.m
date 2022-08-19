@@ -12,9 +12,9 @@ addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
 EEGpath = [master_dir '/EEGData/sub' subjID];
-EEGfiles = ["sub01_day01_block01.vhdr", "sub01_day01_block02.vhdr", "sub01_day01_block03.vhdr", ...
+EEGfiles = ["sub01_day01.vhdr", "sub01_day01_block02.vhdr", "sub01_day01_block03.vhdr", ...
     "sub01_day01_block10.vhdr"];
-concatfilename = [EEGpath '/sub01_day01.vhdr'];
+concatfilename = [EEGpath '/sub01_day01_concat.vhdr'];
 %if ~exist(concatfilename)
     data_concat = NaN(63,1);
     sample_count = 0;
