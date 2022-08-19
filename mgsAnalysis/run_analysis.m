@@ -5,7 +5,7 @@ subjID = '01';
 day = 1;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
-direct.datc = '/datc/MD_TMS_EEG';
+direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
 direct.data = [direct.datc '/data'];
 direct.analysis = [direct.datc '/analysis'];
 direct.iEye = [direct.master '/iEye'];
@@ -22,6 +22,7 @@ load(taskMapfilename);
 %% Run iEye
 % Saving stuff
 %Create a directory to save all files with their times
+tic
 direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];% ...
 % filesep datestr(now, 'mm_dd_yy_HH_MM_SS')];
 if ~exist(direct.save, 'dir')
@@ -40,7 +41,7 @@ else
     save(saveNamepro,'ii_sess_pro')
     save(saveNameanti,'ii_sess_anti')
 end
-
+toc
 %% Run EEG preprocessing
 direct.EEG = [direct.datc '/EEGData/sub' subjID];
 EEGfile = 'sub01_day01_concat.vhdr';
