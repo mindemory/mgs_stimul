@@ -14,7 +14,7 @@ ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
-for block = 1:12
+for block = 1:1
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
@@ -35,7 +35,7 @@ for block = 1:12
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = eye_preprocess_oldiEye(edfFile, ifgFile, preproc_fn, ii_params);
+    [ii_data, ii_cfg, ii_sacc] = eye_preprocess(edfFile, ifgFile, preproc_fn, ii_params);
     
     %     if block == 1
     %         % plot some features of the data
@@ -98,7 +98,8 @@ for block = 1:12
 end
 disp('Combining runs')
 ii_sess_pro = ii_combineruns(ii_trial_pro);
-ii_sess_anti = ii_combineruns(ii_trial_anti);
+ii_sess_anti = [];
+%ii_sess_anti = ii_combineruns(ii_trial_anti);
 
 end
 %saveNameanti = [saveDIR '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];

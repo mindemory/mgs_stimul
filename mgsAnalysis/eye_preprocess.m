@@ -1,5 +1,4 @@
-function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn, cfg_fn, preproc_fn, ...
-    ii_params, trialinfo, skip_steps)
+function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
 % ii_preproc Performs default pre-processing stream
 %
 % For preprocessing saccade data (specifically, memory-guided saccade
@@ -51,6 +50,7 @@ function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn, cfg_fn, preproc_fn, .
 % initialize iEye - make sure paths are correct, etc
 ii_init;
 
+
 if nargin < 4 || isempty(ii_params)
     ii_params = ii_loadparams;
 end
@@ -66,25 +66,35 @@ end
 
 
 % import data
-[ii_data,ii_cfg] = ii_import_edf(edf_fn, cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
+matfile_iEye = [preproc_fn '_iEye.mat'];
+if exist(matfile_iEye, 'file') == 2
+    load(matfile_iEye);
+else
+    [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
+end
 %imported_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 
 % truncate data to relevant XDATs
-[ii_data,ii_cfg] = ii_trim(ii_data, ii_cfg, ii_params.valid_epochs, ii_params.epoch_chan);
+[ii_data,ii_cfg] = ii_trim(ii_data,ii_cfg,ii_params.valid_epochs,ii_params.epoch_chan);
+
 %trim_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
-
-% remove extreme-valued X,Y channels (further than the screen edges)
-%[ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
-%    {[0 ii_params.resolution(1)],[0 ii_params.resolution(2)]});
-%censor_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
-
 % rescale X, Y based on screen info
-[ii_data, ii_cfg] = ii_rescale_invert(ii_data, ii_cfg, {'X', 'Y'}, ii_params);
-[ii_data, ii_cfg] = ii_rescale_invert(ii_data, ii_cfg, {'TarX', 'TarY'}, ii_params);
+[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
+[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'TarX','TarY'},ii_params.resolution,ii_params.ppd);
 
-% rescale_invert_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
-plot_data_polar(ii_data, {'XY'}, 'va');
-plot_data_polar(ii_data, {'XY'}, 'r');
+%rescale_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
+
+% Invert Y channel (the eye-tracker spits out flipped Y values)
+[ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'Y');
+[ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'TarY');
+
+%invert_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
+% remove extreme-valued X,Y channels (further than the screen edges)
+[ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
+    {[-0.5 0.5]*ii_params.resolution(1)/ii_params.ppd,...
+     [-0.5 0.5]*ii_params.resolution(2)/ii_params.ppd});
+
+%censor_plot = plot_data(ii_data,{'X','Y'})
 
 % Correct for blinks
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
@@ -117,9 +127,9 @@ plot_data_polar(ii_data, {'XY'}, 'r');
 
 %sacc_plot = ii_plottimeseries(ii_data,ii_cfg,{'X_smooth','Y_smooth'})
 % look for MICROsaccades %update to the above, 7/11/2019, geh
-[ii_data,ii_cfg] = ii_findmicrosaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',...
-    ii_params.sacc_velocity_thresh,ii_params.sacc_duration_thresh,...
-    ii_params.microsacc_amplitude_limit); %keep dur and vel thresh, change amplitude thresh 0.5-1.5 
+% [ii_data,ii_cfg] = ii_findmicrosaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',...
+%     ii_params.sacc_velocity_thresh,ii_params.sacc_duration_thresh,...
+%     ii_params.microsacc_amplitude_limit); %keep dur and vel thresh, change amplitude thresh 0.5-1.5 
 
 
 % find fixation epochs (between saccades and blinks)
@@ -196,9 +206,9 @@ end
 
 % and plot the final full timeseries
 if ii_params.show_plots == 1
-    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'});
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'});
 else
-    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'},'nofigure');
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'},'nofigure');
 end
 saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
 
