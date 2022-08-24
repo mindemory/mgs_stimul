@@ -11,7 +11,7 @@ direct.analysis = [direct.datc '/analysis'];
 direct.iEye = [direct.master '/iEye'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 direct.mgs = [direct.data '/mgs_data/sub' subjID];
-direct.day = [direct.mgs '/day' num2str(day, "%02d") '_real'];
+direct.day = [direct.mgs '/day' num2str(day, "%02d")];
 addpath(genpath(direct.iEye));
 %addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
@@ -23,7 +23,7 @@ load(taskMapfilename);
 % Saving stuff
 %Create a directory to save all files with their times
 tic
-direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d") '_real'];% ...
+direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];% ...
 % filesep datestr(now, 'mm_dd_yy_HH_MM_SS')];
 if ~exist(direct.save, 'dir')
     mkdir(direct.save);
@@ -44,7 +44,7 @@ end
 toc
 %% Run EEG preprocessing
 direct.EEG = [direct.datc '/EEGData/sub' subjID];
-EEGfile = 'sub01_day01_concat.vhdr';
+EEGfile = 'sub01_day01_block01_md.vhdr';
 prointoVF_idx = find(ii_sess_pro.saccloc == 1);
 prooutVF_idx = find(ii_sess_pro.saccloc == 0);
 antiintoVF_idx = find(ii_sess_anti.saccloc == 1);
