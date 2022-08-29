@@ -80,6 +80,10 @@ for coilInd = 2:length(LocInds)
             stimLocpix = [stimLocSetIn; stimLocSetOut];
             trialInds = randperm(parameters.numTrials);
             stimLocpix = stimLocpix(trialInds', :);
+            % 1 if stimulus is inside TMS VF
+            stimVF = [ones(size(stimLocSetIn, 1)) zeros(size(stimLocSetOut, 1))];
+            stimVF = stimVF(trialInds);
+
             condthisBlock = convertStringsToChars(condsByBlock(block));
             PhosphReport(coilInd).taskMap(day, block).TMScond = TMScond;
             PhosphReport(coilInd).taskMap(day, block).condition = condthisBlock;
@@ -90,6 +94,8 @@ for coilInd = 2:length(LocInds)
             end
             dotSizeStim = computeDotSize(parameters, stimLocpix);
             dotSizeSacc = computeDotSize(parameters, saccLocpix);
+            
+            PhosphReport(coilInd).taskMap(day, block).stimVF = stimVF;
             PhosphReport(coilInd).taskMap(day, block).stimLocpix = stimLocpix;
             PhosphReport(coilInd).taskMap(day, block).dotSizeStim = dotSizeStim;
             PhosphReport(coilInd).taskMap(day, block).dotSizeSacc = dotSizeSacc;
@@ -106,7 +112,11 @@ for coilInd = 2:length(LocInds)
             stimLocpix = [stimLocSetIn; stimLocSetOut];
             trialInds = randperm(parameters.numTrials);
             stimLocpix = stimLocpix(trialInds', :);
-            if rem(block, 2) == 1
+            % 1 if stimulus is inside TMS VF
+            stimVF = [ones(size(stimLocSetIn, 1)) zeros(size(stimLocSetOut, 1))];
+            stimVF = stimVF(trialInds);
+
+            if block == 1
                 condthisBlock = 'pro';
                 saccLocpix = stimLocpix;
             else
@@ -117,6 +127,8 @@ for coilInd = 2:length(LocInds)
 
             dotSizeStim = computeDotSize(parameters, stimLocpix);
             dotSizeSacc = computeDotSize(parameters, saccLocpix);
+            
+            PhosphReport(coilInd).taskMap(day, block).stimVF = stimVF;
             PhosphReport(coilInd).taskMapPractice(block).stimLocpix = stimLocpix;
             PhosphReport(coilInd).taskMapPractice(block).dotSizeStim = dotSizeStim;
             PhosphReport(coilInd).taskMapPractice(block).dotSizeSacc = dotSizeSacc;

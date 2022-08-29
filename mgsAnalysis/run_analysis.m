@@ -37,13 +37,17 @@ if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
     load(saveNamepromat);
     load(saveNameantimat);
 else
-    [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap);
+    [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, 3);
     save(saveNamepro,'ii_sess_pro')
     save(saveNameanti,'ii_sess_anti')
 end
 toc
 %% Run EEG preprocessing
 direct.EEG = [direct.datc '/EEGData/sub' subjID];
+direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
+if ~exist(direct.saveEEG, 'dir')
+    mkdir(direct.saveEEG)
+end
 EEGfile = 'sub01_day01_block01_md.vhdr';
 prointoVF_idx = find(ii_sess_pro.saccloc == 1);
 prooutVF_idx = find(ii_sess_pro.saccloc == 0);

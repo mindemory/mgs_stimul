@@ -1,5 +1,8 @@
-function [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap)
+function [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block)
 
+if nargin < 3
+    end_block = 12;
+end
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
 ii_params.valid_epochs =[1 2 3 4 5 6 7 8];
@@ -14,7 +17,7 @@ ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
-for block = 1:1
+for block = 1:end_block
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
@@ -97,8 +100,16 @@ for block = 1:1
     end
 end
 disp('Combining runs')
-ii_sess_pro = ii_combineruns(ii_trial_pro);
-ii_sess_anti = [];
+if ~exist("ii_trial_pro", "var")
+    ii_sess_pro = [];
+else
+    ii_sess_pro = ii_combineruns(ii_trial_pro);
+end
+if ~exist("ii_trial_anti", "var")
+    ii_sess_anti = [];
+else
+    ii_sess_anti = ii_combineruns(ii_trial_anti);
+end
 %ii_sess_anti = ii_combineruns(ii_trial_anti);
 
 end
