@@ -13,7 +13,7 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
-if strcmp(hostname, 'tmsubuntu')
+if strcmp(hostname, 'syndrome')
     master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 elseif strcmp(hostname, 'mindemory.cable.rcn.com')
     master_dir = '/Users/mrugankdake/remote/datc/MD_TMS_EEG/';

@@ -1,4 +1,5 @@
 function saveTaskMap(subjID, session, coilLocInd)
+clearvars -except subjID session coilLocInd; close all; clc;
 % Choose a session and coilLocInd that needs to be used for a given subject
 %%% Adding all necessary paths
 subjID = num2str(subjID, "%02d");
@@ -11,7 +12,7 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
-if strcmp(hostname, 'tmsubuntu')
+if strcmp(hostname, 'syndrome')
     master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 elseif strcmp(hostname, 'mindemory.cable.rcn.com')
     master_dir = '/Users/mrugankdake/remote/datc/MD_TMS_EEG/';

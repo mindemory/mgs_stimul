@@ -48,37 +48,40 @@ sca;
 screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters, hostname);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MarkStim CHECK!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% detect the MarkStim and perform handshake make sure that the orange
+% light is turned on! If not, press the black button on Teensy.
+if parameters.EEG
+    % Checks for possible identifiers of Teensy
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)];
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
+        end
+    end
+    trigger_id = ['/dev/', dev_name]
+    MarkStim('i', trigger_id)
+    MarkStim('s', true, 50); %time-window of pulse (in ms), minimum is 38ms
+end
 
-for block = start_block:4
+%% Start Experiment
+for block = start_block:10
+    % EEG marker --> block begins
+    if parameters.EEG
+        MarkStim('t', 1);
+    end
     parameters.block = num2str(block, "%02d");
     parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
     % Initialize taskMap
     load([phosphene_data_path '/taskMapPractice_sub' subjID])
     taskMap = taskMapPractice(1, block);
-    trialNum = length(taskMap.stimLocpix);
-    %% Start Experiment
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % MarkStim CHECK!
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % detect the MarkStim and perform handshake make sure that the orange
-    % light is turned on! If not, press the black button on Teensy.
-    if parameters.TMS
-        % Checks for possible identifiers of Teensy
-        dev_num = 0;
-        devs = dir('/dev/');
-        while 1
-            dev_name = ['ttyACM', num2str(dev_num)];
-            if any(strcmp({devs.name}, dev_name))
-                break
-            else
-                dev_num = dev_num + 1;
-            end
-        end
-        trigger_id = ['/dev/', dev_name]
-        MarkStim('i', trigger_id)
-        MarkStim('s', true, 50); %time-window of pulse (in ms), minimum is 38ms
-    end
-    
+    trialNum = length(taskMap.stimLocpix);      
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Initialize eyetracker
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,9 +120,7 @@ for block = start_block:4
     ListenChar(-1);
     %drawTextures(parameters, screen, 'Aperture');
     showprompts(screen, 'BlockStart', block, taskMap.condition)
-    
     WaitSecs(2);
-    
     %drawTextures(parameters, screen, 'Aperture');
     drawTextures(parameters, screen, 'FixationCross');
     
@@ -130,24 +131,18 @@ for block = start_block:4
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
     %% run over trials
     for trial = trialArray
-        
-        % EEG marker --> trial begins
-        if parameters.EEG
-            MarkStim('t', 1);
-        end
-        
-        disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
+        disp(['runing block: ' num2str(block, "%02d") ', trial: ' num2str(trial, "%02d")])
         
         if parameters.eyetracker
             Eyelink('command', 'record_status_message "TRIAL %i/%i "', ...
                 trial, trialNum);
             Eyelink('Message', 'TRIAL %i ', trial);
         end
-        
         if trial == 1
             WaitSecs(2);
         end
         trial_start = GetSecs;
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Run a trial
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,7 +311,7 @@ for block = start_block:4
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
-        if parameters.TMS
+        if parameters.EEG
             MarkStim('t', 9);
         end
         %record to the edf file that iti is started
@@ -350,10 +345,6 @@ for block = start_block:4
     matFile.screen = screen;
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
-    % end Teensy handshake
-    if parameters.TMS
-        MarkStim('x');
-    end
     
     % check for end of block
     KbQueueFlush(kbx);
@@ -363,6 +354,7 @@ for block = start_block:4
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
+    
     if strcmp(cmndKey, parameters.space_key)
         continue;
     elseif strcmp(cmndKey, parameters.exit_key)
@@ -371,6 +363,10 @@ for block = start_block:4
         return;
     end
 end % end of block
+% end Teensy handshake
+if parameters.EEG
+    MarkStim('x');
+end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);

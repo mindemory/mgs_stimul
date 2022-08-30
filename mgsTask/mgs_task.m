@@ -1,7 +1,11 @@
-function mgs_task(subjID, day, start_block)
+function mgs_task(subjID, day, start_block, prac_status)
 %% Initialization
-clearvars -except subjID session day coilLocInd start_block;
+clearvars -except subjID session day coilLocInd start_block prac_status;
 close all; clc;% clear mex;
+
+if nargin < 4
+    prac_status = 0;
+end
 
 subjID = num2str(subjID, "%02d");
 
@@ -18,7 +22,11 @@ filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
 markstim_path = [master_dir '/markstim-master'];
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
+if prac_status == 1
+    mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
+else
+    mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
+end
 addpath(genpath(markstim_path));
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
@@ -36,8 +44,12 @@ if strcmp(hostname, 'syndrome')
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
-    parameters.EEG = 1; % set to 0 if there is no EEG recording
-    %parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    if prac_status == 1
+        parameters.EEG = 0; % set to 0 if there is no EEG recording
+        parameters.TMS = 1;
+    else
+        parameters.EEG = 1;
+    end
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
@@ -48,43 +60,52 @@ sca;
 screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters, hostname);
-
-for block = start_block:12
-    parameters.block = num2str(block, "%02d");
-    datapath = [mgs_data_path '/day' num2str(day, "%02d")];
-    parameters = initFiles(parameters, screen, datapath, kbx, block);
-    % Initialize taskMap
-    load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d")])
-    if taskMap(1).TMScond == 1
-        parameters.TMS = 1;
-    elseif taskMap(1).TMScond == 0
-        parameters.TMS = 0;
-    end
-    taskMap = taskMap(1, block);
-    trialNum = length(taskMap.stimLocpix);
-    %% Start Experiment
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % MarkStim CHECK!
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % detect the MarkStim and perform handshake make sure that the orange
-    % light is turned on! If not, press the black button on Teensy.
-    if parameters.EEG
-        % Checks for possible identifiers of Teensy
-        dev_num = 0;
-        devs = dir('/dev/');
-        while 1
-            dev_name = ['ttyACM', num2str(dev_num)];
-            if any(strcmp({devs.name}, dev_name))
-                break
-            else
-                dev_num = dev_num + 1;
-            end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MarkStim CHECK!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% detect the MarkStim and perform handshake make sure that the orange
+% light is turned on! If not, press the black button on Teensy.
+if parameters.EEG
+    % Checks for possible identifiers of Teensy
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)];
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
         end
-        trigger_id = ['/dev/', dev_name]
-        MarkStim('i', trigger_id)
-        MarkStim('s', true, 50); %time-window of pulse (in ms), minimum is 38ms
     end
-    
+    trigger_id = ['/dev/', dev_name]
+    MarkStim('i', trigger_id)
+    MarkStim('s', true, 50); %time-window of pulse (in ms), minimum is 38ms
+end
+
+%% Start Experiment
+for block = start_block:10
+    % EEG marker --> block begins
+    if parameters.EEG
+        MarkStim('t', 1);
+    end
+    parameters.block = num2str(block, "%02d");
+     % Initialize taskMap
+    if prac_status == 1
+        parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
+        load([phosphene_data_path '/taskMapPractice_sub' subjID])
+        taskMap = taskMapPractice(1, block);
+    else
+        datapath = [mgs_data_path '/day' num2str(day, "%02d")];
+        parameters = initFiles(parameters, screen, datapath, kbx, block);
+        load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d")])
+        if taskMap(1).TMScond == 1
+            parameters.TMS = 1;
+        elseif taskMap(1).TMScond == 0
+            parameters.TMS = 0;
+        end
+        taskMap = taskMap(1, block);
+    end
+    trialNum = length(taskMap.stimLocpix);      
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Initialize eyetracker
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,12 +155,7 @@ for block = start_block:12
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
     %% run over trials
     for trial = trialArray
-        % EEG marker --> trial begins
-        if parameters.EEG
-            MarkStim('t', 1);
-        end
-        
-        disp(['runing trial  ' num2str(trial, '%02d') ' ....'])
+        disp(['runing block: ' num2str(block, "%02d") ', trial: ' num2str(trial, "%02d")])
         
         if parameters.eyetracker
             Eyelink('command', 'record_status_message "TRIAL %i/%i "', ...
@@ -353,10 +369,6 @@ for block = start_block:12
     matFile.screen = screen;
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
-    % end Teensy handshake
-    if parameters.EEG
-        MarkStim('x');
-    end
     
     % check for end of block
     KbQueueFlush(kbx);
@@ -366,6 +378,7 @@ for block = start_block:12
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
+    
     if strcmp(cmndKey, parameters.space_key)
         continue;
     elseif strcmp(cmndKey, parameters.exit_key)
@@ -374,6 +387,10 @@ for block = start_block:12
         return;
     end
 end % end of block
+% end Teensy handshake
+if parameters.EEG
+    MarkStim('x');
+end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);
