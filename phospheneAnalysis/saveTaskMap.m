@@ -4,7 +4,19 @@ function saveTaskMap(subjID, session, coilLocInd)
 subjID = num2str(subjID, "%02d");
 session = num2str(session, "%02d");
 
-master_dir = '/d/DATC/datc/MD_TMS_EEG/';
+%%% Check the system name to ensure correct paths are added.
+[ret, hostname] = system('hostname');
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+if strcmp(hostname, 'tmsubuntu')
+    master_dir = '/d/DATC/datc/MD_TMS_EEG/';
+elseif strcmp(hostname, 'mindemory.cable.rcn.com')
+    master_dir = '/Users/mrugankdake/remote/datc/MD_TMS_EEG/';
+end
+
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
 
 addpath(genpath(phosphene_data_path));

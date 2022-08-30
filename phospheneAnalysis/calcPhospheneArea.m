@@ -95,7 +95,7 @@ for coilInd = 2:length(LocInds)
             dotSizeStim = computeDotSize(parameters, stimLocpix);
             dotSizeSacc = computeDotSize(parameters, saccLocpix);
             
-            PhosphReport(coilInd).taskMap(day, block).stimVF = stimVF;
+            PhosphReport(coilInd).taskMap(day, block).stimVF = stimVF';
             PhosphReport(coilInd).taskMap(day, block).stimLocpix = stimLocpix;
             PhosphReport(coilInd).taskMap(day, block).dotSizeStim = dotSizeStim;
             PhosphReport(coilInd).taskMap(day, block).dotSizeSacc = dotSizeSacc;
@@ -171,7 +171,7 @@ for coilInd = 2:N
     ylim([0 parameters.screenYpixels]);
     xticks(parameters.screenXpixels * [0 1/4 1/2 3/4 1]);
     yticks(parameters.screenYpixels * [0 1/4 1/2 3/4 1]);
-    hh = suptitle('Overlapping Phosphenes');
+    hh = sgtitle('Overlapping Phosphenes');
     set(hh, 'FontSize', 24, 'FontWeight', 'bold');
     title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
     pbaspect([1 1 1]);
@@ -194,7 +194,7 @@ for coilInd = 2:N
     ax.FontSize = 16;
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
-    hh1 = suptitle('Stimuli Sample Space');
+    hh1 = sgtitle('Stimuli Sample Space');
     set(hh1, 'FontSize', 24, 'FontWeight', 'bold');
     title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
     pbaspect([1 1 1]);
