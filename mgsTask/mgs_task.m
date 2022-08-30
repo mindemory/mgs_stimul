@@ -47,8 +47,10 @@ elseif strcmp(hostname, 'tmsubuntu')
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         parameters.TMS = 1;
+        end_block = 2;
     else
         parameters.EEG = 1;
+        end_block = 10;
     end
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
@@ -65,7 +67,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MarkStim and perform handshake make sure that the orange
 % light is turned on! If not, press the black button on Teensy.
-if parameters.EEG
+if parameters.EEG + parameters.TMS > 0
     % Checks for possible identifiers of Teensy
     dev_num = 0;
     devs = dir('/dev/');
@@ -83,7 +85,7 @@ if parameters.EEG
 end
 
 %% Start Experiment
-for block = start_block:10
+for block = start_block:end_block
     % EEG marker --> block begins
     if parameters.EEG
         MarkStim('t', 1);

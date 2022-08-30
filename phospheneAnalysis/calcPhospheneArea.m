@@ -117,23 +117,23 @@ for coilInd = 2:length(LocInds)
         stimVFPractice = [ones(size(stimLocSetInPractice, 1), 1); zeros(size(stimLocSetOutPractice, 1), 1)];
         stimVFPractice = stimVFPractice(trialIndsPractice);
 
-        if block == 1
+        if blockPractice == 1
             condthisBlockPractice = 'pro';
             saccLocpixPractice = stimLocpixPractice;
         else
             condthisBlockPractice = 'anti';
             saccLocpixPractice = [parameters.screenXpixels parameters.screenYpixels] - stimLocpixPractice;
         end
-        PhosphReport(coilInd).taskMapPractice(block).condition = condthisBlockPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).condition = condthisBlockPractice;
 
         dotSizeStimPractice = computeDotSize(parameters, stimLocpixPractice);
         dotSizeSaccPractice = computeDotSize(parameters, saccLocpixPractice);
 
-        PhosphReport(coilInd).taskMapPractice(day, block).stimVF = stimVFPractice;
-        PhosphReport(coilInd).taskMapPractice(block).stimLocpix = stimLocpixPractice;
-        PhosphReport(coilInd).taskMapPractice(block).dotSizeStim = dotSizeStimPractice;
-        PhosphReport(coilInd).taskMapPractice(block).dotSizeSacc = dotSizeSaccPractice;
-        PhosphReport(coilInd).taskMapPractice(block).saccLocpix = saccLocpixPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).stimVF = stimVFPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).stimLocpix = stimLocpixPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).dotSizeStim = dotSizeStimPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).dotSizeSacc = dotSizeSaccPractice;
+        PhosphReport(coilInd).taskMapPractice(blockPractice).saccLocpix = saccLocpixPractice;
     end
 end
 
