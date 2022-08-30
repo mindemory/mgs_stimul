@@ -51,6 +51,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     else
         parameters.EEG = 1;
         end_block = 10;
+        parameters.TMS = 0;
     end
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
