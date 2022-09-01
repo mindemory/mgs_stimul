@@ -1,7 +1,7 @@
 clear; close all; clc;
 
 %% Initialization
-subjID = '01';
+subjID = '02';
 day = 1;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
@@ -48,7 +48,7 @@ direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
 if ~exist(direct.saveEEG, 'dir')
     mkdir(direct.saveEEG)
 end
-EEGfile = 'sub01_day01_block01_md.vhdr';
+EEGfile = 'sub02_day02_concat.vhdr';
 prointoVF_idx = find(ii_sess_pro.saccloc == 1);
 prooutVF_idx = find(ii_sess_pro.saccloc == 0);
 antiintoVF_idx = find(ii_sess_anti.saccloc == 1);

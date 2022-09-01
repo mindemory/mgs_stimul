@@ -1,8 +1,8 @@
 ifgFile = 'p_1000hz.ifg';
-direct.day = 1;
+%direct.day = 1;
 ii_init;
-subjID = '01';
-day = 1;
+subjID = '02';
+day = 2;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 direct.datc = '/d/DATC/datc/MD_TMS_EEG/';
