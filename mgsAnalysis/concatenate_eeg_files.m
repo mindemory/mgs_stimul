@@ -1,6 +1,7 @@
 clear; close all; clc;
-subjID = '01';
-day = 1;
+subjID = '02';
+day = 2;
+block_files = [1, 5, 6];
 master_dir = '/d/DATC/datc/MD_TMS_EEG';
 
 addpath /Users/mrugank/Documents/fieldtrip;
@@ -12,15 +13,20 @@ addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
 EEGpath = [master_dir '/EEGData/sub' subjID];
-EEGfiles = ["sub01_day01.vhdr", "sub01_day01_block02.vhdr", "sub01_day01_block03.vhdr", ...
-    "sub01_day01_block10.vhdr"];
-concatfilename = [EEGpath '/sub01_day01_concat.vhdr'];
+for ii = length(block_files)
+    bb = block_files(ii);
+    EEGfiles{ii} = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_block' num2str(bb, "%02d")];
+end
+%EEGfiles = {['sub' num2str(subjID)_day02.vhdr'], 'sub01_day01_block02.vhdr', 'sub01_day01_block03.vhdr', ...
+%    'sub01_day01_block10.vhdr'};
+concatfname = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vhdr'];
+concatfilepathname = [EEGpath filesep concatfname];
 %if ~exist(concatfilename)
     data_concat = NaN(63,1);
     sample_count = 0;
     for ii=1:length(EEGfiles)
-        EEGfile = [EEGpath filesep char(EEGfiles(ii))];
-        disp(['Working on file ' char(EEGfiles(ii))]);
+        EEGfile = [EEGpath filesep EEGfiles{ii}];
+        disp(['Working on file ' EEGfiles{ii}]);
         hdr = ft_read_header(EEGfile);
         dat = ft_read_data(EEGfile);
         evt = ft_read_event(EEGfile);
@@ -36,5 +42,5 @@ concatfilename = [EEGpath '/sub01_day01_concat.vhdr'];
         data_concat = [data_concat, dat];
     end
     hdr.nSamples = sample_count;
-    ft_write_data(concatfilename, data_concat, 'header', hdr, 'event', event_concat);
+    ft_write_data(concatfilepathname, data_concat, 'header', hdr, 'event', event_concat);
 %end
