@@ -2,8 +2,8 @@ clear; close all; clc;
 
 %% Initialization
 subjID = '02';
-day = 2;
-end_block = 6;
+day = 1;
+end_block = 9;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';

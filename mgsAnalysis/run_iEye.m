@@ -1,7 +1,7 @@
 function [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block)
 
 if nargin < 3
-    end_block = 12;
+    end_block = 10;
 end
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
