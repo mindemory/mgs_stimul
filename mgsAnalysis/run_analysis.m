@@ -48,11 +48,12 @@ direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
 if ~exist(direct.saveEEG, 'dir')
     mkdir(direct.saveEEG)
 end
-EEGfile = 'sub02_day02_concat.vhdr';
+EEGfile = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vhdr'];
+% saccloc = 1 refers to stimulus in VF
 prointoVF_idx = find(ii_sess_pro.saccloc == 1);
 prooutVF_idx = find(ii_sess_pro.saccloc == 0);
-antiintoVF_idx = find(ii_sess_anti.saccloc == 1);
-antioutVF_idx = find(ii_sess_anti.saccloc == 0);
+antiintoVF_idx = find(ii_sess_anti.saccloc == 0);
+antioutVF_idx = find(ii_sess_anti.saccloc == 1);
 [task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
     eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
     antiintoVF_idx, antioutVF_idx);

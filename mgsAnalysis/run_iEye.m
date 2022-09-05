@@ -17,7 +17,7 @@ ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
-for block = 1:end_block
+for block = [1,2,3,4,5,6]
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
@@ -54,48 +54,14 @@ for block = 1:end_block
     if ii_sacc.epoch_start == 5
         ii_sacc.epoch_start = 6;
     end
-    
-    pt1 = [0 screen.screenYpixels];
-    pt2 = [screen.screenXpixels 0];
+   
     if strcmp(eyecond, 'pro')
-        saccloc = [];
-        for ii=1:length(taskMap(block).stimLocpix)
-            d = ((taskMap(block).saccLocpix(ii,1) - pt1(1)) * ...
-                (pt2(2) - pt1(2))) - ((taskMap(block).saccLocpix(ii,2) - pt1(2)) * ...
-                (pt2(1) - pt1(1)));
-            if d > 0
-                saccloc = [saccloc, 1];
-            elseif d < 0
-                saccloc = [saccloc, 0];
-            end
-            %             if taskMap(block).saccLocpix(ii,1)>=screen.xCenter && taskMap(block).saccLocpix(ii,2)>=screen.yCenter
-            %                 saccloc = [saccloc, 1];
-            %             elseif taskMap(block).saccLocpix(ii,1)<screen.xCenter && taskMap(block).saccLocpix(ii,2)<screen.yCenter
-            %                 saccloc = [saccloc, 0];
-            %             end
-        end
         [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
-        ii_trial_pro{block_pro}.saccloc = saccloc';
+        ii_trial_pro{block_pro}.saccloc = taskMap.stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
-        saccloc = [];
-        for ii=1:length(taskMap(block).stimLocpix)
-            d = ((taskMap(block).saccLocpix(ii,1) - pt1(1)) * ...
-                (pt2(2) - pt1(2))) - ((taskMap(block).saccLocpix(ii,2) - pt1(2)) * ...
-                (pt2(1) - pt1(1)));
-            if d > 0
-                saccloc = [saccloc, 1];
-            elseif d < 0
-                saccloc = [saccloc, 0];
-            end
-            %             if taskMap(block).saccLocpix(ii,1)>=screen.xCenter && taskMap(block).saccLocpix(ii,2)>=screen.yCenter
-            %                 saccloc = [saccloc, 1];
-            %             elseif taskMap(block).saccLocpix(ii,1)<screen.xCenter && taskMap(block).saccLocpix(ii,2)<screen.yCenter
-            %                 saccloc = [saccloc, 0];
-            %             end
-        end
         [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
-        ii_trial_anti{block_anti}.saccloc = saccloc';
+        ii_trial_anti{block_anti}.saccloc = taskMap.stimVF;
         block_anti = block_anti+1;
     end
 end
