@@ -3,7 +3,7 @@
 %     antiintoVF_idx, antioutVF_idx)
 addpath /Users/mrugankdake/Documents/MATLAB/fieldtrip-20220104/;
 ft_defaults;
-set(0,'DefaultFigureWindowStyle','docked')
+%set(0,'DefaultFigureWindowStyle','docked')
 %% Load the data
 saveName = [direct.saveEEG '/sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_raweeg.mat'];
 if ~exist(saveName, 'file')
@@ -78,7 +78,7 @@ else
     load(saveName)
 end
 %% Rejecting trials
-set(0,'DefaultFigureWindowStyle','normal')
+%set(0,'DefaultFigureWindowStyle','normal')
 tic
 cfg = [];
 cfg.method = 'summary';
@@ -158,7 +158,7 @@ figure(); ft_multiplotTFR(cfg, TFR_antioutVF)
 cfg = [];
 cfg.parameter = 'powspctrm';
 cfg.trials = 'all';
-cfg.channel = 'all';%{'PO7', 'PO3', 'O1'};
+cfg.channel = {'PO7', 'PO3', 'O1'};
 ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);
 cfg.channel = 'all';%{'PO4', 'PO8', 'O2'};
 ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);

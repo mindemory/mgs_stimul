@@ -17,7 +17,7 @@ ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
-for block = [1,2,3,4,5,6]
+for block = 1:end_block
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
