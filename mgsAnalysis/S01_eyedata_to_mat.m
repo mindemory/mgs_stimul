@@ -4,6 +4,7 @@ ifgFile = 'p_1000hz.ifg';
 
 subjID = '02';
 day = 2;
+end_block = 6;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 direct.datc = '/d/DATC/datc/MD_TMS_EEG/';
@@ -15,7 +16,7 @@ addpath(genpath(direct.iEye));
 %addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
 ii_init;
-for block = 1:6
+for block = 1:end_block
     block
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));

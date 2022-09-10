@@ -115,7 +115,7 @@ cfg.channel = 'all';
 cfg.method = 'wavelet';
 cfg.taper = 'hanning';
 %cfg.pad = 'nextpow2';
-cfg.toi = -0.7:0.5:7.5;
+cfg.toi = -0.7:0.2:7.5;
 cfg.foilim = [4, 30];
 cfg.trials = prointoVF_idx;
 TFR_prointoVF = ft_freqanalysis(cfg, data_eeg);
@@ -159,7 +159,12 @@ cfg = [];
 cfg.parameter = 'powspctrm';
 cfg.trials = 'all';
 cfg.channel = {'PO7', 'PO3', 'O1'};
-ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);
+cfg.zlim = [0, 10^4]
+ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
+ft_singleplotTFR(cfg,TFR_prooutVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
+ft_singleplotTFR(cfg,TFR_antiintoVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
+ft_singleplotTFR(cfg,TFR_antioutVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
+
 cfg.channel = 'all';%{'PO4', 'PO8', 'O2'};
 ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);
 

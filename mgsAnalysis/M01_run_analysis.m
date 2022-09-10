@@ -1,9 +1,9 @@
 clear; close all; clc;
 
 %% Initialization
-subjID = '02';
-day = 2;
-end_block = 6;
+subjID = '01';
+day = 1;
+end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
@@ -19,7 +19,17 @@ addpath(genpath(direct.data));
 
 taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
 load(taskMapfilename);
-
+% for ii = 1:length(taskMap)
+%     for jj = 1:length(taskMap(ii).stimLocpix)
+%         if taskMap(ii).stimLocpix(jj, 1) > 1100
+%             taskMap(ii).stimVF(jj) =  1;
+%         else
+%             taskMap(ii).stimVF(jj) = 0;
+%         end
+%     end
+%     taskMap(ii).stimVF = taskMap(ii).stimVF';
+% end
+% save(taskMapfilename, 'taskMap')
 %% Run iEye
 % Saving stuff
 %Create a directory to save all files with their times
@@ -34,15 +44,23 @@ saveNameanti = [direct.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
+    disp('Loading exists ii_sess files.')
     load(saveNamepromat);
     load(saveNameantimat);
 else
+    disp('ii_sess files do not exist. running ieye')
     [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block);
     save(saveNamepro,'ii_sess_pro')
     save(saveNameanti,'ii_sess_anti')
 end
 toc
+
 %% Run EEG preprocessing
+prointoVF_idx = find(ii_sess_pro.stimVF == 1);
+prooutVF_idx = find(ii_sess_pro.stimVF == 0);
+antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
+antioutVF_idx = find(ii_sess_anti.stimVF == 1);
+
 direct.EEG = [direct.datc '/EEGData/sub' subjID];
 direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
 if ~exist(direct.saveEEG, 'dir')
@@ -50,10 +68,7 @@ if ~exist(direct.saveEEG, 'dir')
 end
 EEGfile = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vhdr'];
 % saccloc = 1 refers to stimulus in VF
-prointoVF_idx = find(ii_sess_pro.saccloc == 1);
-prooutVF_idx = find(ii_sess_pro.saccloc == 0);
-antiintoVF_idx = find(ii_sess_anti.saccloc == 0);
-antioutVF_idx = find(ii_sess_anti.saccloc == 1);
+
 %[task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
 %    eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
 %    antiintoVF_idx, antioutVF_idx);

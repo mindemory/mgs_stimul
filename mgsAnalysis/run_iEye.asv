@@ -108,19 +108,19 @@ else
 
     for ii = 1:length(ii_sess_anti.excl_trial)
         % Flag trials with fixation breaks
-        if sum(ii_sess_anti.excl_trial{ii} == 13) > 0
+        if sum(ii_sess_anti.excl_trial(ii) == 13) > 0
             ii_sess_anti.break_fix = 1;
         end
         % Flag trials with no primary saccades
-        if sum(ii_sess_anti.excl_trial{ii} == 20) > 0
+        if sum(ii_sess_anti.excl_trial(ii) == 20) > 0
             ii_sess_anti.prim_sacc(ii) = 0;
         end
         % Flag trials with small or short saccades
-        if sum(ii_sess_anti.excl_trial{ii} == 21) > 0
+        if sum(ii_sess_anti.excl_trial(ii) == 21) > 0
             ii_sess_anti.small_sacc(ii) = 1;
         end
         % Flag trials with large MGS errors
-        if sum(ii_sess_anti.excl_trial{ii} == 22) > 0
+        if sum(ii_sess_anti.excl_trial(ii) == 22) > 0
             ii_sess_anti.large_error(ii) =  1;
         end
     end
