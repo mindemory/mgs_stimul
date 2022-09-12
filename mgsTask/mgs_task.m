@@ -46,7 +46,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
-        parameters.TMS = 1;
+        parameters.TMS = 0;
         end_block = 2;
     else
         parameters.EEG = 1;
