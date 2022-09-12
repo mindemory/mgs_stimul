@@ -2,9 +2,9 @@ clear; close all; clc;
 ifgFile = 'p_1000hz.ifg';
 %direct.day = 1;
 
-subjID = '02';
+subjID = '01';
 day = 2;
-end_block = 6;
+end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 direct.datc = '/d/DATC/datc/MD_TMS_EEG/';

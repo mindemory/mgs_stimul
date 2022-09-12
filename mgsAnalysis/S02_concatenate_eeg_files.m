@@ -1,7 +1,7 @@
 clear; close all; clc;
-subjID = '02';
-day = 3;
-block_files = [1, 5];
+subjID = '01';
+day = 2;
+block_files = [1, 7];
 master_dir = '/d/DATC/datc/MD_TMS_EEG';
 
 addpath /Users/mrugank/Documents/fieldtrip;
@@ -12,7 +12,7 @@ mgs_data_path = [master_dir '/data/mgs_data/sub' subjID '/day' num2str(day, "%02
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
 
-EEGpath = [master_dir '/EEGData/sub' subjID];
+EEGpath = [master_dir '/EEGData/sub' subjID '/day' num2str(day,"%02d")];
 for ii = 1:length(block_files)
     bb = block_files(ii);
     EEGfiles{ii} = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_block' num2str(bb, "%02d") '.vhdr'];
