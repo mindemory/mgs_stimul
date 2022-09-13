@@ -80,7 +80,7 @@ else
     for ii = 1:length(ii_sess_pro.excl_trial)
         % Flag trials with fixation breaks
         if sum(ii_sess_pro.excl_trial{ii} == 13) > 0
-            ii_sess_pro.break_fix = 1;
+            ii_sess_pro.break_fix(ii) = 1;
         end
         % Flag trials with no primary saccades
         if sum(ii_sess_pro.excl_trial{ii} == 20) > 0
@@ -109,7 +109,7 @@ else
     for ii = 1:length(ii_sess_anti.excl_trial)
         % Flag trials with fixation breaks
         if sum(ii_sess_anti.excl_trial{ii} == 13) > 0
-            ii_sess_anti.break_fix = 1;
+            ii_sess_anti.break_fix(ii) = 1;
         end
         % Flag trials with no primary saccades
         if sum(ii_sess_anti.excl_trial{ii} == 20) > 0

@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 subjID = '01'
-day = 1
+day = 2
 direct = {}
 direct['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
 direct['data'] = direct['datc'] + '/data'
