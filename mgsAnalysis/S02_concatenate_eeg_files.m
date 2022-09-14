@@ -1,6 +1,6 @@
 clear; close all; clc;
 subjID = '01';
-day = 2;
+day = 3;
 block_files = [1, 7];
 master_dir = '/d/DATC/datc/MD_TMS_EEG';
 

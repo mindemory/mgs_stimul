@@ -6,7 +6,17 @@ day = 2;
 end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
-direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
+[ret, hostname] = system('hostname');
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+if strcmp(hostname, 'syndrome') % If running on Syndrome
+    direct.datc = '/datc/MD_TMS_EEG';
+else % If running on World's best MacBook
+    direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
+end
 direct.data = [direct.datc '/data'];
 direct.analysis = [direct.datc '/analysis'];
 direct.iEye = [direct.master '/iEye'];
