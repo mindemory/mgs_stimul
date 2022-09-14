@@ -19,7 +19,9 @@ hostname = strtrim(hostname);
 %%% Adding all necessary paths
 curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
-master_dir = curr_dir(1:(filesepinds(end-1)-1));
+% master_dir = curr_dir(1:(filesepinds(end-1)-1));
+%                                     v
+%                                                                                  
 markstim_path = [master_dir '/markstim-master'];
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
 if prac_status == 1
