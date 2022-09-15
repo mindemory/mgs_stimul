@@ -3,7 +3,7 @@ ifgFile = 'p_1000hz.ifg';
 %direct.day = 1;
 
 subjID = '01';
-day = 2;
+day = 3;
 end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
