@@ -54,9 +54,9 @@ for block = 1:end_block
     if ii_sacc.epoch_start == 5
         ii_sacc.epoch_start = 6;
     end
-    if block == 5
-        taskMap(block).stimVF = taskMap(block).stimVF(2:end);
-    end
+%     if block == 5
+%         taskMap(block).stimVF = taskMap(block).stimVF(2:end);
+%     end
     if strcmp(eyecond, 'pro')
         [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
         ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;

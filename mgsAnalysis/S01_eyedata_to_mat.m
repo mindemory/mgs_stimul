@@ -2,7 +2,7 @@ clear; close all; clc;
 ifgFile = 'p_1000hz.ifg';
 %direct.day = 1;
 
-subjID = '01';
+subjID = '05';
 day = 3;
 end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
