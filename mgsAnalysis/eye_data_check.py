@@ -153,6 +153,7 @@ print('f_sacc_err')
 print(tukey)
 
 # Plotting figures
+plt.rc('ytick', labelsize = 12)
 fig1, ax = plt.subplots()
 X1 = [0.3, 0.8, 1.3]
 X2 = [0.4, 0.9, 1.4]
@@ -168,14 +169,14 @@ Yerr1 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'pro']['i_
 Yerr2 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'anti']['i_sacc_err']),
     sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err']),
     sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err'])]
-plt.title('sub' + subjID )
+plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
 plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
             markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = 'pro')
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
             markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
 plt.xlim(0, 1.6)
 plt.ylim(0, 2)
-plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'])
+plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
 plt.legend()
 # Xs = X1 + X2
 # Ys = Y1+Y2
@@ -195,7 +196,7 @@ plt.legend()
 #         sig_star = 'ns'
 #     label_diff(ind1[ll], ind2[ll], sig_star, Xs, Ys, ax)
 #label_diff(0, 1, '*', X1+X2, Y1+Y2, ax)
-plt.ylabel('MGS Error')
+plt.ylabel('MGS Error', fontsize = 12)
 
 fig2 = plt.figure()
 X1 = [0.3, 0.8, 1.3]
@@ -212,16 +213,16 @@ Yerr1 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'pro']['f_
 Yerr2 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'anti']['f_sacc_err']),
     sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err']),
     sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err'])]
-plt.title('sub' + subjID )
+plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
 plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
             markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = 'pro')
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
             markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
 plt.xlim(0, 1.6)
 plt.ylim(0, 2)
-plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'])
+plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
 plt.legend()
-plt.ylabel('MGS Error')
+plt.ylabel('MGS Error', fontsize = 12)
 
 isacc_fig_path = direct['Figures'] + '/isacc_errs.png'
 fig1.savefig(isacc_fig_path, dpi = fig1.dpi, format='png')
