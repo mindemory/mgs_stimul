@@ -3,6 +3,7 @@ from scipy.io import loadmat
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import os
 from scipy.stats import sem, f_oneway
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
@@ -175,6 +176,7 @@ plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green',
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
             markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
 plt.xlim(0, 1.6)
+#plt.ylim(0, 5)
 plt.ylim(0, 2)
 plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
 plt.legend()
@@ -219,12 +221,26 @@ plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green',
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
             markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
 plt.xlim(0, 1.6)
+#plt.ylim(0, 2.5)
 plt.ylim(0, 2)
 plt.xticks([0.35, 0.85, 1.35], ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
 plt.legend()
 plt.ylabel('MGS Error', fontsize = 12)
 
+
+fig3, axs = plt.subplots(1, 2, sharey = True)
+sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_notms)
+sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_tms)
+plt.suptitle('sub '+ subjID)
+fig4, axs = plt.subplots(1, 2, sharey = True)
+sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_notms)
+sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_tms)
+plt.suptitle('sub '+ subjID)
 isacc_fig_path = direct['Figures'] + '/isacc_errs.png'
 fig1.savefig(isacc_fig_path, dpi = fig1.dpi, format='png')
 fsacc_fig_path = direct['Figures'] + '/fsacc_errs.png'
 fig2.savefig(fsacc_fig_path, dpi = fig2.dpi, format='png')
+isacc_violin_fig_path = direct['Figures'] + '/isacc_violin.png'
+fig3.savefig(isacc_violin_fig_path, dpi = fig3.dpi, format='png')
+fsacc_violin_fig_path = direct['Figures'] + '/fsacc_violin.png'
+fig4.savefig(fsacc_violin_fig_path, dpi = fig4.dpi, format='png')
