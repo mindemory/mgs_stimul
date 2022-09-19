@@ -37,7 +37,7 @@ if ~exist(saveName, 'file')
     tic
     cfg = [];
     cfg.demean = 'yes';
-    cfg.bpfreq = [0.5,100];
+    cfg.bpfreq = [0.1,100];
     cfg.bpfilter = 'yes';
     cfg.bpfiltord = 2;
     data_eeg = ft_preprocessing(cfg, data_eeg);

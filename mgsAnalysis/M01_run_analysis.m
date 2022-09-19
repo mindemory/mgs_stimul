@@ -2,7 +2,7 @@ clear; close all; clc;
 
 %% Initialization
 subjID = '01';
-day = 3;
+day = 1;
 end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));

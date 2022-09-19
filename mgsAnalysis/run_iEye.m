@@ -54,14 +54,16 @@ for block = 1:end_block
     if ii_sacc.epoch_start == 5
         ii_sacc.epoch_start = 6;
     end
-   
+    if block == 5
+        taskMap(block).stimVF = taskMap(block).stimVF(2:end);
+    end
     if strcmp(eyecond, 'pro')
         [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
-        ii_trial_pro{block_pro}.stimVF = taskMap.stimVF;
+        ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
         [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
-        ii_trial_anti{block_anti}.stimVF = taskMap.stimVF;
+        ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
         block_anti = block_anti+1;
     end
 end
