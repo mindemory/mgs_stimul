@@ -3,7 +3,7 @@ clear; close all; clc;
 %% Initialization
 subjID = '05';
 day = 1;
-end_block = 10;
+end_block = 7;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 [ret, hostname] = system('hostname');
@@ -54,7 +54,7 @@ saveNameanti = [direct.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
-    disp('Loading exists ii_sess files.')
+    disp('Loading existing ii_sess files.')
     load(saveNamepromat);
     load(saveNameantimat);
 else
@@ -71,7 +71,12 @@ prooutVF_idx = find(ii_sess_pro.stimVF == 0);
 antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
 antioutVF_idx = find(ii_sess_anti.stimVF == 1);
 
-direct.EEG = [direct.datc '/EEGData/sub' subjID];
+if strcmp(hostname, 'syndrome') % If running on Syndrome
+    direct.EEG = [direct.datc '/EEGData/sub' subjID '/day' num2str(day, "%02d")];
+else
+    direct.EEG = [direct.datc '/EEGData/sub' subjID];
+end
+
 direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
 if ~exist(direct.saveEEG, 'dir')
     mkdir(direct.saveEEG)

@@ -1,7 +1,7 @@
 clear; close all; clc;
-subjID = '01';
+subjID = '05';
 day = 3;
-block_files = [1, 7];
+block_files = [1, 9];
 master_dir = '/d/DATC/datc/MD_TMS_EEG';
 
 addpath /Users/mrugank/Documents/fieldtrip;
