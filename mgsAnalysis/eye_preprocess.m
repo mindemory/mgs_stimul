@@ -71,6 +71,7 @@ if exist(matfile_iEye, 'file') == 2
     load(matfile_iEye);
 else
     [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
+    figure(); plot(ii_data.XDAT, 'ro-')
 end
 %imported_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 

@@ -2,11 +2,21 @@ clear; close all; clc;
 
 %% Initialization
 subjID = '01';
-day = 1;
-end_block = 12;
+day = 2;
+end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
-direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
+[ret, hostname] = system('hostname');
+if ret ~= 0
+    hostname = getenv('HOSTNAME');
+end
+hostname = strtrim(hostname);
+
+if strcmp(hostname, 'syndrome') % If running on Syndrome
+    direct.datc = '/datc/MD_TMS_EEG';
+else % If running on World's best MacBook
+    direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
+end
 direct.data = [direct.datc '/data'];
 direct.analysis = [direct.datc '/analysis'];
 direct.iEye = [direct.master '/iEye'];
@@ -19,10 +29,25 @@ addpath(genpath(direct.data));
 
 taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
 load(taskMapfilename);
-
-%% Run iEye
-% Saving stuff
-%Create a directory to save all files with their times
+ispro = NaN(1, length(taskMap));
+for blurb = 1:length(taskMap)
+    if strcmp(taskMap(blurb).condition, 'pro')
+        ispro(blurb) = 1;
+    elseif strcmp(taskMap(blurb).condition, 'anti')
+        ispro(blurb) = 0;
+    end
+end
+protrialNum = NaN(1, sum(ispro) * 40);
+antitrialNum = NaN(1, sum(isanti) * 40);
+pro_count = 0;
+anti_count = 0;
+for ii = 1:length(ispro)
+    if ispro(ii) == 1
+        for jj = pro_count+1:pro_count+40
+        protrialNum(pro_count+1:pro_count+40) 
+    
+end
+%% Load ii_sess files
 tic
 direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];
 if ~exist(direct.save, 'dir')
@@ -34,29 +59,26 @@ saveNameanti = [direct.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
-    disp('Loading exists ii_sess files.')
+    disp('Loading existing ii_sess files.')
     load(saveNamepromat);
     load(saveNameantimat);
 else
-    disp('ii_sess files do not exist. running ieye')
-    [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block);
-    save(saveNamepro,'ii_sess_pro')
-    save(saveNameanti,'ii_sess_anti')
+    disp('ii_sess files do not exist. Run S01_eyedata_to_mat.')
 end
 toc
-%% Check for Behavioral Data
+
+%% Run EEG preprocessing
 prointoVF_idx = find(ii_sess_pro.stimVF == 1);
 prooutVF_idx = find(ii_sess_pro.stimVF == 0);
 antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
 antioutVF_idx = find(ii_sess_anti.stimVF == 1);
 
-prointoVF_isacc_mean = nanmean(ii_sess_pro.i_sacc_err(prointoVF_idx));
-prooutVF_isacc_mean = nanmean(ii_sess_pro.i_sacc_err(prooutVF_idx));
-antiintoVF_isacc_mean = nanmean(ii_sess_anti.i_sacc_err(antiintoVF_idx));
-antioutVF_isacc_mean = nanmean(ii_sess_anti.i_sacc_err(antioutVF_idx));
+if strcmp(hostname, 'syndrome') % If running on Syndrome
+    direct.EEG = [direct.datc '/EEGData/sub' subjID '/day' num2str(day, "%02d")];
+else
+    direct.EEG = [direct.datc '/EEGData/sub' subjID];
+end
 
-%% Run EEG preprocessing
-direct.EEG = [direct.datc '/EEGData/sub' subjID];
 direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
 if ~exist(direct.saveEEG, 'dir')
     mkdir(direct.saveEEG)
