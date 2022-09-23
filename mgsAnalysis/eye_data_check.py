@@ -7,47 +7,41 @@ import seaborn as sns
 import os
 from scipy.stats import sem, f_oneway
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
-
+from generate_Y import generate_Y
 
 # Hide deprecation warnings!
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 subjID = '02'
-days = [1, 2]
-TMSon = [0, 1]
+days = [1, 2, 3]
 
 direct = {}
-direct['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
+#direct['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
+direct['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
 direct['data'] = direct['datc'] + '/data'
 direct['analysis'] = direct['datc'] + '/analysis'
 direct['Figures'] = direct['datc'] + '/Figures/sub' + subjID 
 direct['phosphene'] = direct['data'] + '/phosphene_data/sub' + subjID
 direct['mgs'] = direct['data'] + '/mgs_data/sub' + subjID
-#taskMapfilename = direct['phosphene'] + '/taskMap_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
-
-# def label_diff(i,j,text,X,Y, ax):
-#     x = (X[i]+X[j])/2
-#     y = 1.1*max(Y[i], Y[j])
-#     dx = abs(X[i]-X[j])
-
-#     props = {'connectionstyle':'bar','arrowstyle':'-',\
-#                     'shrinkA':30,'shrinkB':30,'linewidth':1}
-#     ax.annotate(text, xy=(x,y+0.25), zorder=10)
-#     ax.annotate('', xy=(X[i],y), xytext=(X[j],y), arrowprops=props)
 
 for ii in range(len(days)):
     day = days[ii]
-    tms_status = TMSon[ii]
+    
     direct['day'] = direct['mgs'] + '/day' + f'{day:02d}'
     direct['save'] = direct['analysis'] + '/sub' + subjID + '/day' + f'{day:02d}'
     saveNamepro = direct['save'] + '/ii_sess_pro_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
     saveNameanti = direct['save'] + '/ii_sess_anti_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
-
+    taskMapfilename = direct['phosphene'] + '/taskMap_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
+    
     # Load the data files
+    taskMap = loadmat(taskMapfilename)
     ii_sess_pro = loadmat(saveNamepro)
     ii_sess_anti = loadmat(saveNameanti)
 
+    # Check if this is a TMS session
+    tms_status = taskMap['taskMap'][0, 0]['TMScond'][0][0]
+    print(tms_status)
     # Find the stimulus VF
     stimVF_pro = ii_sess_pro['ii_sess_pro']['stimVF'][0, 0]
     stimVF_anti = ii_sess_anti['ii_sess_anti']['stimVF'][0, 0]
@@ -87,44 +81,47 @@ for ii in range(len(days)):
     df['typesum'] = df['instimVF'] + df['ispro']
     df['rejtrials'] = rejtrials
     
+    trial_type = []
+    pro_anti = []
+    into_away = []
+    for ii in range(df['ispro'].shape[0]):
+        if df['ispro'][ii] == 1:
+            pro_anti.append('pro')
+        elif df['ispro'][ii] == -1:
+            pro_anti.append('anti')
+    for ii in range(df['instimVF'].shape[0]):
+        if df['instimVF'][ii] == 1:
+            into_away.append('into')
+        elif df['instimVF'][ii] == 0:
+            into_away.append('away')
+    for ii in range(df['typesum'].shape[0]):
+        if df['typesum'][ii] == 0:
+            trial_type.append('antioutVF')
+        elif df['typesum'][ii] == -1:
+            trial_type.append('antiintoVF')
+        elif df['typesum'][ii] == 1:
+            trial_type.append('prooutVF')
+        elif df['typesum'][ii] == 2:
+            trial_type.append('prointoVF')
+    df['trial_type'] = trial_type
+    df['pro_anti'] = pro_anti
+    df['into_away'] = into_away
+
     if tms_status == 1:
-        trial_type = []
-        for ii in range(df['typesum'].shape[0]):
-            if df['typesum'][ii] == 0:
-                trial_type.append('antioutVF')
-            elif df['typesum'][ii] == -1:
-                trial_type.append('antiintoVF')
-            elif df['typesum'][ii] == 1:
-                trial_type.append('prooutVF')
-            elif df['typesum'][ii] == 2:
-                trial_type.append('prointoVF')
-        df['trial_type'] = trial_type
         if 'df_tms' in globals():
             df_tms = pd.concat([df_tms, df])
         else:
             df_tms = df
     else:
-        trial_type = []
-        # for ii in range(df['ispro'].shape[0]):
-        #     if df['ispro'][ii] == 1:
-        #         trial_type.append('pro')
-        #     elif df['ispro'][ii] == -1:
-        #         trial_type.append('anti')
-        for ii in range(df['typesum'].shape[0]):
-            if df['typesum'][ii] == 0:
-                trial_type.append('antioutVF')
-            elif df['typesum'][ii] == -1:
-                trial_type.append('antiintoVF')
-            elif df['typesum'][ii] == 1:
-                trial_type.append('prooutVF')
-            elif df['typesum'][ii] == 2:
-                trial_type.append('prointoVF')
-        df['trial_type'] = trial_type
         if 'df_notms' in globals():
             df_notms = pd.concat([df_notms, df])
         else:
             df_notms = df
 
+# df_tms = df_tms['i_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
+# df_notms = df_notms['i_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
+# df_tms = df_tms['f_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
+# df_notms = df_notms['f_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
 
 df_tms_goodtrials = df_tms[df_tms['rejtrials'] == 0 & df_tms['i_sacc_err'].notna() & df_tms['f_sacc_err'].notna()]
 df_notms_goodtrials = df_notms[df_notms['rejtrials'] == 0 & df_notms['i_sacc_err'].notna() & df_notms['f_sacc_err'].notna()]
@@ -135,130 +132,141 @@ df_notms_goodtrials = df_notms_goodtrials[(((df_notms_goodtrials['i_sacc_err'] -
                 / df_notms_goodtrials['i_sacc_err'].std()).abs() < 3) & (((df_notms_goodtrials['f_sacc_err'] - 
                 df_notms_goodtrials['f_sacc_err'].mean())  / df_notms_goodtrials['f_sacc_err'].std()).abs() < 3)]
 
-cat_order_tms = ['prointoVF', 'antiintoVF', 'prooutVF', 'antioutVF']
-cat_order_notms = ['prointoVF', 'antiintoVF', 'prooutVF', 'antioutVF']
-#cat_order_notms = ['pro', 'anti']
+cat_order_trial_type = ['prointoVF', 'antiintoVF', 'prooutVF', 'antioutVF']
+cat_order_pro_anti = ['pro', 'anti']
+cat_order_into_away = ['into', 'away']
+
+print('No TMS prointoVF: ', df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF'].shape)
+print('No TMS prooutVF: ', df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prooutVF'].shape)
+print('TMS prointoVF: ', df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF'].shape)
+print('TMS prooutVF: ', df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF'].shape)
+print('No TMS antiintoVF: ', df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF'].shape)
+print('No TMS antioutVF: ', df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antioutVF'].shape)
+print('TMS antiintoVF: ', df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF'].shape)
+print('TMS antioutVF: ', df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF'].shape)
 # Stats
-f_value, p_value = f_oneway(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err'],
-                    df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err'])
-print(f'One-way ANOVA for i_sacc_err gives F = {f_value}, p = {p_value}')
-f_value, p_value = f_oneway(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err'],
-                    df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err'],
-                    df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err'])
-print(f'One-way ANOVA for f_sacc_err gives F = {f_value}, p = {p_value}')
+# f_value, p_value = f_oneway(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err'],
+#                     df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err'])
+# print(f'One-way ANOVA for i_sacc_err gives F = {f_value}, p = {p_value}')
+# f_value, p_value = f_oneway(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err'],
+#                     df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err'],
+#                     df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err'])
+# print(f'One-way ANOVA for f_sacc_err gives F = {f_value}, p = {p_value}')
 
 
-df_concat = pd.concat([df_tms_goodtrials, df_notms_goodtrials])
-tukey = pairwise_tukeyhsd(endog=df_concat['i_sacc_err'], groups=df_concat['trial_type'], alpha=0.05)
-print('i_sacc_err')
-print(tukey)
-tukey = pairwise_tukeyhsd(endog=df_concat['f_sacc_err'], groups=df_concat['trial_type'], alpha=0.05)
-print('f_sacc_err')
-print(tukey)
+# df_concat = pd.concat([df_tms_goodtrials, df_notms_goodtrials])
+# tukey = pairwise_tukeyhsd(endog=df_concat['i_sacc_err'], groups=df_concat['trial_type'], alpha=0.05)
+# print('i_sacc_err')
+# print(tukey)
+# tukey = pairwise_tukeyhsd(endog=df_concat['f_sacc_err'], groups=df_concat['trial_type'], alpha=0.05)
+# print('f_sacc_err')
+# print(tukey)
 
 # Plotting figures
 plt.rc('ytick', labelsize = 12)
-fig1, ax = plt.subplots()
-X1 = [0.3, 0.8, 1.3, 1.8]
-X2 = [0.4, 0.9, 1.4, 1.9]
-Y1 = [np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err']),
-    np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err'])]
-Y2 = [np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err']),
-    np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err'])]
-Yerr1 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err']),
-    sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['i_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['i_sacc_err'])]
-Yerr2 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err']),
-    sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['i_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['i_sacc_err'])]
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'trial_type', 'i_sacc_err')
 plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
 plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = 'pro')
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-plt.xlim(0, 2.1)
-#plt.ylim(0, 5)
-plt.ylim(0, 2)
-plt.xticks([0.35, 0.85, 1.35, 1.85], ['No TMS\n into VF', 'No TMS\n away VF', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
 plt.legend()
-# Xs = X1 + X2
-# Ys = Y1+Y2
-# ind1 = [0]
-# ind2 = [3]
-# ps = [0.0003]
-# for ll in range(len(ind1)):
-#     if ps[ll] < 0.0001:
-#         sig_star = '****'
-#     elif ps[ll] < 0.001:
-#         sig_star = '***'
-#     elif ps[ll] < 0.01:
-#         sig_star = '**'
-#     elif ps[ll] < 0.05:
-#         sig_star = '*'
-#     else:
-#         sig_star = 'ns'
-#     label_diff(ind1[ll], ind2[ll], sig_star, Xs, Ys, ax)
-#label_diff(0, 1, '*', X1+X2, Y1+Y2, ax)
 plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
 
-fig2 = plt.figure()
-X1 = [0.3, 0.8, 1.3, 1.8]
-X2 = [0.4, 0.9, 1.4, 1.9]
-Y1 = [np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err']),
-    np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err'])]
-Y2 = [np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err']),
-    np.mean(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err']),
-    np.mean(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err'])]
-Yerr1 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err']),
-    sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prointoVF']['f_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'prooutVF']['f_sacc_err'])]
-Yerr2 = [sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err']),
-    sem(df_notms_goodtrials[df_notms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antiintoVF']['f_sacc_err']),
-    sem(df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'antioutVF']['f_sacc_err'])]
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'trial_type', 'f_sacc_err')
 plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
 plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = 'pro')
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
 plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-plt.xlim(0, 2.1)
-#plt.ylim(0, 3)
-plt.ylim(0, 2)
-plt.xticks([0.35, 0.85, 1.35, 1.85], ['No TMS\n into VF', 'No TMS\n away VF', 'MGS into\n TMS VF', 'MGS away\n from TMS VF'], fontsize = 12)
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
 plt.legend()
 plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
 
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'pro_anti', 'i_sacc_err')
+plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
+plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
+plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
+plt.legend()
+plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
 
-fig3, axs = plt.subplots(1, 2, sharey = True)
-sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_notms)
-sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_tms)
-plt.suptitle('sub '+ subjID)
-fig4, axs = plt.subplots(1, 2, sharey = True)
-sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_notms)
-sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_tms)
-plt.suptitle('sub '+ subjID)
-isacc_fig_path = direct['Figures'] + '/isacc_errs_test.png'
-fig1.savefig(isacc_fig_path, dpi = fig1.dpi, format='png')
-fsacc_fig_path = direct['Figures'] + '/fsacc_errs_test.png'
-fig2.savefig(fsacc_fig_path, dpi = fig2.dpi, format='png')
-isacc_violin_fig_path = direct['Figures'] + '/isacc_violin_test.png'
-fig3.savefig(isacc_violin_fig_path, dpi = fig3.dpi, format='png')
-fsacc_violin_fig_path = direct['Figures'] + '/fsacc_violin_test.png'
-fig4.savefig(fsacc_violin_fig_path, dpi = fig4.dpi, format='png')
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'pro_anti', 'f_sacc_err')
+plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
+plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
+plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
+plt.legend()
+plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
+
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'into_away', 'i_sacc_err')
+plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
+plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
+plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
+plt.legend()
+plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
+
+fig, ax = plt.subplots()
+X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                        df_tms_goodtrials, 'into_away', 'f_sacc_err')
+plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
+plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
+            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
+plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
+            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
+plt.xlim(0, LIMS[0])
+plt.ylim(0, LIMS[1])
+plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
+plt.legend()
+plt.ylabel('MGS Error', fontsize = 12)
+fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
+
+# fig3, axs = plt.subplots(1, 2, sharey = True)
+# sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_notms)
+# sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_tms)
+# plt.suptitle('sub '+ subjID)
+# fig4, axs = plt.subplots(1, 2, sharey = True)
+# sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_notms)
+# sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_tms)
+# plt.suptitle('sub '+ subjID)
+
