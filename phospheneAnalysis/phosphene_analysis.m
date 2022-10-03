@@ -16,7 +16,7 @@ hostname = strtrim(hostname);
 if strcmp(hostname, 'syndrome')
     master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 else
-    master_dir = '/Users/mrugankdake/remote/datc/MD_TMS_EEG/';
+    master_dir = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/';
 end
 
 data_path = [master_dir '/data/phosphene_data/sub' subjID];

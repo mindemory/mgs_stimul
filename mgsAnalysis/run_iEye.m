@@ -11,13 +11,13 @@ ii_params.trial_end_value = 8;   % XDAT value for trial end
 ii_params.drift_epoch = [1 2 3 4]; % XDAT values for drift correction
 ii_params.calibrate_epoch = 7;   % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
-ii_params.calibrate_mode = 'scale'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
+ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
 ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
-for block = 1:1
+for block = 1:end_block
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
@@ -69,11 +69,15 @@ for block = 1:1
 end
 %% Combining runs
 disp('Combining runs')
+disp(['Total trials = ', num2str(end_block * 40)])
 % For pro trials
 if ~exist("ii_trial_pro", "var")
     ii_sess_pro = [];
 else
     ii_sess_pro = ii_combineruns(ii_trial_pro);
+    disp(['Pro trials = ', num2str(size(ii_sess_pro.i_sacc_err, 1))])
+    disp(['nan trials ii_sess_pro.i_sacc_err = ', num2str(sum(isnan(ii_sess_pro.i_sacc_err)))])
+    disp(['nan trials ii_sess_pro.f_sacc_err = ', num2str(sum(isnan(ii_sess_pro.f_sacc_err)))])
     ii_sess_pro.break_fix = zeros(length(ii_sess_pro.excl_trial), 1);
     ii_sess_pro.prim_sacc = ones(length(ii_sess_pro.excl_trial), 1);
     ii_sess_pro.small_sacc = zeros(length(ii_sess_pro.excl_trial), 1);
@@ -103,6 +107,9 @@ if ~exist("ii_trial_anti", "var")
     ii_sess_anti = [];
 else
     ii_sess_anti = ii_combineruns(ii_trial_anti);
+    disp(['Anti trials = ', num2str(size(ii_sess_anti.i_sacc_err, 1))])
+    disp(['nan trials ii_sess_anti.i_sacc_err = ', num2str(sum(isnan(ii_sess_anti.i_sacc_err)))])
+    disp(['nan trials ii_sess_anti.f_sacc_err = ', num2str(sum(isnan(ii_sess_anti.f_sacc_err)))])
     ii_sess_anti.break_fix = zeros(length(ii_sess_anti.excl_trial), 1);
     ii_sess_anti.prim_sacc = ones(length(ii_sess_anti.excl_trial), 1);
     ii_sess_anti.small_sacc = zeros(length(ii_sess_anti.excl_trial), 1);

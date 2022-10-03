@@ -18,7 +18,7 @@ parameters = loadParameters(tmsRtnTpy);
 tms_notms = [0, 1, 1];
 tms_notms_Idx = randperm(length(tms_notms));
 tms_notms = tms_notms(tms_notms_Idx);
-
+VAs = zeros(length(LocInds), 1);
 
 %% Calculate border and area of each phosphene report
 for coilInd = 1:length(LocInds)
@@ -45,8 +45,8 @@ for coilInd = 1:length(LocInds)
     [X_mean, Y_mean] = centroid(overlap_polyshape);
     PhosphReport(coilInd).polyshape_centroid = [X_mean, Y_mean];
     % compute buffer of r and polar angle of mean.
-    coords_all = sample_space_bounds(X_mean, Y_mean, parameters); % r in pixel
-    
+    [va, coords_all] = sample_space_bounds(X_mean, Y_mean, parameters); % r in pixel
+    VAs(coilInd) = va;
     % compute area for expected bounds
     polyshape_bound = rmholes(polyshape(coords_all));
     % compute the overlapping area between expected bounds and overlapping
@@ -154,26 +154,31 @@ end
 
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
-    plot(parameters.xCenter, parameters.yCenter,'+k');
+    plot(parameters.xCenter, parameters.yCenter,'+k', 'MarkerSize', 10, 'linewidth', 1.5);
     for trial = 1:length(PhosphReport(coilInd).polyshape)
         hold on;
-        pg = plot(PhosphReport(coilInd).polyshape{trial});
+        pg = plot(PhosphReport(coilInd).polyshape{trial}, 'linewidth', 1.5);
         pg.FaceColor = 'w';
         ax = gca; ax.YDir = 'reverse'; %axis off;
     end
-    
+
     pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
     pg1.FaceColor = 'k';
     ax = gca;
     ax.FontSize = 16;
-    plot(PhosphReport(coilInd).polyshape_centroid(1), PhosphReport(coilInd).polyshape_centroid(2), 'g*');
+    ax.XAxis.FontSize = 16;
+    ax.YAxis.FontSize = 16;
+    plot([parameters.xCenter, PhosphReport(coilInd).polyshape_centroid(1)], ...
+        [parameters.yCenter, PhosphReport(coilInd).polyshape_centroid(2)], 'm--', 'MarkerSize', 10, 'linewidth', 1.5);
+    
+    plot(PhosphReport(coilInd).polyshape_centroid(1), PhosphReport(coilInd).polyshape_centroid(2), 'g*', 'MarkerSize', 10, 'linewidth', 1.5);
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
     xticks(parameters.screenXpixels * [0 1/4 1/2 3/4 1]);
     yticks(parameters.screenYpixels * [0 1/4 1/2 3/4 1]);
     hh = sgtitle('Overlapping Phosphenes');
     set(hh, 'FontSize', 24, 'FontWeight', 'bold');
-    title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
+    title({['Coil index: ' num2str(coilInd)], ['mean va: ' num2str(round(VAs(coilInd), 4))]}, 'FontSize', 20);
     pbaspect([1 1 1]);
 end
 
@@ -183,7 +188,7 @@ fig2.Position = [1000 1000 1000 1000];
 
 for coilInd = 1:N
     subplot(n1,n2,coilInd);
-    plot(parameters.xCenter, parameters.yCenter,'+k');
+    plot(parameters.xCenter, parameters.yCenter,'+k', 'MarkerSize', 20, 'linewidth', 2);
     hold on;
     pg1 = plot(PhosphReport(coilInd).overlapPolyshape);
     pg1.FaceColor = 'k';
@@ -192,16 +197,19 @@ for coilInd = 1:N
         PhosphReport(coilInd).StimuliSampleSpace(:,2), '.', 'Color', [0, 0, 1, 1])
     ax = gca; ax.YDir = 'reverse';
     ax.FontSize = 16;
+    ax.XAxis.FontSize = 16;
+    ax.YAxis.FontSize = 16;
     xlim([0 parameters.screenXpixels]);
     ylim([0 parameters.screenYpixels]);
+    xticks(parameters.screenXpixels * [0 1/4 1/2 3/4 1]);
+    yticks(parameters.screenYpixels * [0 1/4 1/2 3/4 1]);
     hh1 = sgtitle('Stimuli Sample Space');
     set(hh1, 'FontSize', 24, 'FontWeight', 'bold');
-    title(['Coil Location Index : ' num2str(coilInd)], 'FontSize', 20);
-    pbaspect([1 1 1]);
+    title({['Coil index: ' num2str(coilInd)], ['mean va: ' num2str(round(VAs(coilInd), 4))]}, 'FontSize', 20);pbaspect([1 1 1]);
 end
 %% Save results
-saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
-save(saveName_phosph,'PhosphReport')
+%saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
+%save(saveName_phosph,'PhosphReport')
 
 if ~exist(figures_dir, 'dir')
     mkdir(figures_dir);

@@ -1,4 +1,4 @@
-function coords_all = sample_space_bounds(X_mean, Y_mean, parameters)
+function [va, coords_all] = sample_space_bounds(X_mean, Y_mean, parameters)
 dx = X_mean - parameters.xCenter;
 dy = -(Y_mean - parameters.yCenter);
 

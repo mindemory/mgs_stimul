@@ -7,18 +7,22 @@ import seaborn as sns
 import os
 from scipy.stats import sem, f_oneway
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from generate_Y import generate_Y
+from generate_Y import generate_Y, generate_plot
 
 # Hide deprecation warnings!
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-subjID = '02'
+import socket
+hostname = socket.gethostname()
+subjID = '01'
 days = [1, 2, 3]
 
 direct = {}
-#direct['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
-direct['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
+if hostname == 'syndrome':
+    direct['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
+else:
+    direct['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
 direct['data'] = direct['datc'] + '/data'
 direct['analysis'] = direct['datc'] + '/analysis'
 direct['Figures'] = direct['datc'] + '/Figures/sub' + subjID 
@@ -52,9 +56,9 @@ for ii in range(len(days)):
 
     # Find trials to be rejected! Conditions used: no primary saccade or large saccade error
     ii_sess_pro_rejtrials = np.where((ii_sess_pro['ii_sess_pro']['prim_sacc'][0, 0] == 0) | 
-                                        (ii_sess_pro['ii_sess_pro']['large_error'] == 1))[0]
+                                        (ii_sess_pro['ii_sess_pro']['break_fix'] == 1))[0]
     ii_sess_anti_rejtrials = numTrials_pro + np.where((ii_sess_anti['ii_sess_anti']['prim_sacc'][0, 0] == 0) | 
-                                        (ii_sess_anti['ii_sess_anti']['large_error'] == 1))[0]
+                                        (ii_sess_anti['ii_sess_anti']['break_fix'] == 1))[0]
     rejtrials = np.zeros(numTrials_pro + numTrials_anti)
     rejtrials[ii_sess_pro_rejtrials] = 1
     rejtrials[ii_sess_anti_rejtrials] = 1
@@ -72,7 +76,6 @@ for ii in range(len(days)):
     prooutVF_idx = np.where(stimVF_pro == np.zeros(stimVF_anti.shape))[0]
     antiintoVF_idx = stimVF_pro.shape[0] + np.where(stimVF_anti == np.zeros(stimVF_anti.shape))[0]
     antioutVF_idx = stimVF_pro.shape[0] + np.where(stimVF_anti == np.ones(stimVF_anti.shape))[0]
-
     # Create a dataframe
     df = pd.DataFrame(isacc, columns = ['i_sacc_err']) # Initial saccade errors
     df['f_sacc_err'] = fsacc # Final saccade errors
@@ -171,102 +174,14 @@ print('TMS antioutVF: ', df_tms_goodtrials[df_tms_goodtrials['trial_type'] == 'a
 
 # Plotting figures
 plt.rc('ytick', labelsize = 12)
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'trial_type', 'i_sacc_err')
-plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
+groups_name = ['compound', 'trial_type', 'pro_anti', 'into_away']
 
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'trial_type', 'f_sacc_err')
-plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
+metrics = ['i_sacc_err', 'f_sacc_err']
+for gg in groups_name:
+    for metric in metrics:
+        X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
+                                df_tms_goodtrials, gg, metric)
+        generate_plot(subjID, metric, X1, X2, Y1, Y2, Yerr1, Yerr2, leg_names, LIMS, 
+                    x_tick_pos, x_label_names, direct, fname)
 
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'pro_anti', 'i_sacc_err')
-plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
-
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'pro_anti', 'f_sacc_err')
-plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
-
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'into_away', 'i_sacc_err')
-plt.title('sub' + subjID + ' i_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
-
-fig, ax = plt.subplots()
-X1, X2, x_tick_pos, x_label_names, leg_names, LIMS, Y1, Y2, Yerr1, Yerr2, fname = generate_Y(df_notms_goodtrials, 
-                        df_tms_goodtrials, 'into_away', 'f_sacc_err')
-plt.title('sub' + subjID + ' f_sacc_err', fontsize = 16)
-plt.errorbar(X1, Y1, yerr = Yerr1, fmt = '.', ecolor = 'green', 
-            markersize = 10, markerfacecolor = 'green', markeredgecolor = 'green', label = leg_names[0])
-plt.errorbar(X2, Y2, yerr = Yerr2, fmt = '.', ecolor = 'red', 
-            markersize = 10, markerfacecolor = 'red', markeredgecolor = 'red', label = leg_names[1])
-plt.xlim(0, LIMS[0])
-plt.ylim(0, LIMS[1])
-plt.xticks(x_tick_pos, x_label_names, fontsize = 12)
-plt.legend()
-plt.ylabel('MGS Error', fontsize = 12)
-fig.savefig(direct['Figures'] + fname, dpi = fig.dpi, format='pdf')
-
-# fig3, axs = plt.subplots(1, 2, sharey = True)
-# sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_notms)
-# sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'i_sacc_err', order = cat_order_tms)
-# plt.suptitle('sub '+ subjID)
-# fig4, axs = plt.subplots(1, 2, sharey = True)
-# sns.violinplot(ax = axs[0], data = df_notms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_notms)
-# sns.violinplot(ax = axs[1], data = df_tms_goodtrials, x = 'trial_type', y = 'f_sacc_err', order = cat_order_tms)
-# plt.suptitle('sub '+ subjID)
 
