@@ -1,10 +1,18 @@
-function mgs_task(subjID, day, start_block, prac_status)
+function mgs_task(subjID, day, start_block, prac_status, anti_type, aperture)
 %% Initialization
-clearvars -except subjID session day coilLocInd start_block prac_status;
-close all; clc;% clear mex;
+clearvars -except subjID session day coilLocInd start_block prac_status anti_type aperture;
+close all; clc;
 
 if nargin < 4
     prac_status = 0;
+end
+
+if nargin < 5
+    anti_type = 'mirror';
+end
+
+if nargin < 6
+    aperture = 0;
 end
 
 subjID = num2str(subjID, "%02d");
@@ -21,15 +29,8 @@ curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));                                                                                
 markstim_path = [master_dir '/markstim-master'];
-phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
-if prac_status == 1
-    mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
-else
-    mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
-end
 addpath(genpath(markstim_path));
-addpath(genpath(phosphene_data_path));
-addpath(genpath(mgs_data_path));
+
 
 parameters = loadParameters(subjID);
 %%% Load PTB and toolboxes
@@ -37,28 +38,40 @@ if strcmp(hostname, 'syndrome')
     % Location of PTB on Syndrome
     addpath(genpath('/Users/Shared/Psychtoolbox')) %% mrugank (01/28/2022): load PTB
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    phosphene_data_path = ['/datc/MD_TMS_EEG/data/phosphene_data/sub' subjID];
     parameters.EEG = 0; % set to 0 if there is no EEG recording
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     parameters.eyetracker = 0; % set to 0 if there is no eyetracker
     Screen('Preference','SkipSyncTests', 1)
+    if prac_status == 1
+        end_block = 2;
+        mgs_data_path = ['/datc/MD_TMS_EEG/data/mgs_practice_data/sub' subjID];
+    else
+        end_block = 10;
+        mgs_data_path = ['/datc/MD_TMS_EEG/data/mgs_data/sub' subjID];
+    end
 elseif strcmp(hostname, 'tmsubuntu')
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         parameters.TMS = 0;
         end_block = 2;
+        mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
         parameters.EEG = 1;
         end_block = 10;
         parameters.TMS = 0;
+        mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
-
+addpath(genpath(phosphene_data_path));
+addpath(genpath(mgs_data_path));
 sca;
 screen = initScreen(parameters);
 
@@ -95,12 +108,12 @@ for block = start_block:end_block
      % Initialize taskMap
     if prac_status == 1
         parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
-        load([phosphene_data_path '/taskMapPractice_sub' subjID])
+        load([phosphene_data_path '/taskMapPractice_sub' subjID '_antitype_' anti_type])
         taskMap = taskMapPractice(1, block);
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
-        load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d")])
+        load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d") '_antitype_' anti_type])
         if taskMap(1).TMScond == 1
             parameters.TMS = 1;
         elseif taskMap(1).TMScond == 0
@@ -145,14 +158,17 @@ for block = start_block:end_block
         Eyelink('Message', 'SYNCTIME');
     end
     ListenChar(-1);
-    %drawTextures(parameters, screen, 'Aperture');
+    if aperture == 1
+        drawTextures(parameters, screen, 'Aperture');
+    end
     showprompts(screen, 'BlockStart', block, taskMap.condition)
     WaitSecs(2);
-    %drawTextures(parameters, screen, 'Aperture');
+    if aperture == 1
+        drawTextures(parameters, screen, 'Aperture');
+    end
     drawTextures(parameters, screen, 'FixationCross');
     
     timeReport = struct;
-    %timeReport = repmat(timeReport, [1, trialNum]);
     
     trialArray = 1:trialNum;
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
@@ -193,7 +209,9 @@ for block = start_block:end_block
             while GetSecs-sampleStartTime <= parameters.sampleDuration
                 dotSize = taskMap.dotSizeStim(trial);
                 dotCenter = taskMap.stimLocpix(trial, :);
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
@@ -213,7 +231,9 @@ for block = start_block:end_block
             end
             % Draw fixation cross
             while GetSecs-delay1StartTime <= parameters.delay1Duration
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
@@ -257,7 +277,9 @@ for block = start_block:end_block
             end
             % Draw fixation cross
             while GetSecs-delay2StartTime<=parameters.delay2Duration
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
@@ -280,7 +302,9 @@ for block = start_block:end_block
             end
             % Draw green fixation cross
             while GetSecs-respCueStartTime < parameters.respCueDuration
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
             end
             timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
@@ -301,7 +325,9 @@ for block = start_block:end_block
             end
             %draw the fixation dot
             while GetSecs-respStartTime<=parameters.respDuration
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'FixationCross');
             end
             timeReport.respDuration(trial) = GetSecs - respStartTime;
@@ -323,7 +349,9 @@ for block = start_block:end_block
             while GetSecs-feedbackStartTime<=parameters.feedbackDuration
                 dotSize = taskMap.dotSizeSacc(trial);
                 dotCenter = taskMap.saccLocpix(trial, :);
-                %drawTextures(parameters, screen, 'Aperture');
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
+                end
                 drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
                 drawTextures(parameters, screen, 'FixationCross');
             end
@@ -350,8 +378,29 @@ for block = start_block:end_block
         end
         % Draw a fixation cross
         while GetSecs-itiStartTime < ITI(trial)
-            %drawTextures(parameters, screen, 'Aperture');
+            if aperture == 1
+                drawTextures(parameters, screen, 'Aperture');
+            end
             drawTextures(parameters, screen, 'FixationCross');
+            % check for end of block
+            KbQueueFlush(kbx);
+            [keyIsDown, keyCode] = KbQueueCheck(kbx);
+            cmndKey = KbName(keyCode);
+            if keyIsDown
+                if strcmp(cmndKey, parameters.exit_key)
+                    showprompts(screen, 'TrialPause')
+                    [keyIsDown, ~] = KbQueueCheck(kbx);
+                    while ~keyIsDown
+                        [keyIsDown, keyCode] = KbQueueCheck(kbx);
+                        cmndKey = KbName(keyCode);
+                        if strcmp(cmndKey, parameters.space_key)
+                            continue;
+                        end
+                    end
+                else
+                    continue;
+                end
+            end
         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;

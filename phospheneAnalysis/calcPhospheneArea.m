@@ -1,4 +1,5 @@
-function calcPhospheneArea(subjID, session, data_dir, figures_dir)
+function calcPhospheneArea(subjID, session, data_dir, figures_dir, anti_type)
+
 
 data_path = [data_dir '/tmsRtnTpy_sub' subjID '_sess' session];
 load(data_path);
@@ -75,7 +76,12 @@ for coilInd = 1:length(LocInds)
             % stimulus inside the tms FOV / TMS
             stimLocSetIn = StimuliSampleSpace(inds, :);
             % stimulus outside the tms FOV / TMS
-            stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
+            if strcmp(anti_type, 'diagonal')
+                stimLocSetOut = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetIn; % mirror diagonally
+            elseif strcmp(anti_type, 'mirror')
+                stimLocSetOut(:, 1) = parameters.screenXpixels - stimLocSetIn(:, 1); % mirror diagonally
+                stimLocSetOut(:, 2) = stimLocSetIn(:, 2);
+            end
             % concat all conditions
             stimLocpix = [stimLocSetIn; stimLocSetOut];
             trialInds = randperm(parameters.numTrials);
@@ -90,7 +96,12 @@ for coilInd = 1:length(LocInds)
             if strcmp(condthisBlock,'pro')
                 saccLocpix = stimLocpix;
             elseif strcmp(condthisBlock,'anti')
-                saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix;
+                if strcmp(anti_type, 'diagonal')
+                    saccLocpix = [parameters.screenXpixels parameters.screenYpixels] - stimLocpix; % mirror diagonally
+                elseif strcmp(anti_type, 'mirror')
+                    saccLocpix(:, 1) = parameters.screenXpixels - stimLocpix(:, 1); % mirror diagonally
+                    saccLocpix(:, 2) = stimLocpix(:, 2);
+                end
             end
             dotSizeStim = computeDotSize(parameters, stimLocpix);
             dotSizeSacc = computeDotSize(parameters, saccLocpix);
@@ -108,7 +119,12 @@ for coilInd = 1:length(LocInds)
         % stimulus inside the tms FOV / TMS
         stimLocSetInPractice = StimuliSampleSpace(indsPractice, :);
         % stimulus outside the tms FOV / TMS
-        stimLocSetOutPractice = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetInPractice; % mirror diagonally
+        if strcmp(anti_type, 'diagonal')
+            stimLocSetOutPractice = [parameters.screenXpixels parameters.screenYpixels] - stimLocSetInPractice; % mirror diagonally
+        elseif strcmp(anti_type, 'mirror')
+            stimLocSetOutPractice(:, 1) = parameters.screenXpixels - stimLocSetInPractice(:, 1); % mirror diagonally
+            stimLocSetOutPractice(:, 2) = stimLocSetInPractice(:, 2);
+        end
         % concat all conditions
         stimLocpixPractice = [stimLocSetInPractice; stimLocSetOutPractice];
         trialIndsPractice = randperm(parameters.numTrials);
@@ -122,7 +138,12 @@ for coilInd = 1:length(LocInds)
             saccLocpixPractice = stimLocpixPractice;
         else
             condthisBlockPractice = 'anti';
-            saccLocpixPractice = [parameters.screenXpixels parameters.screenYpixels] - stimLocpixPractice;
+            if strcmp(anti_type, 'diagonal')
+                saccLocpixPractice = [parameters.screenXpixels parameters.screenYpixels] - stimLocpixPractice; % mirror diagonally
+            elseif strcmp(anti_type, 'mirror')
+                saccLocpixPractice(:, 1) = parameters.screenXpixels - stimLocpixPractice(:, 1); % mirror diagonally
+                saccLocpixPractice(:, 2) = stimLocpixPractice(:, 2);
+            end
         end
         PhosphReport(coilInd).taskMapPractice(blockPractice).condition = condthisBlockPractice;
 
@@ -208,8 +229,8 @@ for coilInd = 1:N
     title({['Coil index: ' num2str(coilInd)], ['mean va: ' num2str(round(VAs(coilInd), 4))]}, 'FontSize', 20);pbaspect([1 1 1]);
 end
 %% Save results
-%saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session];
-%save(saveName_phosph,'PhosphReport')
+saveName_phosph = [data_dir '/PhospheneReport_sub' subjID '_sess' session '_antitype_' anti_type];
+save(saveName_phosph,'PhosphReport')
 
 if ~exist(figures_dir, 'dir')
     mkdir(figures_dir);

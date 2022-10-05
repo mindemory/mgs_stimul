@@ -51,8 +51,8 @@ for block = 1:end_block
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    if ii_sacc.epoch_start == 5
-        ii_sacc.epoch_start = 6;
+    if ii_sacc.epoch_start == 6
+        ii_sacc.epoch_start = 5;
     end
 %     if block == 5
 %         taskMap(block).stimVF = taskMap(block).stimVF(2:end);

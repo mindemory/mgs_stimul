@@ -38,9 +38,8 @@ curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
 markstim_path = [master_dir filesep 'markstim-master'];
-data_path = [master_dir filesep 'data/phosphene_data'];
 addpath(genpath(markstim_path));
-addpath(genpath(data_path));
+
 
 parameters = loadParameters(subjID, session);
 % Load PTB and toolboxes
@@ -49,15 +48,17 @@ if strcmp(hostname, 'syndrome')
     addpath(genpath('/Users/Shared/Psychtoolbox'))
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    data_path = '/datc/MD_TMS_EEG/data/phosphene_data';
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    data_path = [master_dir filesep 'data/phosphene_data'];
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
-
+addpath(genpath(data_path));
 sca;
 Screen('Preference','SkipSyncTests', 1)
 

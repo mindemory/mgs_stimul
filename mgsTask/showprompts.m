@@ -18,6 +18,8 @@ switch prompt_name
         text = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');
     case 'EyeCalibEnd'
         text = sprintf('Thank you. When ready, press key to continue.');
+    case 'TrialPause'
+        text = 'Experiment is paused! Press SPACE to resume.';
     case 'EndExperiment'
         text = 'Thank you for your participation!';
 end
