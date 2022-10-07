@@ -377,30 +377,22 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
-        while GetSecs-itiStartTime < ITI(trial)
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCross');
-            % check for end of block
-            KbQueueFlush(kbx);
-            [keyIsDown, keyCode] = KbQueueCheck(kbx);
-            cmndKey = KbName(keyCode);
-            if keyIsDown
-                if strcmp(cmndKey, parameters.exit_key)
-                    showprompts(screen, 'TrialPause')
-                    [keyIsDown, ~] = KbQueueCheck(kbx);
-                    while ~keyIsDown
-                        [keyIsDown, keyCode] = KbQueueCheck(kbx);
-                        cmndKey = KbName(keyCode);
-                        if strcmp(cmndKey, parameters.space_key)
-                            continue;
-                        end
-                    end
-                else
-                    continue;
+        KbQueueFlush(kbx);
+        [keyIsDown, keyCode] = KbQueueCheck(kbx);
+        cmndKey = KbName(keyCode);
+        while ~keyIsDown
+            while GetSecs-itiStartTime < ITI(trial)
+                if aperture == 1
+                    drawTextures(parameters, screen, 'Aperture');
                 end
+                drawTextures(parameters, screen, 'FixationCross');
             end
+            break;
+            
+        end
+        % check for end of block PS: This chunk is not working! 
+        if strcmp(cmndKey, parameters.exit_key)
+            showprompts('TrialPause');
         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
