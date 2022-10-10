@@ -17,7 +17,7 @@ if strcmp(hostname, 'syndrome') % If running on Syndrome
 else % If running on World's best MacBook
     direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
 end
-direct.data = [direct.datc '/data'];
+direct.data = [direct.datc '/data']; 
 direct.analysis = [direct.datc '/analysis'];
 direct.iEye = [direct.master '/iEye'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];

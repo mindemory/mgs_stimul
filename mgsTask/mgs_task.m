@@ -438,5 +438,6 @@ end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);
+Priority(0);
 sca;
 end
