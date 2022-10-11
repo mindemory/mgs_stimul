@@ -5,7 +5,7 @@ ifgFile = 'p_1000hz.ifg';
 
 subjID = num2str(subjID, "%02d");
 tmp = pwd; tmp2 = strfind(tmp,filesep);
-direct.master = tmp(1:(tmp2(end-1)-1));
+direct.master = tmp(1:(tmp2(end)-1));
 [ret, hostname] = system('hostname');
 if ret ~= 0
     hostname = getenv('hostname');

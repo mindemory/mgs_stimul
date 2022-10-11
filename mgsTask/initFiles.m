@@ -1,22 +1,21 @@
 function parameters = initFiles(parameters, screen, data_path, kbx, block)
-% Create all necessary directiries (a directory for each subject, containg Results and TaskMaps)
-%--------------------------------------------------------------------------------------------------------------------------------------%
+% Create all necessary directories (a directory for each subject, containg Results and TaskMaps)
 % specify the directories to be used
 block_dir = [data_path '/block' num2str(block, "%02d")];
 eye_dir = [block_dir '/EyeData'];
 
-%% Create directories and sub-directories
-if exist(data_path,'dir')~=7 %if the "subNum" directory doesn't exist, create one
+% Create directories and sub-directories
+if exist(data_path,'dir') ~= 7 % if the "data_path" directory doesn't exist, create one
     mkdir(data_path);
 end
 
-if exist(block_dir, 'dir')==7
+if exist(block_dir, 'dir')==7 % if the "block_dir" directory doesn't exist, create one. If it exists, ask if it can be overwritten.
     KbQueueStart(kbx);
-    [~, keyCode]=KbQueueCheck(kbx);
+    [~, keyCode] = KbQueueCheck(kbx);
     cmndKey = KbName(keyCode);
     while ~strcmp(cmndKey, parameters.space_key)
         showprompts(screen, 'BlockExists', block)
-         [~, keyCode]=KbQueueCheck(kbx);
+        [~, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
         if strcmp(cmndKey, parameters.exit_key)
             sca;
@@ -27,19 +26,17 @@ else
     mkdir(block_dir);
 end
 
-if exist(eye_dir,'dir')~=7 %if the "subNum" directory doesn't exist, create one
+if exist(eye_dir,'dir')~=7 % if the "eye_dir" directory doesn't exist, create one
     mkdir(eye_dir);
 end
 
-%% Initialize the files to write in
+% File names that will be saved.
 date_time = datestr(now, 'mmddyy_HHMM');
 edfFile = [parameters.subject parameters.block date_time(1:4)];
-eegFile = ['subj' parameters.subject '_block' parameters.block '_' date_time '.edf'];
 matFile = ['subj' parameters.subject '_block' parameters.block '.mat'];
 
 parameters.block_dir = block_dir;
 parameters.eye_dir = eye_dir;
 parameters.edfFile = edfFile;
-parameters.eegFile = eegFile;
 parameters.matFile = matFile;
 end
