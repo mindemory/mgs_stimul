@@ -402,12 +402,10 @@ for block = start_block:end_block
                 end
                 drawTextures(parameters, screen, 'FixationCross');
             end
-            [keyIsDown, keyCode] = KbQueueCheck(kbx);
+            [~, keyCode] = KbQueueCheck(kbx);
             cmndKey = KbName(keyCode);
             break;
         end
-        timeReport.itiDuration(trial) = GetSecs - itiStartTime;
-        timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
         % check for end of block PS: This chunk is not working! 
         if strcmp(cmndKey, parameters.exit_key)
             KbQueueStart(kbx);
@@ -417,7 +415,8 @@ for block = start_block:end_block
                 [keyIsDown, ~] = KbQueueCheck(kbx);
             end
         end
-
+        timeReport.itiDuration(trial) = GetSecs - itiStartTime;
+        timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
     end
         
     %% Saving Data and Closing everything
