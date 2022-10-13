@@ -33,9 +33,9 @@ parameters.sampleDuration = 0.5;
 parameters.delayDuration = 4;
 parameters.delay1Duration = parameters.delayDuration/2;
 parameters.delay2Duration = parameters.delayDuration-parameters.delay1Duration-parameters.pulseDuration;
-% parameters.respCueDuration = 0.15;
-% parameters.respDuration = 0.7;
-parameters.respDuration = 0.85;
+parameters.respCueDuration = 0.15;
+parameters.respDuration = 0.7;
+%parameters.respDuration = 0.85;
 parameters.feedbackDuration = 0.8;
 parameters.itiDuration = [2,3];
 end

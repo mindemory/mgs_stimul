@@ -301,7 +301,7 @@ for block = start_block:end_block
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response Cue window
+        % Response window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
@@ -317,7 +317,7 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
         % Draw green fixation cross
-        while GetSecs-respCueStartTime < parameters.respCueDuration
+        while GetSecs-respCueStartTime < parameters.respDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
@@ -392,25 +392,32 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
-        KbQueueFlush(kbx);
-        [keyIsDown, keyCode] = KbQueueCheck(kbx);
-        cmndKey = KbName(keyCode);
+        KbQueueStart(kbx);
+        [keyIsDown, ~] = KbQueueCheck(kbx);
         while ~keyIsDown
+            
             while GetSecs-itiStartTime < ITI(trial)
                 if aperture == 1
                     drawTextures(parameters, screen, 'Aperture');
                 end
                 drawTextures(parameters, screen, 'FixationCross');
             end
+            [keyIsDown, keyCode] = KbQueueCheck(kbx);
+            cmndKey = KbName(keyCode);
             break;
-            
-        end
-        % check for end of block PS: This chunk is not working! 
-        if strcmp(cmndKey, parameters.exit_key)
-            showprompts('TrialPause');
         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
+        % check for end of block PS: This chunk is not working! 
+        if strcmp(cmndKey, parameters.exit_key)
+            KbQueueStart(kbx);
+            [keyIsDown, ~] = KbQueueCheck(kbx);
+            while ~keyIsDown
+                showprompts(screen, 'TrialPause');
+                [keyIsDown, ~] = KbQueueCheck(kbx);
+            end
+        end
+
     end
         
     %% Saving Data and Closing everything
