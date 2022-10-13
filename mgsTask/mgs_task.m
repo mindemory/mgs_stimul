@@ -392,6 +392,7 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
+        KbQueueFlush(kbx);
         KbQueueStart(kbx);
         [keyIsDown, ~] = KbQueueCheck(kbx);
         while ~keyIsDown
@@ -401,9 +402,10 @@ for block = start_block:end_block
                     drawTextures(parameters, screen, 'Aperture');
                 end
                 drawTextures(parameters, screen, 'FixationCross');
+                [~, keyCode] = KbQueueCheck(kbx);
+                cmndKey = KbName(keyCode)
             end
-            [~, keyCode] = KbQueueCheck(kbx);
-            cmndKey = KbName(keyCode);
+            
             break;
         end
         % check for end of block PS: This chunk is not working! 

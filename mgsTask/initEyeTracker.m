@@ -9,7 +9,9 @@ function initEyeTracker(parameters, screen)
 if parameters.eyetracker
     parameters.eyeTrackerOn = 1;
     el=EyelinkInitDefaults(screen.win);
-    
+    el.calibrationtargetsize=2.0;  % size of calibration target as percentage of screen
+    el.calibrationtargetwidth=0.8; % width of calibration target's border as percentage of screen
+
     el.backgroundcolour = screen.grey;
     el.msgfontcolour = BlackIndex(el.window);
     el.imgtitlecolour = WhiteIndex(el.window);
