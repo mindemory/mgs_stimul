@@ -120,7 +120,7 @@ for block = start_block:end_block
     % Create folders for the block and read taskMap for current block
     if prac_status == 1
         parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
-        taskMap = taskMapPractice(1, block);
+        tMap = taskMapPractice(1, block);
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
@@ -129,11 +129,11 @@ for block = start_block:end_block
         elseif taskMap(1).TMScond == 0
             parameters.TMS = 0;
         end
-        taskMap = taskMap(1, block);
+        tMap = taskMap(1, block);
     end
     
     % Get a count of trials (it should be 40 for this experiment).
-    trialNum = length(taskMap.stimLocpix);      
+    trialNum = length(tMap.stimLocpix);      
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Initialize eyetracker
@@ -176,7 +176,7 @@ for block = start_block:end_block
     if aperture == 1
         drawTextures(parameters, screen, 'Aperture');
     end
-    showprompts(screen, 'BlockStart', block, taskMap.condition)
+    showprompts(screen, 'BlockStart', block, tMap.condition)
     WaitSecs(2);
     
     % Draw Fixation Cross
@@ -223,8 +223,8 @@ for block = start_block:end_block
         end
         % draw sample and fixation cross
         while GetSecs-sampleStartTime <= parameters.sampleDuration
-            dotSize = taskMap.dotSizeStim(trial);
-            dotCenter = taskMap.stimLocpix(trial, :);
+            dotSize = tMap.dotSizeStim(trial);
+            dotCenter = tMap.stimLocpix(trial, :);
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
@@ -308,7 +308,7 @@ for block = start_block:end_block
         if parameters.EEG
             MarkStim('t', 6);
         end
-        saccLoc = taskMap.saccLocpix(trial, :);
+        saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
         if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
@@ -363,8 +363,8 @@ for block = start_block:end_block
         end
         % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
-            dotSize = taskMap.dotSizeSacc(trial);
-            dotCenter = taskMap.saccLocpix(trial, :);
+            dotSize = tMap.dotSizeSacc(trial);
+            dotCenter = tMap.saccLocpix(trial, :);
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
@@ -396,16 +396,20 @@ for block = start_block:end_block
         KbQueueStart(kbx);
         [keyIsDown, ~] = KbQueueCheck(kbx);
         while ~keyIsDown
-            
-            while GetSecs-itiStartTime < ITI(trial)
-                if aperture == 1
-                    drawTextures(parameters, screen, 'Aperture');
-                end
-                drawTextures(parameters, screen, 'FixationCross');
-                [~, keyCode] = KbQueueCheck(kbx);
-                cmndKey = KbName(keyCode)
+            if aperture == 1
+                drawTextures(parameters, screen, 'Aperture');
             end
-            
+            drawTextures(parameters, screen, 'FixationCross');
+            WaitSecs(ITI(trial));
+%             while GetSecs-itiStartTime < ITI(trial)
+%                 if aperture == 1
+%                     drawTextures(parameters, screen, 'Aperture');
+%                 end
+%                 drawTextures(parameters, screen, 'FixationCross');
+%                 
+%             end
+            [~, keyCode] = KbQueueCheck(kbx);
+            cmndKey = KbName(keyCode);
             break;
         end
         % check for end of block PS: This chunk is not working! 

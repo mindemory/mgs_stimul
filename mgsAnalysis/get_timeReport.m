@@ -1,14 +1,18 @@
 function get_timeReport(subjID)
 clearvars -except subjID; close all; clc;
-subjID = num2str(subjID, "%02d");
+
 if subjID == 1
     end_blocks = [12 10 10];
 elseif subjID == 2
     end_blocks = [10 10 10];
 elseif subjID == 5
-    end_blocks = [7 8 10[;
-days = 3;
-max_end_block = max(end_blocks)
+    end_blocks = [7 8 10];
+elseif subjID == 0
+    end_blocks = [10];
+end
+subjID = num2str(subjID, "%02d"); 
+days = 1;
+max_end_block = max(end_blocks);
 start_block = 1;
 
 subjID = num2str(subjID, "%02d");
