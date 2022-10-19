@@ -212,7 +212,20 @@ for block = start_block:end_block
         sampleStartTime = GetSecs;
         % EEG marker --> Sample begins
         if parameters.EEG
-            MarkStim('t', 2);
+            if strcmp(tMap.condition, 'pro')
+                if tMap.stimVF(trial) == 1
+                    trigger_code = 11;
+                elseif tMap.stimVF(trial) == 0
+                    trigger_code = 12;
+                end
+            elseif strcmp(tMap.condition, 'anti')
+                if tMap.stimVF(trial) == 1
+                    trigger_code = 13;
+                elseif tMap.stimVF(trial) == 0
+                    trigger_code = 14;
+                end
+            end
+            MarkStim('t', trigger_code);
         end
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
