@@ -10,7 +10,7 @@ elseif subjID == 5
 elseif subjID == 0
     end_blocks = [10];
 elseif subjID == 99
-    end_blocks = [10];
+    end_blocks = [10, 10];
 end
 subjID = num2str(subjID, "%02d"); 
 days = 1;
@@ -52,7 +52,7 @@ respDuration = NaN(days, max_end_block, 40);
 feedbackDuration = NaN(days, max_end_block, 40);
 itiDuration = NaN(days, max_end_block, 40);
 trialDuration = NaN(days, max_end_block, 40);
-for day = 1:days
+for day = 1:1%1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
     end_block = end_blocks(day);
     for block = start_block:end_block
