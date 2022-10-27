@@ -58,11 +58,11 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 1; % set to 0 if there is no EEG recording
+        parameters.EEG = 0;%1; % set to 0 if there is no EEG recording
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 1; % set to 0 if there is no eyetracker
+    parameters.eyetracker = 0;%1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -125,7 +125,7 @@ for block = start_block:end_block
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 1;
+            parameters.TMS = 0;%1;
         elseif taskMap(1).TMScond == 0
             parameters.TMS = 0;
         end
