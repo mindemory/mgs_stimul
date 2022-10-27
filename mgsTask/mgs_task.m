@@ -62,7 +62,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 0;%1; % set to 0 if there is no eyetracker
+    parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
