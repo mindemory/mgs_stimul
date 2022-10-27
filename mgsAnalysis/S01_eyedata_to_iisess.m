@@ -27,7 +27,7 @@ addpath(genpath(direct.iEye));
 %addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
 
-taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
+taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_mirror.mat'];
 load(taskMapfilename);
 % for ii = 1:length(taskMap)
 %     for jj = 1:length(taskMap(ii).stimLocpix)

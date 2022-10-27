@@ -1,8 +1,8 @@
 clear; close all; clc;
 
 %% Initialization
-subjID = '01';
-day = 2;
+subjID = '99';
+day = 1;
 end_block = 10;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
@@ -27,7 +27,7 @@ addpath(genpath(direct.iEye));
 %addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
 
-taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
+taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_mirror.mat'];
 load(taskMapfilename);
 
 tmstatus = taskMap(1).TMScond; %0 if off, 1 if on

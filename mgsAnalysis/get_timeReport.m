@@ -9,6 +9,8 @@ elseif subjID == 5
     end_blocks = [7 8 10];
 elseif subjID == 0
     end_blocks = [10];
+elseif subjID == 99
+    end_blocks = [10];
 end
 subjID = num2str(subjID, "%02d"); 
 days = 1;
