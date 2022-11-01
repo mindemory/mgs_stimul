@@ -43,7 +43,7 @@ pixHeight = screenHeight/screenYpixels; %cm/pixel
 ppd = Wperdegree/pixWidth;
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-VAs = 12:1:13;
+VAs = 1:1:14;
 for va = VAs
     theta = 0:0.1:360;
     r_old = va * ppd;

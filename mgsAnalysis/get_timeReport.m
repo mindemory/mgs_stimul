@@ -10,10 +10,10 @@ elseif subjID == 5
 elseif subjID == 0
     end_blocks = [10];
 elseif subjID == 99
-    end_blocks = [10, 10];
+    end_blocks = [10, 10, 10];
 end
 subjID = num2str(subjID, "%02d"); 
-days = 1;
+days = 3;
 max_end_block = max(end_blocks);
 start_block = 1;
 
@@ -52,7 +52,7 @@ respDuration = NaN(days, max_end_block, 40);
 feedbackDuration = NaN(days, max_end_block, 40);
 itiDuration = NaN(days, max_end_block, 40);
 trialDuration = NaN(days, max_end_block, 40);
-for day = 1:1%1:days
+for day = 1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
     end_block = end_blocks(day);
     for block = start_block:end_block
@@ -76,12 +76,13 @@ for day = 1:1%1:days
     
 end
 nbinss = 50;
-figure(); histogram(rmmissing(sampleDuration(:)), 'BinWidth', 0.005); title('sampleDuration');
-figure(); histogram(rmmissing(delay1Duration(:)), 'BinWidth', 0.005); title('delay1Duration');
-figure(); histogram(rmmissing(pulseDuration(:)), 'BinWidth', 0.005); title('pulseDuration');
-figure(); histogram(rmmissing(delay2Duration(:)), 'BinWidth', 0.005); title('delay2Duration');
-figure(); histogram(rmmissing(respCueDuration(:)), 'BinWidth', 0.005); title('respCueDuration');
-figure(); histogram(rmmissing(respDuration(:)), 'BinWidth', 0.005); title('respDuration');
-figure(); histogram(rmmissing(feedbackDuration(:)), 'BinWidth', 0.005); title('feedbackDuration');
-figure(); histogram(rmmissing(itiDuration(:)), 'BinWidth', 0.005); title('itiDuration');
-figure(); histogram(rmmissing(trialDuration(:)), 'BinWidth', 0.005); title('trialDuration');
+day_to_plot = 1;
+figure(); histogram(rmmissing(sampleDuration(day_to_plot,:)), 'BinWidth', 0.005); title('sampleDuration');
+figure(); histogram(rmmissing(delay1Duration(day_to_plot,:)), 'BinWidth', 0.005); title('delay1Duration');
+figure(); histogram(rmmissing(pulseDuration(day_to_plot,:)), 'BinWidth', 0.005); title('pulseDuration');
+figure(); histogram(rmmissing(delay2Duration(day_to_plot,:)), 'BinWidth', 0.005); title('delay2Duration');
+figure(); histogram(rmmissing(respCueDuration(day_to_plot,:)), 'BinWidth', 0.005); title('respCueDuration');
+figure(); histogram(rmmissing(respDuration(day_to_plot,:)), 'BinWidth', 0.005); title('respDuration');
+figure(); histogram(rmmissing(feedbackDuration(day_to_plot,:)), 'BinWidth', 0.005); title('feedbackDuration');
+figure(); histogram(rmmissing(itiDuration(day_to_plot,:)), 'BinWidth', 0.005); title('itiDuration');
+figure(); histogram(rmmissing(trialDuration(day_to_plot,:)), 'BinWidth', 0.005); title('trialDuration');
