@@ -1,7 +1,9 @@
-function S01_eyedata_to_iisess(subjID, day, end_block)
+function S01_eyedata_to_iisess(subjID, day, end_block, anti_type)
 %% Initialization
-clearvars -except subjID day end_block; close all; clc;
-ifgFile = 'p_1000hz.ifg';
+clearvars -except subjID day end_block anti_type; close all; clc;
+if nargin < 4
+    anti_type = 'mirror';
+end
 
 subjID = num2str(subjID, "%02d");
 tmp = pwd; tmp2 = strfind(tmp,filesep);
@@ -24,10 +26,11 @@ direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 direct.mgs = [direct.data '/mgs_data/sub' subjID];
 direct.day = [direct.mgs '/day' num2str(day, "%02d")];
 addpath(genpath(direct.iEye));
-%addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
+addpath(genpath(direct.analysis));
 
-taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_mirror.mat'];
+%taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_' anti_type '.mat'];
+taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
 load(taskMapfilename);
 % for ii = 1:length(taskMap)
 %     for jj = 1:length(taskMap(ii).stimLocpix)
@@ -44,13 +47,14 @@ load(taskMapfilename);
 % Saving stuff
 %Create a directory to save all files with their times
 tic
-direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];
-if ~exist(direct.save, 'dir')
-    mkdir(direct.save);
+direct.save_master = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];
+direct.save_eyedata = [direct.save_master '/EyeData'];
+if ~exist(direct.save_eyedata, 'dir')
+    mkdir(direct.save_eyedata);
 end
 
-saveNamepro = [direct.save '/ii_sess_pro_sub' subjID '_day' num2str(day, "%02d")];
-saveNameanti = [direct.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];
+saveNamepro = [direct.save_master '/ii_sess_pro_sub' subjID '_day' num2str(day, "%02d")];
+saveNameanti = [direct.save_master '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2

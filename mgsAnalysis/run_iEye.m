@@ -3,15 +3,18 @@ function [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block)
 if nargin < 3
     end_block = 10;
 end
+
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
-ii_params.valid_epochs =[1 2 3 4 5 6 7 8];
+ii_params.valid_epochs =[1 2 3 4 5 7 8];
 ii_params.trial_start_value = 1; %XDAT value for trial start
 ii_params.trial_end_value = 8;   % XDAT value for trial end
 ii_params.drift_epoch = [1 2 3 4]; % XDAT values for drift correction
+ii_params.drift_fixation_mode  = 'mode';
 ii_params.calibrate_epoch = 7;   % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
 ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
+ii_params.blink_thresh = 2.5;
 ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
@@ -20,8 +23,10 @@ block_anti = 1;
 for block = 1:end_block
     disp(['Running block ' num2str(block, "%02d")])
     direct.block = [direct.day '/block' num2str(block,"%02d")];
+    
+    % Loading task, display and timeReport for the block
     matFile_extract = dir(fullfile(direct.block, '*.mat'));
-    matFile = [direct.block filesep matFile_extract.name];
+    matFile = [direct.block filesep matFile_extract(end).name];
     load(matFile);
     parameters = matFile.parameters;
     screen = matFile.screen;
@@ -32,8 +37,14 @@ for block = 1:end_block
     ii_params.resolution = [screen.screenXpixels screen.screenYpixels];
     ii_params.ppd = parameters.viewingDistance * tand(1) / screen.pixSize;
     edfFileName = parameters.edfFile;
-    edfFile = [direct.block '/EyeData/' edfFileName '.edf'];
-    
+    edfFile_original = [direct.block filesep edfFileName '.edf'];
+    edf_block_fold = [direct.save_eyedata '/block' num2str(block, "%02d")];
+    if ~exist(edf_block_fold, 'dir')
+        mkdir(edf_block_fold);
+    end
+
+    edfFile = [edf_block_fold filesep edfFileName '.edf'];
+    copyfile(edfFile_original, edfFile);
     % what is the output filename?
     preproc_fn = edfFile(1:end-4);
     

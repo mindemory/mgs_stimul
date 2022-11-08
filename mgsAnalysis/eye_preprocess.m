@@ -71,7 +71,8 @@ if exist(matfile_iEye, 'file') == 2
     load(matfile_iEye);
 else
     [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
-    figure(); plot(ii_data.XDAT, 'ro-')
+    fig = figure; plot(ii_data.XDAT, 'ro-'); xlabel('Time (ms)'); ylabel('XDAT'); title('Sanity check of XDAT');
+    saveas(fig, [preproc_fn '_sanitycheck.png'],'png');
 end
 %imported_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 
@@ -95,13 +96,13 @@ end
     {[-0.5 0.5]*ii_params.resolution(1)/ii_params.ppd,...
      [-0.5 0.5]*ii_params.resolution(2)/ii_params.ppd});
 
-%censor_plot = plot_data(ii_data,{'X','Y'})
+%censor_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 
 % Correct for blinks
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
       ii_params.blink_thresh,ii_params.blink_window(1),ii_params.blink_window(2),'prctile'); 
 
-%blink_plot = plot_data(ii_data,{'X','Y'})
+%blink_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
 % split into individual trials (so that individual-trial corrections can be
 % applied)
 [ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,...
