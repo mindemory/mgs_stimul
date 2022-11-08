@@ -1,4 +1,6 @@
 clear; close all; clc;
+addpath /Users/mrugank/Documents/fieldtrip;
+ft_defaults;
 fs = 2500; 
 nchan = 1;
 nrpt = 32;

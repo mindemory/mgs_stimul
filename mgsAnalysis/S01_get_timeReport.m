@@ -1,4 +1,4 @@
-function get_timeReport(subjID)
+function S01_get_timeReport(subjID)
 clearvars -except subjID; close all; clc;
 
 if subjID == 1

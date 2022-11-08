@@ -1,4 +1,4 @@
-function S01_eyedata_to_iisess(subjID, day, end_block, anti_type)
+function A01_eyedata_to_iisess(subjID, day, end_block, anti_type)
 %% Initialization
 clearvars -except subjID day end_block anti_type; close all; clc;
 if nargin < 4
@@ -63,7 +63,7 @@ if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
     load(saveNameantimat);
 else
     disp('ii_sess files do not exist. running ieye')
-    [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block);
+    [ii_sess_pro, ii_sess_anti] = I01_run_iEye(direct, taskMap, end_block);
     save(saveNamepro,'ii_sess_pro')
     save(saveNameanti,'ii_sess_anti')
 end

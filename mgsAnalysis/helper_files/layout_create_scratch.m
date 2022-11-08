@@ -75,6 +75,6 @@ lay.label = {'Fp1','Fz','F3','F7','FT9','FC5','FC1','C3','T7','TP9', ...
 lay.label = lay.label';
 %lay.outline = lay.outline;
 %lay.mask = lay.mask;
-savefname = '/d/DATA/hyper/experiments/Mrugank/TMS/mgs_stimul/mgsAnalysis/acticap-64_md.mat';
+savefname = 'acticap-64_md.mat';
 save(savefname, 'lay')
 cfg = []; cfg.layout = 'acticap-64_md.mat'; ft_layoutplot(cfg)

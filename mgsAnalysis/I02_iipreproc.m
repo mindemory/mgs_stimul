@@ -1,4 +1,4 @@
-function [ii_data,ii_cfg,ii_sacc] = eye_preprocess(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
+function [ii_data,ii_cfg,ii_sacc] = I02_iipreproc(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
 % ii_preproc Performs default pre-processing stream
 %
 % For preprocessing saccade data (specifically, memory-guided saccade

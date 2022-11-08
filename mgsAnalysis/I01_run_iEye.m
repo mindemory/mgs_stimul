@@ -1,4 +1,4 @@
-function [ii_sess_pro, ii_sess_anti] = run_iEye(direct, taskMap, end_block)
+function [ii_sess_pro, ii_sess_anti] = I01_run_iEye(direct, taskMap, end_block)
 
 if nargin < 3
     end_block = 10;
@@ -14,9 +14,9 @@ ii_params.drift_fixation_mode  = 'mode';
 ii_params.calibrate_epoch = 7;   % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
 ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
-ii_params.blink_thresh = 2.5;
+ii_params.blink_thresh = 1.5;
 ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
-ii_params.plot_epoch = [4 5 6 7];  % what epochs do we plot for preprocessing?
+ii_params.plot_epoch = [4 5 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 block_pro = 1;
 block_anti = 1;
@@ -49,7 +49,7 @@ for block = 1:end_block
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = eye_preprocess(edfFile, ifgFile, preproc_fn, ii_params);
+    [ii_data, ii_cfg, ii_sacc] = I02_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);
     
     %     if block == 1
     %         % plot some features of the data
@@ -69,11 +69,11 @@ for block = 1:end_block
 %         taskMap(block).stimVF = taskMap(block).stimVF(2:end);
 %     end
     if strcmp(eyecond, 'pro')
-        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
+        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5);
         ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
-        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6);
+        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5);
         ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
         block_anti = block_anti+1;
     end
