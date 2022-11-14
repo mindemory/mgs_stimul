@@ -6,18 +6,26 @@ end
 
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
-ii_params.valid_epochs =[1 2 3 4 5 7 8];
+ii_params.valid_epochs =[1 2 3 4 5 6 7 8];
 ii_params.trial_start_value = 1; %XDAT value for trial start
 ii_params.trial_end_value = 8;   % XDAT value for trial end
 ii_params.drift_epoch = [1 2 3 4]; % XDAT values for drift correction
 ii_params.drift_fixation_mode  = 'mode';
-ii_params.calibrate_epoch = 7;   % XDAT value for when we calibrate (feedback stim)
+ii_params.calibrate_epoch = 7; % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
 ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
-ii_params.blink_thresh = 1.5;
+ii_params.blink_thresh = 0.1;
 ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [4 5 7];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
+
+excl_criteria.i_dur_thresh = 850; % must be shorter than 150 ms
+excl_criteria.i_amp_thresh = 2;   % must be longer than 5 dva [if FIRST saccade in denoted epoch is not at least this long and at most this duration, drop the trial]
+excl_criteria.i_err_thresh = 10;   % i_sacc must be within this many DVA of target pos to consider the trial
+
+excl_criteria.drift_thresh = 2.5;     % if drift correction norm is this big or more, drop
+excl_criteria.delay_fix_thresh = 2.5; % if any fixation is this far from 0,0 during delay (epoch 3)
+
 block_pro = 1;
 block_anti = 1;
 for block = 1:end_block
@@ -50,30 +58,22 @@ for block = 1:end_block
     
     % run preprocessing!
     [ii_data, ii_cfg, ii_sacc] = I02_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);
-    
-    %     if block == 1
-    %         % plot some features of the data
-    %         % (check out the docs for each of these; lots of options...)
-    %         ii_plottimeseries(ii_data,ii_cfg); % pltos the full timeseries
-    %         ii_plotalltrials(ii_data,ii_cfg); % plots each trial individually
-    %         ii_plotalltrials2d(ii_data,ii_cfg); % plots all trials, in 2d, overlaid on one another w/ fixations
-    %     end
-    
+        
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    if ii_sacc.epoch_start == 6
-        ii_sacc.epoch_start = 5;
+    if ii_sacc.epoch_start == 5
+        ii_sacc.epoch_start = 6;
     end
 %     if block == 5
 %         taskMap(block).stimVF = taskMap(block).stimVF(2:end);
 %     end
     if strcmp(eyecond, 'pro')
-        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5);
+        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],6,[],excl_criteria,[],'lenient');
         ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
-        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5);
+        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6,[],excl_criteria,[],'lenient');
         ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
         block_anti = block_anti+1;
     end

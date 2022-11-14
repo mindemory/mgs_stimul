@@ -143,38 +143,29 @@ end
 %legend({'X','Y','X fix','Y fix'})
 % select the fixation used for drift correction
 if ~ismember('drift',skip_steps)
-
     [ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, ii_params.epoch_chan,...
         ii_params.drift_epoch, ii_params.drift_fixation_mode );
 
-
-% use those selections to drift-correct each trial (either using the
-% fixation value, which may include timepoints past end of epoch, or using
-% 'raw' or 'smoothed' data on each channel)
+    % use those selections to drift-correct each trial (either using the
+    % fixation value, which may include timepoints past end of epoch, or using
+    % 'raw' or 'smoothed' data on each channel)
     [ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},ii_params.drift_select_mode,...
         ii_params.drift_target);
 end
-
-
 % add trial info [not explicitly necessary if simple experiment, TarX &
 % TarY fields used as before]
 %
 % trial_info should be n_trials x n_params/features - can be indexed in
 % some data processing commands below. can be cell or array. 
-
-
-
 % if trialinfo is defined, otherwise skip
 if nargin>=5 && ~isempty(trialinfo)
     [ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trialinfo);
 end
 
-
 % 'target correct' or 'calibrate' (which name is better?)
 % adjust timeseries on a trial so that gaze at specified epoch (quantified
 % w/ specified method, like driftcorrect) is at known coords (either given
 % by a channel or a pair of cols in ii_cfg.trialinfo
-
 % first, select relevant epochs (should be one selection per trial)
 
 if ~ismember('calibration',skip_steps)
@@ -201,9 +192,11 @@ f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_
 if length(f_all)>1
     for ff = 1:lenght(f_all)
         saveas(f_all,sprintf('%s_%02.f.png',preproc_fn(1:end-4),ff),'png');
+        saveas(f_all,sprintf('%s_%02.f.fig',preproc_fn(1:end-4),ff),'fig');
     end
 else
     saveas(f_all,sprintf('%s.png',preproc_fn(1:end-4)),'png');
+    saveas(f_all,sprintf('%s.fig',preproc_fn(1:end-4)),'fig');
 end
 
 % and plot the final full timeseries
@@ -213,6 +206,7 @@ else
     f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'},'nofigure');
 end
 saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
+saveas(f_ts,sprintf('%s_timeseries.fig',preproc_fn(1:end-4)),'fig');
 
 
 % save the preprocessing params
