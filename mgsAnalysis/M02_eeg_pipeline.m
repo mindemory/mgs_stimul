@@ -3,62 +3,62 @@
 %     antiintoVF_idx, antioutVF_idx)
 addpath /Users/mrugankdake/Documents/MATLAB/fieldtrip-20220104/;
 ft_defaults;
-%set(0,'DefaultFigureWindowStyle','docked')
-%% Load the data
-saveName = [direct.saveEEG '/sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_raweeg.mat'];
-if ~exist(saveName, 'file')
-    disp('Raw file does not exist. Creating mat file.')
-    tic
-    cfg = [];
-    cfg.dataset = [direct.EEG filesep EEGfile];
-    cfg.demean = 'no';
-    cfg.continuous = 'yes';
-    data_eeg = ft_preprocessing(cfg);
-    toc
-    % Removing NAN timepoint
-    if sum(sum(isnan(data_eeg.trial{1}))) > 0
-        data_eeg.time{1} = data_eeg.time{1}(2:end);
-        data_eeg.sampleinfo = data_eeg.sampleinfo - [0 1];
-        data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
-        data_eeg.hdr.nSamples = data_eeg.hdr.nSamples - 1;
-        data_eeg.cfg.trl = data_eeg.cfg.trl - [0 1 0];
+
+% List of files to be saved
+% Step 1: Loading data 'subXX_dayXX_raweeg.mat'
+% Step 2: Remove low frequency drifts 'subXX_dayXX_highpass.mat'
+% Step 3: Epoch data 'subXX_dayXX_epoched.mat'
+
+fname_general = [direct.saveEEG '/sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d")];
+load_saveName = [fname_general '_raweeg.mat'];
+bandpass_saveName = [fname_general '_bandpass.mat'];
+epoched_saveName = [fname_general '_epoched.mat'];
+
+%%
+if ~exist(epoched_saveName, 'file')
+    disp('Epoched data does not exist. Checking for bandpass filtered data.')
+    if ~exist(bandpass_saveName, 'file')
+        disp('Bandpass filtered data does not exist. Checking for raw eeg file.')
+        if ~exist(load_saveName, 'file')
+            % Importing data
+            disp('Raw file does not exist. Creating mat file.')
+            tic
+            cfg = [];
+            cfg.dataset = [direct.EEG filesep EEGfile];
+            cfg.demean = 'no';
+            cfg.continuous = 'yes';
+            data_eeg = ft_preprocessing(cfg);
+            % Removing NAN timepoint
+            if sum(sum(isnan(data_eeg.trial{1}))) > 0
+                data_eeg.time{1} = data_eeg.time{1}(2:end);
+                data_eeg.sampleinfo = data_eeg.sampleinfo - [0 1];
+                data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
+                data_eeg.hdr.nSamples = data_eeg.hdr.nSamples - 1;
+                data_eeg.cfg.trl = data_eeg.cfg.trl - [0 1 0];
+            end
+            toc
+            % Check data
+            % figure(); plot(data_eeg.time{1}, data_eeg.trial{1}(1:10, :))
+            save(load_saveName, 'data_eeg', '-v7.3')
+        else
+            disp('Raw file exists, importing mat file.')
+            load(load_saveName)
+        end
+        disp('Applying band pass filter.')
+        tic
+        cfg = [];
+        cfg.demean = 'yes';
+        cfg.bpfreq = [0.1,100];
+        cfg.bpfilter = 'yes';
+        cfg.bpfiltord = 2;
+        data_eeg = ft_preprocessing(cfg, data_eeg);
+        toc
+        save(bandpass_saveName, 'data_eeg', '-v7.3')
+    else
+        disp('Highpass file exists, importing mat file.')
+        load(bandpass_saveName)
     end
-    % Check data
-    % figure(); plot(data_eeg.time{1}, data_eeg.trial{1}(1:10, :))
-    save(saveName, 'data_eeg', '-v7.3')
-else
-    disp('Raw file exists, importing mat file.')
-    load(saveName)
-end
-%% Removing low frequency drifts
-saveName = [direct.saveEEG '/sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_highpass.mat'];
-if ~exist(saveName, 'file')
-    disp('Highpass file does not exist. Creating mat file.')
-    tic
-    cfg = [];
-    cfg.demean = 'yes';
-    cfg.bpfreq = [0.1,100];
-    cfg.bpfilter = 'yes';
-    cfg.bpfiltord = 2;
-    data_eeg = ft_preprocessing(cfg, data_eeg);
-    toc
-    save(saveName, 'data_eeg', '-v7.3')
-else
-    disp('Highpass file exists, importing mat file.')
-    load(saveName)
-end
-%% Removing line noise
-% NOTE: RUN AFTER LOOKING AT EPOCHED DATA!
-tic
-cfg = [];
-cfg.dftfilter = 'yes';
-cfg.dftfreq = [50 100];
-data_eeg = ft_preprocessing(cfg, data_eeg);
-toc
-%% Epoching the data
-saveName = [direct.saveEEG '/sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_epoched.mat'];
-if ~exist(saveName, 'file')
-    disp('Epoched file does not exist. Creating mat file.')
+    disp('Epoching the data.')
     tic
     cfg = [];
     cfg.dataset = [direct.EEG filesep EEGfile];
@@ -70,13 +70,21 @@ if ~exist(saveName, 'file')
     cfg = ft_definetrial(cfg);
     data_eeg = ft_redefinetrial(cfg, data_eeg);
     toc
-    % Check data
-    % figure(); cfg = []; cfg.viewmode = 'vertical'; ft_databrowser(cfg, data_eeg)
-    save(saveName, 'data_eeg', '-v7.3')
+    save(epoched_saveName, 'data_eeg', '-v7.3')
 else
     disp('Epoched file exists, importing mat file.')
-    load(saveName)
+    load(epoched_saveName)
 end
+
+%% Removing line noise
+% NOTE: RUN AFTER LOOKING AT EPOCHED DATA!
+tic
+cfg = [];
+cfg.dftfilter = 'yes';
+cfg.dftfreq = [50 100];
+data_eeg = ft_preprocessing(cfg, data_eeg);
+toc
+
 %% Divide data by conditions
 data_eeg_prointoVF = block_data(data_eeg, prointoVF_idx_EEG);
 data_eeg_prooutVF = block_data(data_eeg, prooutVF_idx_EEG);

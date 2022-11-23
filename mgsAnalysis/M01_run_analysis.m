@@ -1,9 +1,9 @@
 clear; close all; clc;
 
 %% Initialization
-subjID = '99';
+subjID = '01';
 day = 1;
-end_block = 10;
+end_block = 12;
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end-1)-1));
 [ret, hostname] = system('hostname');
@@ -24,7 +24,6 @@ direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 direct.mgs = [direct.data '/mgs_data/sub' subjID];
 direct.day = [direct.mgs '/day' num2str(day, "%02d")];
 addpath(genpath(direct.iEye));
-%addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
 
 taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_mirror.mat'];
@@ -95,3 +94,45 @@ EEGfile = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vh
 %[task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
 %    eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
 %    antiintoVF_idx, antioutVF_idx);
+
+
+
+anti_real = [];
+pro_real = [];
+for ii = 1:5
+    anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_theta'];
+    pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_theta'];
+end
+anti_real = anti_real';
+pro_real = pro_real';
+figure();
+plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
+figure();
+plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
+
+anti_real = [];
+pro_real = [];
+for ii = 1:5
+    anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_r'];
+    pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_r'];
+end
+anti_real = anti_real';
+pro_real = pro_real';
+figure();
+plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
+figure();
+plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
+
+
+anti_real = [];
+pro_real = [];
+for ii = 1:5
+    anti_real = [anti_real, real_error_dict.block_anti(ii).isacc_theta'];
+    pro_real = [pro_real, real_error_dict.block_pro(ii).isacc_theta'];
+end
+anti_real = anti_real';
+pro_real = pro_real';
+figure();
+plot(ii_sess_anti.i_sacc_err, anti_real, 'ro-')
+figure();
+plot(ii_sess_pro.i_sacc_err, pro_real, 'ko-')
