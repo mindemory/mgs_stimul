@@ -1,8 +1,15 @@
+clear; close all; clc;
+p.subjID = '01';
+p.day = 1;
+
+[p, taskMap] = initialization(p, 'eeg');
+
+EEGfile = ['sub' num2str(p.subjID, "%02d") '_day' num2str(p.day, "%02d") '_concat.vhdr'];
+
 % function [task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
 %     eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
 %     antiintoVF_idx, antioutVF_idx)
-addpath /Users/mrugankdake/Documents/MATLAB/fieldtrip-20220104/;
-ft_defaults;
+
 
 % List of files to be saved
 % Step 1: Loading data 'subXX_dayXX_raweeg.mat'

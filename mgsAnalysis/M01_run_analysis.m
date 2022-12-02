@@ -4,33 +4,9 @@ clear; close all; clc;
 subjID = '01';
 day = 1;
 end_block = 12;
-tmp = pwd; tmp2 = strfind(tmp,filesep);
-direct.master = tmp(1:(tmp2(end-1)-1));
-[ret, hostname] = system('hostname');
-if ret ~= 0
-    hostname = getenv('HOSTNAME');
-end
-hostname = strtrim(hostname);
+[p, taskMap] = initialization(subjID, day, 'eye');
 
-if strcmp(hostname, 'syndrome') % If running on Syndrome
-    direct.datc = '/datc/MD_TMS_EEG';
-else % If running on World's best MacBook
-    direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
-end
-direct.data = [direct.datc '/data'];
-direct.analysis = [direct.datc '/analysis'];
-direct.iEye = [direct.master '/iEye'];
-direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
-direct.mgs = [direct.data '/mgs_data/sub' subjID];
-direct.day = [direct.mgs '/day' num2str(day, "%02d")];
-addpath(genpath(direct.iEye));
-addpath(genpath(direct.data));
-
-taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '_antitype_mirror.mat'];
-load(taskMapfilename);
-
-tmstatus = taskMap(1).TMScond; %0 if off, 1 if on
-
+% Determine trial number of pro and anti trials for all blocks
 for blurb = 1:length(taskMap)
     if strcmp(taskMap(blurb).condition, 'pro')
         if ~exist('protrialNum', 'var')
@@ -46,17 +22,15 @@ for blurb = 1:length(taskMap)
         end
     end
 end
-protrialNum = reshape(protrialNum, [], 1);
-antitrialNum = reshape(antitrialNum, [], 1);
+
+% convert the pro and anti trials into an array
+protrialNum = reshape(protrialNum', [], 1);
+antitrialNum = reshape(antitrialNum', [], 1);
+
 %% Load ii_sess files
 tic
-direct.save = [direct.analysis '/sub' subjID '/day' num2str(day, "%02d")];
-if ~exist(direct.save, 'dir')
-    mkdir(direct.save);
-end
-
-saveNamepro = [direct.save '/ii_sess_pro_sub' subjID '_day' num2str(day, "%02d")];
-saveNameanti = [direct.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];
+saveNamepro = [p.save '/ii_sess_pro_sub' subjID '_day' num2str(day, "%02d")];
+saveNameanti = [p.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
@@ -68,71 +42,55 @@ else
 end
 toc
 
-%% Run EEG preprocessing
-prointoVF_idx = find(ii_sess_pro.stimVF == 1);
-prooutVF_idx = find(ii_sess_pro.stimVF == 0);
-antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
-antioutVF_idx = find(ii_sess_anti.stimVF == 1);
-prointoVF_idx_EEG = protrialNum(prointoVF_idx);
-prooutVF_idx_EEG = protrialNum(prooutVF_idx);
-antiintoVF_idx_EEG = antitrialNum(antiintoVF_idx);
-antioutVF_idx_EEG = antitrialNum(antioutVF_idx);
+% %% Run EEG preprocessing
+% prointoVF_idx = find(ii_sess_pro.stimVF == 1);
+% prooutVF_idx = find(ii_sess_pro.stimVF == 0);
+% antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
+% antioutVF_idx = find(ii_sess_anti.stimVF == 1);
+% prointoVF_idx_EEG = protrialNum(prointoVF_idx);
+% prooutVF_idx_EEG = protrialNum(prooutVF_idx);
+% antiintoVF_idx_EEG = antitrialNum(antiintoVF_idx);
+% antioutVF_idx_EEG = antitrialNum(antioutVF_idx);
 
-if strcmp(hostname, 'syndrome') % If running on Syndrome
-    direct.EEG = [direct.datc '/EEGData/sub' subjID '/day' num2str(day, "%02d")];
-else
-    direct.EEG = [direct.datc '/EEGData/sub' subjID];
-end
-
-direct.saveEEG = [direct.datc '/EEGfiles/sub' subjID];
-if ~exist(direct.saveEEG, 'dir')
-    mkdir(direct.saveEEG)
-end
-EEGfile = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vhdr'];
 % saccloc = 1 refers to stimulus in VF
 
-%[task_prointoVF, task_prooutVF, task_antiintoVF, task_antioutVF] = ...
-%    eeg_pipeline(direct, EEGfile, prointoVF_idx, prooutVF_idx, ...
-%    antiintoVF_idx, antioutVF_idx);
 
-
-
-anti_real = [];
-pro_real = [];
-for ii = 1:5
-    anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_theta'];
-    pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_theta'];
-end
-anti_real = anti_real';
-pro_real = pro_real';
-figure();
-plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
-figure();
-plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
-
-anti_real = [];
-pro_real = [];
-for ii = 1:5
-    anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_r'];
-    pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_r'];
-end
-anti_real = anti_real';
-pro_real = pro_real';
-figure();
-plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
-figure();
-plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
-
-
-anti_real = [];
-pro_real = [];
-for ii = 1:5
-    anti_real = [anti_real, real_error_dict.block_anti(ii).isacc_theta'];
-    pro_real = [pro_real, real_error_dict.block_pro(ii).isacc_theta'];
-end
-anti_real = anti_real';
-pro_real = pro_real';
-figure();
-plot(ii_sess_anti.i_sacc_err, anti_real, 'ro-')
-figure();
-plot(ii_sess_pro.i_sacc_err, pro_real, 'ko-')
+% anti_real = [];
+% pro_real = [];
+% for ii = 1:5
+%     anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_theta'];
+%     pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_theta'];
+% end
+% anti_real = anti_real';
+% pro_real = pro_real';
+% figure();
+% plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
+% figure();
+% plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
+% 
+% anti_real = [];
+% pro_real = [];
+% for ii = 1:5
+%     anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_r'];
+%     pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_r'];
+% end
+% anti_real = anti_real';
+% pro_real = pro_real';
+% figure();
+% plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
+% figure();
+% plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
+% 
+% 
+% anti_real = [];
+% pro_real = [];
+% for ii = 1:5
+%     anti_real = [anti_real, real_error_dict.block_anti(ii).isacc_theta'];
+%     pro_real = [pro_real, real_error_dict.block_pro(ii).isacc_theta'];
+% end
+% anti_real = anti_real';
+% pro_real = pro_real';
+% figure();
+% plot(ii_sess_anti.i_sacc_err, anti_real, 'ro-')
+% figure();
+% plot(ii_sess_pro.i_sacc_err, pro_real, 'ko-')

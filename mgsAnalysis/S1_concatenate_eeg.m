@@ -1,25 +1,15 @@
-clear; close all; clc;
-subjID = '01';
-day = 3;
+function S1_concatenate_eeg(p)
 block_files = [1, 9];
 master_dir = '/d/DATC/datc/MD_TMS_EEG';
 
-addpath /Users/mrugank/Documents/fieldtrip;
-ft_defaults;
 
-phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
-mgs_data_path = [master_dir '/data/mgs_data/sub' subjID '/day' num2str(day, "%02d")];
-addpath(genpath(phosphene_data_path));
-addpath(genpath(mgs_data_path));
-
-EEGpath = [master_dir '/EEGData/sub' subjID '/day' num2str(day,"%02d")];
+EEGpath = [master_dir '/EEGData/sub' p.subjID '/day' num2str(p.day,"%02d")];
 for ii = 1:length(block_files)
     bb = block_files(ii);
-    EEGfiles{ii} = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_block' num2str(bb, "%02d") '.vhdr'];
+    EEGfiles{ii} = ['sub' num2str(p.subjID, "%02d") '_day' num2str(p.day, "%02d") '_block' num2str(bb, "%02d") '.vhdr'];
 end
-%EEGfiles = {['sub' num2str(subjID)_day02.vhdr'], 'sub01_day01_block02.vhdr', 'sub01_day01_block03.vhdr', ...
-%    'sub01_day01_block10.vhdr'};
-concatfname = ['sub' num2str(subjID, "%02d") '_day' num2str(day, "%02d") '_concat.vhdr'];
+
+concatfname = ['sub' num2str(p.subjID, "%02d") '_day' num2str(p.day, "%02d") '_concat.vhdr'];
 concatfilepathname = [EEGpath filesep concatfname];
 data_concat = NaN(63,1);
 sample_count = 0;
@@ -43,3 +33,4 @@ end
 hdr.nSamples = sample_count;
 hdr.nChans = 63;
 ft_write_data(concatfilepathname, data_concat, 'header', hdr, 'event', event_concat);
+end
