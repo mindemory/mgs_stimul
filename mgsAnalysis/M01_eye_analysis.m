@@ -1,10 +1,10 @@
 clear; close all; clc;
 
 %% Initialization
-subjID = '01';
-day = 1;
+p.subjID = '01';
+p.day = 1;
 end_block = 12;
-[p, taskMap] = initialization(subjID, day, 'eye');
+[p, taskMap] = initialization(p, 'eye');
 
 % Determine trial number of pro and anti trials for all blocks
 for blurb = 1:length(taskMap)
@@ -29,8 +29,8 @@ antitrialNum = reshape(antitrialNum', [], 1);
 
 %% Load ii_sess files
 tic
-saveNamepro = [p.save '/ii_sess_pro_sub' subjID '_day' num2str(day, "%02d")];
-saveNameanti = [p.save '/ii_sess_anti_sub' subjID '_day' num2str(day, "%02d")];
+saveNamepro = [p.save '/ii_sess_pro_sub' p.subjID '_day' num2str(p.day, '%02d')];
+saveNameanti = [p.save '/ii_sess_anti_sub' p.subjID '_day' num2str(p.day, '%02d')];
 saveNamepromat = [saveNamepro '.mat'];
 saveNameantimat = [saveNameanti '.mat'];
 if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
@@ -38,7 +38,10 @@ if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
     load(saveNamepromat);
     load(saveNameantimat);
 else
-    disp('ii_sess files do not exist. Run S01_eyedata_to_mat.')
+    disp('ii_sess files do not exist. running ieye')
+    [ii_sess_pro, ii_sess_anti] = I01_run_iEye(p, taskMap, end_block);
+    save(saveNamepro,'ii_sess_pro')
+    save(saveNameanti,'ii_sess_anti')
 end
 toc
 

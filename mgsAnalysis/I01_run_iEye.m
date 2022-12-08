@@ -1,4 +1,4 @@
-function [ii_sess_pro, ii_sess_anti] = I01_run_iEye(direct, taskMap, end_block)
+function [ii_sess_pro, ii_sess_anti] = I01_run_iEye(p, taskMap, end_block)
 
 if nargin < 3
     end_block = 10;
@@ -29,12 +29,12 @@ excl_criteria.delay_fix_thresh = 2.5; % if any fixation is this far from 0,0 dur
 block_pro = 1;
 block_anti = 1;
 for block = 1:end_block
-    disp(['Running block ' num2str(block, "%02d")])
-    direct.block = [direct.day '/block' num2str(block,"%02d")];
+    disp(['Running block ' num2str(block, '%02d')])
+    p.block = [p.dayfolder '/block' num2str(block,'%02d')];
     
     % Loading task, display and timeReport for the block
-    matFile_extract = dir(fullfile(direct.block, '*.mat'));
-    matFile = [direct.block filesep matFile_extract(end).name];
+    matFile_extract = dir(fullfile(p.block, '*.mat'));
+    matFile = [p.block filesep matFile_extract(end).name];
     load(matFile);
     parameters = matFile.parameters;
     screen = matFile.screen;
@@ -45,8 +45,8 @@ for block = 1:end_block
     ii_params.resolution = [screen.screenXpixels screen.screenYpixels];
     ii_params.ppd = parameters.viewingDistance * tand(1) / screen.pixSize;
     edfFileName = parameters.edfFile;
-    edfFile_original = [direct.block filesep edfFileName '.edf'];
-    edf_block_fold = [direct.save_eyedata '/block' num2str(block, "%02d")];
+    edfFile_original = [p.block filesep edfFileName '.edf'];
+    edf_block_fold = [p.save_eyedata '/block' num2str(block, '%02d')];
     if ~exist(edf_block_fold, 'dir')
         mkdir(edf_block_fold);
     end
