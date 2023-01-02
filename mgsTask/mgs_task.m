@@ -64,11 +64,34 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     end
     parameters.eyetracker = 1; % set to 0 if there is no eyetracker
     PsychDefaultSetup(1);
+elseif strcmp(hostname, 'DESKTOP-93Q6L7O') % Running stimulus code for testing
+    addpath(genpath('C:\toolbox\Psychtoolbox'))
+    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    % Relative paths for tmsubuntu
+    curr_dir = pwd; filesepinds = strfind(curr_dir,filesep);
+    master_dir = curr_dir(1:(filesepinds(end-1)-1)); 
+    phosphene_data_path = [master_dir '\data\phosphene_data\sub' subjID];
+    % Path to MarkStim
+%     markstim_path = [master_dir '/markstim-master'];
+%     addpath(genpath(markstim_path));
+    if prac_status == 1
+        parameters.EEG = 0; % set to 0 if there is no EEG recording
+        end_block = 2; % 2 blocks for practice session
+        mgs_data_path = [master_dir '\data\mgs_practice_data\sub' subjID];
+    else
+        parameters.EEG = 1; % set to 0 if there is no EEG recording
+        end_block = 10; % 10 blocks for main sessions
+        mgs_data_path = [master_dir '\data\mgs_data\sub' subjID];
+    end
+    parameters.eyetracker = 1; % set to 0 if there is no eyetracker
+    PsychDefaultSetup(2);
+%     Screen('Preference','SkipSyncTests', 1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
     return;
 end
-sca;
+% sca;
 
 % Initialize data paths
 addpath(genpath(phosphene_data_path));
