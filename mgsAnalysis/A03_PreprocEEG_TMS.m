@@ -77,10 +77,15 @@ end
 cfg                           = [];
 cfg.dataset                   = fName.concat;
 cfg.continuous                = 'yes';
-cfg.hpfilter                  = 'yes';
-cfg.hpfilttype                = 'firws';
-cfg.hpfiltdir                 = 'onepass-zerophase';
-cfg.hpfreq                    = 0.5;
+% cfg.hpfilter                  = 'yes';
+% cfg.hpfilttype                = 'firws';
+% cfg.hpfiltdir                 = 'onepass-zerophase';
+% cfg.hpfreq                    = 0.5;
+cfg.bpfilter = 'yes';
+cfg.bpfreq = [0.5 50];
+cfg.bpfilttype = 'but';
+cfg.bpfiltord = 4; 
+cfg.bpfiltdir = 'twopass'; 
 cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
 raw_data                      = ft_preprocessing(cfg);
 
@@ -126,19 +131,24 @@ flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
 bad_trls = find(sum(flagged_data) > 0);
 % Reject channel if flat or too noisy
 bad_ch = ch_names((ch_std < 0.01) | (ch_std > 100));
-bad_ch = [bad_ch, ch_names(bad_chan_num)];
+bad_ch = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
 
 cfg                           = [];
 cfg.dataset                   = fName.concat;
 cfg.continuous                = 'yes';
-cfg.hpfilter                  = 'yes';
-cfg.hpfilttype                = 'firws';
-cfg.hpfiltdir                 = 'onepass-zerophase';
-cfg.hpfreq                    = 1;
-cfg.lpfilter                  = 'yes';
-cfg.lpfilttype                = 'firws';
-cfg.lpfiltdir                 = 'onepass-zerophase';
-cfg.lpfreq                    = 55;
+% cfg.hpfilter                  = 'yes';
+% cfg.hpfilttype                = 'firws';
+% cfg.hpfiltdir                 = 'onepass-zerophase';
+% cfg.hpfreq                    = 1;
+% cfg.lpfilter                  = 'yes';
+% cfg.lpfilttype                = 'firws';
+% cfg.lpfiltdir                 = 'onepass-zerophase';
+% cfg.lpfreq                    = 55;
+cfg.bpfilter = 'yes';
+cfg.bpfreq = [0.1 50];
+cfg.bpfilttype = 'but';
+cfg.bpfiltord = 4; 
+cfg.bpfiltdir = 'twopass'; 
 cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
 raw_data                      = ft_preprocessing(cfg);
 
@@ -156,8 +166,12 @@ raw_cleaned_reref             = ft_preprocessing(cfg, raw_cleaned);
 cfg = []; cfg.method = 'fastica';
 cfg.randomseed = 42;
 ica_comp = ft_componentanalysis(cfg, raw_cleaned_reref);
-cfg = []; cfg.component = 1:20; cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no';
+cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no';
 ft_topoplotIC(cfg, ica_comp)
+cfg = [];
+cfg.layout = 'acticap-64_md.mat'; % specify the layout file that should be used for plotting
+cfg.viewmode = 'component';
+ft_databrowser(cfg, ica_comp)
 % aa = corr(raw_cleaned.trial{1}');
 % figure(); imagesc(aa)
 % 
