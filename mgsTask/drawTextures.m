@@ -50,7 +50,7 @@ switch texture_name
         Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
             fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
-        Screen('Flip', screen.win);
+        %Screen('Flip', screen.win);
         
     % Drawing Stimulus
     case 'Stimulus'

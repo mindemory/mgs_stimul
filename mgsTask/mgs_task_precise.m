@@ -1,4 +1,4 @@
-function mgs_task(subjID, day, start_block, prac_status, anti_type, aperture)
+function mgs_task_precise(subjID, day, start_block, prac_status, anti_type, aperture)
 clearvars -except subjID session day coilLocInd start_block prac_status anti_type aperture;
 close all; clc;
 % Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
@@ -84,6 +84,18 @@ end
 % Initialize screen
 screen = initScreen(parameters);
 
+% Added 01/16/2022: Converting timing to frames
+parameters.sampleFrames = round(parameters.sampleDuration / screen.ifi);
+parameters.delayFrames = round(parameters.delayDuration / screen.ifi);
+parameters.delay1Frames = round(parameters.delay1Duration / screen.ifi);
+parameters.pulseFrames = round(parameters.pulseDuration / screen.ifi);
+parameters.delay2Frames = round(parameters.delay2Duration / screen.ifi);
+parameters.respCueFrames = round(parameters.respCueDuration / screen.ifi);
+parameters.respFrames = round(parameters.respDuration / screen.ifi);
+parameters.feedbackFrames = round(parameters.feedbackDuration / screen.ifi);
+parameters.itiFrames = round(parameters.itiDuration / screen.ifi);
+waitframes = 1;
+
 [kbx, parameters] = initPeripherals(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MarkStim CHECK!
@@ -144,7 +156,7 @@ for block = start_block:end_block
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                showprompts(screen, 'WelcomeWindow', parameters.TMS)
+                vbl = showprompts(screen, 'WelcomeWindow', parameters.TMS);
                 [keyIsDown, ~] = KbQueueCheck(kbx);
             end
             break;
@@ -176,7 +188,7 @@ for block = start_block:end_block
     if aperture == 1
         drawTextures(parameters, screen, 'Aperture');
     end
-    showprompts(screen, 'BlockStart', block, tMap.condition)
+    vbl = showprompts(screen, 'BlockStart', block, tMap.condition);
     WaitSecs(2);
     
     % Draw Fixation Cross
@@ -184,6 +196,7 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'Aperture');
     end
     drawTextures(parameters, screen, 'FixationCross');
+    vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
     
     timeReport = struct;
     trialArray = 1:trialNum;
@@ -235,7 +248,8 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % draw sample and fixation cross
-        while GetSecs-sampleStartTime <= parameters.sampleDuration
+        for frame = 1:parameters.sampleFrames
+        %while GetSecs-sampleStartTime <= parameters.sampleDuration
             dotSize = tMap.dotSizeStim(trial);
             dotCenter = tMap.stimLocpix(trial, :);
             if aperture == 1
@@ -243,6 +257,8 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.sampleDuration(trial) = GetSecs-sampleStartTime;
 
@@ -259,11 +275,14 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 2);
         end
         % Draw fixation cross
-        while GetSecs-delay1StartTime <= parameters.delay1Duration
+        for frame = 1:parameters.delay1Frames
+        %while GetSecs-delay1StartTime <= parameters.delay1Duration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
 
@@ -305,16 +324,19 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 4);
         end
         % Draw fixation cross
-        while GetSecs-delay2StartTime<=parameters.delay2Duration
+        for frame = 1:parameters.delay2Frames
+        %while GetSecs-delay2StartTime<=parameters.delay2Duration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response window
+        % Response Cue window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
@@ -330,11 +352,14 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
         % Draw green fixation cross
-        while GetSecs-respCueStartTime < parameters.respDuration
+        for frame = 1:parameters.respCueFrames
+        %while GetSecs-respCueStartTime < parameters.respDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
 
@@ -353,11 +378,14 @@ for block = start_block:end_block
             Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
         end
         %draw the fixation dot
-        while GetSecs-respStartTime<=parameters.respDuration
+        for frame = 1:parameters.respFrames
+        %while GetSecs-respStartTime<=parameters.respDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.respDuration(trial) = GetSecs - respStartTime;
 
@@ -375,7 +403,8 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 7);
         end
         % draw the fixation dot
-        while GetSecs-feedbackStartTime<=parameters.feedbackDuration
+        for frame = 1:parameters.feedbackFrames
+        %while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             dotSize = tMap.dotSizeSacc(trial);
             dotCenter = tMap.saccLocpix(trial, :);
             if aperture == 1
@@ -383,6 +412,8 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
+            Screen('DrawingFinished', screen.win);
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         
@@ -413,6 +444,7 @@ for block = start_block:end_block
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
+            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
             WaitSecs(ITI(trial));
 %             while GetSecs-itiStartTime < ITI(trial)
 %                 if aperture == 1
@@ -430,7 +462,7 @@ for block = start_block:end_block
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                showprompts(screen, 'TrialPause');
+                vbl = showprompts(screen, 'TrialPause');
                 [keyIsDown, ~] = KbQueueCheck(kbx);
             end
         end
@@ -458,7 +490,7 @@ for block = start_block:end_block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
     while ~keyIsDown
-        showprompts(screen, 'BlockEnd', block)
+        vbl= showprompts(screen, 'BlockEnd', block);
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -475,7 +507,7 @@ end % end of block
 if parameters.EEG
     MarkStim('x');
 end
-showprompts(screen, 'EndExperiment');
+vbl = showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);
 Priority(0);

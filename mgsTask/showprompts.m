@@ -1,4 +1,4 @@
-function showprompts(screen, prompt_name, num, cond)
+function vbl = showprompts(screen, prompt_name, num, cond)
 % Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
 switch prompt_name
     case 'WelcomeWindow'
@@ -26,5 +26,5 @@ fontsize = 30;
 text_color = screen.white;
 Screen('TextSize', screen.win, fontsize);
 DrawFormattedText(screen.win, text, 'center', 'center', text_color);
-Screen('Flip', screen.win);
+vbl = Screen('Flip', screen.win);
 end
