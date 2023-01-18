@@ -37,7 +37,7 @@ function [varargout] = TMS(flag, varargin)
 
 if strcmp(flag,'Open')
     % Opens COM3 port and returns serial port ID
-    s = serial('COM3'); % MAC serial port
+    s = serial('/dev/ttyUSB0'); % MAC serial port
     fopen(s);
     set(s,'Baudrate',38400)
     % set(s,'Timeout',0.001)

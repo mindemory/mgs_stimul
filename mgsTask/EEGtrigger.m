@@ -1,4 +1,4 @@
-TB = IOPort('OpenSerialPort', '/dev/ttyUSB1');
+TB = IOPort('OpenSerialPort', '/dev/ttyUSB0');
 Available = IOPort('BytesAvailable', TB)
 if(Available>0)
     disp(IOPort('Read'), TB, 0, Available);
@@ -18,7 +18,7 @@ Available = IOPort('BytesAvailable', TB)
 IOPort('Close', TB);
 
 %%
-SerialPortObj=serial('/dev/ttyUSB2', 'TimeOut', 1); % in this example x=4
+SerialPortObj=serial('/dev/ttyUSB1', 'TimeOut', 1); % in this example x=4
 SerialPortObj.BytesAvailableFcnMode='byte';
 SerialPortObj.BytesAvailableFcnCount=1;
 SerialPortObj.BytesAvailableFcn=@ReadCallback;
