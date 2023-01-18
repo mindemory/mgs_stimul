@@ -11,9 +11,11 @@ elseif subjID == 0
     end_blocks = [10];
 elseif subjID == 99
     end_blocks = [10, 10, 10];
+elseif subjID == 98;
+    end_blocks = [1];
 end
 subjID = num2str(subjID, "%02d"); 
-days = 3;
+days = 1;
 max_end_block = max(end_blocks);
 start_block = 1;
 
