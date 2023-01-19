@@ -12,7 +12,7 @@ elseif subjID == 0
 elseif subjID == 99
     end_blocks = [10, 10, 10];
 elseif subjID == 98;
-    end_blocks = [1];
+    end_blocks = [2];
 end
 subjID = num2str(subjID, "%02d"); 
 days = 1;
