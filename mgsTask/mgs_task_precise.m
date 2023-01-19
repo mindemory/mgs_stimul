@@ -94,7 +94,7 @@ parameters.respCueFrames = round(parameters.respCueDuration / screen.ifi);
 parameters.respFrames = round(parameters.respDuration / screen.ifi);
 parameters.feedbackFrames = round(parameters.feedbackDuration / screen.ifi);
 parameters.itiFrames = round(parameters.itiDuration / screen.ifi);
-waitframes = 1;
+waitframes = 0;
 
 [kbx, parameters] = initPeripherals(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,6 +223,7 @@ for block = start_block:end_block
         % sample window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         sampleStartTime = GetSecs;
+        tic
         % EEG marker --> Sample begins
         if parameters.EEG
             if strcmp(tMap.condition, 'pro')
@@ -240,6 +241,8 @@ for block = start_block:end_block
             end
             MarkStim('t', trigger_code);
         end
+        toc
+        tic
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
@@ -247,8 +250,13 @@ for block = start_block:end_block
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
+        toc
         % draw sample and fixation cross
+        %tic
+        %ts = [];
+        vbl = Screen('Flip', screen.win);
         for frame = 1:parameters.sampleFrames
+            
         %while GetSecs-sampleStartTime <= parameters.sampleDuration
             dotSize = tMap.dotSizeStim(trial);
             dotCenter = tMap.stimLocpix(trial, :);
@@ -257,9 +265,12 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
+            %Screen('DrawingFinished', screen.win);
+            tic
+            vbl = Screen('Flip', screen.win, vbl+screen.ifi/2);%, vbl + (waitframes - 0.5) * screen.ifi);
+            toc
         end
+        %toc
         timeReport.sampleDuration(trial) = GetSecs-sampleStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

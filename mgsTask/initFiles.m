@@ -14,7 +14,7 @@ if exist(block_dir, 'dir')==7 % if the "block_dir" directory doesn't exist, crea
     [~, keyCode] = KbQueueCheck(kbx);
     cmndKey = KbName(keyCode);
     while ~strcmp(cmndKey, parameters.space_key)
-        vbl = showprompts(screen, 'BlockExists', block)
+        vbl = showprompts(screen, 'BlockExists', block);
         [~, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
         if strcmp(cmndKey, parameters.exit_key)
