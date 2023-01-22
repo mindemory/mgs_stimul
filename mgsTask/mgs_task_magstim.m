@@ -51,7 +51,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     master_dir = curr_dir(1:(filesepinds(end-1)-1)); 
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
-    markstim_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
+    markstim_path = [master_dir '/markstim-master'];
     addpath(genpath(markstim_path));
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
@@ -86,12 +86,25 @@ screen = initScreen(parameters);
 
 [kbx, parameters] = initPeripherals(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Open TMS Port
+% MarkStim CHECK!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% detect the MagVenture and perform handshake.
+% detect the MarkStim and perform handshake make sure that the orange
+% light is turned on! If not, press the black button on Teensy.
 if parameters.EEG + parameters.TMS > 0
-    s = TMS('Open')
-    TMS('Enable', s);
+    % Checks for possible identifiers of Teensy
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)];
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
+        end
+    end
+    trigger_id = ['/dev/', dev_name]
+    MarkStim('i', trigger_id)
+    MarkStim('s', true, 50); % time-window of pulse (in ms), minimum is 38ms
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
