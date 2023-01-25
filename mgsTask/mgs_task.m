@@ -117,7 +117,7 @@ for block = start_block:end_block
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 0;
+            parameters.TMS = 1;
         elseif taskMap(1).TMScond == 0
             parameters.TMS = 0;
         end
