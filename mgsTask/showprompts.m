@@ -26,5 +26,5 @@ fontsize = 30;
 text_color = screen.white;
 Screen('TextSize', screen.win, fontsize);
 DrawFormattedText(screen.win, text, 'center', 'center', text_color);
-vbl = Screen('Flip', screen.win);
+Screen('Flip', screen.win);
 end

@@ -1,4 +1,4 @@
-function mgs_task(subjID, day, start_block, prac_status, anti_type, aperture)
+function mgs_task(subjID, day, start_block, TMSamp, prac_status, anti_type, aperture)
 clearvars -except subjID session day coilLocInd start_block prac_status anti_type aperture;
 close all; clc;
 % Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
@@ -6,12 +6,15 @@ close all; clc;
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 4
-    prac_status = 0; % 0: actual session, 1: practice session
+    TMSamp = 55;
 end
 if nargin < 5
-    anti_type = 'mirror'; % mirror: mirrored anti conditon, diagonal: diagonal anti condition
+    prac_status = 0; % 0: actual session, 1: practice session
 end
 if nargin < 6
+    anti_type = 'mirror'; % mirror: mirrored anti conditon, diagonal: diagonal anti condition
+end
+if nargin < 7
     aperture = 0; % 0: full screen mode, 1: stimulus drawn on aperture
 end
 
@@ -51,8 +54,8 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     master_dir = curr_dir(1:(filesepinds(end-1)-1)); 
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
-    markstim_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
-    addpath(genpath(markstim_path));
+    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
+    addpath(genpath(trigger_path));
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         end_block = 2; % 2 blocks for practice session
@@ -92,6 +95,8 @@ screen = initScreen(parameters);
 if parameters.EEG + parameters.TMS > 0
     s = TMS('Open')
     TMS('Enable', s);
+    TMS('Timing', s);
+    TMS('Amplitude', s, TMSamp);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,9 +104,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
     % EEG marker --> block begins
-    if parameters.EEG
-        MarkStim('t', 1);
-    end
+%     if parameters.EEG
+%         MarkStim('t', 1);
+%     end
     parameters.block = num2str(block, "%02d");
     
     % Create folders for the block and read taskMap for current block
@@ -112,9 +117,9 @@ for block = start_block:end_block
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 1;
+            parameters.TMS = 0;
         elseif taskMap(1).TMScond == 0
-            parameters.TMS = 1;
+            parameters.TMS = 0;
         end
         tMap = taskMap(1, block);
     end
@@ -212,7 +217,7 @@ for block = start_block:end_block
                     trigger_code = 14;
                 end
             end
-            MarkStim('t', trigger_code);
+            %MarkStim('t', trigger_code);
         end
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -237,9 +242,9 @@ for block = start_block:end_block
         % Delay1 window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
-        if parameters.EEG
-            MarkStim('t', 3);
-        end
+%         if parameters.EEG
+%             MarkStim('t', 3);
+%         end
         %record to the edf file that delay1 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
@@ -261,13 +266,13 @@ for block = start_block:end_block
         % EEG marker --> TMS pulse begins
         if parameters.EEG
             if parameters.TMS
-                MarkStim('t', 132); % 128 for TMS + 4 for EEG marker
-            else
-                MarkStim('t', 4);
+                TMS('Train', s); % 128 for TMS + 4 for EEG marker
+%             else
+%                 MarkStim('t', 4);
             end
         else
             if parameters.TMS
-                MarkStim('t', 128); % 128 for TMS
+                TMS('Train', s); % 128 for TMS
             end
         end
         %record to the edf file that noise mask is started
@@ -283,9 +288,9 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay2StartTime = GetSecs;
         % EEG marker --> Delay2 begins
-        if parameters.EEG
-            MarkStim('t', 5);
-        end
+%         if parameters.EEG
+%             MarkStim('t', 5);
+%         end
         %record to the edf file that delay2 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
@@ -305,9 +310,9 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
-        if parameters.EEG
-            MarkStim('t', 6);
-        end
+%         if parameters.EEG
+%             MarkStim('t', 6);
+%         end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
         if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
@@ -330,9 +335,9 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respStartTime = GetSecs;
         % EEG marker --> response begins
-        if parameters.EEG
-            MarkStim('t', 7)
-        end
+%         if parameters.EEG
+%             MarkStim('t', 7)
+%         end
         %record to the edf file that response is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
@@ -353,9 +358,9 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
-        if parameters.EEG
-            MarkStim('t', 8);
-        end
+%         if parameters.EEG
+%             MarkStim('t', 8);
+%         end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
@@ -381,9 +386,9 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
-        if parameters.EEG
-            MarkStim('t', 9);
-        end
+%         if parameters.EEG
+%             MarkStim('t', 9);
+%         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
@@ -459,8 +464,9 @@ for block = start_block:end_block
     end
 end % end of block
 % end Teensy handshake
-if parameters.EEG
-    MarkStim('x');
+if parameters.TMS
+    TMS('Disable', s);
+    TMS('Close', s);
 end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
