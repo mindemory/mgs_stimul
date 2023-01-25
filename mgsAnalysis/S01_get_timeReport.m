@@ -10,7 +10,7 @@ elseif subjID == 5
 elseif subjID == 0
     end_blocks = [10];
 elseif subjID == 99
-    end_blocks = [1];
+    end_blocks = [10];
 elseif subjID == 98;
     end_blocks = [1];
 end
