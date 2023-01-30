@@ -97,6 +97,7 @@ if parameters.EEG + parameters.TMS > 0
     TMS('Enable', s);
     TMS('Timing', s);
     TMS('Amplitude', s, TMSamp);
+    %fclose(fid);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,9 +105,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
     % EEG marker --> block begins
-%     if parameters.EEG
-%         MarkStim('t', 1);
-%     end
+    if parameters.EEG
+        fname = ['sudo python3 ' trigger_path '/trigger_send.py &'];
+        system(fname);
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '0');
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '1');
+    end
     parameters.block = num2str(block, "%02d");
     
     % Create folders for the block and read taskMap for current block
@@ -217,7 +223,8 @@ for block = start_block:end_block
                     trigger_code = 14;
                 end
             end
-            %MarkStim('t', trigger_code);
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, num2str(trigger_code));
         end
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -242,9 +249,10 @@ for block = start_block:end_block
         % Delay1 window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
-%         if parameters.EEG
-%             MarkStim('t', 3);
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '3');
+        end
         %record to the edf file that delay1 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
@@ -265,15 +273,11 @@ for block = start_block:end_block
         pulseStartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
-            if parameters.TMS
-                TMS('Train', s); % 128 for TMS + 4 for EEG marker
-%             else
-%                 MarkStim('t', 4);
-            end
-        else
-            if parameters.TMS
-                TMS('Train', s); % 128 for TMS
-            end
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '4');
+        end
+        if parameters.TMS
+            TMS('Train', s); % 128 for TMS
         end
         %record to the edf file that noise mask is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -288,9 +292,10 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay2StartTime = GetSecs;
         % EEG marker --> Delay2 begins
-%         if parameters.EEG
-%             MarkStim('t', 5);
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '5');
+        end
         %record to the edf file that delay2 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
@@ -310,9 +315,10 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
-%         if parameters.EEG
-%             MarkStim('t', 6);
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '6');
+        end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
         if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
@@ -335,9 +341,10 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respStartTime = GetSecs;
         % EEG marker --> response begins
-%         if parameters.EEG
-%             MarkStim('t', 7)
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '7');
+        end
         %record to the edf file that response is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
@@ -358,9 +365,10 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
-%         if parameters.EEG
-%             MarkStim('t', 8);
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '8');
+        end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
@@ -386,9 +394,10 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
-%         if parameters.EEG
-%             MarkStim('t', 9);
-%         end
+        if parameters.EEG
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '9');
+        end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
@@ -438,6 +447,13 @@ for block = start_block:end_block
         copyfile([parameters.edfFile '.edf'], [parameters.block_dir filesep parameters.edfFile '.edf']);
         Eyelink('Shutdown');
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
+    end
+    
+    if parameters.EEG
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '100');
+        fclose(fid);
+        clearvars fid;
     end
     
     % save timeReport
