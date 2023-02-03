@@ -93,10 +93,10 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if parameters.EEG + parameters.TMS > 0
-    s = TMS('Open')
-    TMS('Enable', s);
-    TMS('Timing', s);
-    TMS('Amplitude', s, TMSamp);
+%     s = TMS('Open')
+%     TMS('Enable', s);
+%     TMS('Timing', s);
+%     TMS('Amplitude', s, TMSamp);
     %fclose(fid);
 end
 
