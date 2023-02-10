@@ -28,7 +28,7 @@ p.mgs = [p.data '/mgs_data/sub' p.subjID];
 p.dayfolder = [p.mgs '/day' num2str(p.day, '%02d')];
 
 %taskMapfilename = [p.phosphene '/taskMap_sub' subjID '_day' num2str(day, '%02d') '_antitype_mirror.mat'];
-taskMapfilename = [p.phosphene '/taskMap_sub' p.subjID '_day' num2str(p.day, '%02d') '.mat'];
+taskMapfilename = [p.phosphene '/taskMap_sub' p.subjID '_day' num2str(p.day, '%02d') '_antitype_mirror.mat'];
 load(taskMapfilename);
 
 p.tmstatus = taskMap(1).TMScond; %0 if off, 1 if on

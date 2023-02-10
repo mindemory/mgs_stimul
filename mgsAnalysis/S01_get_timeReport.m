@@ -9,12 +9,11 @@ elseif subjID == 5
     end_blocks = [7 8 10];
 elseif subjID == 0
     end_blocks = [10];
+elseif subjID == 98
+    end_blocks = [10];
 elseif subjID == 99
-    end_blocks = [10];
-elseif subjID == 98;
-    end_blocks = [10];
+    end_blocks = [5];
 end
-subjID = num2str(subjID, "%02d"); 
 days = 1;
 max_end_block = max(end_blocks);
 start_block = 1;
@@ -35,25 +34,20 @@ else % If running on World's best MacBook
 end
 direct.data = [direct.datc '/data']; 
 direct.analysis = [direct.datc '/analysis'];
-% direct.iEye = [direct.master '/iEye'];
+direct.figures = [direct.datc '/Figures'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 direct.mgs = [direct.data '/mgs_data/sub' subjID];
 
-%addpath(genpath(direct.iEye));
-%addpath(genpath(phosphene_data_path));
 addpath(genpath(direct.data));
+% For plotting
+nbinss = 50;
 
-%taskMapfilename = [direct.phosphene '/taskMap_sub' subjID '_day' num2str(day, "%02d") '.mat'];
-%load(taskMapfilename);
-sampleDuration = NaN(days, max_end_block, 40);
-delay1Duration = NaN(days, max_end_block, 40);
-pulseDuration = NaN(days, max_end_block, 40);
-delay2Duration = NaN(days, max_end_block, 40);
-respCueDuration = NaN(days, max_end_block, 40);
-respDuration = NaN(days, max_end_block, 40);
-feedbackDuration = NaN(days, max_end_block, 40);
-itiDuration = NaN(days, max_end_block, 40);
-trialDuration = NaN(days, max_end_block, 40);
+% Directory to save plots
+fig_dir = [direct.figures '/sub' subjID '/timeStruct'];
+if exist(fig_dir, 'dir') ~= 7
+    mkdir(fig_dir)
+end
+
 for day = 1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
     end_block = end_blocks(day);
@@ -62,29 +56,37 @@ for day = 1:days
         matfiledeets = dir([block_path '/*.mat']);
         matfileName = matfiledeets(end).name;
         load([block_path filesep matfileName]);
+        % Load timeReport for this day and block
         timeReport = matFile.timeReport;
-        sampleDuration(day, block, :) = timeReport.sampleDuration;
-        delay1Duration(day, block, :) = timeReport.delay1Duration;
-        pulseDuration(day, block, :) = timeReport.pulseDuration;
-        delay2Duration(day, block, :) = timeReport.delay2Duration;
-        respCueDuration(day, block, :) = timeReport.respCueDuration;
-        respDuration(day, block, :) = timeReport.respDuration;
-        feedbackDuration(day, block, :) = timeReport.feedbackDuration;
-        itiDuration(day, block, :) = timeReport.itiDuration;
-        trialDuration(day, block, :) = timeReport.trialDuration;
+        % Get a list of all duration variables and initialize timeStruct
+        if day == 1 && block == start_block
+            dur_vars = fieldnames(timeReport);
+            for ii = 1:length(dur_vars)
+                timeStruct.(dur_vars{ii}) = NaN(days, max_end_block, 40);
+            end
+        end
+        % Extract all variables from timeReport for each day and block into
+        % timeStruct
+        for ii = 1:length(dur_vars)
+            timeStruct.(dur_vars{ii})(day, block, :) = timeReport.(dur_vars{ii});
+        end
         clear matFile;
     end
-
-    
+    % Generate a figure of time stamps
+    figure;
+    h = suptitle(['sub' subjID '_ day' num2str(day, "%02d") ]);
+    set(h, 'Position', [0.5, -0.03, 0]);
+    for ii = 1:length(dur_vars)
+        subplot(3, 3, ii)
+        histogram(rmmissing(timeStruct.(dur_vars{ii})(day,:)), 'BinWidth', 0.005);
+        title(dur_vars{ii});
+        xlabel('Time (s)')
+        ylabel('# of Trials')
+    end
+    fig_fname = [fig_dir '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
+    print(gcf, '-dpng', fig_fname); 
 end
-nbinss = 50;
-day_to_plot = 1;
-figure(); histogram(rmmissing(sampleDuration(day_to_plot,:)), 'BinWidth', 0.005); title('sampleDuration');
-figure(); histogram(rmmissing(delay1Duration(day_to_plot,:)), 'BinWidth', 0.005); title('delay1Duration');
-figure(); histogram(rmmissing(pulseDuration(day_to_plot,:)), 'BinWidth', 0.005); title('pulseDuration');
-figure(); histogram(rmmissing(delay2Duration(day_to_plot,:)), 'BinWidth', 0.005); title('delay2Duration');
-figure(); histogram(rmmissing(respCueDuration(day_to_plot,:)), 'BinWidth', 0.005); title('respCueDuration');
-figure(); histogram(rmmissing(respDuration(day_to_plot,:)), 'BinWidth', 0.005); title('respDuration');
-figure(); histogram(rmmissing(feedbackDuration(day_to_plot,:)), 'BinWidth', 0.005); title('feedbackDuration');
-figure(); histogram(rmmissing(itiDuration(day_to_plot,:)), 'BinWidth', 0.005); title('itiDuration');
-figure(); histogram(rmmissing(trialDuration(day_to_plot,:)), 'BinWidth', 0.005); title('trialDuration');
+
+time_fname = [direct.analysis '/sub' subjID '/timeStruct.mat'];
+save(time_fname, 'timeStruct');
+end

@@ -1,0 +1,32 @@
+function check_flags(hdr, event_concat)
+    % Sample rate of EEG data
+    sampling_freq = hdr.Fs; % In Hz
+
+    % Extracting flags and sample stamps from event_concat file
+    flag_list = [event_concat.value];
+    flag_list = flag_list(2:end); % Eliminating the start flag created when creating a file
+    sample_list = [event_concat.sample];
+    sample_list = sample_list(2:end); % Eliminating the start flag created when creating a file
+    
+    % Make sure the flags are correct, flag_list should be a multiple of 4,
+    % since all flags are of form 'Sxxx' or 'Rxxx'
+    if mod(length(flag_list), 4) ~= 0
+        disp('Program should have interrupted here! Issues with flags, put a stop here and debug!')
+    end
+
+    % Collect flag type, flag number and sample/time stamps from EEG data
+    flag_type = [];
+    flag_num = [];
+    sample_stamp = [];
+    for ii = 1:floor(length(flag_list)/4)
+        this_flag = flag_list(4*ii-3:4*ii);
+        flag_type = [flag_type, this_flag(1)]; % extract flag type either S or R
+        flag_num = [flag_num, str2num(this_flag(2:4))]; % extract flag number [1, 255]
+        sample_stamp = [sample_stamp, sample_list(ii)]; % Get sample stamp, recording starts at 0
+    end
+    time_stamp = [sample_stamp]/sampling_freq; % in seconds
+
+    % 
+
+end
+
