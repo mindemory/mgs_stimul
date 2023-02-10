@@ -92,11 +92,11 @@ screen = initScreen(parameters);
 % Open TMS Port
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
-if parameters.EEG + parameters.TMS > 0
-%     s = TMS('Open')
-%     TMS('Enable', s);
-%     TMS('Timing', s);
-%     TMS('Amplitude', s, TMSamp);
+if parameters.EEG+parameters.TMS > 0
+    s = TMS('Open')
+    TMS('Enable', s);
+    TMS('Timing', s);
+    TMS('Amplitude', s, TMSamp);
     %fclose(fid);
 end
 
@@ -123,7 +123,7 @@ for block = start_block:end_block
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 0;
+            parameters.TMS = 1;
         elseif taskMap(1).TMScond == 0
             parameters.TMS = 0;
         end
