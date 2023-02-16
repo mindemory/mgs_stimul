@@ -100,21 +100,18 @@ if parameters.EEG+parameters.TMS > 0
     %fclose(fid);
 end
 
-trigReport = zeros(10, 322);
-masterTimeReport = struct;
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
-    trig_counter = 1;
     % EEG marker --> block begins
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+        fname = ['sudo python3 ' trigger_path '/trigger_send.py &'];
         system(fname);
-        masterTimeReport.blockstart(block) = GetSecs;
-        trigReport(block, trig_counter) =  1;
-        trig_counter = trig_counter + 1;
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '0');
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '1');
     end
     parameters.block = num2str(block, "%02d");
     
@@ -226,12 +223,8 @@ for block = start_block:end_block
                     trigger_code = 14;
                 end
             end
-            
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.sample(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  trigger_code;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, num2str(trigger_code));
         end
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -257,11 +250,8 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.delay1(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  2;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '3');
         end
         %record to the edf file that delay1 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -283,11 +273,8 @@ for block = start_block:end_block
         pulseStartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.tms(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  3;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '4');
         end
         if parameters.TMS
             TMS('Train', s); % 128 for TMS
@@ -306,11 +293,8 @@ for block = start_block:end_block
         delay2StartTime = GetSecs;
         % EEG marker --> Delay2 begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.delay2(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  4;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '5');
         end
         %record to the edf file that delay2 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -332,11 +316,8 @@ for block = start_block:end_block
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.respcue(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  5;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '6');
         end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
@@ -361,11 +342,8 @@ for block = start_block:end_block
         respStartTime = GetSecs;
         % EEG marker --> response begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.resp(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  6;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '7');
         end
         %record to the edf file that response is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -388,11 +366,8 @@ for block = start_block:end_block
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.feedback(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  7;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '8');
         end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -420,11 +395,8 @@ for block = start_block:end_block
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.iti(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  8;
-            trig_counter = trig_counter + 1;
+            fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+            fwrite(fid, '9');
         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -478,11 +450,10 @@ for block = start_block:end_block
     end
     
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-        system(fname);
-        masterTimeReport.blocked(block) = GetSecs;
-        trigReport(block, trig_counter) =  9;
-        %trig_counter = trig_counter + 1;
+        fid = fopen([trigger_path '/trig_vals.txt'], 'w');
+        fwrite(fid, '100');
+        fclose(fid);
+        clearvars fid;
     end
     
     % save timeReport
@@ -508,9 +479,6 @@ for block = start_block:end_block
         return;
     end
 end % end of block
-reportFile.masterTimeReport = masterTimeReport;
-reportFile.trigReport = trigReport;
-save([datapath '/reportFile.mat'],'reportFile')
 % end Teensy handshake
 if parameters.TMS
     TMS('Disable', s);
