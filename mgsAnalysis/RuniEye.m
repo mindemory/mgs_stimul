@@ -1,4 +1,4 @@
-function [ii_sess_pro, ii_sess_anti] = I01_run_iEye(p, taskMap, end_block)
+function [ii_sess_pro, ii_sess_anti] = RuniEye(p, taskMap, end_block)
 
 if nargin < 3
     end_block = 10;

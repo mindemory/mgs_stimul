@@ -7,8 +7,8 @@ MATLAB_PATH='/usr/local/bin/matlab9.6'
 PROJECT_DIR=/datc/MD_TMS_EEG
 FILES_DIR=${PROJECT_DIR}/EEGfiles
 RAW_DIR=${PROJECT_DIR}/EEGData
-SUBJ_LIST=(1 2 5)
-DAYS=(1 2 3)
+SUBJ_LIST=(99)
+DAYS=(1)
 
 LOG_DIR=$FILES_DIR/logs
 
@@ -32,7 +32,7 @@ for s in ${!SUBJ_LIST[@]}; do
     for d in ${!DAYS[@]}; do
         SUBJ=${SUBJ_LIST[$s]}
         DAY=${DAYS[$d]}
-        LOG_FILE=$LOG_DIR/eegpre.sh.o.$SUBJ.$DAY.$DATE
+        LOG_FILE=$LOG_DIR/eegpre.$SUBJ.$DAY.$DATE.txt
         
         printf "\n"
         echo "Subject: $SUBJ"

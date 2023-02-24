@@ -1,4 +1,5 @@
-function S01_get_timeReport(subjID)
+function A01_GetTimeReport(subjID)
+% Created by Mrugank (02/24/2022): The file 
 clearvars -except subjID; close all; clc;
 
 if subjID == 1
@@ -33,7 +34,7 @@ else % If running on World's best MacBook
     direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
 end
 direct.data = [direct.datc '/data']; 
-direct.analysis = [direct.datc '/analysis'];
+direct.analysis = [direct.datc '/analysis/sub' subjID];
 direct.figures = [direct.datc '/Figures'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 direct.mgs = [direct.data '/mgs_data/sub' subjID];
@@ -44,6 +45,10 @@ nbinss = 50;
 
 % Directory to save plots
 fig_dir = [direct.figures '/sub' subjID '/timeStruct'];
+if exist(direct.analysis, 'dir') ~= 7
+    mkdir(direct.analysis)
+end
+
 if exist(fig_dir, 'dir') ~= 7
     mkdir(fig_dir)
 end
@@ -87,6 +92,6 @@ for day = 1:days
     print(gcf, '-dpng', fig_fname); 
 end
 
-time_fname = [direct.analysis '/sub' subjID '/timeStruct.mat'];
+time_fname = [direct.analysis '/timeStruct.mat'];
 save(time_fname, 'timeStruct');
 end

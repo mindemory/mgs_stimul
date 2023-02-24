@@ -1,5 +1,5 @@
 clear; close all; clc;
-addpath /Users/mrugank/Documents/fieldtrip;
+addpath /hyper/software/fieldtrip-20220104;
 ft_defaults;
 fs = 2500; 
 nchan = 1;

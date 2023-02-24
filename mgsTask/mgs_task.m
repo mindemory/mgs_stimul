@@ -347,7 +347,7 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
         % Draw green fixation cross
-        while GetSecs-respCueStartTime < parameters.respDuration
+        while GetSecs-respCueStartTime < parameters.respCueDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
@@ -480,7 +480,7 @@ for block = start_block:end_block
     if parameters.EEG
         fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
         system(fname);
-        masterTimeReport.blocked(block) = GetSecs;
+        masterTimeReport.blockend(block) = GetSecs;
         trigReport(block, trig_counter) =  9;
         %trig_counter = trig_counter + 1;
     end

@@ -1,12 +1,15 @@
-function eeg_preproc(subjID, day)
-clearvars -except subjID day; close all; clc;
+function PreprocEEG(subjID, day, steps)
+%clearvars -except subjID day; close all; clc;
 
+if nargin < 3
+    steps = {'concat', 'raweeg', 'bandpass', 'epoch'};
+end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
 
 [p, taskMap] = initialization(p, 'eeg');
 
-EEGfile = ['sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d') '_concat.vhdr'];
+%EEGfile = ['sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d') '_concat.vhdr'];
 
 % List of files to be saved
 % Step 1: Loading data 'subXX_dayXX_raweeg.mat'
@@ -20,48 +23,54 @@ if ~exist(fName.folder, 'dir')
 end
 fName.general = [fName.folder '/sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d')];
 
-fName.concat = [fName.general '.vhdr'];
-fName.load = [fName.general '_raweeg.mat'];
-fName.bandpass = [fName.general '_bandpass.mat'];
-fName.epoched = [fName.general '_epoched.mat'];
+%% Concatenate EEG data
+if any(strcmp(steps, 'concat'))
+    fName.concat = [fName.general '.vhdr'];
+    if ~exist(fName.concat, 'file')
+        disp('Concatenated file does not exist. Concatenating EEG data.')
+        tic
+        concatenate_eeg(p, fName);
+        toc
+    else
+        disp('Concatenated file exists. Skipping this step.')
+    end
+end
 
-%%
-if ~exist(fName.epoched, 'file')
-    disp('Epoched data does not exist. Checking for bandpass filtered data.')
-    if ~exist(fName.bandpass, 'file')
-        disp('Bandpass filtered data does not exist. Checking for raw eeg file.')
-        if ~exist(fName.load, 'file')
-            if ~exist(fName.concat, 'file')
-                disp('Concatenated file does not exist. Concatenating EEG data.')
-                tic
-                concatenate_eeg(p, fName);
-                toc
-            end
-            % Importing data
-            disp('Raw file does not exist. Creating mat file.')
-            tic
-            cfg = [];
-            cfg.dataset = fName.concat;
-            cfg.demean = 'no';
-            cfg.continuous = 'yes';
-            data_eeg = ft_preprocessing(cfg);
-            % Removing NAN timepoint
-            if sum(sum(isnan(data_eeg.trial{1}))) > 0
-                data_eeg.time{1} = data_eeg.time{1}(2:end);
-                data_eeg.sampleinfo = data_eeg.sampleinfo - [0 1];
-                data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
-                data_eeg.hdr.nSamples = data_eeg.hdr.nSamples - 1;
-                data_eeg.cfg.trl = data_eeg.cfg.trl - [0 1 0];
-            end
-            toc
-            % Check data
-            % figure(); plot(data_eeg.time{1}, data_eeg.trial{1}(1:10, :))
-            save(fName.load, 'data_eeg', '-v7.3')
-        else
-            disp('Raw file exists, importing mat file.')
-            load(fName.loac)
+%% Creating mat file from EEG data
+if any(strcmp(steps, 'raweeg'))
+    fName.load = [fName.general '_raweeg.mat'];
+    if ~exist(fName.load, 'file')
+        % Importing data
+        disp('Raw file does not exist. Creating mat file.')
+        tic
+        cfg = [];
+        cfg.dataset = fName.concat;
+        cfg.demean = 'no';
+        cfg.continuous = 'yes';
+        data_eeg = ft_preprocessing(cfg);
+        % Removing NAN timepoint
+        if sum(sum(isnan(data_eeg.trial{1}))) > 0
+            data_eeg.time{1} = data_eeg.time{1}(2:end);
+            data_eeg.sampleinfo = data_eeg.sampleinfo - [0 1];
+            data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
+            data_eeg.hdr.nSamples = data_eeg.hdr.nSamples - 1;
+            data_eeg.cfg.trl = data_eeg.cfg.trl - [0 1 0];
         end
-        disp('Applying band pass filter.')
+        toc
+        % Check data
+        % figure(); plot(data_eeg.time{1}, data_eeg.trial{1}(1:10, :))
+        save(fName.load, 'data_eeg', '-v7.3')
+    else
+        disp('Raw file exists, importing mat file.')
+        load(fName.load)
+    end
+end
+
+%% Bandpass filter
+if any(strcmp(steps, 'bandpass'))
+    fName.bandpass = [fName.general '_bandpass.mat'];
+    if ~exist(fName.bandpass, 'file')
+        disp('Bandpass filtered data does not exist. Applying band pass filter.')
         tic
         cfg = [];
         cfg.demean = 'yes';
@@ -75,23 +84,33 @@ if ~exist(fName.epoched, 'file')
         disp('Highpass file exists, importing mat file.')
         load(fName.bandpass)
     end
-    disp('Epoching the data.')
-    tic
-    cfg = [];
-    cfg.dataset = fName.concat;
-    cfg.trialfun = 'ft_trialfun_general';
-    cfg.trialdef.eventtype = 'Stimulus';
-    cfg.trialdef.eventvalue = {'S  2'};
-    cfg.trialdef.prestim = 1;
-    cfg.trialdef.poststim = 8;
-    cfg = ft_definetrial(cfg);
-    data_eeg = ft_redefinetrial(cfg, data_eeg);
-    toc
-    save(fName.epoched, 'data_eeg', '-v7.3')
-else
-    disp('Epoched file exists, importing mat file.')
-    load(fName.epoched)
 end
+
+%% Epoch
+if any(strcmp(steps, 'epoch'))
+    fName.epoched = [fName.general '_epoched.mat'];
+    if ~exist(fName.epoched, 'file')
+        disp('Epoching the data.')
+        tic
+        cfg = [];
+        cfg.dataset = fName.concat;
+        cfg.trialfun = 'ft_trialfun_general';
+        cfg.trialdef.eventtype = 'Stimulus';
+        cfg.trialdef.eventvalue = {'S  2'};
+        cfg.trialdef.prestim = 1;
+        cfg.trialdef.poststim = 8;
+        cfg = ft_definetrial(cfg);
+        data_eeg = ft_redefinetrial(cfg, data_eeg);
+        toc
+        save(fName.epoched, 'data_eeg', '-v7.3')
+    else
+        disp('Epoched file exists, importing mat file.')
+        load(fName.epoched)
+    end
+end
+
+%%
+
 
 %% Removing line noise
 % NOTE: RUN AFTER LOOKING AT EPOCHED DATA!
@@ -101,7 +120,7 @@ end
 % cfg.dftfreq = [50 100];
 % data_eeg = ft_preprocessing(cfg, data_eeg);
 % toc
-% 
+%
 % %% Divide data by conditions
 % data_eeg_prointoVF = block_data(data_eeg, prointoVF_idx_EEG);
 % data_eeg_prooutVF = block_data(data_eeg, prooutVF_idx_EEG);
@@ -116,7 +135,7 @@ end
 % data_eeg_prooutVF = ft_rejectvisual(cfg, data_eeg_prooutVF);
 % data_eeg_antiintoVF = ft_rejectvisual(cfg, data_eeg_antiintoVF);
 % data_eeg_antioutVF = ft_rejectvisual(cfg, data_eeg_antioutVF);
-% 
+%
 % %% Time-frequency analysis
 % cfg = [];
 % cfg.output = 'pow';
@@ -127,7 +146,7 @@ end
 % cfg.foilim = [4, 30];
 % cfg.trials = 'all';
 % saveName = [direct.saveEEG '/sub' num2str(subjID, '%02d') '_day' num2str(day, '%02d') '_TFR.mat'];
-% 
+%
 % if ~exist(saveName, 'file')
 %     disp('TFR file does not exist. Creating mat file.')
 %     TFR_prointoVF = ft_freqanalysis(cfg, data_eeg_prointoVF);
@@ -139,14 +158,14 @@ end
 %     disp('TFR file exists, importing mat file.')
 %     load(saveName)
 % end
-% 
+%
 % %% Topoplot
 % cfg = [];
 % cfg.baseline = 'no';%[-0.5 -0.1];
 % cfg.baselinetype = 'relative';
 % cfg.xlim = [1, 5];
 % cfg.ylim = [8 12];
-% %cfg.zlim = 
+% %cfg.zlim =
 % cfg.marker = 'on';
 % cfg.layout = 'acticap-64_md.mat';
 % cfg.colorbar = 'yes';
@@ -154,7 +173,7 @@ end
 % figure(); ft_topoplotTFR(cfg, TFR_prooutVF)
 % figure(); ft_topoplotTFR(cfg, TFR_antiintoVF)
 % figure(); ft_topoplotTFR(cfg, TFR_antioutVF)
-% 
+%
 % %% Multiplot
 % cfg = [];
 % cfg.baseline = 'no';%[-0.5 -0.1];
@@ -167,11 +186,11 @@ end
 % figure(); ft_multiplotTFR(cfg, TFR_prooutVF)
 % figure(); ft_multiplotTFR(cfg, TFR_antiintoVF)
 % figure(); ft_multiplotTFR(cfg, TFR_antioutVF)
-% 
+%
 % %% Removing LM and RM electrodes
 % cfg = [];
 % cfg.channel = setdiff(1:66, [64, 65]);
-% data_eeg = ft_selectdata(cfg, data_eeg); 
+% data_eeg = ft_selectdata(cfg, data_eeg);
 % %% Referencing to Mastoids
 % cfg = [];
 % cfg.channel = 'all';
@@ -189,7 +208,7 @@ end
 % ERP_antiintoVF = ft_timelockanalysis(cfg, data_eeg_antiintoVF);
 % cfg.trials = antioutVF_idx;
 % ERP_antioutVF = ft_timelockanalysis(cfg, data_eeg_antioutVF);
-% 
+%
 % cfg = [];
 % cfg.parameter = 'powspctrm';
 % cfg.trials = 'all';
@@ -199,15 +218,15 @@ end
 % ft_singleplotTFR(cfg,TFR_prooutVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
 % ft_singleplotTFR(cfg,TFR_antiintoVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
 % ft_singleplotTFR(cfg,TFR_antioutVF);pbaspect([1 1 1]);xlabel('Time (s)');ylabel('Frequency (Hz)')
-% 
+%
 % cfg.channel = 'all';%{'PO4', 'PO8', 'O2'};
 % ft_singleplotTFR(cfg,TFR_prointoVF);pbaspect([1 1 1]);
-% 
-% 
+%
+%
 % ft_singleplotTFR(cfg,TFR_prooutVF);pbaspect([1 1 1]);
 % ft_singleplotTFR(cfg,TFR_antiintoVF);pbaspect([1 1 1]);
 % ft_singleplotTFR(cfg,TFR_antioutVF);pbaspect([1 1 1]);
-% 
+%
 % %figure();
 % %plot(data_eeg.time{1}, data_eeg.trial{1});
 % %hold on;

@@ -16,14 +16,13 @@ function [real, iEye] = compute_errors(scatter_x, scatter_y, target_x, target_y,
     real.theta = scatter_theta - target_theta; % in degrees
     
     % Errors as computed by iEye
-    iEye_scatter_x = %(scatter_x - p.xcenter)/p.ppd;%atan2d(scatter_x - p.xcenter, p.viewDistance);
-    iEye_scatter_y = %(scatter_y - p.ycenter)/p.ppd;%atan2d(scatter_y - p.ycenter, p.viewDistance);
-    iEye_target_x = %(target_x - p.xcenter)/p.ppd;%atan2d(target_x - p.xcenter, p.viewDistance);
-    iEye_target_y = %(target_y - p.ycenter)/p.ppd;%atan2d(target_y - p.ycenter, p.viewDistance);
+    %iEye_scatter_x = (scatter_x - p.xcenter)/p.ppd;%atan2d(scatter_x - p.xcenter, p.viewDistance);
+    %iEye_scatter_y = (scatter_y - p.ycenter)/p.ppd;%atan2d(scatter_y - p.ycenter, p.viewDistance);
+    %iEye_target_x = (target_x - p.xcenter)/p.ppd;%atan2d(target_x - p.xcenter, p.viewDistance);
+    %iEye_target_y = (target_y - p.ycenter)/p.ppd;%atan2d(target_y - p.ycenter, p.viewDistance);
     iEye_scatter_x = atan2d(scatter_x - p.xcenter, p.viewDistance);
     iEye_scatter_y = atan2d(scatter_y - p.ycenter, p.viewDistance);
     iEye_target_x = atan2d(target_x - p.xcenter, p.viewDistance);
     iEye_target_y = atan2d(target_y - p.ycenter, p.viewDistance);
     iEye.euclidean = sqrt((iEye_scatter_x - iEye_target_x).^2 + (iEye_scatter_y - iEye_target_y).^2);
-
 end

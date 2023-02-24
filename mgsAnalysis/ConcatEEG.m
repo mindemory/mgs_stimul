@@ -1,4 +1,4 @@
-function concatenate_eeg(p, fName, run_check)
+function ConcatEEG(p, fName, run_check)
 % Created by Mrugank: 12/08/2022: Extracts header, data and event files for
 % each subject ran on each day and concatenates them into one file.
 
@@ -14,6 +14,8 @@ sample_count = 0;
 for ii=1:length(fNames)
     EEGfile = [p.EEGData filesep fNames(ii).name];
     disp(['Working on file ' fNames(ii).name]);
+    
+    % extract header, data and event from EEGfile
     hdr = ft_read_header(EEGfile);
     dat = ft_read_data(EEGfile);
     evt = ft_read_event(EEGfile);
@@ -28,13 +30,15 @@ for ii=1:length(fNames)
     sample_count = sample_count + hdr.nSamples;
     data_concat = [data_concat, dat(1:63, :)];
 end
+
 hdr.nSamples = sample_count;
 hdr.nChans = 63;
 
-% Check time of flags
+% Chec
 if run_check
     disp('Checking timings for flags.')
-    check_flags(hdr, event_concat)
+    flags = check_flags(hdr, event_concat);
+    save([p.save '/EEGflags.mat'],'flags')
 else
     disp('Timing of flags not checked. Analyses based on precise time-stamps could be incorrect.')
 end
