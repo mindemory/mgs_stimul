@@ -1,4 +1,4 @@
-function mgs_task_precise(subjID, day, start_block, prac_status, anti_type, aperture)
+function mgs_task_eyefeedback(subjID, day, start_block, TMSamp, prac_status, anti_type, aperture)
 clearvars -except subjID session day coilLocInd start_block prac_status anti_type aperture;
 close all; clc;
 % Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
@@ -6,12 +6,15 @@ close all; clc;
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 4
-    prac_status = 0; % 0: actual session, 1: practice session
+    TMSamp = 55;
 end
 if nargin < 5
-    anti_type = 'mirror'; % mirror: mirrored anti conditon, diagonal: diagonal anti condition
+    prac_status = 0; % 0: actual session, 1: practice session
 end
 if nargin < 6
+    anti_type = 'mirror'; % mirror: mirrored anti conditon, diagonal: diagonal anti condition
+end
+if nargin < 7
     aperture = 0; % 0: full screen mode, 1: stimulus drawn on aperture
 end
 
@@ -51,8 +54,8 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     master_dir = curr_dir(1:(filesepinds(end-1)-1)); 
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
-    markstim_path = [master_dir '/markstim-master'];
-    addpath(genpath(markstim_path));
+    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
+    addpath(genpath(trigger_path));
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         end_block = 2; % 2 blocks for practice session
@@ -84,48 +87,39 @@ end
 % Initialize screen
 screen = initScreen(parameters);
 
-% Added 01/16/2022: Converting timing to frames
-parameters.sampleFrames = round(parameters.sampleDuration / screen.ifi);
-parameters.delayFrames = round(parameters.delayDuration / screen.ifi);
-parameters.delay1Frames = round(parameters.delay1Duration / screen.ifi);
-parameters.pulseFrames = round(parameters.pulseDuration / screen.ifi);
-parameters.delay2Frames = round(parameters.delay2Duration / screen.ifi);
-parameters.respCueFrames = round(parameters.respCueDuration / screen.ifi);
-parameters.respFrames = round(parameters.respDuration / screen.ifi);
-parameters.feedbackFrames = round(parameters.feedbackDuration / screen.ifi);
-parameters.itiFrames = round(parameters.itiDuration / screen.ifi);
-waitframes = 0;
-
 [kbx, parameters] = initPeripherals(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MarkStim CHECK!
+% Open TMS Port
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% detect the MarkStim and perform handshake make sure that the orange
-% light is turned on! If not, press the black button on Teensy.
-if parameters.EEG + parameters.TMS > 0
-    % Checks for possible identifiers of Teensy
-    dev_num = 0;
-    devs = dir('/dev/');
-    while 1
-        dev_name = ['ttyACM', num2str(dev_num)];
-        if any(strcmp({devs.name}, dev_name))
-            break
-        else
-            dev_num = dev_num + 1;
-        end
-    end
-    trigger_id = ['/dev/', dev_name]
-    MarkStim('i', trigger_id)
-    MarkStim('s', true, 50); % time-window of pulse (in ms), minimum is 38ms
+% detect the MagVenture and perform handshake.
+if taskMap(1).TMScond == 1 % determine if this is a TMS task
+    parameters.TMS = 1;
+elseif taskMap(1).TMScond == 0
+    parameters.TMS = 0;
 end
+
+if parameters.TMS > 0
+    s = TMS('Open');
+    TMS('Enable', s);
+    TMS('Timing', s);
+    TMS('Amplitude', s, TMSamp);
+end
+
+trigReport = zeros(10, 322);
+masterTimeReport = struct;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
+    trig_counter = 1;
     % EEG marker --> block begins
     if parameters.EEG
-        MarkStim('t', 1);
+        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+        system(fname);
+        masterTimeReport.blockstart(block) = GetSecs;
+        trigReport(block, trig_counter) =  1;
+        trig_counter = trig_counter + 1;
     end
     parameters.block = num2str(block, "%02d");
     
@@ -136,11 +130,7 @@ for block = start_block:end_block
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
-        if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 1;
-        elseif taskMap(1).TMScond == 0
-            parameters.TMS = 1;
-        end
+        
         tMap = taskMap(1, block);
     end
     
@@ -156,7 +146,7 @@ for block = start_block:end_block
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                vbl = showprompts(screen, 'WelcomeWindow', parameters.TMS);
+                showprompts(screen, 'WelcomeWindow', parameters.TMS)
                 [keyIsDown, ~] = KbQueueCheck(kbx);
             end
             break;
@@ -188,7 +178,7 @@ for block = start_block:end_block
     if aperture == 1
         drawTextures(parameters, screen, 'Aperture');
     end
-    vbl = showprompts(screen, 'BlockStart', block, tMap.condition);
+    showprompts(screen, 'BlockStart', block, tMap.condition)
     WaitSecs(2);
     
     % Draw Fixation Cross
@@ -196,7 +186,6 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'Aperture');
     end
     drawTextures(parameters, screen, 'FixationCross');
-    vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
     
     timeReport = struct;
     trialArray = 1:trialNum;
@@ -223,7 +212,6 @@ for block = start_block:end_block
         % sample window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         sampleStartTime = GetSecs;
-        tic
         % EEG marker --> Sample begins
         if parameters.EEG
             if strcmp(tMap.condition, 'pro')
@@ -239,10 +227,14 @@ for block = start_block:end_block
                     trigger_code = 14;
                 end
             end
-            MarkStim('t', trigger_code);
+            
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.sample(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  trigger_code;
+            trig_counter = trig_counter + 1;
         end
-        toc
-        tic
+        
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
@@ -250,14 +242,9 @@ for block = start_block:end_block
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
-        toc
+        
         % draw sample and fixation cross
-        %tic
-        %ts = [];
-        vbl = Screen('Flip', screen.win);
-        for frame = 1:parameters.sampleFrames
-            
-        %while GetSecs-sampleStartTime <= parameters.sampleDuration
+        while GetSecs-sampleStartTime <= parameters.sampleDuration
             dotSize = tMap.dotSizeStim(trial);
             dotCenter = tMap.stimLocpix(trial, :);
             if aperture == 1
@@ -265,12 +252,7 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
-            %Screen('DrawingFinished', screen.win);
-            tic
-            vbl = Screen('Flip', screen.win, vbl+screen.ifi/2);%, vbl + (waitframes - 0.5) * screen.ifi);
-            toc
         end
-        %toc
         timeReport.sampleDuration(trial) = GetSecs-sampleStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,22 +260,25 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
         if parameters.EEG
-            MarkStim('t', 3);
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.delay1(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  2;
+            trig_counter = trig_counter + 1;
         end
+        
         %record to the edf file that delay1 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 2);
         end
+        
         % Draw fixation cross
-        for frame = 1:parameters.delay1Frames
-        %while GetSecs-delay1StartTime <= parameters.delay1Duration
+        while GetSecs-delay1StartTime <= parameters.delay1Duration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
 
@@ -303,22 +288,27 @@ for block = start_block:end_block
         pulseStartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
-            if parameters.TMS
-                MarkStim('t', 132); % 128 for TMS + 4 for EEG marker
-            else
-                MarkStim('t', 4);
-            end
-        else
-            if parameters.TMS
-                MarkStim('t', 128); % 128 for TMS
-            end
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.tms(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  3;
+            trig_counter = trig_counter + 1;
         end
+        
+        if parameters.TMS
+            TMS('Train', s); % Train of TMS pulses, set pulse protocol on MagVenture Timing page
+        end
+        
         %record to the edf file that noise mask is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /tmsPulse"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 3);
         end
-        WaitSecs(parameters.pulseDuration);
+        
+        % Make sure that this epoch does not run for more than desired time
+        if GetSecs - pulseStartTime > 0
+            WaitSecs(parameters.pulseDuration - (GetSecs - pulseStartTime));
+        end
         timeReport.pulseDuration(trial) = GetSecs - pulseStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -327,7 +317,11 @@ for block = start_block:end_block
         delay2StartTime = GetSecs;
         % EEG marker --> Delay2 begins
         if parameters.EEG
-            MarkStim('t', 5);
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.delay2(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  4;
+            trig_counter = trig_counter + 1;
         end
         %record to the edf file that delay2 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -335,14 +329,11 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 4);
         end
         % Draw fixation cross
-        for frame = 1:parameters.delay2Frames
-        %while GetSecs-delay2StartTime<=parameters.delay2Duration
+        while GetSecs-delay2StartTime<=parameters.delay2Duration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
@@ -352,7 +343,11 @@ for block = start_block:end_block
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
         if parameters.EEG
-            MarkStim('t', 6);
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.respcue(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  5;
+            trig_counter = trig_counter + 1;
         end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
@@ -363,14 +358,11 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
         % Draw green fixation cross
-        for frame = 1:parameters.respCueFrames
-        %while GetSecs-respCueStartTime < parameters.respDuration
+        while GetSecs-respCueStartTime < parameters.respCueDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
 
@@ -380,7 +372,11 @@ for block = start_block:end_block
         respStartTime = GetSecs;
         % EEG marker --> response begins
         if parameters.EEG
-            MarkStim('t', 7)
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.resp(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  6;
+            trig_counter = trig_counter + 1;
         end
         %record to the edf file that response is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -389,14 +385,11 @@ for block = start_block:end_block
             Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
         end
         %draw the fixation dot
-        for frame = 1:parameters.respFrames
-        %while GetSecs-respStartTime<=parameters.respDuration
+        while GetSecs-respStartTime<=parameters.respDuration
             if aperture == 1
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.respDuration(trial) = GetSecs - respStartTime;
 
@@ -406,7 +399,11 @@ for block = start_block:end_block
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
         if parameters.EEG
-            MarkStim('t', 8);
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.feedback(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  7;
+            trig_counter = trig_counter + 1;
         end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -414,8 +411,7 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 7);
         end
         % draw the fixation dot
-        for frame = 1:parameters.feedbackFrames
-        %while GetSecs-feedbackStartTime<=parameters.feedbackDuration
+        while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             dotSize = tMap.dotSizeSacc(trial);
             dotCenter = tMap.saccLocpix(trial, :);
             if aperture == 1
@@ -423,8 +419,6 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
-            Screen('DrawingFinished', screen.win);
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
         end
         timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         
@@ -437,7 +431,11 @@ for block = start_block:end_block
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
         if parameters.EEG
-            MarkStim('t', 9);
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.iti(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  8;
+            trig_counter = trig_counter + 1;
         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
@@ -455,7 +453,6 @@ for block = start_block:end_block
                 drawTextures(parameters, screen, 'Aperture');
             end
             drawTextures(parameters, screen, 'FixationCross');
-            vbl = Screen('Flip', screen.win, vbl + (waitframes - 0.5) * screen.ifi);
             WaitSecs(ITI(trial));
 %             while GetSecs-itiStartTime < ITI(trial)
 %                 if aperture == 1
@@ -473,7 +470,7 @@ for block = start_block:end_block
             KbQueueStart(kbx);
             [keyIsDown, ~] = KbQueueCheck(kbx);
             while ~keyIsDown
-                vbl = showprompts(screen, 'TrialPause');
+                showprompts(screen, 'TrialPause');
                 [keyIsDown, ~] = KbQueueCheck(kbx);
             end
         end
@@ -491,6 +488,14 @@ for block = start_block:end_block
         disp(['Eyedata recieve for ' num2str(block,"%02d") ' OK!']);
     end
     
+    if parameters.EEG
+        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+        system(fname);
+        masterTimeReport.blockend(block) = GetSecs;
+        trigReport(block, trig_counter) =  9;
+        %trig_counter = trig_counter + 1;
+    end
+    
     % save timeReport
     matFile.parameters = parameters;
     matFile.screen = screen;
@@ -501,7 +506,7 @@ for block = start_block:end_block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
     while ~keyIsDown
-        vbl= showprompts(screen, 'BlockEnd', block);
+        showprompts(screen, 'BlockEnd', block)
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end
@@ -514,11 +519,15 @@ for block = start_block:end_block
         return;
     end
 end % end of block
+reportFile.masterTimeReport = masterTimeReport;
+reportFile.trigReport = trigReport;
+save([datapath '/reportFile.mat'],'reportFile')
 % end Teensy handshake
-if parameters.EEG
-    MarkStim('x');
+if parameters.TMS
+    TMS('Disable', s);
+    TMS('Close', s);
 end
-vbl = showprompts(screen, 'EndExperiment');
+showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);
 Priority(0);

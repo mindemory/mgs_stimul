@@ -92,12 +92,17 @@ screen = initScreen(parameters);
 % Open TMS Port
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
-if parameters.EEG+parameters.TMS > 0
-    s = TMS('Open')
+if taskMap(1).TMScond == 1 % determine if this is a TMS task
+    parameters.TMS = 1;
+elseif taskMap(1).TMScond == 0
+    parameters.TMS = 0;
+end
+
+if parameters.TMS > 0
+    s = TMS('Open');
     TMS('Enable', s);
     TMS('Timing', s);
     TMS('Amplitude', s, TMSamp);
-    %fclose(fid);
 end
 
 trigReport = zeros(10, 322);
@@ -125,11 +130,7 @@ for block = start_block:end_block
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
-        if taskMap(1).TMScond == 1 % determine if this is a TMS task
-            parameters.TMS = 1;
-        elseif taskMap(1).TMScond == 0
-            parameters.TMS = 0;
-        end
+        
         tMap = taskMap(1, block);
     end
     
@@ -233,6 +234,7 @@ for block = start_block:end_block
             trigReport(block, trig_counter) =  trigger_code;
             trig_counter = trig_counter + 1;
         end
+        
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
@@ -240,6 +242,7 @@ for block = start_block:end_block
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
+        
         % draw sample and fixation cross
         while GetSecs-sampleStartTime <= parameters.sampleDuration
             dotSize = tMap.dotSizeStim(trial);
@@ -263,11 +266,13 @@ for block = start_block:end_block
             trigReport(block, trig_counter) =  2;
             trig_counter = trig_counter + 1;
         end
+        
         %record to the edf file that delay1 is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 2);
         end
+        
         % Draw fixation cross
         while GetSecs-delay1StartTime <= parameters.delay1Duration
             if aperture == 1
@@ -289,15 +294,21 @@ for block = start_block:end_block
             trigReport(block, trig_counter) =  3;
             trig_counter = trig_counter + 1;
         end
+        
         if parameters.TMS
-            TMS('Train', s); % 128 for TMS
+            TMS('Train', s); % Train of TMS pulses, set pulse protocol on MagVenture Timing page
         end
+        
         %record to the edf file that noise mask is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /tmsPulse"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 3);
         end
-        WaitSecs(parameters.pulseDuration);
+        
+        % Make sure that this epoch does not run for more than desired time
+        if GetSecs - pulseStartTime > 0
+            WaitSecs(parameters.pulseDuration - (GetSecs - pulseStartTime));
+        end
         timeReport.pulseDuration(trial) = GetSecs - pulseStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -327,7 +338,7 @@ for block = start_block:end_block
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response window
+        % Response Cue window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
