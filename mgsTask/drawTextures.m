@@ -51,6 +51,39 @@ switch texture_name
             fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
+    
+    % Drawing Fixation Cross
+    case 'FixationCrossITI'
+        if nargin < 4
+            fixcolor = screen.white;
+        else
+            fixcolor = color;
+        end
+        % Get pixel width and height for inner and outer circle based of VA
+        r_pix_outer = va2pixel(parameters, screen, parameters.fixationSizeDeg);
+        r_pix_inner = va2pixel(parameters, screen, parameters.fixationSizeDeg/3);
+        
+        % Coordinates for fixation cross
+        xCoords = [-r_pix_outer r_pix_outer 0 0];
+        yCoords = [0 0 -r_pix_outer r_pix_outer];
+        allCoords = [xCoords; yCoords];
+        
+        % Coordinates for outer circle
+        baseRect_outer = [0 0 r_pix_outer*2 r_pix_outer*2];
+        maxDiameter_outer = ceil(max(baseRect_outer) * 1.1);
+        centeredRect_outer = CenterRectOnPoint(baseRect_outer, screen.xCenter, screen.yCenter);
+        
+        % Coordinates for inner circle
+        baseRect_inner = [0 0 r_pix_inner*2 r_pix_inner*2];
+        maxDiameter_inner = ceil(max(baseRect_inner) * 1.1);
+        centeredRect_inner = CenterRectOnPoint(baseRect_inner, screen.xCenter, screen.yCenter);
+        
+        % Draw Fixation cross
+        Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_outer, maxDiameter_outer);
+        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+            fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_inner, maxDiameter_inner);
+        Screen('Flip', screen.win);
         
     % Drawing Stimulus
     case 'Stimulus'

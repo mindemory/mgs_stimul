@@ -422,6 +422,24 @@ for block = start_block:end_block
             end
             drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
+            
+            % Compute gaze coords
+            if parameters.eyetracker
+                if Eyelink('NewFloatSampleAvailable') > 0
+                    evt = Eyelink('NewestFloatSample');
+                    if el.eye_used ~= -1
+                        eye_x = evt.gx(el.eye_used+1);
+                        eye_y = evt.gx(el.eye_used+1);
+                        
+                        if eye_x~=el.MISSING_DATA && eye_y~=el.MISSING_DATA ...
+                            && evt.pa(el.eye_used+1)>0
+                            curr_eye_x = eye_x;
+                            curr_eye_y = eye_y;
+                            euc_err = [euc_err, sqrt((curr_eye_x - dotCenter(1))^2 + (curr_eye_y - dotCenter(2))^2)];
+                        end
+                    end
+                end
+            end
         end
         max(euc_err)
         min(euc_err)

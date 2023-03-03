@@ -1,4 +1,4 @@
-function initEyeTracker(parameters, screen)
+function el = initEyeTracker(parameters, screen)
 %%
 %INITIALIZE EYE TRACKER & RUN CALIBRATION
 %run without eye tracker if eyetracker is 0
@@ -64,9 +64,9 @@ if parameters.eyetracker
     % do a final check of calibration using driftcorrection
     %EyelinkDoDriftCorrection(el);
     
-    eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
-    if eye_used == el.BINOCULAR % if both eyes are tracked
-        eye_used = el.RIGHT_EYE; % use left eye
+    el.eye_used = Eyelink('EyeAvailable'); % get eye that's tracked
+    if el.eye_used == el.BINOCULAR % if both eyes are tracked
+        el.eye_used = el.RIGHT_EYE; % use right eye
     end
 end
 end

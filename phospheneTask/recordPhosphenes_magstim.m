@@ -37,10 +37,8 @@ hostname = strtrim(hostname);
 curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
-%markstim_path = [master_dir filesep 'markstim-master'];
-%addpath(genpath(markstim_path));
-trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
-addpath(genpath(trigger_path));
+markstim_path = [master_dir filesep 'markstim-master'];
+addpath(genpath(markstim_path));
 
 
 parameters = loadParameters(subjID, session);
@@ -76,11 +74,20 @@ tmsRtnTpy.Params.taskParams = parameters;
 %% TEENSY CHECK!
 % detect the TeensyTrigger and perform handshake make sure that the orange 
 % light is turned on! If not, press the black button on Teensy Trigger.
-if parameters.TMS > 0
-    s = TMS('Open');
-    TMS('Enable', s);
-    TMS('Timing', s);
-    %TMS('Amplitude', s, TMSamp);
+if parameters.TMS
+    % Checks for possible identifiers of TeensyTrigger
+    dev_num = 0;
+    devs = dir('/dev/');
+    while 1
+        dev_name = ['ttyACM', num2str(dev_num)];
+        if any(strcmp({devs.name}, dev_name))
+            break
+        else
+            dev_num = dev_num + 1;
+        end
+    end
+    trigger_id = ['/dev/', dev_name]
+    MarkStim('i', trigger_id)
 end
 
 % initialize trial and coil indices, incrementally increased on each run
@@ -135,7 +142,7 @@ while 1
                 % send a signal to the a USB to trigger the TMS pulse
                 pause(parameters.waitBeforePulse);
                 if parameters.TMS
-                    TMS('Train', s); % Train of TMS pulses, set pulse protocol on MagVenture Timing page
+                    MarkStim('t', 128);
                 end
                 WaitSecs(parameters.PulseDuration);
                 display(sprintf('\n\ttrigger pulse sent to the TMS machine'));
@@ -259,8 +266,7 @@ end
 % This should end the handshake with MarkStim. Orange light should be back
 % on.
 if parameters.TMS
-    TMS('Disable', s);
-    TMS('Close', s);
+    MarkStim('x');
 end
 sca;
 end
