@@ -6,7 +6,7 @@ close all; clc;
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 4
-    TMSamp = 55;
+    TMSamp = 52;
 end
 if nargin < 5
     prac_status = 0; % 0: actual session, 1: practice session
