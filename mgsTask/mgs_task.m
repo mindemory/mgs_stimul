@@ -71,7 +71,6 @@ else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
     return;
 end
-% sca;
 
 % Initialize data paths
 addpath(genpath(phosphene_data_path));
@@ -84,10 +83,10 @@ else
     load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d") '_antitype_' anti_type])
 end
 
-% Initialize screen
+% Initialize screen and peripherals
 screen = initScreen(parameters);
-
 [kbx, parameters] = initPeripherals(parameters);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Open TMS Port
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
