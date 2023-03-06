@@ -61,11 +61,11 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 1; % set to 0 if there is no EEG recording
+        parameters.EEG = 0; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 1; % set to 0 if there is no eyetracker
+    parameters.eyetracker = 0; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -92,7 +92,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 1;
+    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
@@ -305,7 +305,7 @@ for block = start_block:end_block
         end
         
         % Make sure that this epoch does not run for more than desired time
-        if GetSecs - pulseStartTime > 0
+        if GetSecs - pulseStartTime < parameters.pulseDuration
             WaitSecs(parameters.pulseDuration - (GetSecs - pulseStartTime));
         end
         timeReport.pulseDuration(trial) = GetSecs - pulseStartTime;
@@ -501,22 +501,22 @@ for block = start_block:end_block
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
-    % check for end of block
-    KbQueueFlush(kbx);
-    [keyIsDown, ~] = KbQueueCheck(kbx);
-    while ~keyIsDown
-        showprompts(screen, 'BlockEnd', block)
-        [keyIsDown, keyCode] = KbQueueCheck(kbx);
-        cmndKey = KbName(keyCode);
-    end
-    
-    if strcmp(cmndKey, parameters.space_key)
-        continue;
-    elseif strcmp(cmndKey, parameters.exit_key)
-        sca;
-        ListenChar(1);
-        return;
-    end
+    % check for end of block (removed on 03/06: for debugging timing)
+%     KbQueueFlush(kbx);
+%     [keyIsDown, ~] = KbQueueCheck(kbx);
+%     while ~keyIsDown
+%         showprompts(screen, 'BlockEnd', block)
+%         [keyIsDown, keyCode] = KbQueueCheck(kbx);
+%         cmndKey = KbName(keyCode);
+%     end
+%     
+%     if strcmp(cmndKey, parameters.space_key)
+%         continue;
+%     elseif strcmp(cmndKey, parameters.exit_key)
+%         sca;
+%         ListenChar(1);
+%         return;
+%     end
 end % end of block
 reportFile.masterTimeReport = masterTimeReport;
 reportFile.trigReport = trigReport;

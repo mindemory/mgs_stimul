@@ -1,10 +1,13 @@
 clear; close all; clc;
 
 %% Initialization
-p.subjID = '01';
+p.subjID = '10';
 p.day = 1;
-end_block = 12;
+end_block = 2;
 [p, taskMap] = initialization(p, 'eye');
+tmp = pwd; tmp2 = strfind(tmp,filesep);
+direct.master = tmp(1:(tmp2(end)-1));
+addpath(direct.master)
 
 % Determine trial number of pro and anti trials for all blocks
 for blurb = 1:length(taskMap)
@@ -39,7 +42,7 @@ if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
     load(saveNameantimat);
 else
     disp('ii_sess files do not exist. running ieye')
-    [ii_sess_pro, ii_sess_anti] = I01_run_iEye(p, taskMap, end_block);
+    [ii_sess_pro, ii_sess_anti] = RuniEye(p, taskMap, end_block);
     save(saveNamepro,'ii_sess_pro')
     save(saveNameanti,'ii_sess_anti')
 end

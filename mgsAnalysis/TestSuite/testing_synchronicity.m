@@ -1,6 +1,6 @@
 clear; close all; clc;
-load('/datc/MD_TMS_EEG/data/mgs_data/sub98/day01/reportFile.mat');
-load('/datc/MD_TMS_EEG/analysis/sub98/day01/EEGflags.mat');
+load('/datc/MD_TMS_EEG/data/mgs_data/sub10/day01/reportFile.mat');
+load('/datc/MD_TMS_EEG/analysis/sub10/day01/EEGflags.mat');
 
 flags.type(2:2:end) = [];
 flags.num(2:2:end) = [];

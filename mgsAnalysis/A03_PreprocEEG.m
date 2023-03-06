@@ -1,4 +1,4 @@
-function PreprocEEG(subjID, day, steps)
+function A03_PreprocEEG(subjID, day, steps)
 %clearvars -except subjID day; close all; clc;
 
 if nargin < 3
@@ -16,20 +16,23 @@ p.day = day;
 % Step 2: Remove low frequency drifts 'subXX_dayXX_highpass.mat'
 % Step 3: Epoch data 'subXX_dayXX_epoched.mat'
 
-
+% File names
 fName.folder = [p.saveEEG '/sub' num2str(p.subjID, '%02d') '/day' num2str(p.day, '%02d')];
 if ~exist(fName.folder, 'dir')
     mkdir(fName.folder)
 end
 fName.general = [fName.folder '/sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d')];
+fName.concat = [fName.general '.vhdr'];
+fName.load = [fName.general '_raweeg.mat'];
+fName.bandpass = [fName.general '_bandpass.mat'];
+fName.epoched = [fName.general '_epoched.mat'];
 
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
-    fName.concat = [fName.general '.vhdr'];
     if ~exist(fName.concat, 'file')
         disp('Concatenated file does not exist. Concatenating EEG data.')
         tic
-        concatenate_eeg(p, fName);
+        ConcatEEG(p, fName);
         toc
     else
         disp('Concatenated file exists. Skipping this step.')
@@ -38,7 +41,6 @@ end
 
 %% Creating mat file from EEG data
 if any(strcmp(steps, 'raweeg'))
-    fName.load = [fName.general '_raweeg.mat'];
     if ~exist(fName.load, 'file')
         % Importing data
         disp('Raw file does not exist. Creating mat file.')
@@ -68,7 +70,6 @@ end
 
 %% Bandpass filter
 if any(strcmp(steps, 'bandpass'))
-    fName.bandpass = [fName.general '_bandpass.mat'];
     if ~exist(fName.bandpass, 'file')
         disp('Bandpass filtered data does not exist. Applying band pass filter.')
         tic
@@ -88,7 +89,6 @@ end
 
 %% Epoch
 if any(strcmp(steps, 'epoch'))
-    fName.epoched = [fName.general '_epoched.mat'];
     if ~exist(fName.epoched, 'file')
         disp('Epoching the data.')
         tic
