@@ -6,7 +6,7 @@ close all; clc;
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 4
-    TMSamp = 52;
+    TMSamp = 52; % default TMS intensity value
 end
 if nargin < 5
     prac_status = 0; % 0: actual session, 1: practice session
