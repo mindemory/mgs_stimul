@@ -65,7 +65,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 1; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
+    parameters.eyetracker = 0; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -92,7 +92,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
+    parameters.TMS = 1; % keeping TMS of for debugging (03/06/2023)
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
