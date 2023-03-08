@@ -242,8 +242,25 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         
+        end_time = [];
+        for ii = 1:100
+            if mod(ii, 50) == 0
+                disp(ii)
+            end
+            tic
+            sampleStartTime = GetSecs;
+            tmp = [];
+            % draw sample and fixation cross
+            while GetSecs-sampleStartTime <= parameters.sampleDuration
+                tmp = [tmp GetSecs];
+            end
+            end_time = [end_time toc];
+        end
+        
+        tmp = [];
         % draw sample and fixation cross
         while GetSecs-sampleStartTime <= parameters.sampleDuration
+            tmp = [tmp GetSecs];
             dotSize = tMap.dotSizeStim(trial);
             dotCenter = tMap.stimLocpix(trial, :);
             if aperture == 1
