@@ -242,27 +242,11 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         
-<<<<<<< HEAD
-        end_time = [];
-        for ii = 1:1000
-            if mod(ii, 50) == 0
-                disp(ii)
-            end
-            tic
-            sampleStartTime = GetSecs;
-            tmp = [];
-            % draw sample and fixation cross
-            while GetSecs-sampleStartTime <= parameters.sampleDuration
-                tmp = [tmp GetSecs];
-            end
-            end_time = [end_time toc];
-=======
         % draw sample and fixation cross
         dotSize = tMap.dotSizeStim(trial);
         dotCenter = tMap.stimLocpix(trial, :);
         if aperture == 1
             drawTextures(parameters, screen, 'Aperture');
->>>>>>> e4b0300fc220f0e50a8d6f0b6b54a6e368ac6d38
         end
         drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
         drawTextures(parameters, screen, 'FixationCross');
@@ -450,10 +434,6 @@ for block = start_block:end_block
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
             WaitSecs(parameters.feedbackDuration - (GetSecs - feedbackStartTime));
         end
-<<<<<<< HEAD
-
-=======
->>>>>>> e4b0300fc220f0e50a8d6f0b6b54a6e368ac6d38
         timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         
         if parameters.eyetracker
@@ -488,10 +468,6 @@ for block = start_block:end_block
         KbQueueStart(kbx);
         [keyIsDown, ~] = KbQueueCheck(kbx);
         while ~keyIsDown
-<<<<<<< HEAD
-            
-=======
->>>>>>> e4b0300fc220f0e50a8d6f0b6b54a6e368ac6d38
             WaitSecs(ITI(trial));
             [~, keyCode] = KbQueueCheck(kbx);
             cmndKey = KbName(keyCode);
