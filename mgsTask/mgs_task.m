@@ -61,7 +61,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 0; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
+        parameters.EEG = 1; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
@@ -92,7 +92,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
+    parameters.TMS = 1; % keeping TMS of for debugging (03/06/2023)
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
@@ -243,7 +243,7 @@ for block = start_block:end_block
         end
         
         end_time = [];
-        for ii = 1:100
+        for ii = 1:1000
             if mod(ii, 50) == 0
                 disp(ii)
             end
@@ -430,7 +430,6 @@ for block = start_block:end_block
         dotSize = tMap.dotSizeSacc(trial);
         dotCenter = tMap.saccLocpix(trial, :);
         
-        euc_err = [];
         % draw the fixation dot
         while GetSecs-feedbackStartTime<=parameters.feedbackDuration
             % Render stimulus
@@ -440,9 +439,7 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
             drawTextures(parameters, screen, 'FixationCross');
         end
-        max(euc_err)
-        min(euc_err)
-        length(euc_err)
+
         timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         
         if parameters.eyetracker
@@ -468,14 +465,16 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCrossITI');
+        
         KbQueueFlush(kbx);
         KbQueueStart(kbx);
         [keyIsDown, ~] = KbQueueCheck(kbx);
         while ~keyIsDown
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCrossITI');
+            
             WaitSecs(ITI(trial));
             [~, keyCode] = KbQueueCheck(kbx);
             cmndKey = KbName(keyCode);
