@@ -464,24 +464,24 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCrossITI');
         
-        KbQueueFlush(kbx);
-        KbQueueStart(kbx);
-        [keyIsDown, ~] = KbQueueCheck(kbx);
-        while ~keyIsDown
-            WaitSecs(ITI(trial));
-            [~, keyCode] = KbQueueCheck(kbx);
-            cmndKey = KbName(keyCode);
-            break;
-        end
-        % check for end of block PS: This chunk is not working! 
-        if strcmp(cmndKey, parameters.exit_key)
-            KbQueueStart(kbx);
-            [keyIsDown, ~] = KbQueueCheck(kbx);
-            while ~keyIsDown
-                showprompts(screen, 'TrialPause');
-                [keyIsDown, ~] = KbQueueCheck(kbx);
-            end
-        end
+%         KbQueueFlush(kbx);
+%         KbQueueStart(kbx);
+%         [keyIsDown, ~] = KbQueueCheck(kbx);
+%         while ~keyIsDown
+%             WaitSecs(ITI(trial));
+%             [~, keyCode] = KbQueueCheck(kbx);
+%             cmndKey = KbName(keyCode);
+%             break;
+%         end
+%         % check for end of block PS: This chunk is not working! 
+%         if strcmp(cmndKey, parameters.exit_key)
+%             KbQueueStart(kbx);
+%             [keyIsDown, ~] = KbQueueCheck(kbx);
+%             while ~keyIsDown
+%                 showprompts(screen, 'TrialPause');
+%                 [keyIsDown, ~] = KbQueueCheck(kbx);
+%             end
+%         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
     end
