@@ -464,6 +464,9 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCrossITI');
         
+        if GetSecs - itiStartTime < ITI(trial)
+            WaitSecs(ITI(trial) - (GetSecs - itiStartTime));
+        end
 %         KbQueueFlush(kbx);
 %         KbQueueStart(kbx);
 %         [keyIsDown, ~] = KbQueueCheck(kbx);
