@@ -92,7 +92,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
+    parameters.TMS = 1; % keeping TMS of for debugging (03/06/2023)
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
@@ -243,14 +243,16 @@ for block = start_block:end_block
         end
         
         % draw sample and fixation cross
-        while GetSecs-sampleStartTime <= parameters.sampleDuration
-            dotSize = tMap.dotSizeStim(trial);
-            dotCenter = tMap.stimLocpix(trial, :);
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
-            drawTextures(parameters, screen, 'FixationCross');
+        dotSize = tMap.dotSizeStim(trial);
+        dotCenter = tMap.stimLocpix(trial, :);
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
+        drawTextures(parameters, screen, 'FixationCross');
+        
+        if GetSecs - sampleStartTime < parameters.sampleDuration
+            WaitSecs(parameters.sampleDuration - (GetSecs-sampleStartTime));
         end
         timeReport.sampleDuration(trial) = GetSecs-sampleStartTime;
 
@@ -273,11 +275,13 @@ for block = start_block:end_block
         end
         
         % Draw fixation cross
-        while GetSecs-delay1StartTime <= parameters.delay1Duration
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCross');
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross');
+        
+        if GetSecs - delay1StartTime < parameters.delay1Duration
+            WaitSecs(parameters.delay1Duration - (GetSecs-delay1StartTime));
         end
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
 
@@ -328,11 +332,13 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 4);
         end
         % Draw fixation cross
-        while GetSecs-delay2StartTime<=parameters.delay2Duration
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCross');
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross');
+        
+        if GetSecs - delay2StartTime < parameters.delay2Duration
+            WaitSecs(parameters.delay2Duration - (GetSecs - delay2StartTime));
         end
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
@@ -357,11 +363,13 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
         % Draw green fixation cross
-        while GetSecs-respCueStartTime < parameters.respCueDuration
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
+        
+        if GetSecs - respCueStartTime < parameters.respCueDuration
+            WaitSecs(parameters.respCueDuration - (GetSecs - respCueStartTime));
         end
         timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
 
@@ -384,11 +392,13 @@ for block = start_block:end_block
             Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
         end
         %draw the fixation dot
-        while GetSecs-respStartTime<=parameters.respDuration
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCross');
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross');
+        
+        if GetSecs - respStartTime < parameters.respDuration
+            WaitSecs(parameters.respDuration - (GetSecs - respStartTime));
         end
         timeReport.respDuration(trial) = GetSecs - respStartTime;
 
@@ -413,19 +423,17 @@ for block = start_block:end_block
         dotSize = tMap.dotSizeSacc(trial);
         dotCenter = tMap.saccLocpix(trial, :);
         
-        euc_err = [];
         % draw the fixation dot
-        while GetSecs-feedbackStartTime<=parameters.feedbackDuration
-            % Render stimulus
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
-            drawTextures(parameters, screen, 'FixationCross');
+        % Render stimulus
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
         end
-        max(euc_err)
-        min(euc_err)
-        length(euc_err)
+        drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
+        drawTextures(parameters, screen, 'FixationCross');
+
+        if GetSecs - feedbackStartTime < parameters.feedbackDuration
+            WaitSecs(parameters.feedbackDuration - (GetSecs - feedbackStartTime));
+        end
         timeReport.feedbackDuration(trial) = GetSecs-feedbackStartTime;
         
         if parameters.eyetracker
@@ -451,28 +459,32 @@ for block = start_block:end_block
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         % Draw a fixation cross
-        KbQueueFlush(kbx);
-        KbQueueStart(kbx);
-        [keyIsDown, ~] = KbQueueCheck(kbx);
-        while ~keyIsDown
-            if aperture == 1
-                drawTextures(parameters, screen, 'Aperture');
-            end
-            drawTextures(parameters, screen, 'FixationCrossITI');
-            WaitSecs(ITI(trial));
-            [~, keyCode] = KbQueueCheck(kbx);
-            cmndKey = KbName(keyCode);
-            break;
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
         end
-        % check for end of block PS: This chunk is not working! 
-        if strcmp(cmndKey, parameters.exit_key)
-            KbQueueStart(kbx);
-            [keyIsDown, ~] = KbQueueCheck(kbx);
-            while ~keyIsDown
-                showprompts(screen, 'TrialPause');
-                [keyIsDown, ~] = KbQueueCheck(kbx);
-            end
+        drawTextures(parameters, screen, 'FixationCrossITI');
+        
+        if GetSecs - itiStartTime < ITI(trial)
+            WaitSecs(ITI(trial) - (GetSecs - itiStartTime));
         end
+%         KbQueueFlush(kbx);
+%         KbQueueStart(kbx);
+%         [keyIsDown, ~] = KbQueueCheck(kbx);
+%         while ~keyIsDown
+%             WaitSecs(ITI(trial));
+%             [~, keyCode] = KbQueueCheck(kbx);
+%             cmndKey = KbName(keyCode);
+%             break;
+%         end
+%         % check for end of block PS: This chunk is not working! 
+%         if strcmp(cmndKey, parameters.exit_key)
+%             KbQueueStart(kbx);
+%             [keyIsDown, ~] = KbQueueCheck(kbx);
+%             while ~keyIsDown
+%                 showprompts(screen, 'TrialPause');
+%                 [keyIsDown, ~] = KbQueueCheck(kbx);
+%             end
+%         end
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
     end

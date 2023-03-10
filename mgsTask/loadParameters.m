@@ -26,16 +26,28 @@ parameters.fixationSizeDeg = 0.6; % degrees of visual angle
 parameters.pulseFrequency = 20; % in Hz
 parameters.pulseNum = 3; % Pulse count
 parameters.pulseDuration = (parameters.pulseNum-1)/parameters.pulseFrequency; % in seconds
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % timing parameters (in seconds)
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% parameters.sampleDuration = 0.5;
+% parameters.delayDuration = 4;
+% parameters.delay1Duration = parameters.delayDuration/2;
+% parameters.delay2Duration = parameters.delayDuration-parameters.delay1Duration-parameters.pulseDuration;
+% parameters.respCueDuration = 0.15;
+% parameters.respDuration = 0.7;
+% %parameters.respDuration = 0.85;
+% parameters.feedbackDuration = 0.8;
+% parameters.itiDuration = [2,3];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % timing parameters (in seconds)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+parameters.initDuration = 1;
 parameters.sampleDuration = 0.5;
 parameters.delayDuration = 4;
 parameters.delay1Duration = parameters.delayDuration/2;
-parameters.delay2Duration = parameters.delayDuration-parameters.delay1Duration-parameters.pulseDuration;
+parameters.delay2Duration = parameters.delayDuration/2;%-parameters.delay1Duration-parameters.pulseDuration;
 parameters.respCueDuration = 0.15;
 parameters.respDuration = 0.7;
-%parameters.respDuration = 0.85;
 parameters.feedbackDuration = 0.8;
-parameters.itiDuration = [2,3];
+parameters.itiDuration = [1,2];
 end
