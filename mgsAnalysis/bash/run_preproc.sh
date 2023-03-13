@@ -7,11 +7,11 @@ MATLAB_PATH='/usr/local/bin/matlab9.6'
 PROJECT_DIR=/datc/MD_TMS_EEG
 FILES_DIR=${PROJECT_DIR}/EEGfiles
 RAW_DIR=${PROJECT_DIR}/EEGData
-SUBJ_LIST=(99)
-DAYS=(1)
+SUBJ_LIST=(98)
+DAYS=(1 3)
 
 LOG_DIR=$FILES_DIR/logs
-
+cd ..
 LEN_SUBJ=${#SUBJ_LIST[@]}
 LEN_DAYS=${#DAYS[@]}
 NUM_CORES="$((10#$LEN_SUBJ*10#$LEN_DAYS-1))"
@@ -32,7 +32,7 @@ for s in ${!SUBJ_LIST[@]}; do
     for d in ${!DAYS[@]}; do
         SUBJ=${SUBJ_LIST[$s]}
         DAY=${DAYS[$d]}
-        LOG_FILE=$LOG_DIR/eegpre.$SUBJ.$DAY.$DATE.txt
+        LOG_FILE=$LOG_DIR/pre.$SUBJ.$DAY.$DATE.txt
         
         printf "\n"
         echo "Subject: $SUBJ"
@@ -41,7 +41,7 @@ for s in ${!SUBJ_LIST[@]}; do
         echo "Date: $DATE"
         printf "Log file: $LOG_FILE\n"
         
-        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "eeg_preproc($SUBJ,$DAY)" > $LOG_FILE &
+        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG($SUBJ, $DAY)" > $LOG_FILE &
         (( CORENUM++ ))
         
     done

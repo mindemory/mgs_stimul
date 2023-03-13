@@ -2,6 +2,8 @@ function [p, taskMap] = initialization(p, analysis_type)
 
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 p.master = tmp(1:(tmp2(end)-1));
+addpath(genpath(p.master)); % Adding all the folders and the helper function
+
 [ret, hostname] = system('hostname');
 if ret ~= 0
     hostname = getenv('HOSTNAME');

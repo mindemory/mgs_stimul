@@ -2,7 +2,7 @@ function A03_PreprocEEG(subjID, day, steps)
 %clearvars -except subjID day; close all; clc;
 
 if nargin < 3
-    steps = {'concat', 'raweeg', 'bandpass', 'epoch'};
+    steps = {'concat', 'raweeg'};%, 'bandpass', 'epoch'};
 end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
@@ -107,6 +107,8 @@ if any(strcmp(steps, 'epoch'))
         disp('Epoched file exists, importing mat file.')
         load(fName.epoched)
     end
+
+disp('We are done! Woosh, that was some work.')
 end
 
 %%
