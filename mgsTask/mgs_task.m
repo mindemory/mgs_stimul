@@ -65,7 +65,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 0; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
+    parameters.eyetracker = 1; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -525,21 +525,21 @@ for block = start_block:end_block
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
     % check for end of block (removed on 03/06: for debugging timing)
-%     KbQueueFlush(kbx);
-%     [keyIsDown, ~] = KbQueueCheck(kbx);
-%     while ~keyIsDown
-%         showprompts(screen, 'BlockEnd', block)
-%         [keyIsDown, keyCode] = KbQueueCheck(kbx);
-%         cmndKey = KbName(keyCode);
-%     end
-%     
-%     if strcmp(cmndKey, parameters.space_key)
-%         continue;
-%     elseif strcmp(cmndKey, parameters.exit_key)
-%         sca;
-%         ListenChar(1);
-%         return;
-%     end
+    KbQueueFlush(kbx);
+    [keyIsDown, ~] = KbQueueCheck(kbx);
+    while ~keyIsDown
+        showprompts(screen, 'BlockEnd', block)
+        [keyIsDown, keyCode] = KbQueueCheck(kbx);
+        cmndKey = KbName(keyCode);
+    end
+    
+    if strcmp(cmndKey, parameters.space_key)
+        continue;
+    elseif strcmp(cmndKey, parameters.exit_key)
+        sca;
+        ListenChar(1);
+        return;
+    end
 end % end of block
 reportFile.masterTimeReport = masterTimeReport;
 reportFile.trigReport = trigReport;
