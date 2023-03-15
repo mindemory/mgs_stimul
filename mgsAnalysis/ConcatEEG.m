@@ -33,7 +33,16 @@ end
 
 hdr.nSamples = sample_count;
 hdr.nChans = 63;
-
+load('/datc/MD_TMS_EEG/data/mgs_data/sub98/day01/reportFile.mat');
+correct_trigs = repelem(reshape(reportFile.trigReport', 1, []), 2);
+for ii = 2:length(event_concat)
+    trig_val_now = correct_trigs(ii - 1);
+    if trig_val_now < 10
+        event_concat(ii).value = ['R  ' num2str(trig_val_now)];
+    else
+        event_concat(ii).value = ['R ' num2str(trig_val_now)];
+    end
+end
 % Chec
 if run_check
     disp('Checking timings for flags.')

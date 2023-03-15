@@ -50,4 +50,13 @@ parameters.respCueDuration = 0.15;
 parameters.respDuration = 0.7;
 parameters.feedbackDuration = 0.8;
 parameters.itiDuration = [1,2];
+% parameters.initDuration = 0.1;
+% parameters.sampleDuration = 0.1;
+% parameters.delayDuration = 0.2;
+% parameters.delay1Duration = parameters.delayDuration/2;
+% parameters.delay2Duration = parameters.delayDuration/2;%-parameters.delay1Duration-parameters.pulseDuration;
+% parameters.respCueDuration = 0.1;
+% parameters.respDuration = 0.1;
+% parameters.feedbackDuration = 0.1;
+% parameters.itiDuration = [0.1,0.2];
 end

@@ -61,11 +61,11 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 0; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
+        parameters.EEG = 1; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 0; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
+    parameters.eyetracker = 1; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -117,7 +117,7 @@ for block = start_block:end_block
         fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
         system(fname);
         masterTimeReport.blockstart(block) = GetSecs;
-        trigReport(block, trig_counter) =  1;
+        trigReport(block, trig_counter) =  0;
         trig_counter = trig_counter + 1;
     end
     parameters.block = num2str(block, "%02d");
@@ -208,6 +208,40 @@ for block = start_block:end_block
         trial_start = GetSecs;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % initial fixation window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        initStartTime = GetSecs;
+        % EEG marker --> Fixation
+        if parameters.EEG
+            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            system(fname);
+            masterTimeReport.init(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  1;
+            trig_counter = trig_counter + 1;
+        end
+        
+        %record to the edf file that sample is started
+        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 1);
+            Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
+            Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
+        end
+        
+        % draw sample and fixation cross
+        dotSize = tMap.dotSizeStim(trial);
+        dotCenter = tMap.stimLocpix(trial, :);
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross');
+        
+        if GetSecs - initStartTime < parameters.initDuration
+            WaitSecs(parameters.initDuration - (GetSecs-initStartTime));
+        end
+        timeReport.initDuration(trial) = GetSecs-initStartTime;
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % sample window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         sampleStartTime = GetSecs;
@@ -237,7 +271,7 @@ for block = start_block:end_block
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 1);
+            Eyelink('Message', 'XDAT %i ', trigger_code);
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
@@ -286,9 +320,9 @@ for block = start_block:end_block
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % TMS pulse window
+        % Delay2 window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        pulseStartTime = GetSecs;
+        delay2StartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
@@ -308,29 +342,6 @@ for block = start_block:end_block
             Eyelink('Message', 'XDAT %i ', 3);
         end
         
-        % Make sure that this epoch does not run for more than desired time
-        if GetSecs - pulseStartTime < parameters.pulseDuration
-            WaitSecs(parameters.pulseDuration - (GetSecs - pulseStartTime));
-        end
-        timeReport.pulseDuration(trial) = GetSecs - pulseStartTime;
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Delay2 window
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        delay2StartTime = GetSecs;
-        % EEG marker --> Delay2 begins
-        if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
-            system(fname);
-            masterTimeReport.delay2(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  4;
-            trig_counter = trig_counter + 1;
-        end
-        %record to the edf file that delay2 is started
-        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 4);
-        end
         % Draw fixation cross
         if aperture == 1
             drawTextures(parameters, screen, 'Aperture');
@@ -351,14 +362,14 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
             system(fname);
             masterTimeReport.respcue(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  5;
+            trigReport(block, trig_counter) =  4;
             trig_counter = trig_counter + 1;
         end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
         if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 5);
+            Eyelink('Message', 'XDAT %i ', 4);
             Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
         end
@@ -382,13 +393,13 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
             system(fname);
             masterTimeReport.resp(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  6;
+            trigReport(block, trig_counter) =  5;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that response is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 6);
+            Eyelink('Message', 'XDAT %i ', 5);
             Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
         end
         %draw the fixation dot
@@ -411,13 +422,13 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
             system(fname);
             masterTimeReport.feedback(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  7;
+            trigReport(block, trig_counter) =  6;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 7);
+            Eyelink('Message', 'XDAT %i ', 6);
         end
         % Get the size and location of dot
         dotSize = tMap.dotSizeSacc(trial);
@@ -448,13 +459,13 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
             system(fname);
             masterTimeReport.iti(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  8;
+            trigReport(block, trig_counter) =  7;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 8);
+            Eyelink('Message', 'XDAT %i ', 7);
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
@@ -503,7 +514,7 @@ for block = start_block:end_block
         fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
         system(fname);
         masterTimeReport.blockend(block) = GetSecs;
-        trigReport(block, trig_counter) =  9;
+        trigReport(block, trig_counter) =  8;
         %trig_counter = trig_counter + 1;
     end
     
@@ -514,21 +525,21 @@ for block = start_block:end_block
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
     % check for end of block (removed on 03/06: for debugging timing)
-%     KbQueueFlush(kbx);
-%     [keyIsDown, ~] = KbQueueCheck(kbx);
-%     while ~keyIsDown
-%         showprompts(screen, 'BlockEnd', block)
-%         [keyIsDown, keyCode] = KbQueueCheck(kbx);
-%         cmndKey = KbName(keyCode);
-%     end
-%     
-%     if strcmp(cmndKey, parameters.space_key)
-%         continue;
-%     elseif strcmp(cmndKey, parameters.exit_key)
-%         sca;
-%         ListenChar(1);
-%         return;
-%     end
+    KbQueueFlush(kbx);
+    [keyIsDown, ~] = KbQueueCheck(kbx);
+    while ~keyIsDown
+        showprompts(screen, 'BlockEnd', block)
+        [keyIsDown, keyCode] = KbQueueCheck(kbx);
+        cmndKey = KbName(keyCode);
+    end
+    
+    if strcmp(cmndKey, parameters.space_key)
+        continue;
+    elseif strcmp(cmndKey, parameters.exit_key)
+        sca;
+        ListenChar(1);
+        return;
+    end
 end % end of block
 reportFile.masterTimeReport = masterTimeReport;
 reportFile.trigReport = trigReport;

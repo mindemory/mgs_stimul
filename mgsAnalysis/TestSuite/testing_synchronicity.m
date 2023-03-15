@@ -4,6 +4,7 @@ load('/datc/MD_TMS_EEG/analysis/sub98/day01/EEGflags.mat');
 
 flags.type(2:2:end) = [];
 flags.num(2:2:end) = [];
+flags.trig = reshape(reportFile.trigReport', 1, []);
 flags.sample(2:2:end) = [];
 flags.time(2:2:end) = [];
 flags.matlabTime = zeros(1, 3220);

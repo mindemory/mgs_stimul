@@ -2,7 +2,7 @@ function A03_PreprocEEG(subjID, day, steps)
 %clearvars -except subjID day; close all; clc;
 
 if nargin < 3
-    steps = {'concat', 'raweeg'};%, 'bandpass', 'epoch'};
+    steps = {'concat', 'raweeg', 'epoch'};%, 'bandpass', 'epoch'};
 end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
@@ -96,7 +96,7 @@ if any(strcmp(steps, 'epoch'))
         cfg.dataset = fName.concat;
         cfg.trialfun = 'ft_trialfun_general';
         cfg.trialdef.eventtype = 'Stimulus';
-        cfg.trialdef.eventvalue = {'S  2'};
+        cfg.trialdef.eventvalue = {'R  1'};
         cfg.trialdef.prestim = 1;
         cfg.trialdef.poststim = 8;
         cfg = ft_definetrial(cfg);
@@ -107,7 +107,7 @@ if any(strcmp(steps, 'epoch'))
         disp('Epoched file exists, importing mat file.')
         load(fName.epoched)
     end
-
+end
 disp('We are done! Woosh, that was some work.')
 end
 
