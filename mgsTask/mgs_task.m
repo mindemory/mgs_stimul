@@ -54,8 +54,9 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     master_dir = curr_dir(1:(filesepinds(end-1)-1)); 
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
-    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers/EEG'];
+    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
     addpath(genpath(trigger_path));
+    trigger_path_EEG = [trigger_path '/EEG'];
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         end_block = 2; % 2 blocks for practice session
@@ -114,7 +115,7 @@ for block = start_block:end_block
     trig_counter = 1;
     % EEG marker --> block begins
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/eegflag0.py'];
+        fname = ['sudo python3 ' trigger_path_EEG '/eegflag0.py'];
         system(fname);
         masterTimeReport.blockstart(block) = GetSecs;
         trigReport(block, trig_counter) =  0;
@@ -212,7 +213,7 @@ for block = start_block:end_block
         initStartTime = GetSecs;
         % EEG marker --> Fixation
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag1.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag1.py'];
             system(fname);
             masterTimeReport.init(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  1;
@@ -249,18 +250,18 @@ for block = start_block:end_block
             if strcmp(tMap.condition, 'pro')
                 if tMap.stimVF(trial) == 1
                     trigger_code = 11;
-                    fname = ['sudo python3 ' trigger_path '/eegflag11.py'];
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag11.py'];
                 elseif tMap.stimVF(trial) == 0
                     trigger_code = 12;
-                    fname = ['sudo python3 ' trigger_path '/eegflag12.py'];
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag12.py'];
                 end
             elseif strcmp(tMap.condition, 'anti')
                 if tMap.stimVF(trial) == 1
                     trigger_code = 13;
-                    fname = ['sudo python3 ' trigger_path '/eegflag13.py'];
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag13.py'];
                 elseif tMap.stimVF(trial) == 0
                     trigger_code = 14;
-                    fname = ['sudo python3 ' trigger_path '/eegflag14.py'];
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag14.py'];
                 end
             end
             system(fname);
@@ -296,7 +297,7 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag2.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag2.py'];
             system(fname);
             masterTimeReport.delay1(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  2;
@@ -326,7 +327,7 @@ for block = start_block:end_block
         delay2StartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag3.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag3.py'];
             system(fname);
             masterTimeReport.tms(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  3;
@@ -360,7 +361,7 @@ for block = start_block:end_block
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag4.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag4.py'];
             system(fname);
             masterTimeReport.respcue(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  4;
@@ -391,7 +392,7 @@ for block = start_block:end_block
         respStartTime = GetSecs;
         % EEG marker --> response begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag5.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag5.py'];
             system(fname);
             masterTimeReport.resp(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  5;
@@ -420,7 +421,7 @@ for block = start_block:end_block
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag6.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag6.py'];
             system(fname);
             masterTimeReport.feedback(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  6;
@@ -457,7 +458,7 @@ for block = start_block:end_block
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/eegflag7.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag7.py'];
             system(fname);
             masterTimeReport.iti(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  7;
@@ -512,7 +513,7 @@ for block = start_block:end_block
     end
     
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/eegflag8.py'];
+        fname = ['sudo python3 ' trigger_path_EEG '/eegflag8.py'];
         system(fname);
         masterTimeReport.blockend(block) = GetSecs;
         trigReport(block, trig_counter) =  8;
