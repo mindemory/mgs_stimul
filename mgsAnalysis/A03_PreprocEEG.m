@@ -2,7 +2,7 @@ function A03_PreprocEEG(subjID, day, steps)
 %clearvars -except subjID day; close all; clc;
 
 if nargin < 3
-    steps = {'concat', 'raweeg', 'epoch'};%, 'bandpass', 'epoch'};
+    steps = {'concat', 'raweeg'};%, 'bandpass', 'epoch'};
 end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
