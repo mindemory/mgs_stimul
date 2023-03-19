@@ -526,35 +526,35 @@ for block = start_block:end_block
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
-    % check for end of block (removed on 03/06: for debugging timing)
-%     KbQueueFlush(kbx);
-%     [keyIsDown, ~] = KbQueueCheck(kbx);
-%     while ~keyIsDown
-%         showprompts(screen, 'BlockEnd', block)
-%         [keyIsDown, keyCode] = KbQueueCheck(kbx);
-%         cmndKey = KbName(keyCode);
-%     end
-%     
-%     if strcmp(cmndKey, parameters.space_key)
-%         continue;
-%     elseif strcmp(cmndKey, parameters.exit_key)
-%         % end Teensy handshake
-%         if parameters.TMS
-%             TMS('Disable', s);
-%             TMS('Close', s);
-%         end
-%         showprompts(screen, 'EndExperiment');
-%         WaitSecs(2);
-%         ListenChar(1);
-%         sca;
-%         
-%         % Save EEG flags
-%         reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')]; 
-%         reportFile.masterTimeReport = masterTimeReport;
-%         reportFile.trigReport = trigReport;
-%         save(reportFname,'reportFile')
-%         return;
-%     end
+    % check for end of block
+    KbQueueFlush(kbx);
+    [keyIsDown, ~] = KbQueueCheck(kbx);
+    while ~keyIsDown
+        showprompts(screen, 'BlockEnd', block)
+        [keyIsDown, keyCode] = KbQueueCheck(kbx);
+        cmndKey = KbName(keyCode);
+    end
+    
+    if strcmp(cmndKey, parameters.space_key)
+        continue;
+    elseif strcmp(cmndKey, parameters.exit_key)
+        % end Teensy handshake
+        if parameters.TMS
+            TMS('Disable', s);
+            TMS('Close', s);
+        end
+        showprompts(screen, 'EndExperiment');
+        WaitSecs(2);
+        ListenChar(1);
+        sca;
+        
+        % Save EEG flags
+        reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')]; 
+        reportFile.masterTimeReport = masterTimeReport;
+        reportFile.trigReport = trigReport;
+        save(reportFname,'reportFile')
+        return;
+    end
 end % end of block
 
 % end Teensy handshake

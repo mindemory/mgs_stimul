@@ -1,12 +1,7 @@
 clear; close all; clc;
-load('/datc/MD_TMS_EEG/data/mgs_data/sub98/day01/reportFile.mat');
-load('/datc/MD_TMS_EEG/analysis/sub98/day01/EEGflags.mat');
+load('/datc/MD_TMS_EEG/data/mgs_data/sub98/day03/reportFile01_10.mat');
+load('/datc/MD_TMS_EEG/analysis/sub98/day03/EEGflags.mat');
 
-flags.type(2:2:end) = [];
-flags.num(2:2:end) = [];
-flags.trig = reshape(reportFile.trigReport', 1, []);
-flags.sample(2:2:end) = [];
-flags.time(2:2:end) = [];
 flags.matlabTime = zeros(1, 3220);
 eegTime = reportFile.masterTimeReport;
 blocks = 10;
@@ -25,10 +20,10 @@ for block = 1:blocks
     flags.matlabTime(counter) = eegTime.blockend(block);
     counter = counter+1;
 end
-blockstartsample = [1];%, 323, 645, 967, 1289, 1611, 1933, 2255, 2577, 2899, 3221];
+blockstartsample = [1, 323, 645, 967, 1289, 1611, 1933, 2255, 2577, 2899, 3221];
 flags.EEGsync = zeros(1, 3220);
 flags.matlabsync = zeros(1, 3220);
-for ii = 1:3218
+for ii = 1:3220
     if ismember(ii, blockstartsample)
         t0EEG = flags.sample(ii);
         t0Matlab = flags.matlabTime(ii);

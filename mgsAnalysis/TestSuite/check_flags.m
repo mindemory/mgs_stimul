@@ -9,9 +9,7 @@ function flags = check_flags(hdr, event_concat)
 
     % Extracting flags and sample stamps from event_concat file
     flag_list = [event_concat.value];
-    flag_list = flag_list(2:end); % Eliminating the start flag created when creating a file
-    sample_list = [event_concat.sample];
-    sample_list = sample_list(2:end); % Eliminating the start flag created when creating a file
+    sample_list = [event_concat.sample];    
     
     % Make sure the flags are correct, flag_list should be a multiple of 4,
     % since all flags are of form 'Sxxx' or 'Rxxx'

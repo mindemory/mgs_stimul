@@ -96,7 +96,7 @@ if any(strcmp(steps, 'epoch'))
         cfg.dataset = fName.concat;
         cfg.trialfun = 'ft_trialfun_general';
         cfg.trialdef.eventtype = 'Stimulus';
-        cfg.trialdef.eventvalue = {'R  1'};
+        cfg.trialdef.eventvalue = {'S  1'};
         cfg.trialdef.prestim = 1;
         cfg.trialdef.poststim = 8;
         cfg = ft_definetrial(cfg);

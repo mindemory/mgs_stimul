@@ -9,7 +9,6 @@ end
 delete([p.EEGData '/._*'])
 fNames = dir([p.EEGData '/*.vhdr']);
 
-data_concat = NaN(63,1);
 sample_count = 0;
 for ii=1:length(fNames)
     EEGfile = [p.EEGData filesep fNames(ii).name];
@@ -28,22 +27,44 @@ for ii=1:length(fNames)
         event_concat = [event_concat, evt];
     end
     sample_count = sample_count + hdr.nSamples;
-    data_concat = [data_concat, dat(1:63, :)];
-end
-
-hdr.nSamples = sample_count;
-hdr.nChans = 63;
-load('/datc/MD_TMS_EEG/data/mgs_data/sub98/day01/reportFile.mat');
-correct_trigs = repelem(reshape(reportFile.trigReport', 1, []), 2);
-for ii = 2:length(event_concat)
-    trig_val_now = correct_trigs(ii - 1);
-    if trig_val_now < 10
-        event_concat(ii).value = ['R  ' num2str(trig_val_now)];
+    if ii == 1
+        data_concat = dat;
     else
-        event_concat(ii).value = ['R ' num2str(trig_val_now)];
+        data_concat = [data_concat, dat];
+    end
+    %data_concat = [data_concat, dat(1:63, :)];
+end
+hdr.nSamples = sample_count;
+%hdr.nChans = 63;
+
+% Fix the redundant flag issue (Added on 03/17/2023)
+drop_evts = [];
+for evt_this = 1:length(event_concat)
+    % Eliminate New Segment elements
+    if strcmp(event_concat(evt_this).type, 'New Segment')
+        drop_evts = [drop_evts, evt_this];
+    end
+    % Remove S 15 and R 15 flags, coming from closing the port
+    if strcmp(event_concat(evt_this).value, 'S 15') || strcmp(event_concat(evt_this).value, 'R 15')
+        drop_evts = [drop_evts, evt_this];
     end
 end
-% Chec
+event_concat(drop_evts) = [];
+
+% Remove the flags that are repeated
+drop_evts = [];
+for evt_this = 1:length(event_concat)
+    if evt_this > 1
+        if strcmp(event_concat(evt_this).value, event_concat(evt_this-1).value)
+            drop_evts = [drop_evts, evt_this];
+        end
+    end
+end
+event_concat(drop_evts) = [];
+
+disp(['We have a total of ' num2str(length(event_concat)) ' flags in this dataset']);
+
+% Check timing of flags
 if run_check
     disp('Checking timings for flags.')
     flags = check_flags(hdr, event_concat);
