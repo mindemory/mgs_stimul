@@ -56,12 +56,13 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     % Path to MarkStim
     trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
     addpath(genpath(trigger_path));
+    trigger_path_EEG = [trigger_path '/EEG'];
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 1; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
+        parameters.EEG = 0; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
@@ -92,7 +93,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 1; % keeping TMS of for debugging (03/06/2023)
+    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
@@ -114,7 +115,7 @@ for block = start_block:end_block
     trig_counter = 1;
     % EEG marker --> block begins
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+        fname = ['sudo python3 ' trigger_path_EEG '/eegflag0.py'];
         system(fname);
         masterTimeReport.blockstart(block) = GetSecs;
         trigReport(block, trig_counter) =  0;
@@ -129,7 +130,6 @@ for block = start_block:end_block
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
         parameters = initFiles(parameters, screen, datapath, kbx, block);
-        
         tMap = taskMap(1, block);
     end
     
@@ -213,7 +213,7 @@ for block = start_block:end_block
         initStartTime = GetSecs;
         % EEG marker --> Fixation
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag1.py'];
             system(fname);
             masterTimeReport.init(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  1;
@@ -222,10 +222,8 @@ for block = start_block:end_block
         
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /fixation"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 1);
-            Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
-            Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         
         % draw sample and fixation cross
@@ -250,18 +248,20 @@ for block = start_block:end_block
             if strcmp(tMap.condition, 'pro')
                 if tMap.stimVF(trial) == 1
                     trigger_code = 11;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag11.py'];
                 elseif tMap.stimVF(trial) == 0
                     trigger_code = 12;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag12.py'];
                 end
             elseif strcmp(tMap.condition, 'anti')
                 if tMap.stimVF(trial) == 1
                     trigger_code = 13;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag13.py'];
                 elseif tMap.stimVF(trial) == 0
                     trigger_code = 14;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag14.py'];
                 end
             end
-            
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
             system(fname);
             masterTimeReport.sample(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  trigger_code;
@@ -295,7 +295,7 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag2.py'];
             system(fname);
             masterTimeReport.delay1(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  2;
@@ -325,7 +325,7 @@ for block = start_block:end_block
         delay2StartTime = GetSecs;
         % EEG marker --> TMS pulse begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag3.py'];
             system(fname);
             masterTimeReport.tms(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  3;
@@ -338,7 +338,7 @@ for block = start_block:end_block
         
         %record to the edf file that noise mask is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /tmsPulse"', trial, trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 3);
         end
         
@@ -359,7 +359,7 @@ for block = start_block:end_block
         respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag4.py'];
             system(fname);
             masterTimeReport.respcue(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  4;
@@ -390,7 +390,7 @@ for block = start_block:end_block
         respStartTime = GetSecs;
         % EEG marker --> response begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag5.py'];
             system(fname);
             masterTimeReport.resp(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  5;
@@ -400,7 +400,6 @@ for block = start_block:end_block
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 5);
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /saccadeCoords"', trial, trialNum);
         end
         %draw the fixation dot
         if aperture == 1
@@ -419,7 +418,7 @@ for block = start_block:end_block
         feedbackStartTime = GetSecs;
         % EEG marker --> feedback begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag6.py'];
             system(fname);
             masterTimeReport.feedback(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  6;
@@ -456,7 +455,7 @@ for block = start_block:end_block
         itiStartTime = GetSecs;
         % EEG marker --> ITI begins
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag7.py'];
             system(fname);
             masterTimeReport.iti(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  7;
@@ -511,7 +510,7 @@ for block = start_block:end_block
     end
     
     if parameters.EEG
-        fname = ['sudo python3 ' trigger_path '/trigger_send.py'];
+        fname = ['sudo python3 ' trigger_path_EEG '/eegflag8.py'];
         system(fname);
         masterTimeReport.blockend(block) = GetSecs;
         trigReport(block, trig_counter) =  8;
@@ -524,7 +523,7 @@ for block = start_block:end_block
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
-    % check for end of block (removed on 03/06: for debugging timing)
+    % check for end of block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
     while ~keyIsDown
@@ -536,14 +535,25 @@ for block = start_block:end_block
     if strcmp(cmndKey, parameters.space_key)
         continue;
     elseif strcmp(cmndKey, parameters.exit_key)
-        sca;
+        % end Teensy handshake
+        if parameters.TMS
+            TMS('Disable', s);
+            TMS('Close', s);
+        end
+        showprompts(screen, 'EndExperiment');
+        WaitSecs(2);
         ListenChar(1);
+        sca;
+        
+        % Save EEG flags
+        reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')]; 
+        reportFile.masterTimeReport = masterTimeReport;
+        reportFile.trigReport = trigReport;
+        save(reportFname,'reportFile')
         return;
     end
 end % end of block
-reportFile.masterTimeReport = masterTimeReport;
-reportFile.trigReport = trigReport;
-save([datapath '/reportFile.mat'],'reportFile')
+
 % end Teensy handshake
 if parameters.TMS
     TMS('Disable', s);
@@ -552,6 +562,12 @@ end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
 WaitSecs(2);
-Priority(0);
 sca;
+Priority(0);
+
+% Save EEG flags
+reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')]; 
+reportFile.masterTimeReport = masterTimeReport;
+reportFile.trigReport = trigReport;
+save(reportFname,'reportFile')
 end

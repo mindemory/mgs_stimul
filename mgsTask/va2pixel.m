@@ -6,8 +6,3 @@ rho = parameters.viewingDistance;
 r_cm = rho * tand(phi/2);
 r_pix = round(r_cm/screen.pixSize); % convert cm to pixels
 end
-
-
-
-
-
