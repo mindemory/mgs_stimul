@@ -225,6 +225,8 @@ for block = start_block:end_block
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /fixation"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 1);
+            Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
+            Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         
         % draw sample and fixation cross
