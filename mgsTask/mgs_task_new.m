@@ -108,7 +108,6 @@ end
 trigReport = zeros(10, 322);
 masterTimeReport = struct;
 
-eyetrack_errors = struct;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,8 +224,6 @@ for block = start_block:end_block
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /fixation"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 1);
-            Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
-            Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
         
         % draw sample and fixation cross
@@ -237,36 +234,6 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCross');
         
-        gxold = screen.xCenter;
-        gyold = screen.yCenter;
-        while GetSecs-initStartTime < parameters.initDuration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % see if there was a fixation break
-                if (gx~=gxold || gy~=gyold)
-                    va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                    if va_now > 1
-                        eyetrack_errors.fixation(block, trial) = 1;
-                    else
-                        eyetrack_errors.fixation(block, trial) = 0;
-                    end
-                end
-                gxold = gx;
-                gyold = gy;
-            end    
-        end
-        clear gx gy gxold gyold evt
         if GetSecs - initStartTime < parameters.initDuration
             WaitSecs(parameters.initDuration - (GetSecs-initStartTime));
         end
@@ -277,21 +244,24 @@ for block = start_block:end_block
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         sampleStartTime = GetSecs;
         % EEG marker --> Sample begins
-        if strcmp(tMap.condition, 'pro')
-            if tMap.stimVF(trial) == 1
-                trigger_code = 11;
-            elseif tMap.stimVF(trial) == 0
-                trigger_code = 12;
-            end
-        elseif strcmp(tMap.condition, 'anti')
-            if tMap.stimVF(trial) == 1
-                trigger_code = 13;
-            elseif tMap.stimVF(trial) == 0
-                trigger_code = 14;
-            end
-        end
         if parameters.EEG
-            fname = ['sudo python3 ' trigger_path_EEG '/eegflag' num2str(trigger_code) '.py'];
+            if strcmp(tMap.condition, 'pro')
+                if tMap.stimVF(trial) == 1
+                    trigger_code = 11;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag11.py'];
+                elseif tMap.stimVF(trial) == 0
+                    trigger_code = 12;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag12.py'];
+                end
+            elseif strcmp(tMap.condition, 'anti')
+                if tMap.stimVF(trial) == 1
+                    trigger_code = 13;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag13.py'];
+                elseif tMap.stimVF(trial) == 0
+                    trigger_code = 14;
+                    fname = ['sudo python3 ' trigger_path_EEG '/eegflag14.py'];
+                end
+            end
             system(fname);
             masterTimeReport.sample(block, trial) = GetSecs;
             trigReport(block, trig_counter) =  trigger_code;
@@ -314,37 +284,6 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
         drawTextures(parameters, screen, 'FixationCross');
-        
-        gxold = screen.xCenter;
-        gyold = screen.yCenter;
-        while GetSecs-sampleStartTime < parameters.sampleDuration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % see if there was a fixation break
-                if (gx~=gxold || gy~=gyold)
-                    va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                    if va_now > 1
-                        eyetrack_errors.sample(block, trial) = 1;
-                    else
-                        eyetrack_errors.sample(block, trial) = 0;
-                    end
-                end
-                gxold = gx;
-                gyold = gy;
-            end    
-        end
-        clear gx gy gxold gyold evt
         
         if GetSecs - sampleStartTime < parameters.sampleDuration
             WaitSecs(parameters.sampleDuration - (GetSecs-sampleStartTime));
@@ -374,37 +313,6 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'Aperture');
         end
         drawTextures(parameters, screen, 'FixationCross');
-        
-        gxold = screen.xCenter;
-        gyold = screen.yCenter;
-        while GetSecs-delay1StartTime < parameters.delay1Duration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % see if there was a fixation break
-                if (gx~=gxold || gy~=gyold)
-                    va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                    if va_now > 1
-                        eyetrack_errors.delay1(block, trial) = 1;
-                    else
-                        eyetrack_errors.delay1(block, trial) = 0;
-                    end
-                end
-                gxold = gx;
-                gyold = gy;
-            end    
-        end
-        clear gx gy gxold gyold evt
         
         if GetSecs - delay1StartTime < parameters.delay1Duration
             WaitSecs(parameters.delay1Duration - (GetSecs-delay1StartTime));
@@ -440,46 +348,15 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCross');
         
-        gxold = screen.xCenter;
-        gyold = screen.yCenter;
-        while GetSecs-delay2StartTime < parameters.delay2Duration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % see if there was a fixation break
-                if (gx~=gxold || gy~=gyold)
-                    va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                    if va_now > 1
-                        eyetrack_errors.delay2(block, trial) = 1;
-                    else
-                        eyetrack_errors.delay2(block, trial) = 0;
-                    end
-                end
-                gxold = gx;
-                gyold = gy;
-            end    
-        end
-        clear gx gy gxold gyold evt
-        
         if GetSecs - delay2StartTime < parameters.delay2Duration
             WaitSecs(parameters.delay2Duration - (GetSecs - delay2StartTime));
         end
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response window
+        % Response Cue window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        respStartTime = GetSecs;
+        respCueStartTime = GetSecs;
         % EEG marker --> Response cue begins
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag4.py'];
@@ -491,7 +368,7 @@ for block = start_block:end_block
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
         if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /responseCue"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 4);
             Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
             Eyelink('Message', 'TarY %s ', num2str(saccLoc(2)));
@@ -502,99 +379,38 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
         
-        %gxold = screen.xCenter;
-        %gyold = screen.yCenter;
-        counter = 1;
-        %eyetrack_errors.resp_gx(block, trial) = [0];
-        %eyetrack_errors.resp_gy(block, trial) = [0];
-        while GetSecs-respStartTime < parameters.respDuration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % store gx and gy values here
-                eyetrack_errors.resp_gx(block, trial, counter) = gx;
-                eyetrack_errors.resp_gy(block, trial, counter) = gy;
-
-                %gxold = gx;
-                %gyold = gy;
-            end
-            counter = counter+1;
+        if GetSecs - respCueStartTime < parameters.respCueDuration
+            WaitSecs(parameters.respCueDuration - (GetSecs - respCueStartTime));
         end
-        clear gx gy gxold gyold evt counter
+        timeReport.respCueDuration(trial) = GetSecs - respCueStartTime;
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Response window
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        respStartTime = GetSecs;
+        % EEG marker --> response begins
+        if parameters.EEG
+            fname = ['sudo python3 ' trigger_path_EEG '/eegflag5.py'];
+            system(fname);
+            masterTimeReport.resp(block, trial) = GetSecs;
+            trigReport(block, trig_counter) =  5;
+            trig_counter = trig_counter + 1;
+        end
+        %record to the edf file that response is started
+        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+            Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
+            Eyelink('Message', 'XDAT %i ', 5);
+        end
+        %draw the fixation dot
+        if aperture == 1
+            drawTextures(parameters, screen, 'Aperture');
+        end
+        drawTextures(parameters, screen, 'FixationCross');
         
         if GetSecs - respStartTime < parameters.respDuration
             WaitSecs(parameters.respDuration - (GetSecs - respStartTime));
         end
         timeReport.respDuration(trial) = GetSecs - respStartTime;
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response window
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         respStartTime = GetSecs;
-%         % EEG marker --> response begins
-%         if parameters.EEG
-%             fname = ['sudo python3 ' trigger_path_EEG '/eegflag5.py'];
-%             system(fname);
-%             masterTimeReport.resp(block, trial) = GetSecs;
-%             trigReport(block, trig_counter) =  5;
-%             trig_counter = trig_counter + 1;
-%         end
-%         %record to the edf file that response is started
-%         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-%             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
-%             Eyelink('Message', 'XDAT %i ', 5);
-%         end
-%         %draw the fixation dot
-%         if aperture == 1
-%             drawTextures(parameters, screen, 'Aperture');
-%         end
-%         drawTextures(parameters, screen, 'FixationCross');
-%         
-%         gxold = screen.xCenter;
-%         gyold = screen.yCenter;
-%         while GetSecs-initStartTime < parameters.initDuration * 0.9
-%             if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-%                 evt = Eyelink('NewestFloatSample');
-%                 if el.eye_used ~= -1
-%                     gx = evt.gx(el.eye_used+1);
-%                     gy = evt.gy(el.eye_used+1);
-%                     % In case of blinks or something, make gx and gy back
-%                     % to center, crude fix
-%                     if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-%                         gx = screen.xCenter;
-%                         gy = screen.yCenter;
-%                     end
-%                 end
-%                 
-%                 % see if there was a fixation break
-%                 if (gx~=gxold || gy~=gyold)
-%                     va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-%                     if va_now > 1
-%                         eyetrack_errors.fixation(block, trial) = 1;
-%                     else
-%                         eyetrack_errors.fixation(block, trial) = 0;
-%                     end
-%                 end
-%                 gxold = gx;
-%                 gyold = gy;
-%             end    
-%         end
-%         clear gx gy gxold gyold evt
-%         
-%         if GetSecs - respStartTime < parameters.respDuration
-%             WaitSecs(parameters.respDuration - (GetSecs - respStartTime));
-%         end
-%         timeReport.respDuration(trial) = GetSecs - respStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Feedback window
@@ -613,7 +429,6 @@ for block = start_block:end_block
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 6);
         end
-        
         % Get the size and location of dot
         dotSize = tMap.dotSizeSacc(trial);
         dotCenter = tMap.saccLocpix(trial, :);
@@ -625,38 +440,7 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
         drawTextures(parameters, screen, 'FixationCross');
-        
-        gxold = screen.xCenter;
-        gyold = screen.yCenter;
-        while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.9
-            if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-                evt = Eyelink('NewestFloatSample');
-                if el.eye_used ~= -1
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-                end
-                
-                % see if subject made saccade back to feedback
-                if (gx~=gxold || gy~=gyold)
-                    va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
-                    if va_now > 1
-                        eyetrack_errors.feedback(block, trial) = 1;
-                    else
-                        eyetrack_errors.feedback(block, trial) = 0;
-                    end
-                end
-                gxold = gx;
-                gyold = gy;
-            end    
-        end
-        clear gx gy gxold gyold evt
-        
+
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
             WaitSecs(parameters.feedbackDuration - (GetSecs - feedbackStartTime));
         end
@@ -766,10 +550,6 @@ for block = start_block:end_block
         reportFile.masterTimeReport = masterTimeReport;
         reportFile.trigReport = trigReport;
         save(reportFname,'reportFile')
-        
-        % Save Eyetrack errors
-        eyetrackFname = [datapath '/eyetrackerrorsFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')]; 
-        save(eyetrackFname,'eyetrack_errors')
         return;
     end
 end % end of block
