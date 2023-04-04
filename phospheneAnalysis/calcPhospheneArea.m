@@ -133,7 +133,7 @@ for coilInd = 1:length(LocInds)
         stimVFPractice = [ones(size(stimLocSetInPractice, 1), 1); zeros(size(stimLocSetOutPractice, 1), 1)];
         stimVFPractice = stimVFPractice(trialIndsPractice);
 
-        if blockPractice == 1
+        if mod(blockPractice, 2) == 1 % odd blocks in practice are pro
             condthisBlockPractice = 'pro';
             saccLocpixPractice = stimLocpixPractice;
         else
