@@ -1,4 +1,4 @@
-function saveTaskMap(subjID, session, coilLocInd, anti_type)
+function S02_saveTaskMap(subjID, session, coilLocInd, anti_type)
 clearvars -except subjID session coilLocInd anti_type; close all; clc;
 if nargin < 4
     anti_type = 'mirror';

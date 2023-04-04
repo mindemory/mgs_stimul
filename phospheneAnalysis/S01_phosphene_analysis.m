@@ -1,4 +1,4 @@
-function phosphene_analysis(subjID, session, anti_type)
+function S01_phosphene_analysis(subjID, session, anti_type)
 clearvars -except subjID session anti_type; close all; clc;
 % NOTE: This code can only run on Syndrome
 warning('off','all')
