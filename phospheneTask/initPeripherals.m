@@ -18,7 +18,7 @@ if strcmp(hostname, 'syndrome')
     parameters.newloc_key = '2';
     parameters.quit_key = '3';
     
-    %% Ubuntu Optimized
+%% Ubuntu Optimized
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu does not support PsychHID. Instead GetKeyboardIndices and
     % GetGamepadIndices is used.
@@ -43,7 +43,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     parameters.newloc_key = '2';
     parameters.quit_key = '3';
     
-    %% Undetected device
+%% Undetected device
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
 end
@@ -66,4 +66,8 @@ end
 % create keyboard and mouse events queue
 KbQueueCreate(kbx);
 KbQueueCreate(mbx);
+
+% Response keys of interest
+parameters.space_key = 'space';
+parameters.exit_key = 'ESCAPE';
 end

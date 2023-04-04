@@ -5,8 +5,11 @@ close all; clc;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize parameters
+subjID = num2str(subjID, "%02d"); % convert subjID to string
+parameters = loadParameters(subjID);
 if nargin < 4
-    TMSamp = 52; % default TMS intensity value
+    TMSamp = 30; % default TMS amplitude of 30% MSO
 end
 if nargin < 5
     prac_status = 0; % 0: actual session, 1: practice session
@@ -24,10 +27,6 @@ if ret ~= 0
     hostname = getenv('HOSTNAME');
 end
 hostname = strtrim(hostname);
-
-% Initialize parameters
-subjID = num2str(subjID, "%02d"); % convert subjID to string
-parameters = loadParameters(subjID);
 
 % Initialize PTB and EEG/TMS/Eyetracking parameters
 if strcmp(hostname, 'syndrome') % Syndrome is meant for debugging
@@ -62,11 +61,11 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 2; % 2 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 0; % set to 0 if there is no EEG recording (turned to 0 for debugging, 03/06/2023)
+        parameters.EEG = 1;
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
-    parameters.eyetracker = 1; % set to 0 if there is no eyetracker (turned to 0 for debugging, 03/06/2023)
+    parameters.eyetracker = 1; 
     PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
@@ -93,7 +92,7 @@ screen = initScreen(parameters);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % detect the MagVenture and perform handshake.
 if taskMap(1).TMScond == 1 % determine if this is a TMS task
-    parameters.TMS = 0; % keeping TMS of for debugging (03/06/2023)
+    parameters.TMS = 1; 
 elseif taskMap(1).TMScond == 0
     parameters.TMS = 0;
 end
@@ -671,7 +670,6 @@ for block = start_block:end_block
         system(fname);
         masterTimeReport.blockend(block) = GetSecs;
         trigReport(block, trig_counter) =  7;
-        %trig_counter = trig_counter + 1;
     end
     
     % save timeReport
@@ -715,7 +713,7 @@ for block = start_block:end_block
     end
 end % end of block
 
-% end Teensy handshake
+% Close TMS Port and End Experiment
 if parameters.TMS
     TMS('Disable', s);
     TMS('Close', s);

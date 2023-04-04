@@ -1,4 +1,4 @@
-function vbl = showprompts(screen, prompt_name, num, cond)
+function showprompts(screen, prompt_name, num, cond)
 % Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
 switch prompt_name
     case 'WelcomeWindow'

@@ -2,7 +2,6 @@ function parameters = initFiles(parameters, screen, data_path, kbx, block)
 % Create all necessary directories (a directory for each subject, containg Results and TaskMaps)
 % specify the directories to be used
 block_dir = [data_path '/block' num2str(block, "%02d")];
-% eye_dir = [block_dir '/EyeData'];
 
 % Create directories and sub-directories
 if exist(data_path,'dir') ~= 7 % if the "data_path" directory doesn't exist, create one
@@ -26,17 +25,12 @@ else
     mkdir(block_dir);
 end
 
-% if exist(eye_dir,'dir')~=7 % if the "eye_dir" directory doesn't exist, create one
-%     mkdir(eye_dir);
-% end
-
 % File names that will be saved.
 date_time = datestr(now, 'mmddyy_HHMM');
 edfFile = [parameters.subject parameters.block date_time(1:4)];
 matFile = ['subj' parameters.subject '_block' parameters.block '.mat'];
 
 parameters.block_dir = block_dir;
-% parameters.eye_dir = eye_dir;
 parameters.edfFile = edfFile;
 parameters.matFile = matFile;
 end

@@ -1,4 +1,5 @@
 function showprompts(screen, prompt_name)
+% Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
 font_size = 30;
 text_color = [128 0 0];
 switch prompt_name
@@ -14,6 +15,8 @@ switch prompt_name
         text_color = screen.black;
     case 'NoPhosphene'
         text = 'subject reported no phosphene';
+    case 'SessionExists'
+        text = 'Session already exists. Press SPACE if you still want to continue, or ESCAPE to quit.';
     case 'Quit'
         text = 'program terminated by the experimenter!';
 end

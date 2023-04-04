@@ -22,15 +22,19 @@ function recordPhosphenes(subjID, session, TMSamp)
 
 % The code runs till quit (q) is pressed by the experimenter. 
 
-%% Initialization
-clearvars -except subjID session TMSamp; close all; clc;
-
+% Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
+clearvars -except subjID session TMSamp; 
+close all; clc;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize parameters
+subjID = num2str(subjID, '%02d');
+session = num2str(session, '%02d');
 if nargin < 3
     TMSamp = 30; % default TMS amplitude of 30% MSO
 end
-
-subjID = num2str(subjID, '%02d');
-session = num2str(session, '%02d');
+parameters = loadParameters(subjID, session);
 
 % Check the system name to ensure correct paths are added.
 [ret, hostname] = system('hostname');
@@ -39,13 +43,6 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
-curr_dir = pwd;
-filesepinds = strfind(curr_dir,filesep);
-master_dir = curr_dir(1:(filesepinds(end-1)-1));
-trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
-addpath(genpath(trigger_path));
-
-parameters = loadParameters(subjID, session);
 % Load PTB and toolboxes
 if strcmp(hostname, 'syndrome')
     % Syndrome Mac
@@ -53,31 +50,40 @@ if strcmp(hostname, 'syndrome')
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     data_path = '/datc/MD_TMS_EEG/data/phosphene_data';
+    Screen('Preference','SkipSyncTests', 1)
 elseif strcmp(hostname, 'tmsubuntu')
     % Ubuntu Stimulus Display
     addpath(genpath('/usr/share/psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.TMS = 1; % set to 0 if there is no TMS stimulation
+    curr_dir = pwd;
+    filesepinds = strfind(curr_dir,filesep);
+    master_dir = curr_dir(1:(filesepinds(end-1)-1));
+    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
+    addpath(genpath(trigger_path));
     data_path = [master_dir filesep 'data/phosphene_data'];
+    PsychDefaultSetup(1);
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
+    return;
 end
-addpath(genpath(data_path));
-sca;
-Screen('Preference','SkipSyncTests', 1)
 
-% initialize parameters, screen parameters and detect peripherals
+% Initialize data paths
+addpath(genpath(data_path));
+
+% Initialize screen and peripherals
 screen = initScreen(parameters);
 [kbx, mbx, parameters] = initPeripherals(parameters, hostname);
 
-% store screen and subject parameters in tmsRtnTpy
+% Store screen and subject parameters in tmsRtnTpy
 tmsRtnTpy.Params.ID = ['sub' subjID '_sess' session];
 tmsRtnTpy.Params.screen = screen;
 tmsRtnTpy.Params.taskParams = parameters;
 
-%% TEENSY CHECK!
-% detect the TeensyTrigger and perform handshake make sure that the orange 
-% light is turned on! If not, press the black button on Teensy Trigger.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Open TMS Port
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% detect the MagVenture and perform handshake.
 if parameters.TMS > 0
     s = TMS('Open');
     TMS('Enable', s);
@@ -85,23 +91,27 @@ if parameters.TMS > 0
     TMS('Amplitude', s, TMSamp);
 end
 
-% initialize trial and coil indices, incrementally increased on each run
+% Initialize trial and coil indices, incrementally increased on each run
 trialInd = 0;
 coilLocInd = 0;
 ListenChar(-1) % prevent inputs from keyboard and mouse on main screen
 
-%% Instructions for the subject
+parameters = initFiles(parameters, screen, data_path, kbx);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Start Experiment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Instructions for the subject
 while 1
     KbQueueStart(kbx);
-    [keyIsDown, ~]=KbQueueCheck(kbx);
+    [keyIsDown, ~]= KbQueueCheck(kbx);
     while ~keyIsDown
         showprompts(screen, 'WelcomeWindow')
-        [keyIsDown, ~]=KbQueueCheck(kbx);
+        [keyIsDown, ~]= KbQueueCheck(kbx);
     end
     break;
 end
 
-%% Run the task
+% Run the task
 while 1
     % check for any keypresses
     KbQueueStart(kbx);
@@ -235,31 +245,10 @@ ListenChar(0);
 sca
 ShowCursor;
 
-%% Saving stuff
-%%%% Create a directory to save all files with their times
-saveDIR_auto = [data_path filesep 'Results_Auto/sub' subjID '/sess' session ...
-    filesep datestr(now, 'mm_dd_yy_HH_MM_SS')];
-if exist('saveDIR_auto', 'dir') ~= 7
-    mkdir(saveDIR_auto);
-end
+%% Saving data
+save(parameters.fName,'tmsRtnTpy')
 
-saveName = [saveDIR_auto '/tmsRtnTpy_sub' subjID '_sess' session];
-save(saveName,'tmsRtnTpy')
-
-%%% save results
-saveData = input(sprintf('\nsave results[y/n]?:  '),'s');
-if strcmp(saveData,'y')
-    saveDIR = [data_path filesep 'sub' subjID];
-    if exist('saveDIR', 'dir') ~= 7
-        mkdir(saveDIR);
-    end
-    saveName = [saveDIR '/tmsRtnTpy_sub' subjID '_sess' session];
-    save(saveName,'tmsRtnTpy')
-end
-
-%% Close MarkStim
-% This should end the handshake with MarkStim. Orange light should be back
-% on.
+% Close TMS Port and End Experiment
 if parameters.TMS
     TMS('Disable', s);
     TMS('Close', s);
