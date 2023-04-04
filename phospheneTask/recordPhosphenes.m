@@ -1,4 +1,4 @@
-function recordPhosphenes(subjID, session)
+function recordPhosphenes(subjID, session, TMSamp)
 %% Record Phoshpenes (mrugank: 03/07/2022)
 % The code has been originally written by Masih. It has been adapted to
 % make changes to suitably adjust to the new display, interact with the TMS
@@ -23,7 +23,12 @@ function recordPhosphenes(subjID, session)
 % The code runs till quit (q) is pressed by the experimenter. 
 
 %% Initialization
-clearvars -except subjID session; close all; clc;% clear mex;
+clearvars -except subjID session TMSamp; close all; clc;
+
+if nargin < 3
+    TMSamp = 30; % default TMS amplitude of 30% MSO
+end
+
 subjID = num2str(subjID, '%02d');
 session = num2str(session, '%02d');
 
@@ -37,11 +42,8 @@ hostname = strtrim(hostname);
 curr_dir = pwd;
 filesepinds = strfind(curr_dir,filesep);
 master_dir = curr_dir(1:(filesepinds(end-1)-1));
-%markstim_path = [master_dir filesep 'markstim-master'];
-%addpath(genpath(markstim_path));
 trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
 addpath(genpath(trigger_path));
-
 
 parameters = loadParameters(subjID, session);
 % Load PTB and toolboxes
@@ -80,7 +82,7 @@ if parameters.TMS > 0
     s = TMS('Open');
     TMS('Enable', s);
     TMS('Timing', s);
-    %TMS('Amplitude', s, TMSamp);
+    TMS('Amplitude', s, TMSamp);
 end
 
 % initialize trial and coil indices, incrementally increased on each run

@@ -62,18 +62,18 @@ for block = 1:end_block
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    if ii_sacc.epoch_start == 5
-        ii_sacc.epoch_start = 6;
-    end
+%     if ii_sacc.epoch_start == 5
+%         ii_sacc.epoch_start = 6;
+%     end
 %     if block == 5
 %         taskMap(block).stimVF = taskMap(block).stimVF(2:end);
 %     end
     if strcmp(eyecond, 'pro')
-        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],6,[],excl_criteria,[],'lenient');
+        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],5,[],excl_criteria,[],'lenient');
         ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
-        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 6,[],excl_criteria,[],'lenient');
+        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5,[],excl_criteria,[],'lenient');
         ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
         block_anti = block_anti+1;
     end

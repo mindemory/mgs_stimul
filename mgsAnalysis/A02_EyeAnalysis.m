@@ -2,7 +2,7 @@ clear; close all; clc;
 
 %% Initialization
 p.subjID = '10';
-p.day = 1;
+p.day = 3;
 end_block = 2;
 [p, taskMap] = initialization(p, 'eye');
 tmp = pwd; tmp2 = strfind(tmp,filesep);

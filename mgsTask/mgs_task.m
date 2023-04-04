@@ -538,65 +538,6 @@ for block = start_block:end_block
         timeReport.respDuration(trial) = GetSecs - respStartTime;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Response window
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         respStartTime = GetSecs;
-%         % EEG marker --> response begins
-%         if parameters.EEG
-%             fname = ['sudo python3 ' trigger_path_EEG '/eegflag5.py'];
-%             system(fname);
-%             masterTimeReport.resp(block, trial) = GetSecs;
-%             trigReport(block, trig_counter) =  5;
-%             trig_counter = trig_counter + 1;
-%         end
-%         %record to the edf file that response is started
-%         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-%             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
-%             Eyelink('Message', 'XDAT %i ', 5);
-%         end
-%         %draw the fixation dot
-%         if aperture == 1
-%             drawTextures(parameters, screen, 'Aperture');
-%         end
-%         drawTextures(parameters, screen, 'FixationCross');
-%         
-%         gxold = screen.xCenter;
-%         gyold = screen.yCenter;
-%         while GetSecs-initStartTime < parameters.initDuration * 0.9
-%             if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
-%                 evt = Eyelink('NewestFloatSample');
-%                 if el.eye_used ~= -1
-%                     gx = evt.gx(el.eye_used+1);
-%                     gy = evt.gy(el.eye_used+1);
-%                     % In case of blinks or something, make gx and gy back
-%                     % to center, crude fix
-%                     if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-%                         gx = screen.xCenter;
-%                         gy = screen.yCenter;
-%                     end
-%                 end
-%                 
-%                 % see if there was a fixation break
-%                 if (gx~=gxold || gy~=gyold)
-%                     va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-%                     if va_now > 1
-%                         eyetrack_errors.fixation(block, trial) = 1;
-%                     else
-%                         eyetrack_errors.fixation(block, trial) = 0;
-%                     end
-%                 end
-%                 gxold = gx;
-%                 gyold = gy;
-%             end    
-%         end
-%         clear gx gy gxold gyold evt
-%         
-%         if GetSecs - respStartTime < parameters.respDuration
-%             WaitSecs(parameters.respDuration - (GetSecs - respStartTime));
-%         end
-%         timeReport.respDuration(trial) = GetSecs - respStartTime;
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Feedback window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         feedbackStartTime = GetSecs;
@@ -605,13 +546,13 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag6.py'];
             system(fname);
             masterTimeReport.feedback(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  6;
+            trigReport(block, trig_counter) =  5;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that feedback is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 6);
+            Eyelink('Message', 'XDAT %i ', 5);
         end
         
         % Get the size and location of dot
@@ -674,13 +615,13 @@ for block = start_block:end_block
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag7.py'];
             system(fname);
             masterTimeReport.iti(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  7;
+            trigReport(block, trig_counter) =  6;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that iti is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 7);
+            Eyelink('Message', 'XDAT %i ', 6);
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end
@@ -729,7 +670,7 @@ for block = start_block:end_block
         fname = ['sudo python3 ' trigger_path_EEG '/eegflag8.py'];
         system(fname);
         masterTimeReport.blockend(block) = GetSecs;
-        trigReport(block, trig_counter) =  8;
+        trigReport(block, trig_counter) =  7;
         %trig_counter = trig_counter + 1;
     end
     
