@@ -4,12 +4,21 @@ if nargin < 3
     end_block = 10;
 end
 
+% List of epochs in the task
+% XDAT 1: Fixation window =  1s
+% XDAT 10: Sample window =  0.5s (would correspond to 'S 11', 'S 12', 'S
+% 13', 'S 14' in EEG flags depending on the stimulus VF and block type
+% XDAT 2: Delay 1 = 2s
+% XDAT 3: Delay 2 = 2s
+% XDAT 4: Response window = 0.85s
+% XDAT 5: Feedback window = 0.8s
+% XDAT 6: ITI window = 2s or 3s (50-50 split)
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
-ii_params.valid_epochs =[1 10 2 3 4 5 6];
+ii_params.valid_epochs =[1 10 2 3 4 5 6]; % Updated epochs (Mrugank: 04/05/2023)
 ii_params.trial_start_value = 1; %XDAT value for trial start
 ii_params.trial_end_value = 6;   % XDAT value for trial end
-ii_params.drift_epoch = [1 10 2 3]; % XDAT values for drift correction
+ii_params.drift_epoch = [1 10 2 3]; % XDAT values for drift correction (
 ii_params.drift_fixation_mode  = 'mode';
 ii_params.calibrate_epoch = 5; % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
@@ -19,6 +28,7 @@ ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [10 2 3 4 5];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 
+% Mrugank (04/05/2023): Could possibly be updated later?
 excl_criteria.i_dur_thresh = 850; % must be shorter than 150 ms
 excl_criteria.i_amp_thresh = 2;   % must be longer than 5 dva [if FIRST saccade in denoted epoch is not at least this long and at most this duration, drop the trial]
 excl_criteria.i_err_thresh = 10;   % i_sacc must be within this many DVA of target pos to consider the trial
@@ -62,18 +72,12 @@ for block = 1:end_block
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-%     if ii_sacc.epoch_start == 5
-%         ii_sacc.epoch_start = 6;
-%     end
-%     if block == 5
-%         taskMap(block).stimVF = taskMap(block).stimVF(2:end);
-%     end
     if strcmp(eyecond, 'pro')
-        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],5,[],excl_criteria,[],'lenient');
+        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'lenient');
         ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
         block_pro = block_pro+1;
     elseif strcmp(eyecond, 'anti')
-        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 5,[],excl_criteria,[],'lenient');
+        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 4,[],excl_criteria,[],'lenient');
         ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
         block_anti = block_anti+1;
     end
