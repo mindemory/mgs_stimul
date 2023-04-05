@@ -711,10 +711,12 @@ for block = start_block:end_block
         sca;
         
         % Save EEG flags
-        reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
-        reportFile.masterTimeReport = masterTimeReport;
-        reportFile.trigReport = trigReport;
-        save(reportFname,'reportFile')
+        if parameters.EEG == 1
+            reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
+            reportFile.masterTimeReport = masterTimeReport;
+            reportFile.trigReport = trigReport;
+            save(reportFname,'reportFile')
+        end
         
         % Save Eyetrack errors
         if eyetrackfeedback == 1
@@ -737,8 +739,10 @@ sca;
 Priority(0);
 
 % Save EEG flags
-reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
-reportFile.masterTimeReport = masterTimeReport;
-reportFile.trigReport = trigReport;
-save(reportFname,'reportFile')
+if parameters.EEG == 1
+    reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
+    reportFile.masterTimeReport = masterTimeReport;
+    reportFile.trigReport = trigReport;
+    save(reportFname,'reportFile')
+end
 end
