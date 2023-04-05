@@ -1,9 +1,13 @@
-clear; close all; clc;
+function A02_EyeAnalysis(subjID, day, end_block)
+clearvars -except subjID day end_block;
+close all; clc;
 
 %% Initialization
-p.subjID = '10';
-p.day = 3;
-end_block = 2;
+p.subjID = num2str(subjID, '%02d');
+p.day = day;
+if nargin < 3
+    end_block = 10; % default number of blocks on any given day
+end
 [p, taskMap] = initialization(p, 'eye');
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end)-1));

@@ -303,7 +303,7 @@ for block = start_block:end_block
         %record to the edf file that sample is started
         if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
             Eyelink('command', 'record_status_message "TRIAL %i/%i /sample"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', trigger_code);
+            Eyelink('Message', 'XDAT %i ', 10);
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
             Eyelink('Message', 'TarY %s ', num2str(screen.yCenter));
         end

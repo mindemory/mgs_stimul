@@ -9,13 +9,7 @@ elseif subjID == 2
 elseif subjID == 5
     end_blocks = [7 8 10];
 elseif subjID == 0
-    end_blocks = [10];
-elseif subjID == 98
-    end_blocks = [10 1 10];
-elseif subjID == 99
-    end_blocks = [10, 10, 10];
-elseif subjID == 10
-    end_blocks = [2, 0, 2];
+    end_blocks = [1];
 end
 days = 1;
 max_end_block = 1;%max(end_blocks);
@@ -55,7 +49,7 @@ if exist(fig_dir, 'dir') ~= 7
     mkdir(fig_dir)
 end
 
-for day = 2:2%1:days
+for day = 1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
     end_block = end_blocks(day);
     for block = start_block:end_block
@@ -66,7 +60,7 @@ for day = 2:2%1:days
         % Load timeReport for this day and block
         timeReport = matFile.timeReport;
         % Get a list of all duration variables and initialize timeStruct
-        if day == 2 && block == start_block
+        if day == 1 && block == start_block
             dur_vars = fieldnames(timeReport);
             for ii = 1:length(dur_vars)
                 timeStruct.(dur_vars{ii}) = NaN(days, max_end_block, 40);

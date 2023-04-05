@@ -6,17 +6,17 @@ end
 
 ifgFile = 'p_1000hz.ifg';
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
-ii_params.valid_epochs =[1 2 3 4 5 6 7 8];
+ii_params.valid_epochs =[1 10 2 3 4 5 6];
 ii_params.trial_start_value = 1; %XDAT value for trial start
-ii_params.trial_end_value = 8;   % XDAT value for trial end
-ii_params.drift_epoch = [1 2 3 4]; % XDAT values for drift correction
+ii_params.trial_end_value = 6;   % XDAT value for trial end
+ii_params.drift_epoch = [1 10 2 3]; % XDAT values for drift correction
 ii_params.drift_fixation_mode  = 'mode';
-ii_params.calibrate_epoch = 7; % XDAT value for when we calibrate (feedback stim)
+ii_params.calibrate_epoch = 5; % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
 ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
 ii_params.blink_thresh = 0.1;
 ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
-ii_params.plot_epoch = [4 5 7];  % what epochs do we plot for preprocessing?
+ii_params.plot_epoch = [10 2 3 4 5];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 
 excl_criteria.i_dur_thresh = 850; % must be shorter than 150 ms
