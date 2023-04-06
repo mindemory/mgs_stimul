@@ -80,7 +80,7 @@ addpath(genpath(mgs_data_path));
 % Load taskMap
 if prac_status == 1
     load([phosphene_data_path '/taskMapPractice_sub' subjID '_antitype_' anti_type])
-    parameters.TMS = 1;
+    parameters.TMS = 0;
 else
     load([phosphene_data_path '/taskMap_sub' subjID, '_day' num2str(day, "%02d") '_antitype_' anti_type])
     if taskMap(1).TMScond == 1% determine if this is a TMS task
