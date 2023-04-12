@@ -1,17 +1,22 @@
-function A02_EyeAnalysis(subjID, day, end_block)
-clearvars -except subjID day end_block;
+function A02_EyeAnalysis(subjID, day, end_block, prac_status)
+% Created by Mrugank (04/09/2023) 
+clearvars -except subjID day end_block prac_status;
 close all; clc;
 
-%% Initialization
-p.subjID = num2str(subjID, '%02d');
-p.day = day;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 3
     end_block = 10; % default number of blocks on any given day
 end
-[p, taskMap] = initialization(p, 'eye');
-tmp = pwd; tmp2 = strfind(tmp,filesep);
-direct.master = tmp(1:(tmp2(end)-1));
-addpath(direct.master)
+if nargin < 4
+    prac_status = 0; % default is no practice aka actual run
+end
+p.subjID = num2str(subjID, '%02d');
+p.day = day;
+
+% Initialize all the relevant paths
+[p, taskMap] = initialization(p, 'eye', prac_status);
 
 % Determine trial number of pro and anti trials for all blocks
 for blurb = 1:length(taskMap)
@@ -51,56 +56,3 @@ else
     save(saveNameanti,'ii_sess_anti')
 end
 toc
-
-% %% Run EEG preprocessing
-% prointoVF_idx = find(ii_sess_pro.stimVF == 1);
-% prooutVF_idx = find(ii_sess_pro.stimVF == 0);
-% antiintoVF_idx = find(ii_sess_anti.stimVF == 0);
-% antioutVF_idx = find(ii_sess_anti.stimVF == 1);
-% prointoVF_idx_EEG = protrialNum(prointoVF_idx);
-% prooutVF_idx_EEG = protrialNum(prooutVF_idx);
-% antiintoVF_idx_EEG = antitrialNum(antiintoVF_idx);
-% antioutVF_idx_EEG = antitrialNum(antioutVF_idx);
-
-% saccloc = 1 refers to stimulus in VF
-
-
-% anti_real = [];
-% pro_real = [];
-% for ii = 1:5
-%     anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_theta'];
-%     pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_theta'];
-% end
-% anti_real = anti_real';
-% pro_real = pro_real';
-% figure();
-% plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
-% figure();
-% plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
-% 
-% anti_real = [];
-% pro_real = [];
-% for ii = 1:5
-%     anti_real = [anti_real, real_error_dict.block_anti(ii).fsacc_r'];
-%     pro_real = [pro_real, real_error_dict.block_pro(ii).fsacc_r'];
-% end
-% anti_real = anti_real';
-% pro_real = pro_real';
-% figure();
-% plot(ii_sess_anti.f_sacc_err, anti_real, 'ro-')
-% figure();
-% plot(ii_sess_pro.f_sacc_err, pro_real, 'ko-')
-% 
-% 
-% anti_real = [];
-% pro_real = [];
-% for ii = 1:5
-%     anti_real = [anti_real, real_error_dict.block_anti(ii).isacc_theta'];
-%     pro_real = [pro_real, real_error_dict.block_pro(ii).isacc_theta'];
-% end
-% anti_real = anti_real';
-% pro_real = pro_real';
-% figure();
-% plot(ii_sess_anti.i_sacc_err, anti_real, 'ro-')
-% figure();
-% plot(ii_sess_pro.i_sacc_err, pro_real, 'ko-')

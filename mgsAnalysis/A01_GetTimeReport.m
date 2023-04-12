@@ -1,53 +1,70 @@
-function A01_GetTimeReport(subjID)
+function A01_GetTimeReport(subjID, prac_status)
 % Created by Mrugank (02/24/2022): The file 
-clearvars -except subjID; close all; clc;
+clearvars -except subjID prac_status; close all; clc;
 
-if subjID == 1
-    end_blocks = [12 10 10];
-elseif subjID == 2
-    end_blocks = [10 10 10];
-elseif subjID == 5
-    end_blocks = [7 8 10];
-elseif subjID == 0
-    end_blocks = [1];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if nargin < 2
+    prac_status = 0; % default is no practice aka actual run
 end
-days = 1;
-max_end_block = 1;%max(end_blocks);
-start_block = 1;
-
 subjID = num2str(subjID, "%02d");
-tmp = pwd; tmp2 = strfind(tmp,filesep);
-direct.master = tmp(1:(tmp2(end)-1));
+
+% Check the system running on: currently accepted: syndrome, tmsubuntu
 [ret, hostname] = system('hostname');
 if ret ~= 0
-    hostname = getenv('hostname');
+    hostname = getenv('HOSTNAME');
 end
 hostname = strtrim(hostname);
+tmp = pwd; tmp2 = strfind(tmp,filesep);
+direct.master = tmp(1:(tmp2(end)-1));
 
 if strcmp(hostname, 'syndrome') % If running on Syndrome
     direct.datc = '/d/DATC/datc/MD_TMS_EEG';
 else % If running on World's best MacBook
     direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
 end
-direct.data = [direct.datc '/data']; 
-direct.analysis = [direct.datc '/analysis/sub' subjID];
-direct.figures = [direct.datc '/Figures'];
+
+% Initialize all the paths
+direct.data = [direct.datc '/data'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
-direct.mgs = [direct.data '/mgs_data/sub' subjID];
-
+if prac_status == 1
+    direct.analysis = [direct.datc '/analysis/practice/sub' subjID];
+    direct.figures = [direct.datc '/Figures/practice/sub' subjID '/timeStruct'];
+    direct.mgs = [direct.data '/mgs_practice_data/sub' subjID];
+else
+    direct.analysis = [direct.datc '/analysis/sub' subjID];
+    direct.figures = [direct.datc '/Figures/sub' subjID '/timeStruct'];
+    direct.mgs = [direct.data '/mgs_data/sub' subjID];
+end
 addpath(genpath(direct.data));
-% For plotting
-nbinss = 50;
 
-% Directory to save plots
-fig_dir = [direct.figures '/sub' subjID '/timeStruct'];
+% Paths to save analysis and plots
 if exist(direct.analysis, 'dir') ~= 7
     mkdir(direct.analysis)
 end
 
-if exist(fig_dir, 'dir') ~= 7
-    mkdir(fig_dir)
+if exist(direct.figures, 'dir') ~= 7
+    mkdir(direct.figures)
 end
+
+% List directories
+day_dir_list = dir(direct.mgs);
+day_dir_names = {day_dir_list([day_dir_list.isdir]).name};
+day_dirs = day_dir_names(startsWith(day_dir_names, 'day'));
+days = length(day_dirs);
+end_blocks = [];
+for d = 1:days
+    bl_dir_list = dir([direct.mgs filesep day_dirs{d}]);
+    bl_dir_names = {bl_dir_list([bl_dir_list.isdir]).name};
+    block_dirs = bl_dir_names(startsWith(bl_dir_names, 'block'));
+    end_blocks = [end_blocks, length(block_dirs)];
+end
+max_end_block = max(end_blocks);
+start_block = 1;
+
+% For plotting
+nbinss = 50;
 
 for day = 1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
@@ -84,7 +101,7 @@ for day = 1:days
         xlabel('Time (s)')
         ylabel('# of Trials')
     end
-    fig_fname = [fig_dir '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
+    fig_fname = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
     print(gcf, '-dpng', fig_fname); 
 end
 

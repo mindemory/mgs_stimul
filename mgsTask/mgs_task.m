@@ -128,7 +128,8 @@ for block = start_block:end_block
     
     % Create folders for the block and read taskMap for current block
     if prac_status == 1
-        parameters = initFiles(parameters, screen, mgs_data_path, kbx, block);
+        datapath = [mgs_data_path '/day01'];
+        parameters = initFiles(parameters, screen, datapath, kbx, block);
         tMap = taskMapPractice(1, block);
     else
         datapath = [mgs_data_path '/day' num2str(day, "%02d")];
