@@ -71,7 +71,7 @@ for day = 1:days
     end_block = end_blocks(day);
     for block = start_block:end_block
         block_path = [direct.day '/block' num2str(block, "%02d")];
-        matfiledeets = dir([block_path '/*.mat']);
+        matfiledeets = dir([block_path '/*.mat']); % Try to make this more specific
         matfileName = matfiledeets(end).name;
         load([block_path filesep matfileName]);
         % Load timeReport for this day and block
