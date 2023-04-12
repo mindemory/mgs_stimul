@@ -577,35 +577,31 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'FixationCross');
         
         if eyetrackfeedback == 1
+            % Check for blinks during delay1 window
             gxold = screen.xCenter;
             gyold = screen.yCenter;
             sacc_errs = [];
-            ctr = 1;
-            while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.1
-                if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
+            while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.3
+                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
-                    if el.eye_used ~= -1
-                        gx = evt.gx(el.eye_used+1);
-                        gy = evt.gy(el.eye_used+1);
-                        % In case of blinks or something, make gx and gy back
-                        % to center, crude fix
-                        if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                            gx = screen.xCenter;
-                            gy = screen.yCenter;
-                        end
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
                     end
 
-                    % see if subject made saccade back to feedback
+                    % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
                         sacc_errs = [sacc_errs va_now];
-                        ctr = ctr+1;
                     end
                     gxold = gx;
                     gyold = gy;
                 end
             end
-            %sacc_errs = sacc_errs(~isnan(sacc_errs));
             if ~isempty(sacc_errs)
                 eyetrack_errors.feedback_min(trial) = min(sacc_errs);
                 eyetrack_errors.feedback_max(trial) = max(sacc_errs);
@@ -619,7 +615,7 @@ for block = start_block:end_block
             end
             clear gx gy gxold gyold evt sacc_errs ctr
         end
-        
+
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
             WaitSecs(parameters.feedbackDuration - (GetSecs - feedbackStartTime));
         end
