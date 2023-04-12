@@ -579,7 +579,7 @@ for block = start_block:end_block
         if eyetrackfeedback == 1
             gxold = screen.xCenter;
             gyold = screen.yCenter;
-            sacc_errs = NaN(1, 1000);
+            sacc_errs = [];
             ctr = 1;
             while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.1
                 if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
@@ -598,14 +598,25 @@ for block = start_block:end_block
                     % see if subject made saccade back to feedback
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
-                        sacc_errs(ctr) = va_now;
+                        sacc_errs = [sacc_errs va_now];
                         ctr = ctr+1;
                     end
                     gxold = gx;
                     gyold = gy;
                 end
             end
-            eyetrack_errors.feedback(trial) = max(sacc_errs);
+            %sacc_errs = sacc_errs(~isnan(sacc_errs));
+            if ~isempty(sacc_errs)
+                eyetrack_errors.feedback_min(trial) = min(sacc_errs);
+                eyetrack_errors.feedback_max(trial) = max(sacc_errs);
+                eyetrack_errors.feedback_avg(trial) = mean(sacc_errs);
+                eyetrack_errors.feedback_first(trial) = sacc_errs(1);
+            else
+                eyetrack_errors.feedback_min(trial) = NaN;
+                eyetrack_errors.feedback_max(trial) = NaN;
+                eyetrack_errors.feedback_avg(trial) = NaN;
+                eyetrack_errors.feedback_first(trial) = NaN;
+            end
             clear gx gy gxold gyold evt sacc_errs ctr
         end
         
