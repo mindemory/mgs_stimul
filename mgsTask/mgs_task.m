@@ -105,13 +105,14 @@ if parameters.TMS > 0
     TMS('Amplitude', s, TMSamp);
 end
 
-if eyetrackfeedback == 1
-    eyetrack_errors = struct;
-end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
+    if eyetrackfeedback == 1
+        eyetrack_errors = struct;
+    end
     timeReport = struct;
     trigReport = NaN(1, 400);
     EEGtimeReport = struct;
@@ -257,7 +258,7 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > 1
+                        if va_now > parameters.fixbreakthresh
                             fixbreaks = fixbreaks+1;
                         end
                     end
@@ -265,7 +266,7 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
-            eyetrack_errors.fixation(block, trial) = fixbreaks;
+            eyetrack_errors.fixation(trial) = fixbreaks;
             clear gx gy gxold gyold evt fixbreaks
         end
         
@@ -337,7 +338,7 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > 1
+                        if va_now > parameters.fixbreakthresh
                             fixbreaks = fixbreaks + 1;
                         end
                     end
@@ -345,7 +346,7 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
-            eyetrack_errors.sample(block, trial) = fixbreaks;
+            eyetrack_errors.sample(trial) = fixbreaks;
             clear gx gy gxold gyold evt fixbreaks
         end
         
@@ -398,7 +399,7 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > 1
+                        if va_now > parameters.fixbreakthresh
                             fixbreaks = fixbreaks + 1;
                         end
                     end
@@ -406,7 +407,7 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
-            eyetrack_errors.delay1(block, trial) = fixbreaks;
+            eyetrack_errors.delay1(trial) = fixbreaks;
             clear gx gy gxold gyold evt fixbreaks
         end
         
@@ -464,7 +465,7 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > 1
+                        if va_now > parameters.fixbreakthresh
                             fixbreaks = fixbreaks + 1;
                         end
                     end
@@ -472,7 +473,7 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
-            eyetrack_errors.delay2(block, trial) = fixbreaks;
+            eyetrack_errors.delay2(trial) = fixbreaks;
             clear gx gy gxold gyold evt fixbreaks
         end
         
@@ -511,8 +512,8 @@ for block = start_block:end_block
             % Check for blinks during delay1 window
             gxold = screen.xCenter;
             gyold = screen.yCenter;
-            fixbreaks = 0;
-            while GetSecs-delay2StartTime < parameters.delay2Duration * 0.9
+            saccOnset = parameters.respDuration; % in case no saccade was made
+            while GetSecs-respStartTime < parameters.respDuration * 0.9
                 if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
@@ -527,16 +528,17 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > 1
-                            fixbreaks = fixbreaks + 1;
+                        if va_now > parameters.fixbreakthresh
+                            saccOnset = GetSecs - respStartTime;
+                            break;
                         end
                     end
                     gxold = gx;
                     gyold = gy;
                 end
             end
-            eyetrack_errors.delay2(block, trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            eyetrack_errors.response(trial) = saccOnset;
+            clear gx gy gxold gyold evt saccOnset
         end
         
         if GetSecs - respStartTime < parameters.respDuration
@@ -577,8 +579,9 @@ for block = start_block:end_block
         if eyetrackfeedback == 1
             gxold = screen.xCenter;
             gyold = screen.yCenter;
-            fixbreaks = 0;
-            while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.9
+            sacc_errs = NaN(1, 1000);
+            ctr = 1;
+            while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.1
                 if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
                     evt = Eyelink('NewestFloatSample');
                     if el.eye_used ~= -1
@@ -595,16 +598,15 @@ for block = start_block:end_block
                     % see if subject made saccade back to feedback
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
-                        if va_now > 1
-                            fixbreaks = fixbreaks+1;
-                        end
+                        sacc_errs(ctr) = va_now;
+                        ctr = ctr+1;
                     end
                     gxold = gx;
                     gyold = gy;
                 end
             end
-            eyetrack_errors.feedback(block, trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            eyetrack_errors.feedback(trial) = max(sacc_errs);
+            clear gx gy gxold gyold evt sacc_errs ctr
         end
         
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
