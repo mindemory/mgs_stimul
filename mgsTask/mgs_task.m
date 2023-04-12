@@ -21,7 +21,7 @@ if nargin < 7
     aperture = 0; % 0: full screen mode, 1: stimulus drawn on aperture
 end
 
-eyetrackfeedback = 0;
+eyetrackfeedback = 1;
 % Check the system running on: currently accepted: syndrome, tmsubuntu
 [ret, hostname] = system('hostname');
 if ret ~= 0
@@ -578,6 +578,7 @@ for block = start_block:end_block
         if eyetrackfeedback == 1
             gxold = screen.xCenter;
             gyold = screen.yCenter;
+            fixbreaks = 0;
             while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.9
                 if parameters.eyetracker && Eyelink('NewFloatSampleAvailable') > 0
                     evt = Eyelink('NewestFloatSample');
@@ -596,16 +597,15 @@ for block = start_block:end_block
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
                         if va_now > 1
-                            eyetrack_errors.feedback(block, trial) = 1;
-                        else
-                            eyetrack_errors.feedback(block, trial) = 0;
+                            fixbreaks = fixbreaks+1;
                         end
                     end
                     gxold = gx;
                     gyold = gy;
                 end
             end
-            clear gx gy gxold gyold evt
+            eyetrack_errors.feedback(block, trial) = fixbreaks;
+            clear gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
@@ -668,6 +668,9 @@ for block = start_block:end_block
     
     %% Saving Data and Closing everything
     % stop eyelink and save eyelink data
+    showprompts(screen, 'BlockEnd', block)
+    Beeper('med',0.5,0.1)
+    
     if parameters.eyetracker
         Eyelink('StopRecording');
         Eyelink('ReceiveFile', parameters.edfFile);
@@ -693,7 +696,7 @@ for block = start_block:end_block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
     while ~keyIsDown
-        showprompts(screen, 'BlockEnd', block)
+        showprompts(screen, 'ContinueorEsc', block)
         [keyIsDown, keyCode] = KbQueueCheck(kbx);
         cmndKey = KbName(keyCode);
     end

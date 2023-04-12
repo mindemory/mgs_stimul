@@ -12,6 +12,8 @@ switch prompt_name
     case 'BlockStart'
         text = ['Block = ' num2str(num) '\nBlock type = ' cond];
     case 'BlockEnd'
+        text = ['End of block ' num2str(num) '. Please wait ...'];
+    case 'ContinueorEsc'
         text = ['End of block ' num2str(num) '. Please take a break. Press SPACE to continue.'];
     case 'EyeCalibStart'
         text = sprintf('Please press any key and \n keep focused at the central fixation point for 5 seconds');
