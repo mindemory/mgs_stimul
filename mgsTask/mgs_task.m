@@ -513,7 +513,7 @@ for block = start_block:end_block
             gxold = screen.xCenter;
             gyold = screen.yCenter;
             saccOnset = parameters.respDuration; % in case no saccade was made
-            while GetSecs-respStartTime < parameters.respDuration * 0.9
+            while GetSecs-respStartTime < parameters.respDuration * 0.95
                 if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
@@ -715,8 +715,12 @@ for block = start_block:end_block
     % Save Eyetrack errors
     if eyetrackfeedback == 1
         save([parameters.block_dir filesep parameters.eyeErrorFile],'eyetrack_errors')
+        fixbreaks = sum((eyetrack_errors.sample+eyetrack_errors.delay1+eyetrack_errors.delay2) > 0);
+        resplate = sum(eyetrack_errors.response >= 0.8);
+        disp(['Fixation breaks = ' num2str(fixbreaks) ' trials.']);
+        disp(['Slow response = ' num2str(resplate) ' trials.']);
     end
-        
+
     % check for end of block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
