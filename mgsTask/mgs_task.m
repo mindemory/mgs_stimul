@@ -529,7 +529,7 @@ for block = start_block:end_block
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
                         if va_now > parameters.fixbreakthresh
-                            saccOnset = GetSecs - respStartTime
+                            saccOnset = GetSecs - respStartTime;
                             break;
                         end
                     end
@@ -537,7 +537,7 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
-            eyetrack_errors.response(trial) = saccOnset
+            eyetrack_errors.response(trial) = saccOnset;
             clear gx gy gxold gyold evt saccOnset
         end
         
@@ -596,7 +596,7 @@ for block = start_block:end_block
                     % see if there was a fixation break
                     if (gx~=gxold || gy~=gyold)
                         va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
-                        sacc_errs = [sacc_errs va_now]
+                        sacc_errs = [sacc_errs va_now];
                     end
                     gxold = gx;
                     gyold = gy;
