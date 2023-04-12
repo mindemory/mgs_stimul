@@ -28,9 +28,13 @@ end
 % File names that will be saved.
 date_time = datestr(now, 'mmddyy_HHMM');
 edfFile = [parameters.subject parameters.block date_time(1:4)];
-matFile = ['subj' parameters.subject '_block' parameters.block '.mat'];
+matFile = ['matFile_subj' parameters.subject '_block' parameters.block '.mat'];
+EEGreportFile = ['EEGreportFile_subj' parameters.subject '_block' parameters.block '.mat'];
+eyeErrorFile = ['eyetrackerrorsFile_subj' parameters.subject '_block' parameters.block '.mat'];
 
 parameters.block_dir = block_dir;
 parameters.edfFile = edfFile;
 parameters.matFile = matFile;
+parameters.EEGreportFile = EEGreportFile;
+parameters.eyeErrorFile = eyeErrorFile;
 end

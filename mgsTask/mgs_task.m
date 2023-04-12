@@ -105,9 +105,6 @@ if parameters.TMS > 0
     TMS('Amplitude', s, TMSamp);
 end
 
-trigReport = zeros(10, 322);
-masterTimeReport = struct;
-
 if eyetrackfeedback == 1
     eyetrack_errors = struct;
 end
@@ -115,13 +112,16 @@ end
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for block = start_block:end_block
+    timeReport = struct;
+    trigReport = NaN(1, 400);
+    EEGtimeReport = struct;
     trig_counter = 1;
     % EEG marker --> block begins
     if parameters.EEG
         fname = ['sudo python3 ' trigger_path_EEG '/eegflag0.py'];
         system(fname);
-        masterTimeReport.blockstart(block) = GetSecs;
-        trigReport(block, trig_counter) =  0;
+        EEGtimeReport.blockstart = GetSecs;
+        trigReport(trig_counter) = 0;
         trig_counter = trig_counter + 1;
     end
     parameters.block = num2str(block, "%02d");
@@ -190,7 +190,6 @@ for block = start_block:end_block
     end
     drawTextures(parameters, screen, 'FixationCross');
     
-    timeReport = struct;
     trialArray = 1:trialNum;
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,8 +218,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag1.py'];
             system(fname);
-            masterTimeReport.init(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  1;
+            EEGtimeReport.init(trial) = GetSecs;
+            trigReport(trig_counter) =  1;
             trig_counter = trig_counter + 1;
         end
         
@@ -296,8 +295,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag' num2str(trigger_code) '.py'];
             system(fname);
-            masterTimeReport.sample(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  trigger_code;
+            EEGtimeReport.sample(trial) = GetSecs;
+            trigReport(trig_counter) =  trigger_code;
             trig_counter = trig_counter + 1;
         end
         
@@ -362,8 +361,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag2.py'];
             system(fname);
-            masterTimeReport.delay1(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  2;
+            EEGtimeReport.delay1(trial) = GetSecs;
+            trigReport(trig_counter) =  2;
             trig_counter = trig_counter + 1;
         end
         
@@ -424,8 +423,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag3.py'];
             system(fname);
-            masterTimeReport.tms(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  3;
+            EEGtimeReport.tms(trial) = GetSecs;
+            trigReport(trig_counter) =  3;
             trig_counter = trig_counter + 1;
         end
         
@@ -490,8 +489,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag4.py'];
             system(fname);
-            masterTimeReport.respcue(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  4;
+            EEGtimeReport.response(trial) = GetSecs;
+            trigReport(trig_counter) =  4;
             trig_counter = trig_counter + 1;
         end
         saccLoc = tMap.saccLocpix(trial, :);
@@ -553,8 +552,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag6.py'];
             system(fname);
-            masterTimeReport.feedback(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  5;
+            EEGtimeReport.feedback(trial) = GetSecs;
+            trigReport(trig_counter) =  5;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that feedback is started
@@ -624,8 +623,8 @@ for block = start_block:end_block
         if parameters.EEG
             fname = ['sudo python3 ' trigger_path_EEG '/eegflag7.py'];
             system(fname);
-            masterTimeReport.iti(block, trial) = GetSecs;
-            trigReport(block, trig_counter) =  6;
+            EEGtimeReport.iti(trial) = GetSecs;
+            trigReport(trig_counter) =  6;
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that iti is started
@@ -682,8 +681,8 @@ for block = start_block:end_block
     if parameters.EEG
         fname = ['sudo python3 ' trigger_path_EEG '/eegflag8.py'];
         system(fname);
-        masterTimeReport.blockend(block) = GetSecs;
-        trigReport(block, trig_counter) =  7;
+        EEGtimeReport.blockend = GetSecs;
+        trigReport(trig_counter) =  7;
     end
     
     % save timeReport
@@ -692,6 +691,19 @@ for block = start_block:end_block
     matFile.timeReport = timeReport;
     save([parameters.block_dir filesep parameters.matFile],'matFile')
     
+    % Save EEG flags
+    if parameters.EEG == 1
+        trigReport = trigReport(~isnan(trigReport));
+        EEGsummary.EEGtimeReport = EEGtimeReport;
+        EEGsummary.trigReport = trigReport;
+        save([parameters.block_dir filesep parameters.EEGreportFile],'EEGsummary')
+    end
+
+    % Save Eyetrack errors
+    if eyetrackfeedback == 1
+        save([parameters.block_dir filesep parameters.eyeErrorFile],'eyetrack_errors')
+    end
+        
     % check for end of block
     KbQueueFlush(kbx);
     [keyIsDown, ~] = KbQueueCheck(kbx);
@@ -713,20 +725,6 @@ for block = start_block:end_block
         WaitSecs(2);
         ListenChar(1);
         sca;
-        
-        % Save EEG flags
-        if parameters.EEG == 1
-            reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
-            reportFile.masterTimeReport = masterTimeReport;
-            reportFile.trigReport = trigReport;
-            save(reportFname,'reportFile')
-        end
-        
-        % Save Eyetrack errors
-        if eyetrackfeedback == 1
-            eyetrackFname = [datapath '/eyetrackerrorsFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
-            save(eyetrackFname,'eyetrack_errors')
-        end
         return;
     end
 end % end of block
@@ -741,12 +739,4 @@ ListenChar(1);
 WaitSecs(2);
 sca;
 Priority(0);
-
-% Save EEG flags
-if parameters.EEG == 1
-    reportFname = [datapath '/reportFile' num2str(start_block, '%02d') '_' num2str(parameters.block, '%02d')];
-    reportFile.masterTimeReport = masterTimeReport;
-    reportFile.trigReport = trigReport;
-    save(reportFname,'reportFile')
-end
 end
