@@ -266,7 +266,7 @@ for block = start_block:end_block
                 end
             end
             eyetrack_errors.fixation(trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            clearvars gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - initStartTime < parameters.initDuration
@@ -346,7 +346,7 @@ for block = start_block:end_block
                 end
             end
             eyetrack_errors.sample(trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            clearvars gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - sampleStartTime < parameters.sampleDuration
@@ -407,7 +407,7 @@ for block = start_block:end_block
                 end
             end
             eyetrack_errors.delay1(trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            clearvars gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - delay1StartTime < parameters.delay1Duration
@@ -473,7 +473,7 @@ for block = start_block:end_block
                 end
             end
             eyetrack_errors.delay2(trial) = fixbreaks;
-            clear gx gy gxold gyold evt fixbreaks
+            clearvars gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - delay2StartTime < parameters.delay2Duration
@@ -537,7 +537,7 @@ for block = start_block:end_block
                 end
             end
             eyetrack_errors.response(trial) = saccOnset;
-            clear gx gy gxold gyold evt saccOnset
+            clearvars gx gy gxold gyold evt saccOnset
         end
         
         if GetSecs - respStartTime < parameters.respDuration
@@ -612,7 +612,7 @@ for block = start_block:end_block
                 eyetrack_errors.feedback_avg(trial) = NaN;
                 eyetrack_errors.feedback_first(trial) = NaN;
             end
-            clear gx gy gxold gyold evt sacc_errs ctr
+            clearvars gx gy gxold gyold evt sacc_errs ctr
         end
 
         if GetSecs - feedbackStartTime < parameters.feedbackDuration

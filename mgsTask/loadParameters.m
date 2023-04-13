@@ -20,7 +20,7 @@ parameters.anticolor = [255 0 0]; % red
 parameters.cuecolor = [0 255 0]; % green
 parameters.feebackcolor = [0 255 0]; % green
 parameters.fixationSizeDeg = 0.6; % degrees of visual angle
-parameters.fixbreakthresh = 1.5; % degrees of visual angle
+parameters.fixbreakthresh = 1; % degrees of visual angle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TMS pulse parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
