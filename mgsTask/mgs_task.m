@@ -105,7 +105,6 @@ if parameters.TMS > 0
     TMS('Amplitude', s, TMSamp);
 end
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +243,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             fixbreaks = 0;
             while GetSecs-initStartTime < parameters.initDuration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
@@ -324,7 +323,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             fixbreaks = 0;
             while GetSecs-sampleStartTime < parameters.sampleDuration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
@@ -385,7 +384,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             fixbreaks = 0;
             while GetSecs-delay1StartTime < parameters.delay1Duration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
@@ -451,7 +450,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             fixbreaks = 0;
             while GetSecs-delay2StartTime < parameters.delay2Duration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
@@ -514,7 +513,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             saccOnset = parameters.respDuration; % in case no saccade was made
             while GetSecs-respStartTime < parameters.respDuration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
@@ -582,7 +581,7 @@ for block = start_block:end_block
             gyold = screen.yCenter;
             sacc_errs = [];
             while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.9
-                if parameters.eyetracker && el.eye_used ~= -1 && Eyelink('NewFloatSampleAvailable') > 0 
+                if parameters.eyetracker && el.eye_used ~= -1 %&& Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
                     gy = evt.gy(el.eye_used+1);
