@@ -7,7 +7,7 @@ end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
 
-[p, taskMap] = initialization(p, 'eeg');
+[p, taskMap] = initialization(p, 'eeg', 0);
 
 %EEGfile = ['sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d') '_concat.vhdr'];
 
@@ -50,14 +50,6 @@ if any(strcmp(steps, 'raweeg'))
         cfg.demean = 'no';
         cfg.continuous = 'yes';
         data_eeg = ft_preprocessing(cfg);
-        % Removing NAN timepoint
-        if sum(sum(isnan(data_eeg.trial{1}))) > 0
-            data_eeg.time{1} = data_eeg.time{1}(2:end);
-            data_eeg.sampleinfo = data_eeg.sampleinfo - [0 1];
-            data_eeg.trial{1} = data_eeg.trial{1}(1:end, 2:end);
-            data_eeg.hdr.nSamples = data_eeg.hdr.nSamples - 1;
-            data_eeg.cfg.trl = data_eeg.cfg.trl - [0 1 0];
-        end
         toc
         % Check data
         % figure(); plot(data_eeg.time{1}, data_eeg.trial{1}(1:10, :))
