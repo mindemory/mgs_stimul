@@ -66,15 +66,20 @@ start_block = 1;
 % For plotting
 nbinss = 50;
 
+flag_day = [];
+flag_block = [];
+flag_trl = [];
 for day = 1:days
     direct.day = [direct.mgs '/day' num2str(day, "%02d")];
     end_block = end_blocks(day);
     for block = start_block:end_block
         block_path = [direct.day '/block' num2str(block, "%02d")];
-        matfiledeets = dir([block_path '/*.mat']); % Try to make this more specific
-        matfileName = matfiledeets(end).name;
-        load([block_path filesep matfileName]);
+        block_dir_list = dir(block_path);
+        block_dir_names = {block_dir_list(~[block_dir_list.isdir]).name};
+        matfileName = block_dir_names(startsWith(block_dir_names, 'matFile'));
+        load([block_path filesep matfileName{1}]);
         % Load timeReport for this day and block
+        parameters = matFile.parameters;
         timeReport = matFile.timeReport;
         % Get a list of all duration variables and initialize timeStruct
         if day == 1 && block == start_block
@@ -87,6 +92,17 @@ for day = 1:days
         % timeStruct
         for ii = 1:length(dur_vars)
             timeStruct.(dur_vars{ii})(day, block, :) = timeReport.(dur_vars{ii});
+            % Check for trials with issues
+            if ii < length(dur_vars) - 1 % there is no trialDuration parameter for parameters
+                check_error = find(timeReport.(dur_vars{ii}) > parameters.(dur_vars{ii})*1.005 == 1);
+                if ~isempty(check_error)
+                    for e = 1:length(check_error)
+                        flag_day = [flag_day, day];
+                        flag_block = [flag_block, block];
+                        flag_trl = [flag_trl, check_error(e)];
+                    end
+                end
+            end
         end
         clear matFile;
     end
@@ -101,9 +117,17 @@ for day = 1:days
         xlabel('Time (s)')
         ylabel('# of Trials')
     end
-    fig_fname = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
-    print(gcf, '-dpng', fig_fname); 
+    fig_fname_png = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
+    saveas(gcf, fig_fname_png);
+    fig_fname_fig = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.fig'];
+    saveas(gcf, fig_fname_fig);
 end
+
+% Create a structure to save flagged trials
+flg = struct;
+flg.day = flag_day; flg.block = flag_block; flg.trls = flag_trl;
+flg_fname = [direct.analysis '/flagged_trls.mat'];
+save(flg_fname, 'flg');
 
 time_fname = [direct.analysis '/timeStruct.mat'];
 save(time_fname, 'timeStruct');

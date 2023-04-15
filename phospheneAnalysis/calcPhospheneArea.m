@@ -9,7 +9,7 @@ tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
 
 % Check for unique coil locations
 LocInds = unique(tmsRtnTpy.Response.CoilLocation);
-
+LocInds = [1 2 3 4 5];
 % Initialize PhosphReport
 PhosphReport = struct;
 PhosphReport = repmat(PhosphReport, [1, length(LocInds)]);
