@@ -14,8 +14,8 @@ va = atan2d(r, parameters.viewingDistance);
 disp(['Visual angle for mean of phosphene overlap = ' num2str(va, "%02f")]);
 
 % compute r given a buffer of visual angle
-r_outer_cm = parameters.viewingDistance * tand(va+2*parameters.rbuffer); % in cm
-r_inner_cm = parameters.viewingDistance * tand(va-0*parameters.rbuffer); % in cm
+r_outer_cm = parameters.viewingDistance * tand(va+0.5*parameters.rbuffer); % in cm
+r_inner_cm = parameters.viewingDistance * tand(va-0.5*parameters.rbuffer); % in cm
 r_outer_max_cm = parameters.viewingDistance * tand(parameters.maxRadius); % in cm
 r_inner_min_cm = parameters.viewingDistance * tand(parameters.minRadius); % in cm
 
