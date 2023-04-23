@@ -26,7 +26,7 @@ p['analysis'] = p['datc'] + '/analysis'
 p['Figures'] = p['datc'] + '/Figures/meta_analysis'
 
 # Find subjects and days that have been run so far
-sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub")]
+sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
 subjIDs = []
 num_subs = len(sub_dirs)
 for ii in range(len(sub_dirs)):
@@ -37,10 +37,30 @@ for ii in range(len(sub_dirs)):
     for dd in range(len(day_dirs)):
         days.append(int(day_dirs[dd][-2:]))
         daydir = subjdir + '/' + day_dirs[dd] # Path to daydir for current subject
+        print(f'Running subj = {subjIDs[ii]}, day = {days[dd]}')
 
         # Check if this was a TMS session
         phosphene_data_path = p['data'] + '/phosphene_data/' + sub_dirs[ii]
-        print(phosphene_data_path)
+        taskMapfilename =phosphene_data_path + '/taskMap_' + sub_dirs[ii] + '_' + day_dirs[dd] + '_antitype_mirror.mat'
+        taskMap = loadmat(taskMapfilename)
+        tms_status = taskMap['taskMap'][0, 0]['TMScond'][0][0]
+        
+        # Load the ii_sess files
+        profName = daydir + '/ii_sess_pro_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
+        antifName = daydir + '/ii_sess_anti_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
+        ii_sess_pro = loadmat(profName)
+        ii_sess_anti = loadmat(antifName)
+
+        # Find the stimulus VF
+        stimVF_pro = ii_sess_pro['ii_sess_pro']['stimVF'][0, 0]
+        stimVF_anti = ii_sess_anti['ii_sess_anti']['stimVF'][0, 0]
+        ispro = np.concatenate((np.ones(np.shape(stimVF_pro)[0]), -1*np.ones(np.shape(stimVF_anti)[0]))).astype(int)
+        stimVF = np.concatenate((stimVF_pro, stimVF_anti))
+        numTrials_pro = len(ii_sess_pro['ii_sess_pro']['stimVF'][0, 0])
+        numTrials_anti = len(ii_sess_anti['ii_sess_anti']['stimVF'][0, 0])
+        print(f"pro trials = {numTrials_pro}, anti trials = {numTrials_anti}")
+
+
 
 
 
