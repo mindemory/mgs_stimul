@@ -191,12 +191,12 @@ f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_
 % save the figures for our records
 if length(f_all)>1
     for ff = 1:lenght(f_all)
-        saveas(f_all,sprintf('%s_%02.f.png',preproc_fn(1:end-4),ff),'png');
-        saveas(f_all,sprintf('%s_%02.f.fig',preproc_fn(1:end-4),ff),'fig');
+        saveas(f_all,sprintf('%s_%02.f.png',preproc_fn,ff),'png');
+        saveas(f_all,sprintf('%s_%02.f.fig',preproc_fn,ff),'fig');
     end
 else
-    saveas(f_all,sprintf('%s.png',preproc_fn(1:end-4)),'png');
-    saveas(f_all,sprintf('%s.fig',preproc_fn(1:end-4)),'fig');
+    saveas(f_all,sprintf('%s.png',preproc_fn),'png');
+    saveas(f_all,sprintf('%s.fig',preproc_fn),'fig');
 end
 
 % and plot the final full timeseries
@@ -205,8 +205,8 @@ if ii_params.show_plots == 1
 else
     f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','TarX', 'TarY'},'nofigure');
 end
-saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
-saveas(f_ts,sprintf('%s_timeseries.fig',preproc_fn(1:end-4)),'fig');
+saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn),'png');
+saveas(f_ts,sprintf('%s_timeseries.fig',preproc_fn),'fig');
 
 
 % save the preprocessing params
@@ -225,6 +225,6 @@ ii_savedata(ii_data,ii_cfg,preproc_fn);
     ii_params.epoch_chan);
 
 % save the saccades
-ii_savesacc(ii_cfg,ii_sacc,[preproc_fn(1:end-4) '_sacc.mat']);
+ii_savesacc(ii_cfg,ii_sacc,[preproc_fn '_sacc.mat']);
 
 end

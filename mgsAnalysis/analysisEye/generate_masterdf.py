@@ -28,7 +28,11 @@ p['Figures'] = p['datc'] + '/Figures/meta_analysis'
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
 subjIDs = []
-num_subs = len(sub_dirs)
+num_subs = len(sub_dirs) # Number of subjects
+print(f"We have {num_subs} subjects so far: {sub_dirs}")
+print()
+
+# Create a master dataframe
 for ii in range(len(sub_dirs)):
     subjIDs.append(int(sub_dirs[ii][-2:]))
     subjdir = p['analysis'] + '/' + sub_dirs[ii] # Path of current subject directory
@@ -42,23 +46,72 @@ for ii in range(len(sub_dirs)):
         # Check if this was a TMS session
         phosphene_data_path = p['data'] + '/phosphene_data/' + sub_dirs[ii]
         taskMapfilename =phosphene_data_path + '/taskMap_' + sub_dirs[ii] + '_' + day_dirs[dd] + '_antitype_mirror.mat'
-        taskMap = loadmat(taskMapfilename)
-        tms_status = taskMap['taskMap'][0, 0]['TMScond'][0][0]
+        taskMap = loadmat(taskMapfilename)['taskMap']
+        tms_status = taskMap[0, 0]['TMScond'][0][0]
         
         # Load the ii_sess files
         profName = daydir + '/ii_sess_pro_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
         antifName = daydir + '/ii_sess_anti_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
-        ii_sess_pro = loadmat(profName)
-        ii_sess_anti = loadmat(antifName)
+        ii_sess_pro = loadmat(profName)['ii_sess_pro']
+        ii_sess_anti = loadmat(antifName)['ii_sess_anti']
+        numTrials_pro = len(ii_sess_pro['stimVF'][0, 0])
+        numTrials_anti = len(ii_sess_anti['stimVF'][0, 0])
+        total_trials = numTrials_pro + numTrials_anti
+        print(f"Trial-count: pro = {numTrials_pro}, anti = {numTrials_anti}")
+        pro_data = {'subjID': np.full((numTrials_pro,), subjIDs[ii]),
+                     'day': np.full((numTrials_pro,), days[dd]),
+                      'tnum': ii_sess_pro['t_num'][0, 0].T[0],
+                     'tms': np.full((numTrials_pro,), tms_status),
+                     'ispro': np.full((numTrials_pro), 1),
+                     'instimVF': ii_sess_pro['stimVF'][0, 0].T[0],
+                     'isacc_err': ii_sess_pro['i_sacc_err'][0, 0].T[0],
+                     'fsacc_err': ii_sess_pro['f_sacc_err'][0, 0].T[0],
+                     'isacc_rt': ii_sess_pro['i_sacc_rt'][0, 0].T[0],
+                     'fsacc_rt': ii_sess_pro['f_sacc_rt'][0, 0].T[0],
+                     'breakfix': ii_sess_pro['break_fix'][0, 0].T[0],
+                     'prim_sacc': ii_sess_pro['prim_sacc'][0, 0].T[0],
+                     'small_sacc': ii_sess_pro['small_sacc'][0, 0].T[0],
+                     'large_error': ii_sess_pro['large_error'][0, 0].T[0]
+                    }
+        this_prodf = pd.DataFrame(pro_data)
 
-        # Find the stimulus VF
-        stimVF_pro = ii_sess_pro['ii_sess_pro']['stimVF'][0, 0]
-        stimVF_anti = ii_sess_anti['ii_sess_anti']['stimVF'][0, 0]
-        ispro = np.concatenate((np.ones(np.shape(stimVF_pro)[0]), -1*np.ones(np.shape(stimVF_anti)[0]))).astype(int)
-        stimVF = np.concatenate((stimVF_pro, stimVF_anti))
-        numTrials_pro = len(ii_sess_pro['ii_sess_pro']['stimVF'][0, 0])
-        numTrials_anti = len(ii_sess_anti['ii_sess_anti']['stimVF'][0, 0])
-        print(f"pro trials = {numTrials_pro}, anti trials = {numTrials_anti}")
+        anti_data = {'subjID': np.full((numTrials_anti,), subjIDs[ii]),
+                     'day': np.full((numTrials_anti,), days[dd]),
+                      'tnum': ii_sess_anti['t_num'][0, 0].T[0],
+                     'tms': np.full((numTrials_anti,), tms_status),
+                     'ispro': np.full((numTrials_anti), 0),
+                     'instimVF': ii_sess_anti['stimVF'][0, 0].T[0],
+                     'isacc_err': ii_sess_anti['i_sacc_err'][0, 0].T[0],
+                     'fsacc_err': ii_sess_anti['f_sacc_err'][0, 0].T[0],
+                     'isacc_rt': ii_sess_anti['i_sacc_rt'][0, 0].T[0],
+                     'fsacc_rt': ii_sess_anti['f_sacc_rt'][0, 0].T[0],
+                     'breakfix': ii_sess_anti['break_fix'][0, 0].T[0],
+                     'prim_sacc': ii_sess_anti['prim_sacc'][0, 0].T[0],
+                     'small_sacc': ii_sess_anti['small_sacc'][0, 0].T[0],
+                     'large_error': ii_sess_anti['large_error'][0, 0].T[0]
+                    }
+        this_antidf = pd.DataFrame(anti_data)
+
+        if 'master_df' in globals():
+            master_df = pd.concat([master_df, this_prodf, this_antidf])
+        else:
+            master_df = pd.concat([this_prodf, this_antidf])
+        print()
+
+# Flag trials for rejection: no primary saccade or a large saccade error
+master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['breakfix']==1)*1
+master_df['typesum'] = master_df['ispro'] + master_df['instimVF']  #pro-intoVF: 2, pro-outVF: 1; anti-intoVF: 0; anti-outVF: -1
+conditions = [
+    master_df['typesum'] == 2,
+    master_df['typesum'] == 1,
+    master_df['typesum'] == 0,
+    master_df['typesum'] == -1
+]
+vals = ['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF']
+master_df['trial_type'] = np.select(conditions, vals)
+
+
+    
 
 
 
@@ -67,100 +120,7 @@ for ii in range(len(sub_dirs)):
 #p['phosphene'] = p['data'] + '/phosphene_data/sub' + subjID
 #p['mgs'] = p['data'] + '/mgs_data/sub' + subjID
 
-# subjID = '01'
-# days = [1, 2, 3]
 
-# for ii in range(len(days)):
-#     day = days[ii]
-    
-#     p['day'] = p['mgs'] + '/day' + f'{day:02d}'
-#     p['save'] = p['analysis'] + '/sub' + subjID + '/day' + f'{day:02d}'
-#     saveNamepro = p['save'] + '/ii_sess_pro_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
-#     saveNameanti = p['save'] + '/ii_sess_anti_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
-#     taskMapfilename = p['phosphene'] + '/taskMap_sub' + subjID + '_day' + f'{day:02d}' + '.mat'
-    
-#     # Load the data files
-#     taskMap = loadmat(taskMapfilename)
-#     ii_sess_pro = loadmat(saveNamepro)
-#     ii_sess_anti = loadmat(saveNameanti)
-
-#     # Check if this is a TMS session
-#     tms_status = taskMap['taskMap'][0, 0]['TMScond'][0][0]
-#     print(tms_status)
-#     # Find the stimulus VF
-#     stimVF_pro = ii_sess_pro['ii_sess_pro']['stimVF'][0, 0]
-#     stimVF_anti = ii_sess_anti['ii_sess_anti']['stimVF'][0, 0]
-#     ispro = np.concatenate((np.ones(np.shape(stimVF_pro)[0]), -1*np.ones(np.shape(stimVF_anti)[0]))).astype(int)
-#     stimVF = np.concatenate((stimVF_pro, stimVF_anti))
-#     numTrials_pro = len(ii_sess_pro['ii_sess_pro']['stimVF'][0, 0])
-#     numTrials_anti = len(ii_sess_anti['ii_sess_anti']['stimVF'][0, 0])
-
-#     # Find trials to be rejected! Conditions used: no primary saccade or large saccade error
-#     ii_sess_pro_rejtrials = np.where((ii_sess_pro['ii_sess_pro']['prim_sacc'][0, 0] == 0) | 
-#                                         (ii_sess_pro['ii_sess_pro']['break_fix'] == 1))[0]
-#     ii_sess_anti_rejtrials = numTrials_pro + np.where((ii_sess_anti['ii_sess_anti']['prim_sacc'][0, 0] == 0) | 
-#                                         (ii_sess_anti['ii_sess_anti']['break_fix'] == 1))[0]
-#     rejtrials = np.zeros(numTrials_pro + numTrials_anti)
-#     rejtrials[ii_sess_pro_rejtrials] = 1
-#     rejtrials[ii_sess_anti_rejtrials] = 1
-
-#     # Get the initial and final saccade errors
-#     isacc_pro = ii_sess_pro['ii_sess_pro']['i_sacc_err'][0, 0]
-#     isacc_anti = ii_sess_anti['ii_sess_anti']['i_sacc_err'][0, 0]
-#     isacc = np.concatenate((isacc_pro, isacc_anti))
-#     fsacc_pro = ii_sess_pro['ii_sess_pro']['f_sacc_err'][0, 0]
-#     fsacc_anti = ii_sess_anti['ii_sess_anti']['f_sacc_err'][0, 0]
-#     fsacc = np.concatenate((fsacc_pro, fsacc_anti))
-
-#     # Divide the trials into 4 conditions: prointoVF, prooutVF, antiintoVF, antioutVF
-#     prointoVF_idx = np.where(stimVF_pro == np.ones(stimVF_pro.shape))[0]
-#     prooutVF_idx = np.where(stimVF_pro == np.zeros(stimVF_anti.shape))[0]
-#     antiintoVF_idx = stimVF_pro.shape[0] + np.where(stimVF_anti == np.zeros(stimVF_anti.shape))[0]
-#     antioutVF_idx = stimVF_pro.shape[0] + np.where(stimVF_anti == np.ones(stimVF_anti.shape))[0]
-#     # Create a dataframe
-#     df = pd.DataFrame(isacc, columns = ['i_sacc_err']) # Initial saccade errors
-#     df['f_sacc_err'] = fsacc # Final saccade errors
-#     df['instimVF'] = stimVF # Is stimulus in the visual field? 1: yes, 0: no
-#     df['ispro'] = ispro # Is this a pro-saccade trial? 1: yes, -1: no
-#     df['typesum'] = df['instimVF'] + df['ispro']
-#     df['rejtrials'] = rejtrials
-    
-#     trial_type = []
-#     pro_anti = []
-#     into_away = []
-#     for ii in range(df['ispro'].shape[0]):
-#         if df['ispro'][ii] == 1:
-#             pro_anti.append('pro')
-#         elif df['ispro'][ii] == -1:
-#             pro_anti.append('anti')
-#     for ii in range(df['instimVF'].shape[0]):
-#         if df['instimVF'][ii] == 1:
-#             into_away.append('into')
-#         elif df['instimVF'][ii] == 0:
-#             into_away.append('away')
-#     for ii in range(df['typesum'].shape[0]):
-#         if df['typesum'][ii] == 0:
-#             trial_type.append('antioutVF')
-#         elif df['typesum'][ii] == -1:
-#             trial_type.append('antiintoVF')
-#         elif df['typesum'][ii] == 1:
-#             trial_type.append('prooutVF')
-#         elif df['typesum'][ii] == 2:
-#             trial_type.append('prointoVF')
-#     df['trial_type'] = trial_type
-#     df['pro_anti'] = pro_anti
-#     df['into_away'] = into_away
-
-#     if tms_status == 1:
-#         if 'df_tms' in globals():
-#             df_tms = pd.concat([df_tms, df])
-#         else:
-#             df_tms = df
-#     else:
-#         if 'df_notms' in globals():
-#             df_notms = pd.concat([df_notms, df])
-#         else:
-#             df_notms = df
 
 # # df_tms = df_tms['i_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
 # # df_notms = df_notms['i_sacc_err'].replace([np.inf, -np.inf], np.nan, inplace = True)
