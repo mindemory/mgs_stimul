@@ -1,13 +1,8 @@
 # Load the modules
 from scipy.io import loadmat
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import os
-from scipy.stats import sem, f_oneway
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from generate_Y import generate_Y, generate_plot
 
 # Hide deprecation warnings!
 import warnings
@@ -99,7 +94,7 @@ for ii in range(len(sub_dirs)):
         print()
 
 # Flag trials for rejection: no primary saccade or a large saccade error
-master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['breakfix']==1)*1
+master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['large_error']==1)*1
 master_df['typesum'] = master_df['ispro'] + master_df['instimVF']  #pro-intoVF: 2, pro-outVF: 1; anti-intoVF: 0; anti-outVF: -1
 conditions = [
     master_df['typesum'] == 2,
@@ -110,7 +105,15 @@ conditions = [
 vals = ['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF']
 master_df['trial_type'] = np.select(conditions, vals)
 
+master_df['TMS_condition'] = ''
+master_df.loc[master_df['tms'] == 0, 'TMS_condition'] = 'No TMS'
+master_df.loc[(master_df['tms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
+master_df.loc[(master_df['tms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
 
+# Create a new column for the ispro condition
+master_df['ispro_condition'] = ''
+master_df.loc[master_df['ispro'] == 1, 'ispro_condition'] = 'pro'
+master_df.loc[master_df['ispro'] == 0, 'ispro_condition'] = 'anti'
     
 
 
