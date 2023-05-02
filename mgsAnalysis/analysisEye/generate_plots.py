@@ -6,7 +6,7 @@ import seaborn as sns
 msize = 12
 axes_fontsize = 12
 title_fontsize = 14
-sns.set()
+#sns.set()
 def subject_wise_error_plot(df, error_measure):
     X1 = [0.3, 0.8, 1.3]
     X2 = [round(x + 0.1, 1) for x in X1]
@@ -19,8 +19,8 @@ def subject_wise_error_plot(df, error_measure):
 
     warm_colors = plt.get_cmap('OrRd')
     cool_colors = plt.get_cmap('Blues')
-    wcols = warm_colors(np.linspace(0.2, 0.4, len(subjIDs)))
-    ccols = cool_colors(np.linspace(0.2, 0.4, len(subjIDs)))
+    wcols = warm_colors(np.linspace(0.4, 0.8, len(subjIDs)))
+    ccols = cool_colors(np.linspace(0.4, 0.8, len(subjIDs)))
     for ss in range(len(subjIDs)):
         for ii in range(len(TMSconds)):
             this_prodf = df[(df['subjID'] == subjIDs[ss]) & 
@@ -61,9 +61,23 @@ def subject_wise_error_plot(df, error_measure):
     plt.legend()
     plt.show()
 
- def distribution_plots(df):
-    subjIDs = df['subjID'].unique()
-    fig = plt.figure(figsize = (7, 9))
-    for ss in range(len(subjIDs)):
+def quick_visualization(df):
+    cols_to_plot = ['subjID', 'TMS_condition', 'trial_type', 'isacc_err', 'fsacc_err', 'isacc_rt', 'fsacc_rt']
+    df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
+                             [0, 1, 2, 3], inplace=True)
+    df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],
+                        [0, 1, 2], inplace=True) 
+    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (10, 10), alpha = 0.8)
+    plt.suptitle('Quick overview', fontsize = title_fontsize)
+    plt.show()
+
+    # Visualizing data in 2-d, kept out because not sure how it is doing it.
+    # pd.plotting.radviz(df[cols_to_plot], 'TMS_condition')
+    # plt.suptitle('Quick overview', fontsize = title_fontsize)
+    # plt.show()
+#  def distribution_plots(df):
+#     subjIDs = df['subjID'].unique()
+#     fig = plt.figure(figsize = (7, 9))
+#     for ss in range(len(subjIDs)):
 
 

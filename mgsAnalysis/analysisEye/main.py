@@ -3,21 +3,38 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from generate_plots import subject_wise_error_plot
+from generate_plots import subject_wise_error_plot, quick_visualization
+pd.set_option("display.max.columns", None)
+pd.set_option("display.precision", 4)
 
 df = gm.master_df
+print('Dataframe description')
+print(df.info())
+print()
+print(df.describe())
+print()
+print(df.describe(include=object))
+print()
+
 n_rows_original = len(df)
 # Filter out entries with 'rejtrials' == 1
 df_filtered = df[df['rejtrials'] != 1].copy()
+df_filtered = df_filtered.dropna()
 n_rows_filtered = len(df_filtered)
 print(f"Original = {n_rows_original}, after filtering = {n_rows_filtered} trials.")
+print()
+print('Dataframe description after filtering')
+print(df_filtered.info())
+print()
+print(df_filtered.describe())
+print()
+print(df_filtered.describe(include=object))
+print()
 
+quick_visualization(df_filtered)
 
-# Define the desired order
-
-print(df.head())
-
-subject_wise_error_plot(df_filtered, 'fsacc_err')
+#subject_wise_error_plot(df_filtered, 'isacc_err')
+#subject_wise_error_plot(df_filtered, 'fsacc_err')
 # 
 
 # Plot the distribution

@@ -15,7 +15,7 @@ p = {}
 if hostname == 'syndrome':
     p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
 else:
-    p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc'
+    p['datc'] =  '/Users/mrugankdake/remote/datc/MD_TMS_EEG'
 p['data'] = p['datc'] + '/data'
 p['analysis'] = p['datc'] + '/analysis'
 p['Figures'] = p['datc'] + '/Figures/meta_analysis'
@@ -58,7 +58,7 @@ for ii in range(len(sub_dirs)):
                       'tnum': ii_sess_pro['t_num'][0, 0].T[0],
                      'tms': np.full((numTrials_pro,), tms_status),
                      'ispro': np.full((numTrials_pro), 1),
-                     'instimVF': ii_sess_pro['stimVF'][0, 0].T[0],
+                     'instimVF': ii_sess_pro['stimVF'][0, 0].T[0], # 1 if stimulus is in VF
                      'isacc_err': ii_sess_pro['i_sacc_err'][0, 0].T[0],
                      'fsacc_err': ii_sess_pro['f_sacc_err'][0, 0].T[0],
                      'isacc_rt': ii_sess_pro['i_sacc_rt'][0, 0].T[0],
@@ -75,7 +75,7 @@ for ii in range(len(sub_dirs)):
                       'tnum': ii_sess_anti['t_num'][0, 0].T[0],
                      'tms': np.full((numTrials_anti,), tms_status),
                      'ispro': np.full((numTrials_anti), 0),
-                     'instimVF': ii_sess_anti['stimVF'][0, 0].T[0],
+                     'instimVF': ii_sess_anti['stimVF'][0, 0].T[0], # 1 if stimulus is in VF
                      'isacc_err': ii_sess_anti['i_sacc_err'][0, 0].T[0],
                      'fsacc_err': ii_sess_anti['f_sacc_err'][0, 0].T[0],
                      'isacc_rt': ii_sess_anti['i_sacc_rt'][0, 0].T[0],
@@ -95,10 +95,10 @@ for ii in range(len(sub_dirs)):
 
 # Flag trials for rejection: no primary saccade or a large saccade error
 master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['large_error']==1)*1
-master_df['typesum'] = master_df['ispro'] + master_df['instimVF']  #pro-intoVF: 2, pro-outVF: 1; anti-intoVF: 0; anti-outVF: -1
+master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
 conditions = [
-    master_df['typesum'] == 2,
     master_df['typesum'] == 1,
+    master_df['typesum'] == 2,
     master_df['typesum'] == 0,
     master_df['typesum'] == -1
 ]
@@ -107,8 +107,10 @@ master_df['trial_type'] = np.select(conditions, vals)
 
 master_df['TMS_condition'] = ''
 master_df.loc[master_df['tms'] == 0, 'TMS_condition'] = 'No TMS'
-master_df.loc[(master_df['tms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
-master_df.loc[(master_df['tms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
+master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
+master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
+master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS outVF'
+master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS intoVF'
 
 # Create a new column for the ispro condition
 master_df['ispro_condition'] = ''
