@@ -11,23 +11,31 @@ r = abs(sqrt(dx_cm.^2 + dy_cm.^2));
 
 % compute visual angle subtended by XY
 va = atan2d(r, parameters.viewingDistance);
+if va > parameters.maxRadius
+    va = parameters.maxRadius;
+    disp('Visual angle for mean of phosphene overlap is too big. Updating it...');
+elseif va < parameters.minRadius
+    va = parameters.minRadius;
+    disp('Visual angle for mean of phosphene overlap is too small. Updating it...');
+end
+    
 disp(['Visual angle for mean of phosphene overlap = ' num2str(va, "%02f")]);
 
 % compute r given a buffer of visual angle
 r_outer_cm = parameters.viewingDistance * tand(va+0.5*parameters.rbuffer); % in cm
 r_inner_cm = parameters.viewingDistance * tand(va-0.5*parameters.rbuffer); % in cm
-r_outer_max_cm = parameters.viewingDistance * tand(parameters.maxRadius); % in cm
-r_inner_min_cm = parameters.viewingDistance * tand(parameters.minRadius); % in cm
+% r_outer_max_cm = parameters.viewingDistance * tand(parameters.maxRadius); % in cm
+% r_inner_min_cm = parameters.viewingDistance * tand(parameters.minRadius); % in cm
 
 % compute r_outer and r_inner in pixel
 r_outer = r_outer_cm./parameters.pixSize;
 r_inner = r_inner_cm./parameters.pixSize;
-r_outer_max = r_outer_max_cm./parameters.pixSize;
-r_inner_min = r_inner_min_cm./parameters.pixSize;
+% r_outer_max = r_outer_max_cm./parameters.pixSize;
+% r_inner_min = r_inner_min_cm./parameters.pixSize;
 
 % r_outer and r_inner within permissible bounds
-%r_outer = min([r_outer, r_outer_max])
-%r_inner = max([r_inner, r_inner_min])
+% r_outer = min([r_outer, r_outer_max]);
+% r_inner = max([r_inner, r_inner_min]);
 
 % polar angle of XY
 theta = atan2d(dy_cm, dx_cm);
