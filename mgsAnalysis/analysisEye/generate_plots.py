@@ -75,9 +75,23 @@ def quick_visualization(df):
     # pd.plotting.radviz(df[cols_to_plot], 'TMS_condition')
     # plt.suptitle('Quick overview', fontsize = title_fontsize)
     # plt.show()
-#  def distribution_plots(df):
-#     subjIDs = df['subjID'].unique()
-#     fig = plt.figure(figsize = (7, 9))
-#     for ss in range(len(subjIDs)):
+def distribution_plots(df):
+    subjIDs = df['subjID'].unique()
+    df = df[df['fsacc_err']<4]
+    #tmp_df = df[df['TMS_condition']=='No TMS']
+    for ss in range(len(subjIDs)):
+        subj_df =  df[df['subjID']==subjIDs[ss]]
+        fig = plt.figure(figsize = (7, 9))
+        nbins = 50
+        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='No TMS']['fsacc_err']), alpha=0.5, label='No TMS', bins=nbins)
+        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='TMS intoVF']['fsacc_err']), alpha=0.5, label='TMS intoVF', bins=nbins)
+        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='TMS outVF']['fsacc_err']), alpha=0.5, label='TMS outVF', bins=nbins)
+        plt.legend()
+        plt.title(subjIDs[ss])
+        #sns.histplot(data=tmp_df, x=tmp_df['fsacc_err'], alpha = 0.5, label='No TMS')
+        # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS intoVF']['fsacc_err'], alpha = 0.5, label='TMS intoVF')
+        # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
+        plt.show()
+
 
 

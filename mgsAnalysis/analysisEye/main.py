@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from generate_plots import subject_wise_error_plot, quick_visualization
+from generate_plots import subject_wise_error_plot, quick_visualization, distribution_plots
 pd.set_option("display.max.columns", None)
 pd.set_option("display.precision", 4)
 
@@ -31,8 +31,8 @@ print()
 print(df_filtered.describe(include=object))
 print()
 
-quick_visualization(df_filtered)
-
+#quick_visualization(df_filtered)
+distribution_plots(df_filtered)
 #subject_wise_error_plot(df_filtered, 'isacc_err')
 #subject_wise_error_plot(df_filtered, 'fsacc_err')
 # 
