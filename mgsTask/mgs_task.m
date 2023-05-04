@@ -7,6 +7,8 @@ close all; clc;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize parameters
 subjID = num2str(subjID, "%02d"); % convert subjID to string
+
+
 parameters = loadParameters(subjID);
 if nargin < 4
     TMSamp = 30; % default TMS amplitude of 30% MSO
