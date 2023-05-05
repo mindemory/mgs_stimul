@@ -71,7 +71,7 @@ if exist(matfile_iEye, 'file') == 2
     load(matfile_iEye);
 else
     [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
-    fig = figure; plot(ii_data.XDAT, 'ro-'); xlabel('Time (ms)'); ylabel('XDAT'); title('Sanity check of XDAT');
+    fig = figure('visible','off'); plot(ii_data.XDAT, 'ro-'); xlabel('Time (ms)'); ylabel('XDAT'); title('Sanity check of XDAT');
     saveas(fig, [preproc_fn '_sanitycheck.png'],'png');
 end
 %imported_plot = plot_data(ii_data,{'X','Y', 'TarX', 'TarY'})
@@ -187,16 +187,21 @@ end
 
 % plot all these - make sure they're good
 f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_params.plot_epoch,ii_params.show_plots);
+f_all2d = ii_plotalltrials2d(ii_data,ii_cfg,{'X','Y'},ii_params.show_plots);
 
 % save the figures for our records
 if length(f_all)>1
     for ff = 1:lenght(f_all)
-        saveas(f_all,sprintf('%s_%02.f.png',preproc_fn,ff),'png');
-        saveas(f_all,sprintf('%s_%02.f.fig',preproc_fn,ff),'fig');
+        saveas(f_all,sprintf('%s_%02.f_alltrials1d.png',preproc_fn,ff),'png');
+        saveas(f_all,sprintf('%s_%02.f_alltrials1d.fig',preproc_fn,ff),'fig');
+        saveas(f_all2d,sprintf('%s_%02.f_alltrials2d.png',preproc_fn,ff),'png');
+        saveas(f_all2d,sprintf('%s_%02.f_alltrials2d.fig',preproc_fn,ff),'fig');
     end
 else
-    saveas(f_all,sprintf('%s.png',preproc_fn),'png');
-    saveas(f_all,sprintf('%s.fig',preproc_fn),'fig');
+    saveas(f_all,sprintf('%s_alltrials1d.png',preproc_fn),'png');
+    saveas(f_all,sprintf('%s_alltrials1d.fig',preproc_fn),'fig');
+    saveas(f_all2d,sprintf('%s_alltrials2d.png',preproc_fn),'png');
+    saveas(f_all2d,sprintf('%s_alltrials2d.fig',preproc_fn),'fig');
 end
 
 % and plot the final full timeseries
