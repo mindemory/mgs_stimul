@@ -58,7 +58,7 @@ end
 
 %% QC plots
 % Check for how many excl flags
-fh_excl = ii_plotQC_exclusions(ii_sess,ii_cfg);
+fh_excl = ii_plotQC_exclusions(ii_sess_pro,ii_cfg);
 which_excl = [20 22];
 use_trial = ~cellfun( @any, cellfun( @(a) ismember(a, which_excl), ii_sess_pro.excl_trial, 'UniformOutput',false));
 
