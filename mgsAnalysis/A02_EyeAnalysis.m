@@ -56,21 +56,14 @@ else
     save(saveNameanti,'ii_sess_anti')
 end
 
+
 %% QC plots
-% Check for how many excl flags
-fh_excl = ii_plotQC_exclusions(ii_sess_pro,ii_cfg);
+% Run QC
 which_excl = [20 22];
-use_trial = ~cellfun( @any, cellfun( @(a) ismember(a, which_excl), ii_sess_pro.excl_trial, 'UniformOutput',false));
+disp('Running QC on ii_sess_pro')
+createQC(ii_sess_pro, p, which_excl, 'pro');
+disp('Running QC on ii_sess_anti')
+createQC(ii_sess_anti, p, which_excl, 'anti');
 
-% check RT
-use_trial(ii_sess_pro.i_sacc_rt < 0.1) = 0;
-
-% see how many trials we're keeping
-fprintf('Analyzing %0.03f%% of trials\n',mean(use_trial)*100);
-
-% FIRST: plot RT histogram
-figure;
-histogram(ii_sess_pro.i_sacc_rt,10);
-xlabel('Response time (s)');
-xlim([0 0.7]); % 700 ms is longest allowed RT
 toc
+end
