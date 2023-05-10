@@ -1,4 +1,4 @@
-function [ii_sess] = RuniEye(p, taskMap, end_block)
+function [ii_sess_pro, ii_sess_anti] = RuniEye(p, taskMap, end_block)
 
 if nargin < 3
     end_block = 10;
@@ -36,6 +36,8 @@ excl_criteria.i_err_thresh = 10;   % i_sacc must be within this many DVA of targ
 excl_criteria.drift_thresh = 2.5;     % if drift correction norm is this big or more, drop
 excl_criteria.delay_fix_thresh = 2.5; % if any fixation is this far from 0,0 during delay (epoch 3)
 
+block_pro = 1;
+block_anti = 1;
 for block = 1:end_block
     disp(['Running block ' num2str(block, '%02d')])
     p.block = [p.dayfolder '/block' num2str(block,'%02d')];
@@ -60,9 +62,7 @@ for block = 1:end_block
     end
 
     edfFile = [edf_block_fold filesep edfFileName '.edf'];
-    if ~exist(edfFile, 'file')
-        copyfile(edfFile_original, edfFile);
-    end
+    copyfile(edfFile_original, edfFile);
     % what is the output filename?
     preproc_fn = edfFile(1:end-4);
     
@@ -72,51 +72,81 @@ for block = 1:end_block
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    [ii_trial{block},~] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'lenient');
-    ii_trial{block}.instimVF = taskMap(block).stimVF;
-    ii_trial{block}.istms = ones(length(taskMap(block).stimVF), 1) * taskMap(block).TMScond;
-    ii_trial{block}.ispro = ones(length(taskMap(block).stimVF), 1) * strcmp(eyecond, 'pro');
-    clearvars ii_cfg ii_data;
+    if strcmp(eyecond, 'pro')
+        [ii_trial_pro{block_pro},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'lenient');
+        ii_trial_pro{block_pro}.stimVF = taskMap(block).stimVF;
+        block_pro = block_pro+1;
+    elseif strcmp(eyecond, 'anti')
+        [ii_trial_anti{block_anti},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc, [], 4,[],excl_criteria,[],'lenient');
+        ii_trial_anti{block_anti}.stimVF = taskMap(block).stimVF;
+        block_anti = block_anti+1;
+    end
 end
-
-
 %% Combining runs
 disp('Combining runs')
-
-% Creating ii_sess only if ii_trial is valid
-if ~exist("ii_trial", "var")
-    ii_sess = [];
+disp(['Total trials = ', num2str(end_block * 40)])
+% For pro trials
+if ~exist("ii_trial_pro", "var")
+    ii_sess_pro = [];
 else
-    ii_sess = ii_combineruns(ii_trial);
-    disp(['Total trials = ', num2str(size(ii_sess.i_sacc_err, 1))])
-    disp(['nan trials ii_sess_pro.i_sacc_err = ', num2str(sum(isnan(ii_sess.i_sacc_err(ii_sess.ispro==1))))])
-    disp(['nan trials ii_sess_pro.f_sacc_err = ', num2str(sum(isnan(ii_sess.f_sacc_err(ii_sess.ispro==1))))])
-    disp(['nan trials ii_sess_anti.i_sacc_err = ', num2str(sum(isnan(ii_sess.i_sacc_err(ii_sess.ispro==0))))])
-    disp(['nan trials ii_sess_anti.f_sacc_err = ', num2str(sum(isnan(ii_sess.f_sacc_err(ii_sess.ispro==0))))])
-    
-    % Flag trials with fixation breaks
-    ii_sess.break_fix = double(cell2mat(cellfun(@(x) ismember(13, x), ii_sess.excl_trial, 'UniformOutput', false)));
-    % Flag trials with no primary saccades
-    ii_sess.no_prim_sacc = double(cell2mat(cellfun(@(x) ismember(20, x), ii_sess.excl_trial, 'UniformOutput', false)));
-    % Flag trials with small or short saccades
-    ii_sess.small_sacc = double(cell2mat(cellfun(@(x) ismember(21, x), ii_sess.excl_trial, 'UniformOutput', false)));
-    % Flag trials with large MGS errors
-    ii_sess.large_error = double(cell2mat(cellfun(@(x) ismember(22, x), ii_sess.excl_trial, 'UniformOutput', false)));
+    ii_sess_pro = ii_combineruns(ii_trial_pro);
+    disp(['Pro trials = ', num2str(size(ii_sess_pro.i_sacc_err, 1))])
+    disp(['nan trials ii_sess_pro.i_sacc_err = ', num2str(sum(isnan(ii_sess_pro.i_sacc_err)))])
+    disp(['nan trials ii_sess_pro.f_sacc_err = ', num2str(sum(isnan(ii_sess_pro.f_sacc_err)))])
+    ii_sess_pro.break_fix = zeros(length(ii_sess_pro.excl_trial), 1);
+    ii_sess_pro.prim_sacc = ones(length(ii_sess_pro.excl_trial), 1);
+    ii_sess_pro.small_sacc = zeros(length(ii_sess_pro.excl_trial), 1);
+    ii_sess_pro.large_error = zeros(length(ii_sess_pro.excl_trial), 1);
 
-    % Put a reject trial flag: no primary saccade or a large saccade error
-    ii_sess.rejtrials = double(cell2mat(cellfun(@(x) any(ismember([20, 22], x)), ii_sess.excl_trial, 'UniformOutput', false)));
-    
-    % Check TMS condition
-    ii_sess.TMS_condition = cell(size(ii_sess.instimVF));
-    ii_sess.TMS_condition(ii_sess.instimVF == 1 & ii_sess.istms == 1) = {'TMS_intoVF'};
-    ii_sess.TMS_condition(ii_sess.instimVF == 0 & ii_sess.istms == 1) = {'TMS_outVF'};
-    ii_sess.TMS_condition(ii_sess.istms == 0) = {'No TMS'};
-    
-    % Check trial-type
-    ii_sess.trial_type = cell(size(ii_sess.instimVF));
-    ii_sess.trial_type(ii_sess.ispro == 1 & ii_sess.instimVF == 1) = {'pro_intoVF'};
-    ii_sess.trial_type(ii_sess.ispro == 1 & ii_sess.instimVF == 0) = {'pro_outVF'};
-    ii_sess.trial_type(ii_sess.ispro == 0 & ii_sess.instimVF == 1) = {'anti_intoVF'};
-    ii_sess.trial_type(ii_sess.ispro == 0 & ii_sess.instimVF == 0) = {'anti_outVF'};
+    for ii = 1:length(ii_sess_pro.excl_trial)
+        % Flag trials with fixation breaks
+        if sum(ii_sess_pro.excl_trial{ii} == 13) > 0
+            ii_sess_pro.break_fix(ii) = 1;
+        end
+        % Flag trials with no primary saccades
+        if sum(ii_sess_pro.excl_trial{ii} == 20) > 0
+            ii_sess_pro.prim_sacc(ii) = 0;
+        end
+        % Flag trials with small or short saccades
+        if sum(ii_sess_pro.excl_trial{ii} == 21) > 0
+            ii_sess_pro.small_sacc(ii) = 1;
+        end
+        % Flag trials with large MGS errors
+        if sum(ii_sess_pro.excl_trial{ii} == 22) > 0
+            ii_sess_pro.large_error(ii) =  1;
+        end
+    end
+end
+% For anti trials
+if ~exist("ii_trial_anti", "var")
+    ii_sess_anti = [];
+else
+    ii_sess_anti = ii_combineruns(ii_trial_anti);
+    disp(['Anti trials = ', num2str(size(ii_sess_anti.i_sacc_err, 1))])
+    disp(['nan trials ii_sess_anti.i_sacc_err = ', num2str(sum(isnan(ii_sess_anti.i_sacc_err)))])
+    disp(['nan trials ii_sess_anti.f_sacc_err = ', num2str(sum(isnan(ii_sess_anti.f_sacc_err)))])
+    ii_sess_anti.break_fix = zeros(length(ii_sess_anti.excl_trial), 1);
+    ii_sess_anti.prim_sacc = ones(length(ii_sess_anti.excl_trial), 1);
+    ii_sess_anti.small_sacc = zeros(length(ii_sess_anti.excl_trial), 1);
+    ii_sess_anti.large_error = zeros(length(ii_sess_anti.excl_trial), 1);
+
+    for ii = 1:length(ii_sess_anti.excl_trial)
+        % Flag trials with fixation breaks
+        if sum(ii_sess_anti.excl_trial{ii} == 13) > 0
+            ii_sess_anti.break_fix(ii) = 1;
+        end
+        % Flag trials with no primary saccades
+        if sum(ii_sess_anti.excl_trial{ii} == 20) > 0
+            ii_sess_anti.prim_sacc(ii) = 0;
+        end
+        % Flag trials with small or short saccades
+        if sum(ii_sess_anti.excl_trial{ii} == 21) > 0
+            ii_sess_anti.small_sacc(ii) = 1;
+        end
+        % Flag trials with large MGS errors
+        if sum(ii_sess_anti.excl_trial{ii} == 22) > 0
+            ii_sess_anti.large_error(ii) =  1;
+        end
+    end
 end
 end

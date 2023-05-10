@@ -18,52 +18,24 @@ p.day = day;
 % Initialize all the relevant paths
 [p, taskMap] = initialization(p, 'eye', prac_status);
 
-% Determine trial number of pro and anti trials for all blocks
-for blurb = 1:length(taskMap)
-    if strcmp(taskMap(blurb).condition, 'pro')
-        if ~exist('protrialNum', 'var')
-            protrialNum = (blurb-1)*40+1:blurb*40;
-        else
-            protrialNum = [protrialNum;(blurb-1)*40+1:blurb*40];
-        end
-    elseif strcmp(taskMap(blurb).condition, 'anti')
-        if ~exist('antitrialNum', 'var')
-            antitrialNum = (blurb-1)*40+1:blurb*40;
-        else
-            antitrialNum = [antitrialNum;(blurb-1)*40+1:blurb*40];
-        end
-    end
-end
-
-% convert the pro and anti trials into an array
-protrialNum = reshape(protrialNum', [], 1);
-antitrialNum = reshape(antitrialNum', [], 1);
-
 %% Load ii_sess files
 tic
-saveNamepro = [p.save '/ii_sess_pro_sub' p.subjID '_day' num2str(p.day, '%02d')];
-saveNameanti = [p.save '/ii_sess_anti_sub' p.subjID '_day' num2str(p.day, '%02d')];
-saveNamepromat = [saveNamepro '.mat'];
-saveNameantimat = [saveNameanti '.mat'];
-if exist(saveNamepromat, 'file') == 2 && exist(saveNameantimat, 'file') == 2
-    disp('Loading existing ii_sess files.')
-    load(saveNamepromat);
-    load(saveNameantimat);
+ii_sess_saveName = [p.save '/ii_sess_sub' p.subjID '_day' num2str(p.day, '%02d')];
+ii_sess_saveName_mat = [ii_sess_saveName '.mat'];
+if exist(ii_sess_saveName_mat, 'file') == 2
+    disp('Loading existing ii_sess file.')
+    load(ii_sess_saveName_mat);
 else
-    disp('ii_sess files do not exist. running ieye')
-    [ii_sess_pro, ii_sess_anti] = RuniEye(p, taskMap, end_block);
-    save(saveNamepro,'ii_sess_pro')
-    save(saveNameanti,'ii_sess_anti')
+    disp('ii_sess file does not exist. running ieye')
+    ii_sess = RuniEye(p, taskMap, end_block);
+    save(ii_sess_saveName,'ii_sess')
 end
 
 
 %% QC plots
 % Run QC
-which_excl = [20 22];
-disp('Running QC on ii_sess_pro')
-createQC(ii_sess_pro, p, which_excl, 'pro');
-disp('Running QC on ii_sess_anti')
-createQC(ii_sess_anti, p, which_excl, 'anti');
-
+% which_excl = [20 22];
+% disp('Running QC')
+% RunQC_EyeData(ii_sess, p, which_excl);
 toc
 end
