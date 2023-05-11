@@ -35,7 +35,7 @@ parameters.sampleDuration = 0.5;
 parameters.delayDuration = 4;
 parameters.delay1Duration = parameters.delayDuration/2;
 parameters.delay2Duration = parameters.delayDuration/2;%-parameters.delay1Duration-parameters.pulseDuration;
-parameters.respDuration = 1;
+parameters.respDuration = 0.85;
 parameters.feedbackDuration = 0.8;
 parameters.itiDuration = [1,2];
 
