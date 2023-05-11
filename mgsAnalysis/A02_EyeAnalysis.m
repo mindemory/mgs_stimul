@@ -34,8 +34,8 @@ end
 
 %% QC plots
 % Run QC
-% which_excl = [20 22];
-% disp('Running QC')
-% RunQC_EyeData(ii_sess, p, which_excl);
+which_excl = [20 22];
+disp('Running QC')
+RunQC_EyeData(ii_sess, p, which_excl);
 toc
 end

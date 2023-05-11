@@ -12,20 +12,39 @@ if ~exist(p.QCdir_png, 'dir')
     mkdir(p.QCdir_png);
 end
 
-%% Plot QC exclusions
-fh_excl = ii_plotQC_exclusions(ii_sess(ii_sess.ispro == 1),[],which_excl,0);
-for ff = 1:length(fh_excl)
-    saveas(fh_excl(ff), [p.QCdir_png '/excl' num2str(ff) '_pro_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
-    saveas(fh_excl(ff), [p.QCdir_fig '/excl' num2str(ff) '_pro_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
-end
+ii_sess_pro = struct;
+ii_sess_anti = struct;
 
-fh_excl = ii_plotQC_exclusions(ii_sess(ii_sess.ispro == 0),[],which_excl,0);
-for ff = 1:length(fh_excl)
-    saveas(fh_excl(ff), [p.QCdir_png '/excl' num2str(ff) '_anti_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
-    saveas(fh_excl(ff), [p.QCdir_fig '/excl' num2str(ff) '_anti_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
+fieldnames_original = fieldnames(ii_sess);
+idx_params = strcmp(fieldnames_original, 'params');
+fieldnames_original(idx_params) = [];
+for ii = 1:numel(fieldnames_original)
+    this_field = fieldnames_original{ii};
+    ii_sess_pro.(this_field) = ii_sess.(this_field)(ii_sess.ispro == 1, :);
+    ii_sess_anti.(this_field) = ii_sess.(this_field)(ii_sess.ispro == 0, :);
 end
+ii_sess_pro.params = ii_sess.params;
+ii_sess_anti.params = ii_sess.params;
+
+%% Plot QC exclusions
+disp('1. Plotting QC exclusions')
+% sess pro
+fh_excl_pro = ii_plotQC_exclusions(ii_sess_pro,[],which_excl,0, 1);
+saveas(fh_excl_pro, [p.QCdir_png '/excl' num2str(1) '_pro_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
+saveas(fh_excl_pro, [p.QCdir_fig '/excl' num2str(1) '_pro_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
+
+% sess anti
+fh_excl_anti = ii_plotQC_exclusions(ii_sess_anti,[],which_excl,0, 1);
+saveas(fh_excl_anti, [p.QCdir_png '/excl' num2str(1) '_anti_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
+saveas(fh_excl_anti, [p.QCdir_fig '/excl' num2str(1) '_anti_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
+
+fh_excl = ii_plotQC_exclusions(ii_sess,[],which_excl,0, 2);
+saveas(fh_excl, [p.QCdir_png '/excl' num2str(2) '_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
+saveas(fh_excl, [p.QCdir_fig '/excl' num2str(2) '_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
+
 
 %% Plot QC all trials
+disp('2. Plotting QC all trials')
 fh_trial = ii_plotQC_alltrials(ii_sess,ii_cfg,[], 0);
 for ff = 1:length(fh_trial)
     saveas(fh_trial(ff), [p.QCdir_png '/block' num2str(ff) '_sub' p.subjID '_day' num2str(p.day, '%02d')], 'png');
@@ -46,14 +65,24 @@ end
 
 
 %% Traces for primary, final saccade for each block
-figure('Visible','off');
-ru_pro = unique(ii_sess.r_num(ii_sess.ispro == 1)); % get run #'s
+%figure('Visible','off');
+figure;
+ru_pro = unique(ii_sess_pro.r_num); % get run #'s for pro blocks
+ru_anti = unique(ii_sess_anti.r_num); % get run #'s for anti blocks
+ru_num_total = length(ru_pro) + length(ru_anti); % total # of runs
 
-for rr = 1:length(ru_pro)
-    subplot(2,5,rr); hold on;
+for rr = 1:ru_num_total
+    [p_check, p_idx] = ismember(rr, ru_pro);
+    [a_check, a_idx] = ismember(rr, ru_anti);
+    if p_check
+        subplot(2, 5, p_idx);
+    elseif a_check
+        subplot(2, 5, 5+a_idx);
+    end
+    hold on;
     
     % only grab trials we'll use
-    thisidx = find(ii_sess.r_num==ru_pro(rr) & use_trial==1);
+    thisidx = find(ii_sess.r_num==ru_pro(rr));
     mycolors = lines(length(thisidx)); % color for each trial
     
     for tt = 1:length(thisidx)
@@ -72,7 +101,6 @@ for rr = 1:length(ru_pro)
     plot(0,0,'ks','MarkerFaceColor','k','MarkerSize',5); % fixation point
     xlim([-15 15]); ylim([-15 15]);
     axis square off;
-
-    title(sprintf('Run %i, TMS=',ru_pro(rr)));
+    title(['Block:' num2str(rr,'%02d')]);
 end
 end
