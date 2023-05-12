@@ -36,6 +36,6 @@ end
 % Run QC
 which_excl = [20 22];
 disp('Running QC')
-RunQC_EyeData(ii_sess, p, which_excl);
+RunQC_EyeData(ii_sess, p, which_excl, {'all_trials'});
 toc
 end
