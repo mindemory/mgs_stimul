@@ -88,6 +88,8 @@ if ~exist("ii_trial", "var")
     ii_sess = [];
 else
     ii_sess = ii_combineruns(ii_trial);
+    ii_sess = compute_polar(ii_sess);
+    
     disp(['Total trials = ', num2str(size(ii_sess.i_sacc_err, 1))])
     disp(['nan trials ii_sess_pro.i_sacc_err = ', num2str(sum(isnan(ii_sess.i_sacc_err(ii_sess.ispro==1))))])
     disp(['nan trials ii_sess_pro.f_sacc_err = ', num2str(sum(isnan(ii_sess.f_sacc_err(ii_sess.ispro==1))))])

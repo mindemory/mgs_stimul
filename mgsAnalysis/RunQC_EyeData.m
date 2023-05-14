@@ -116,115 +116,115 @@ if ~ismember('traces', skip_steps)
     saveas(fh_traces, [p.QCdir_fig '/saccade_traces_sub' p.subjID '_day' num2str(p.day, '%02d')], 'fig');
 end
 
-if ~ismember('aligned_saccades', skip_steps)
-    disp('3. Plotting aligned saccades for pro block')
-
-    figure;
-    subplot(3,2,[1 3]); hold on;
-    thisidx = find(ii_sess.ispro==1);
-    for tt = 1:length(thisidx)
-        [tmpth,tmpr] = cart2pol(ii_sess.i_sacc_trace{thisidx(tt)}(:,1),ii_sess.i_sacc_trace{thisidx(tt)}(:,2));
-
-        % change th, keeping r the same, based on th of ii_sess.targ
-        [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
-
-        [aligned_x,aligned_y] = pol2cart(tmpth-adjth,tmpr);
-
-        % if top left or bottom right quadrant, flip y
-        if sign(ii_sess.targ(thisidx(tt),1))~=sign(ii_sess.targ(thisidx(tt),2))
-            aligned_y = -1*aligned_y;
-        end
-
-        plot(aligned_x,aligned_y,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
-        clear tmpth tmpr adjth aligned_x aligned_y;
-    end
-    % fixation point
-    plot(0,0,'+','MarkerSize',8,'MarkerFaceColor',mycolors(2,:),'Color',mycolors(2,:),'LineWidth',2);
-
-    % target location
-    plot(12,0,'d','Color',mycolors(1,:),'MarkerFaceColor',mycolors(1,:),'MarkerSize',8);
-    xlim([-2 15]); axis equal;
-    set(gca,'TickDir','out','XTick',0:6:12);
-    title('Aligned primary saccade trajectories');
-
-    % now, the aligned trace
-    xdat_to_plot = ii_sess.params.resp_epoch + [0 1]; % plot response & feedback epoch
-
-    subplot(3,2,5); hold on;
-
-    for tt = 1:length(thisidx)
-        % similar to before, but now we're going to rotate X,Y channels
-        [tmpth,tmpr] = cart2pol(ii_sess.X{thisidx(tt)},ii_sess.Y{thisidx(tt)});
-
-        % change th, keeping r the same, based on th of ii_sess.targ
-        [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
-
-        [aligned_x,~] = pol2cart(tmpth-adjth,tmpr); % we're not using y here, just x
-
-        aligned_x = aligned_x(ismember(ii_sess.XDAT{thisidx(tt)},xdat_to_plot));
-
-        this_t = (1:length(aligned_x))/ii_cfg.hz;
-        plot(this_t,aligned_x,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
-
-
-    end
-    xlabel('Time (s) after GO');
-    ylabel('Eye position (towards target)');
-    xlim([0 1.5]); ylim([-2 15]);
-    set(gca,'XTick',[0:0.7:1.4],'YTick',[0:6:12],'TickDir','out');
-    
-    
-    subplot(3,2,[2 4]); hold on;
-    thisidx = find(ii_sess.ispro==0);
-    for tt = 1:length(thisidx)
-        [tmpth,tmpr] = cart2pol(ii_sess.i_sacc_trace{thisidx(tt)}(:,1),ii_sess.i_sacc_trace{thisidx(tt)}(:,2));
-
-        % change th, keeping r the same, based on th of ii_sess.targ
-        [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
-
-        [aligned_x,aligned_y] = pol2cart(tmpth-adjth,tmpr);
-
-        % if top left or bottom right quadrant, flip y
-        if sign(ii_sess.targ(thisidx(tt),1))~=sign(ii_sess.targ(thisidx(tt),2))
-            aligned_y = -1*aligned_y;
-        end
-
-        plot(aligned_x,aligned_y,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
-        clear tmpth tmpr adjth aligned_x aligned_y;
-    end
-    % fixation point
-    plot(0,0,'+','MarkerSize',8,'MarkerFaceColor',mycolors(2,:),'Color',mycolors(2,:),'LineWidth',2);
-
-    % target location
-    plot(12,0,'d','Color',mycolors(1,:),'MarkerFaceColor',mycolors(1,:),'MarkerSize',8);
-    xlim([-2 15]); axis equal;
-    set(gca,'TickDir','out','XTick',0:6:12);
-    title('Aligned primary saccade trajectories');
-
-    % now, the aligned trace
-    xdat_to_plot = ii_sess.params.resp_epoch + [0 1]; % plot response & feedback epoch
-
-    subplot(3,2,6); hold on;
-
-    for tt = 1:length(thisidx)
-        % similar to before, but now we're going to rotate X,Y channels
-        [tmpth,tmpr] = cart2pol(ii_sess.X{thisidx(tt)},ii_sess.Y{thisidx(tt)});
-
-        % change th, keeping r the same, based on th of ii_sess.targ
-        [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
-
-        [aligned_x,~] = pol2cart(tmpth-adjth,tmpr); % we're not using y here, just x
-
-        aligned_x = aligned_x(ismember(ii_sess.XDAT{thisidx(tt)},xdat_to_plot));
-
-        this_t = (1:length(aligned_x))/ii_cfg.hz;
-        plot(this_t,aligned_x,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
-
-
-    end
-    xlabel('Time (s) after GO');
-    ylabel('Eye position (towards target)');
-    xlim([0 1.5]); ylim([-2 15]);
-    set(gca,'XTick',[0:0.7:1.4],'YTick',[0:6:12],'TickDir','out');
-end
+% if ~ismember('aligned_saccades', skip_steps)
+%     disp('3. Plotting aligned saccades for pro block')
+% 
+%     figure;
+%     subplot(3,2,[1 3]); hold on;
+%     thisidx = find(ii_sess.ispro==1);
+%     for tt = 1:length(thisidx)
+%         [tmpth,tmpr] = cart2pol(ii_sess.i_sacc_trace{thisidx(tt)}(:,1),ii_sess.i_sacc_trace{thisidx(tt)}(:,2));
+% 
+%         % change th, keeping r the same, based on th of ii_sess.targ
+%         [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
+% 
+%         [aligned_x,aligned_y] = pol2cart(tmpth-adjth,tmpr);
+% 
+%         % if top left or bottom right quadrant, flip y
+%         if sign(ii_sess.targ(thisidx(tt),1))~=sign(ii_sess.targ(thisidx(tt),2))
+%             aligned_y = -1*aligned_y;
+%         end
+% 
+%         plot(aligned_x,aligned_y,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
+%         clear tmpth tmpr adjth aligned_x aligned_y;
+%     end
+%     % fixation point
+%     plot(0,0,'+','MarkerSize',8,'MarkerFaceColor',mycolors(2,:),'Color',mycolors(2,:),'LineWidth',2);
+% 
+%     % target location
+%     plot(12,0,'d','Color',mycolors(1,:),'MarkerFaceColor',mycolors(1,:),'MarkerSize',8);
+%     xlim([-2 15]); axis equal;
+%     set(gca,'TickDir','out','XTick',0:6:12);
+%     title('Aligned primary saccade trajectories');
+% 
+%     % now, the aligned trace
+%     xdat_to_plot = ii_sess.params.resp_epoch + [0 1]; % plot response & feedback epoch
+% 
+%     subplot(3,2,5); hold on;
+% 
+%     for tt = 1:length(thisidx)
+%         % similar to before, but now we're going to rotate X,Y channels
+%         [tmpth,tmpr] = cart2pol(ii_sess.X{thisidx(tt)},ii_sess.Y{thisidx(tt)});
+% 
+%         % change th, keeping r the same, based on th of ii_sess.targ
+%         [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
+% 
+%         [aligned_x,~] = pol2cart(tmpth-adjth,tmpr); % we're not using y here, just x
+% 
+%         aligned_x = aligned_x(ismember(ii_sess.XDAT{thisidx(tt)},xdat_to_plot));
+% 
+%         this_t = (1:length(aligned_x))/ii_cfg.hz;
+%         plot(this_t,aligned_x,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
+% 
+% 
+%     end
+%     xlabel('Time (s) after GO');
+%     ylabel('Eye position (towards target)');
+%     xlim([0 1.5]); ylim([-2 15]);
+%     set(gca,'XTick',[0:0.7:1.4],'YTick',[0:6:12],'TickDir','out');
+%     
+%     
+%     subplot(3,2,[2 4]); hold on;
+%     thisidx = find(ii_sess.ispro==0);
+%     for tt = 1:length(thisidx)
+%         [tmpth,tmpr] = cart2pol(ii_sess.i_sacc_trace{thisidx(tt)}(:,1),ii_sess.i_sacc_trace{thisidx(tt)}(:,2));
+% 
+%         % change th, keeping r the same, based on th of ii_sess.targ
+%         [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
+% 
+%         [aligned_x,aligned_y] = pol2cart(tmpth-adjth,tmpr);
+% 
+%         % if top left or bottom right quadrant, flip y
+%         if sign(ii_sess.targ(thisidx(tt),1))~=sign(ii_sess.targ(thisidx(tt),2))
+%             aligned_y = -1*aligned_y;
+%         end
+% 
+%         plot(aligned_x,aligned_y,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
+%         clear tmpth tmpr adjth aligned_x aligned_y;
+%     end
+%     % fixation point
+%     plot(0,0,'+','MarkerSize',8,'MarkerFaceColor',mycolors(2,:),'Color',mycolors(2,:),'LineWidth',2);
+% 
+%     % target location
+%     plot(12,0,'d','Color',mycolors(1,:),'MarkerFaceColor',mycolors(1,:),'MarkerSize',8);
+%     xlim([-2 15]); axis equal;
+%     set(gca,'TickDir','out','XTick',0:6:12);
+%     title('Aligned primary saccade trajectories');
+% 
+%     % now, the aligned trace
+%     xdat_to_plot = ii_sess.params.resp_epoch + [0 1]; % plot response & feedback epoch
+% 
+%     subplot(3,2,6); hold on;
+% 
+%     for tt = 1:length(thisidx)
+%         % similar to before, but now we're going to rotate X,Y channels
+%         [tmpth,tmpr] = cart2pol(ii_sess.X{thisidx(tt)},ii_sess.Y{thisidx(tt)});
+% 
+%         % change th, keeping r the same, based on th of ii_sess.targ
+%         [adjth,~] = cart2pol(ii_sess.targ(thisidx(tt),1),ii_sess.targ(thisidx(tt),2));
+% 
+%         [aligned_x,~] = pol2cart(tmpth-adjth,tmpr); % we're not using y here, just x
+% 
+%         aligned_x = aligned_x(ismember(ii_sess.XDAT{thisidx(tt)},xdat_to_plot));
+% 
+%         this_t = (1:length(aligned_x))/ii_cfg.hz;
+%         plot(this_t,aligned_x,'-','LineWidth',1,'Color',[0.2 0.2 0.2]);
+% 
+% 
+%     end
+%     xlabel('Time (s) after GO');
+%     ylabel('Eye position (towards target)');
+%     xlim([0 1.5]); ylim([-2 15]);
+%     set(gca,'XTick',[0:0.7:1.4],'YTick',[0:6:12],'TickDir','out');
+% end
 end

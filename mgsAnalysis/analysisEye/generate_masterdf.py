@@ -22,6 +22,7 @@ p['Figures'] = p['datc'] + '/Figures/meta_analysis'
 
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
+sub_dirs = ['sub01']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -45,28 +46,26 @@ for ii in range(len(sub_dirs)):
         tms_status = taskMap[0, 0]['TMScond'][0][0]
         
         # Load the ii_sess files
-        profName = daydir + '/ii_sess_pro_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
-        antifName = daydir + '/ii_sess_anti_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
-        ii_sess_pro = loadmat(profName)['ii_sess_pro']
-        ii_sess_anti = loadmat(antifName)['ii_sess_anti']
-        numTrials_pro = len(ii_sess_pro['stimVF'][0, 0])
-        numTrials_anti = len(ii_sess_anti['stimVF'][0, 0])
+        sessfName = daydir + '/ii_sess_' + sub_dirs[ii] + '_' + day_dirs[dd] + '.mat'
+        ii_sess = loadmat(sessfName)['ii_sess']
+        numTrials_pro = np.sum(ii_sess['ispro'][0, 0] == 1)
+        numTrials_anti = np.sum(ii_sess['ispro'][0, 0] == 0)
         total_trials = numTrials_pro + numTrials_anti
         print(f"Trial-count: pro = {numTrials_pro}, anti = {numTrials_anti}")
         pro_data = {'subjID': np.full((numTrials_pro,), subjIDs[ii]),
                      'day': np.full((numTrials_pro,), days[dd]),
-                      'tnum': ii_sess_pro['t_num'][0, 0].T[0],
+                      'tnum': ii_sess['t_num'][0, 0].T[0],
                      'tms': np.full((numTrials_pro,), tms_status),
                      'ispro': np.full((numTrials_pro), 1),
-                     'instimVF': ii_sess_pro['stimVF'][0, 0].T[0], # 1 if stimulus is in VF
-                     'isacc_err': ii_sess_pro['i_sacc_err'][0, 0].T[0],
-                     'fsacc_err': ii_sess_pro['f_sacc_err'][0, 0].T[0],
-                     'isacc_rt': ii_sess_pro['i_sacc_rt'][0, 0].T[0],
-                     'fsacc_rt': ii_sess_pro['f_sacc_rt'][0, 0].T[0],
-                     'breakfix': ii_sess_pro['break_fix'][0, 0].T[0],
-                     'prim_sacc': ii_sess_pro['prim_sacc'][0, 0].T[0],
-                     'small_sacc': ii_sess_pro['small_sacc'][0, 0].T[0],
-                     'large_error': ii_sess_pro['large_error'][0, 0].T[0]
+                     'instimVF': ii_sess['stimVF'][0, 0].T[0], # 1 if stimulus is in VF
+                     'isacc_err': ii_sess['i_sacc_err'][0, 0].T[0],
+                     'fsacc_err': ii_sess['f_sacc_err'][0, 0].T[0],
+                     'isacc_rt': ii_sess['i_sacc_rt'][0, 0].T[0],
+                     'fsacc_rt': ii_sess['f_sacc_rt'][0, 0].T[0],
+                     'breakfix': ii_sess['break_fix'][0, 0].T[0],
+                     'prim_sacc': ii_sess['prim_sacc'][0, 0].T[0],
+                     'small_sacc': ii_sess['small_sacc'][0, 0].T[0],
+                     'large_error': ii_sess['large_error'][0, 0].T[0]
                     }
         this_prodf = pd.DataFrame(pro_data)
 
