@@ -25,8 +25,8 @@ function ii_sess = compute_polar(ii_sess)
                                         ii_sess.f_sacc_raw(:, 2)-ii_sess.i_sacc_raw(:, 2));                   
 
 end
-% 
-% 
+
+
 % figure();
 % pro_indices = ii_sess.ispro == 1;
 % anti_indices = ii_sess.ispro == 0;
