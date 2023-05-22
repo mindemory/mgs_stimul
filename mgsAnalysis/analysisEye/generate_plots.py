@@ -3,6 +3,8 @@ import pandas as pd
 from scipy.stats import sem
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import gaussian_kde as gkde
+
 msize = 12
 axes_fontsize = 12
 title_fontsize = 14
@@ -52,9 +54,9 @@ def subject_wise_error_plot(df, error_measure):
         plt.plot(X1, Y1[ss, :], color = ccols[ss], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
         plt.plot(X2, Y2[ss, :], color = wcols[ss], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
     
-    if len(subjIDs) < 3:
-        plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2)
-        plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2)
+    #if len(subjIDs) < 3:
+    plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2)
+    plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2)
 
     plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
     plt.ylabel(error_measure, fontsize = axes_fontsize)
@@ -62,12 +64,16 @@ def subject_wise_error_plot(df, error_measure):
     plt.show()
 
 def quick_visualization(df):
-    cols_to_plot = ['subjID', 'TMS_condition', 'trial_type', 'isacc_err', 'fsacc_err', 'isacc_rt', 'fsacc_rt']
-    df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
-                             [0, 1, 2, 3], inplace=True)
-    df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],
-                        [0, 1, 2], inplace=True) 
-    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (10, 10), alpha = 0.8)
+    cols_to_plot = ['isaccX', 'isaccY', 'fsaccX', 'fsaccY', 'isacc_err',
+       'fsacc_err', 'isacc_theta_err', 'fsacc_theta_err',
+       'corrected_theta_err', 'isacc_radius_err', 'fsacc_radius_err',
+       'corrected_radius_err', 'nsacc', 'calib_err', 'isacc_rt', 'fsacc_rt',
+       'isacc_peakvel', 'fsacc_peakvel']
+    # df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
+    #                          [0, 1, 2, 3], inplace=True)
+    # df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],
+    #                     [0, 1, 2], inplace=True) 
+    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (20, 20), alpha = 0.8)
     plt.suptitle('Quick overview', fontsize = title_fontsize)
     plt.show()
 
@@ -78,20 +84,31 @@ def quick_visualization(df):
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
     df = df[df['fsacc_err']<4]
+    errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'corrected_theta_err', 'fsacc_radius_err', 
+                    'corrected_radius_err', 'nsacc', 'calib_err', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
+    n_rows = 2
+    n_cols = 5
+    alpha_val = 0.8
     #tmp_df = df[df['TMS_condition']=='No TMS']
     for ss in range(len(subjIDs)):
         subj_df =  df[df['subjID']==subjIDs[ss]]
-        fig = plt.figure(figsize = (7, 9))
+        fig, axes = plt.subplots(n_rows, n_cols, figsize = (15, 10))
+        plt.suptitle(subjIDs[ss])
         nbins = 50
-        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='No TMS']['fsacc_err']), alpha=0.5, label='No TMS', bins=nbins)
-        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='TMS intoVF']['fsacc_err']), alpha=0.5, label='TMS intoVF', bins=nbins)
-        plt.hist(np.log(subj_df[subj_df['TMS_condition']=='TMS outVF']['fsacc_err']), alpha=0.5, label='TMS outVF', bins=nbins)
-        plt.legend()
-        plt.title(subjIDs[ss])
+        this_idx = 0
+        for n1 in range(n_rows):
+            for n2 in range(n_cols):
+                this_err = errs_to_plot[this_idx]
+                axes[n1, n2].hist(subj_df[subj_df['TMS_condition']=='No TMS'][this_err], alpha=alpha_val, label='No TMS', bins=nbins)
+                axes[n1, n2].hist(subj_df[subj_df['TMS_condition']=='TMS intoVF'][this_err], alpha=alpha_val, label='TMS intoVF', bins=nbins)
+                axes[n1, n2].hist(subj_df[subj_df['TMS_condition']=='TMS outVF'][this_err], alpha=alpha_val, label='TMS outVF', bins=nbins)
+                axes[n1, n2].legend()
+                axes[n1, n2].set_xlabel(this_err)
+                this_idx += 1
         #sns.histplot(data=tmp_df, x=tmp_df['fsacc_err'], alpha = 0.5, label='No TMS')
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS intoVF']['fsacc_err'], alpha = 0.5, label='TMS intoVF')
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
-        plt.show()
+        
 
 
 

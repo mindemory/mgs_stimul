@@ -32,8 +32,8 @@ print(df_filtered.describe(include=object))
 print()
 
 #quick_visualization(df_filtered)
-distribution_plots(df_filtered)
-#subject_wise_error_plot(df_filtered, 'isacc_err')
+#distribution_plots(df_filtered)
+subject_wise_error_plot(df_filtered, 'fsacc_theta_err')
 #subject_wise_error_plot(df_filtered, 'fsacc_err')
 # 
 

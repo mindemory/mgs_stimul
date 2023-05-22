@@ -25,7 +25,7 @@ if not os.path.exists(p['meta']):
 
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
-sub_dirs = ['sub01', 'sub03', 'sub06', 'sub16']
+sub_dirs = ['sub01', 'sub03', 'sub06', 'sub15']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -105,7 +105,35 @@ else:
             else:
                 master_df = this_sess_df
             print()
+    # master_df['ispro'] = master_df['ispro'].astype('Int64')
+    # master_df['instimVF'] = master_df['instimVF'].astype('Int64')
+    master_df['trial_type'] = ''
+    master_df.loc[(master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'trial_type'] = 'pro_intoVF'
+    master_df.loc[(master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'trial_type'] = 'pro_outVF'
+    master_df.loc[(master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'trial_type'] = 'anti_intoVF'
+    master_df.loc[(master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'trial_type'] = 'anti_outVF'
+    
+    # Correcting angular error
+    #master_df.loc[master_df['fsacc_theta_err'] < -2*np.pi, 'fsacc_theta_err'] = 
+    # master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
+    # conditions = [
+    #     master_df['typesum'] == 1,
+    #     master_df['typesum'] == 2,
+    #     master_df['typesum'] == 0,
+    #     master_df['typesum'] == -1
+    # ]
+    # vals = ['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF']
+    # master_df['trial_type'] = np.select(conditions, vals)
+
+    master_df['TMS_condition'] = ''
+    master_df.loc[master_df['istms'] == 0, 'TMS_condition'] = 'No TMS'
+    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
+    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
+    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS outVF'
+    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS intoVF'
+
     master_df.to_csv(p['df_fname'], index = False)
+
 # Flag trials for rejection: no primary saccade or a large saccade error
 # master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['large_error']==1)*1
 # master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
