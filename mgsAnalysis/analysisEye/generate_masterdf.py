@@ -15,7 +15,7 @@ p = {}
 if hostname == 'syndrome':
     p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
 else:
-    p['datc'] =  '/Users/mrugankdake/remote/datc/MD_TMS_EEG'
+    p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG'
 p['data'] = p['datc'] + '/data'
 p['analysis'] = p['datc'] + '/analysis'
 p['meta'] = p['analysis'] + '/meta_analysis'
@@ -25,7 +25,8 @@ if not os.path.exists(p['meta']):
 
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
-sub_dirs = ['sub01', 'sub03', 'sub06', 'sub15']
+#sub_dirs = ['sub01', 'sub03', 'sub06', 'sub08', 'sub15', ]
+sub_dirs = ['sub16']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -114,7 +115,14 @@ else:
     master_df.loc[(master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'trial_type'] = 'anti_outVF'
     
     # Correcting angular error
-    #master_df.loc[master_df['fsacc_theta_err'] < -2*np.pi, 'fsacc_theta_err'] = 
+    angular_err_cols = ['isacc_theta_err', 'fsacc_theta_err', 'corrected_theta_err']
+    for ee in angular_err_cols:
+        master_df[ee] = np.where(master_df[ee] < - np.pi, 
+                                master_df[ee] % (np.pi), master_df[ee])
+        master_df[ee] = np.where(master_df[ee] > np.pi, 
+                                master_df[ee] % (np.pi), master_df[ee])
+        #master_df[ee] = np.sign(master_df[ee]) * (np.abs(master_df[ee] % (np.pi)))
+
     # master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
     # conditions = [
     #     master_df['typesum'] == 1,

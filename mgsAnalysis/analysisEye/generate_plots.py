@@ -21,8 +21,8 @@ def subject_wise_error_plot(df, error_measure):
 
     warm_colors = plt.get_cmap('OrRd')
     cool_colors = plt.get_cmap('Blues')
-    wcols = warm_colors(np.linspace(0.4, 0.8, len(subjIDs)))
-    ccols = cool_colors(np.linspace(0.4, 0.8, len(subjIDs)))
+    wcols = warm_colors(np.linspace(0.3, 0.7, len(subjIDs)))
+    ccols = cool_colors(np.linspace(0.3, 0.7, len(subjIDs)))
     for ss in range(len(subjIDs)):
         for ii in range(len(TMSconds)):
             this_prodf = df[(df['subjID'] == subjIDs[ss]) & 
@@ -105,6 +105,17 @@ def distribution_plots(df):
                 axes[n1, n2].legend()
                 axes[n1, n2].set_xlabel(this_err)
                 this_idx += 1
+        plt.show()
+
+        fig2, axes = plt.subplots(n_rows, n_cols, figsize = (15, 10))
+        plt.suptitle(subjIDs[ss])
+        this_idx = 0
+        for n1 in range(n_rows):
+            for n2 in range(n_cols):
+                this_err = errs_to_plot[this_idx]
+                sns.violinplot(data = subj_df, x = 'TMS_condition', y=this_err, ax = axes[n1, n2], hue = 'ispro', split = 'inner')
+                this_idx+=1
+        plt.show()
         #sns.histplot(data=tmp_df, x=tmp_df['fsacc_err'], alpha = 0.5, label='No TMS')
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS intoVF']['fsacc_err'], alpha = 0.5, label='TMS intoVF')
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
