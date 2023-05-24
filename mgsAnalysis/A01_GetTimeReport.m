@@ -30,22 +30,27 @@ direct.data = [direct.datc '/data'];
 direct.phosphene = [direct.data '/phosphene_data/sub' subjID];
 if prac_status == 1
     direct.analysis = [direct.datc '/analysis/practice/sub' subjID];
-    direct.figures = [direct.datc '/Figures/practice/sub' subjID '/timeStruct'];
     direct.mgs = [direct.data '/mgs_practice_data/sub' subjID];
 else
     direct.analysis = [direct.datc '/analysis/sub' subjID];
-    direct.figures = [direct.datc '/Figures/sub' subjID '/timeStruct'];
     direct.mgs = [direct.data '/mgs_data/sub' subjID];
 end
 addpath(genpath(direct.data));
+
+direct.figures_png = [direct.analysis '/timeStruct/png'];
+direct.figures_fig = [direct.analysis '/timeStruct/fig'];
 
 % Paths to save analysis and plots
 if exist(direct.analysis, 'dir') ~= 7
     mkdir(direct.analysis)
 end
 
-if exist(direct.figures, 'dir') ~= 7
-    mkdir(direct.figures)
+if exist(direct.figures_png, 'dir') ~= 7
+    mkdir(direct.figures_png)
+end
+
+if exist(direct.figures_fig, 'dir') ~= 7
+    mkdir(direct.figures_fig)
 end
 
 % List directories
@@ -107,7 +112,10 @@ for day = 1:days
         clear matFile;
     end
     % Generate a figure of time stamps
-    figure;
+    fig = figure;
+%     fig.Position = [0 0 800 600];
+%     fig.Renderer = 'painters';
+%     fig.RendererSettings.Resolution = 600;
     h = suptitle(['sub' subjID '_ day' num2str(day, "%02d") ]);
     set(h, 'Position', [0.5, -0.03, 0]);
     for ii = 1:length(dur_vars)
@@ -117,10 +125,10 @@ for day = 1:days
         xlabel('Time (s)')
         ylabel('# of Trials')
     end
-    fig_fname_png = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
-    saveas(gcf, fig_fname_png);
-    fig_fname_fig = [direct.figures '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.fig'];
-    saveas(gcf, fig_fname_fig);
+    fig_fname_png = [direct.figures_png '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.png'];
+    saveas(fig, fig_fname_png);
+    fig_fname_fig = [direct.figures_fig '/timeStruct_sub' subjID '_day' num2str(day, "%02d") '.fig'];
+    saveas(fig, fig_fname_fig);
 end
 
 % Create a structure to save flagged trials

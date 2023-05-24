@@ -25,8 +25,7 @@ if not os.path.exists(p['meta']):
 
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
-#sub_dirs = ['sub01', 'sub03', 'sub06', 'sub08', 'sub15', ]
-sub_dirs = ['sub16']
+sub_dirs = ['sub01', 'sub03', 'sub06', 'sub15', 'sub16']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -75,12 +74,12 @@ else:
                         'large_error': ii_sess['large_error'][0, 0].T[0],
                         'rejtrials': ii_sess['rejtrials'][0, 0].T[0],
                         # Target and eye end-points
-                        'TarX': ii_sess['targ'][0, 0][:, 0].T[0],
-                        'TarY': ii_sess['targ'][0, 0][:, 1].T[0],
-                        'isaccX': ii_sess['i_sacc_raw'][0, 0][:, 0].T[0],
-                        'isaccY': ii_sess['i_sacc_raw'][0, 0][:, 1].T[0],
-                        'fsaccX': ii_sess['f_sacc_raw'][0, 0][:, 0].T[0],
-                        'fsaccY': ii_sess['f_sacc_raw'][0, 0][:, 1].T[0],
+                        'TarX': ii_sess['targ'][0, 0][:, 0].T,
+                        'TarY': ii_sess['targ'][0, 0][:, 1].T,
+                        'isaccX': ii_sess['i_sacc_raw'][0, 0][:, 0].T,
+                        'isaccY': ii_sess['i_sacc_raw'][0, 0][:, 1].T,
+                        'fsaccX': ii_sess['f_sacc_raw'][0, 0][:, 0].T,
+                        'fsaccY': ii_sess['f_sacc_raw'][0, 0][:, 1].T,
                         # errors added
                         'isacc_err': ii_sess['i_sacc_err'][0, 0].T[0],
                         'fsacc_err': ii_sess['f_sacc_err'][0, 0].T[0],
@@ -100,7 +99,6 @@ else:
                         'fsacc_peakvel': ii_sess['f_sacc_peakvel'][0, 0].T[0],
                         }
             this_sess_df = pd.DataFrame(sess_data)
-
             if 'master_df' in globals():
                 master_df = pd.concat([master_df, this_sess_df])
             else:
@@ -121,17 +119,6 @@ else:
                                 master_df[ee] % (np.pi), master_df[ee])
         master_df[ee] = np.where(master_df[ee] > np.pi, 
                                 master_df[ee] % (np.pi), master_df[ee])
-        #master_df[ee] = np.sign(master_df[ee]) * (np.abs(master_df[ee] % (np.pi)))
-
-    # master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
-    # conditions = [
-    #     master_df['typesum'] == 1,
-    #     master_df['typesum'] == 2,
-    #     master_df['typesum'] == 0,
-    #     master_df['typesum'] == -1
-    # ]
-    # vals = ['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF']
-    # master_df['trial_type'] = np.select(conditions, vals)
 
     master_df['TMS_condition'] = ''
     master_df.loc[master_df['istms'] == 0, 'TMS_condition'] = 'No TMS'

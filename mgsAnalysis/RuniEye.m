@@ -24,7 +24,7 @@ ii_params.calibrate_epoch = 5; % XDAT value for when we calibrate (feedback stim
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
 ii_params.calibrate_mode = 'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
 ii_params.blink_thresh = 0.1;
-ii_params.blink_window = [200 200]; % how long before/after blink (ms) to drop?
+ii_params.blink_window = [100 100]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [10 2 3 4 5];  % what epochs do we plot for preprocessing?
 ii_params.calibrate_limits = [2.5]; % when amount of adj exceeds this, don't actually calibrate (trial-wise); ignore trial for polynomial fitting (run)
 

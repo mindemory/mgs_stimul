@@ -1,6 +1,6 @@
 function RunQC_EyeData(ii_sess, p, which_excl, skip_steps)
 
-if nargin < 4 || isempty(skip_steps);
+if nargin < 4 || isempty(skip_steps)
     skip_steps = {};
 end
 % Created by Mrugank (05/08/2023)

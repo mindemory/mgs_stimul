@@ -1,6 +1,6 @@
-function A02_EyeAnalysis(subjID, day, end_block, prac_status)
+function A02_EyeAnalysis(subjID, day, end_block, prac_status, only_edf2asc)
 % Created by Mrugank (04/09/2023) 
-clearvars -except subjID day end_block prac_status;
+clearvars -except subjID day end_block prac_status only_edf2asc;
 close all; clc;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,6 +12,10 @@ end
 if nargin < 4
     prac_status = 0; % default is no practice aka actual run
 end
+if nargin < 5
+    only_edf2asc = 0; % default is run whole analysis
+end
+
 p.subjID = num2str(subjID, '%02d');
 p.day = day;
 
@@ -26,16 +30,24 @@ if exist(ii_sess_saveName_mat, 'file') == 2
     disp('Loading existing ii_sess file.')
     load(ii_sess_saveName_mat);
 else
-    disp('ii_sess file does not exist. running ieye')
-    ii_sess = RuniEye(p, taskMap, end_block);
-    save(ii_sess_saveName,'ii_sess')
+    if ~only_edf2asc
+        disp('ii_sess file does not exist. running ieye')
+        ii_sess = RuniEye(p, taskMap, end_block);
+        save(ii_sess_saveName,'ii_sess')
+    else
+        disp('Running import edf2asc only.')
+        RuniEye_loadonly(p, taskMap, end_block);
+    end
 end
 
 
 %% QC plots
-% Run QC
-which_excl = [20 22];
-disp('Running QC')
-RunQC_EyeData(ii_sess, p, which_excl, {'all_trials'});
+if ~only_edf2asc
+    % Run QC
+    which_excl = [20 22];
+    disp('Running QC')
+    RunQC_EyeData(ii_sess, p, which_excl, {'all_trials'});
+    %RunQC_EyeData(ii_sess, p, which_excl);
+end
 toc
 end

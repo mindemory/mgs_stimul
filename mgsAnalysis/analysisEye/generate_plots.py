@@ -92,7 +92,7 @@ def distribution_plots(df):
     #tmp_df = df[df['TMS_condition']=='No TMS']
     for ss in range(len(subjIDs)):
         subj_df =  df[df['subjID']==subjIDs[ss]]
-        fig, axes = plt.subplots(n_rows, n_cols, figsize = (15, 10))
+        fig, axes = plt.subplots(n_rows, n_cols, figsize = (20, 10))
         plt.suptitle(subjIDs[ss])
         nbins = 50
         this_idx = 0
@@ -107,7 +107,7 @@ def distribution_plots(df):
                 this_idx += 1
         plt.show()
 
-        fig2, axes = plt.subplots(n_rows, n_cols, figsize = (15, 10))
+        fig2, axes = plt.subplots(n_rows, n_cols, figsize = (20, 10))
         plt.suptitle(subjIDs[ss])
         this_idx = 0
         for n1 in range(n_rows):
