@@ -11,6 +11,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 import socket
 hostname = socket.gethostname()
 
+from helpers import rotate_to_zero
+
 p = {}
 if hostname == 'syndrome':
     p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
@@ -99,6 +101,7 @@ else:
                         'fsacc_peakvel': ii_sess['f_sacc_peakvel'][0, 0].T[0],
                         }
             this_sess_df = pd.DataFrame(sess_data)
+            rotate_to_zero(this_sess_df)
             if 'master_df' in globals():
                 master_df = pd.concat([master_df, this_sess_df])
             else:
