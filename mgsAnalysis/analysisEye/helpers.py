@@ -3,6 +3,7 @@ import pandas as pd
 
 def rotate_to_zero(df):
     TarTheta = np.arctan2(df['TarY'], df['TarX'])
+    TarRadius = np.sqrt(df['TarX']^2+df['TarY']^2)
     # Initialize columns to store rotated anlges
     df['TarX_rotated'] = np.zeros(len(df['TarX']))
     df['TarY_rotated'] = np.zeros(len(df['TarX']))
@@ -16,12 +17,13 @@ def rotate_to_zero(df):
     for ii in range(len(TarTheta)):
         # Get angle for target and corresponding rotation matrix
         this_angle = -1 * TarTheta[ii]
+        radial_error = np.max(TarRadius) - TarRadius[ii]
         rotation_matrix = np.array([[np.cos(this_angle), -np.sin(this_angle)],
                                     [np.sin(this_angle), np.cos(this_angle)]])
         for idx in range(len(xcols)):
             x = df.loc[ii, [xcols[idx]]]
             y = df.loc[ii, [ycols[idx]]]
-            input_points = np.vstack(x, y)
+            input_points = np.vstack((x, y))
             rotated_points = np.dot(rotation_matrix, input_points)
             df.loc[ii, [xcols[idx] + '_rotated']] = rotated_points[0]
             df.loc[ii, [ycols[idx] + '_rotated']] = rotated_points[1]
