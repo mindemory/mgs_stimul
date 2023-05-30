@@ -2,7 +2,7 @@ function A03_PreprocEEG(subjID, day, steps)
 %clearvars -except subjID day; close all; clc;
 
 if nargin < 3
-    steps = {'concat', 'raweeg'};%, 'bandpass', 'epoch'};
+    steps = {'concat', 'raweeg', 'bandpass', 'epoch'};
 end
 p.subjID = num2str(subjID,'%02d');
 p.day = day;
@@ -103,7 +103,10 @@ end
 disp('We are done! Woosh, that was some work.')
 end
 
-%%
+%% Plot trials (first pass)
+% cfg = [];
+% cfg.viewmode = 'butterfly';
+% ft_databrowser(cfg, data_eeg)
 
 
 %% Removing line noise

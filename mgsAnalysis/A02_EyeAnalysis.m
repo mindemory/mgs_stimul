@@ -29,6 +29,7 @@ ii_sess_saveName_mat = [ii_sess_saveName '.mat'];
 if exist(ii_sess_saveName_mat, 'file') == 2
     disp('Loading existing ii_sess file.')
     load(ii_sess_saveName_mat);
+    
 else
     if ~only_edf2asc
         disp('ii_sess file does not exist. running ieye')

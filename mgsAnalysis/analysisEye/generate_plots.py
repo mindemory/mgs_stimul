@@ -8,7 +8,7 @@ from scipy.stats import gaussian_kde as gkde
 msize = 12
 axes_fontsize = 12
 title_fontsize = 14
-#sns.set()
+sns.set()
 def subject_wise_error_plot(df, error_measure):
     X1 = [0.3, 0.8, 1.3]
     X2 = [round(x + 0.1, 1) for x in X1]
@@ -31,33 +31,42 @@ def subject_wise_error_plot(df, error_measure):
             this_antidf = df[(df['subjID'] == subjIDs[ss]) & 
                             (df['TMS_condition'] == TMSconds[ii]) &
                             ((df['ispro'] == 0))]
-            Y1[ss, ii] = np.nanmean(this_prodf[error_measure])
-            Y2[ss, ii] = np.nanmean(this_antidf[error_measure])
+            Y1[ss, ii] = np.nanvar(this_prodf[error_measure])
+            Y2[ss, ii] = np.nanvar(this_antidf[error_measure])
+            
             Yerr1[ss, ii] = sem(this_prodf[error_measure])
             Yerr2[ss, ii] = sem(this_antidf[error_measure])
-
+        # normalizer_val = Y1[ss, 0]
+        # Y1[ss, :] = Y1[ss, :] / normalizer_val
+        # Y2[ss, :] = Y2[ss, :] / normalizer_val
     x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
 
     X_sum = [sum(value) for value in zip(X1, X2)]
     x_tick_pos = [round(x/2, 1) for x in X_sum]
     # LIMS_x = max(X2) + 0.2
-    # LIMS_y = max(max(Y1), max(Y2)) * 1.2
+    #LIMS_y = max(max(max(Y1)), max(max(Y2))) * 1.2
     # LIMS = [LIMS_x, LIMS_y]
     
     fig = plt.figure(figsize = (7, 9))
-    plt.title(error_measure +' across subjects', fontsize = title_fontsize)
+    #plt.title(error_measure +' across ' + str(len(subjIDs)) + ' subjects', fontsize = title_fontsize)
+    plt.title(subjIDs, fontsize = title_fontsize)
     for ss in range(len(subjIDs)):
-        plt.errorbar(X1, Y1[ss, :], yerr = Yerr1[ss, :], fmt = '.', ecolor = ccols[ss], 
-                    markersize = msize, markerfacecolor = ccols[ss], markeredgecolor = ccols[ss], label = str(subjIDs[ss])+'_pro')
-        plt.errorbar(X2, Y2[ss, :], yerr = Yerr2[ss, :], fmt = '.', ecolor = wcols[ss], 
-                    markersize = msize, markerfacecolor = wcols[ss], markeredgecolor = wcols[ss], label = str(subjIDs[ss])+'_anti')
-        plt.plot(X1, Y1[ss, :], color = ccols[ss], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
-        plt.plot(X2, Y2[ss, :], color = wcols[ss], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
+        # plt.errorbar(X1, Y1[ss, :], yerr = Yerr1[ss, :], fmt = '.', ecolor = ccols[0], 
+        #             markersize = msize, markerfacecolor = ccols[0], markeredgecolor = ccols[0], label = '__no_legend')
+        # plt.errorbar(X2, Y2[ss, :], yerr = Yerr2[ss, :], fmt = '.', ecolor = wcols[0], 
+        #             markersize = msize, markerfacecolor = wcols[0], markeredgecolor = wcols[0], label = '__no_legend')
+        plt.plot(X1, Y1[ss, :], color = ccols[0], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
+        plt.plot(X2, Y2[ss, :], color = wcols[0], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
     
-    #if len(subjIDs) < 3:
-    plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2)
-    plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2)
-
+    if len(subjIDs) < 3:
+        plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = 'pro')
+        plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = 'anti')
+    else:
+        plt.errorbar(X1, np.mean(Y1, axis=0), yerr=sem(Y1, axis=0), fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+        plt.errorbar(X2, np.mean(Y2, axis=0), yerr=sem(Y2, axis=0), fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
+        plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+        plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+    #plt.ylim([0, LIMS_y])
     plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
     plt.ylabel(error_measure, fontsize = axes_fontsize)
     plt.legend()
@@ -83,7 +92,7 @@ def quick_visualization(df):
     # plt.show()
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
-    df = df[df['fsacc_err']<4]
+    #df = df[df['fsacc_err']<4]
     errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'corrected_theta_err', 'fsacc_radius_err', 
                     'corrected_radius_err', 'nsacc', 'calib_err', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
     n_rows = 2

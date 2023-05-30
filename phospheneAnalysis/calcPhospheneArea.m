@@ -18,7 +18,7 @@ PhosphReport = repmat(PhosphReport, [1, length(LocInds)]);
 parameters = loadParameters(tmsRtnTpy);
 tms_notms = [0, 1, 1];
 tms_notms_Idx = randperm(length(tms_notms));
-tms_notms = tms_notms(tms_notms_Idx);
+tms_notms = tms_notms(tms_notms_Idx)
 VAs = zeros(length(LocInds), 1);
 
 more_drops = [];

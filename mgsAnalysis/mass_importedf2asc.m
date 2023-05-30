@@ -1,5 +1,5 @@
-%subs = [1, 3, 6, 8, 13, 15, 16];
-subs = [13];
+subs = [1, 3, 6, 8, 13, 15, 16];
+%subs = [13];
 days = [1, 2, 3];
 for ss = 1:length(subs)
     this_sub = subs(ss);

@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 import socket
 hostname = socket.gethostname()
 
-from helpers import rotate_to_zero
+from helpers import rotate_to_zero, rotate_to_scale
 
 p = {}
 if hostname == 'syndrome':
@@ -27,7 +27,7 @@ if not os.path.exists(p['meta']):
 
 # Find subjects and days that have been run so far
 sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
-sub_dirs = ['sub01', 'sub03', 'sub06', 'sub15', 'sub16']
+sub_dirs = ['sub01', 'sub03', 'sub06', 'sub08', 'sub12', 'sub13', 'sub14', 'sub15', 'sub16']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -102,6 +102,7 @@ else:
                         }
             this_sess_df = pd.DataFrame(sess_data)
             rotate_to_zero(this_sess_df)
+            rotate_to_scale(this_sess_df)
             if 'master_df' in globals():
                 master_df = pd.concat([master_df, this_sess_df])
             else:
