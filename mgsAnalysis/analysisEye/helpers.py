@@ -107,13 +107,14 @@ def variance_error_summary(df):
     df['isacc_theta_rot'] = df['isaccTheta_rotated_only'] - df['TarTheta_rotated_only']
     df['fsacc_theta_rot'] = df['fsaccTheta_rotated_only'] - df['TarTheta_rotated_only']
     for cc in new_cols:
-        df[cc + '_normed'] = 0
-
-    for ss in range(len(subjIDs)):
-        subj_df = df[df['subjID'] == subjIDs[ss]]
-        subj_idx = df.index[df['subjID'] == subjIDs[ss]]
-        this_subj_norm_factor = subj_df['TarTheta_rotated_only'].max() - subj_df['TarTheta_rotated_only'].min()
-        print(subjIDs[ss], this_subj_norm_factor)
-        for cc in new_cols:
-            df.loc[subj_idx, [cc + '_normed']] = df.loc[subj_idx, [cc]]/this_subj_norm_factor
+        #df[cc + '_normed'] = 0
+        temp_normed = np.zeros((len(df['TarX']), 1))
+        for ss in range(len(subjIDs)):
+            subj_df = df[df['subjID'] == subjIDs[ss]]
+            subj_idx = df.index[df['subjID'] == subjIDs[ss]]
+            this_subj_norm_factor = subj_df['TarTheta_rotated_only'].max() - subj_df['TarTheta_rotated_only'].min()
+            temp_normed[subj_idx] = df.loc[subj_idx, [cc]]/this_subj_norm_factor
+            # print(subjIDs[ss], this_subj_norm_factor, len(subj_idx))
+            # print(cc)
+        df[cc + '_normed'] = temp_normed
     return df

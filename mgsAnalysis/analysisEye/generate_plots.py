@@ -31,8 +31,8 @@ def subject_wise_error_plot(df, error_measure):
             this_antidf = df[(df['subjID'] == subjIDs[ss]) & 
                             (df['TMS_condition'] == TMSconds[ii]) &
                             ((df['ispro'] == 0))]
-            Y1[ss, ii] = np.nanmean(this_prodf[error_measure])
-            Y2[ss, ii] = np.nanmean(this_antidf[error_measure])
+            Y1[ss, ii] = np.nanvar(this_prodf[error_measure])
+            Y2[ss, ii] = np.nanvar(this_antidf[error_measure])
             
             Yerr1[ss, ii] = sem(this_prodf[error_measure])
             Yerr2[ss, ii] = sem(this_antidf[error_measure])
