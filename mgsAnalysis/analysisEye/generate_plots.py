@@ -9,7 +9,7 @@ msize = 12
 axes_fontsize = 12
 title_fontsize = 14
 sns.set()
-def subject_wise_error_plot(df, error_measure):
+def subject_wise_error_plot(df, error_measure, normalizer = False):
     X1 = [0.3, 0.8, 1.3]
     X2 = [round(x + 0.1, 1) for x in X1]
     TMSconds = ['No TMS', 'TMS intoVF', 'TMS outVF']
@@ -31,14 +31,15 @@ def subject_wise_error_plot(df, error_measure):
             this_antidf = df[(df['subjID'] == subjIDs[ss]) & 
                             (df['TMS_condition'] == TMSconds[ii]) &
                             ((df['ispro'] == 0))]
-            Y1[ss, ii] = np.nanvar(this_prodf[error_measure])
-            Y2[ss, ii] = np.nanvar(this_antidf[error_measure])
+            Y1[ss, ii] = np.nanmean(this_prodf[error_measure])
+            Y2[ss, ii] = np.nanmean(this_antidf[error_measure])
             
             Yerr1[ss, ii] = sem(this_prodf[error_measure])
             Yerr2[ss, ii] = sem(this_antidf[error_measure])
-        # normalizer_val = Y1[ss, 0]
-        # Y1[ss, :] = Y1[ss, :] / normalizer_val
-        # Y2[ss, :] = Y2[ss, :] / normalizer_val
+        if normalizer == True:
+            normalizer_val = Y1[ss, 2]
+            Y1[ss, :] = Y1[ss, :] / normalizer_val
+            Y2[ss, :] = Y2[ss, :] / normalizer_val
     x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
 
     X_sum = [sum(value) for value in zip(X1, X2)]
@@ -59,30 +60,37 @@ def subject_wise_error_plot(df, error_measure):
         plt.plot(X2, Y2[ss, :], color = wcols[0], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
     
     if len(subjIDs) < 3:
-        plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = 'pro')
-        plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = 'anti')
+        # plt.errorbar(X1, np.mean(Y1, axis=0), yerr=sem(Y1, axis=0), fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+        # plt.errorbar(X2, np.mean(Y2, axis=0), yerr=sem(Y2, axis=0), fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
+        # plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+        # plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+
+        plt.errorbar(X1, Y1[ss, :], yerr = Yerr1[ss, :], fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+        plt.errorbar(X2, Y2[ss, :], yerr = Yerr2[ss, :], fmt = '.', ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
+        plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+        plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
     else:
         plt.errorbar(X1, np.mean(Y1, axis=0), yerr=sem(Y1, axis=0), fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
         plt.errorbar(X2, np.mean(Y2, axis=0), yerr=sem(Y2, axis=0), fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
         plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
         plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    #plt.ylim([0, LIMS_y])
+    if normalizer == True and error_measure == 'fsacc_err':
+        plt.ylim([0, 2])
+    elif normalizer == False and error_measure == 'fsacc_err':
+        plt.ylim([0, 2.5])
     plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
     plt.ylabel(error_measure, fontsize = axes_fontsize)
     plt.legend()
     plt.show()
 
 def quick_visualization(df):
-    cols_to_plot = ['isaccX', 'isaccY', 'fsaccX', 'fsaccY', 'isacc_err',
-       'fsacc_err', 'isacc_theta_err', 'fsacc_theta_err',
-       'corrected_theta_err', 'isacc_radius_err', 'fsacc_radius_err',
-       'corrected_radius_err', 'nsacc', 'calib_err', 'isacc_rt', 'fsacc_rt',
-       'isacc_peakvel', 'fsacc_peakvel']
+    cols_to_plot = ['fsaccX', 'fsaccY', 'fsacc_err', 'fsacc_theta_err', 'fsacc_radius_err', 'calib_err', 'fsacc_rt', 'fsacc_theta_rot',
+                    'fsacc_theta_rot_normed', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'isacc_peakvel', 'fsacc_peakvel']
     # df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
     #                          [0, 1, 2, 3], inplace=True)
     # df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],
     #                     [0, 1, 2], inplace=True) 
-    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (20, 20), alpha = 0.8)
+    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (25, 25), alpha = 0.8)
     plt.suptitle('Quick overview', fontsize = title_fontsize)
     plt.show()
 
@@ -93,15 +101,15 @@ def quick_visualization(df):
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
     #df = df[df['fsacc_err']<4]
-    errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'corrected_theta_err', 'fsacc_radius_err', 
-                    'corrected_radius_err', 'nsacc', 'calib_err', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
+    errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'fsacc_theta_rot', 'fsacc_theta_rot_normed',
+                    'fsacc_radius_err', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
     n_rows = 2
     n_cols = 5
     alpha_val = 0.8
     #tmp_df = df[df['TMS_condition']=='No TMS']
     for ss in range(len(subjIDs)):
         subj_df =  df[df['subjID']==subjIDs[ss]]
-        fig, axes = plt.subplots(n_rows, n_cols, figsize = (20, 10))
+        fig, axes = plt.subplots(n_rows, n_cols, figsize = (25, 10))
         plt.suptitle(subjIDs[ss])
         nbins = 50
         this_idx = 0

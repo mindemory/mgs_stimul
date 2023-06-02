@@ -117,11 +117,11 @@ else:
     
     # Correcting angular error
     angular_err_cols = ['isacc_theta_err', 'fsacc_theta_err', 'corrected_theta_err']
-    for ee in angular_err_cols:
-        master_df[ee] = np.where(master_df[ee] < - np.pi, 
-                                master_df[ee] % (np.pi), master_df[ee])
-        master_df[ee] = np.where(master_df[ee] > np.pi, 
-                                master_df[ee] % (np.pi), master_df[ee])
+    # for ee in angular_err_cols:
+    #     master_df[ee] = np.where(master_df[ee] < - np.pi, 
+    #                             master_df[ee] % (np.pi), master_df[ee])
+    #     master_df[ee] = np.where(master_df[ee] > np.pi, 
+    #                             master_df[ee] % (np.pi), master_df[ee])
 
     master_df['TMS_condition'] = ''
     master_df.loc[master_df['istms'] == 0, 'TMS_condition'] = 'No TMS'

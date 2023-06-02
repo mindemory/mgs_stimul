@@ -104,9 +104,9 @@ disp('We are done! Woosh, that was some work.')
 end
 
 %% Plot trials (first pass)
-% cfg = [];
-% cfg.viewmode = 'butterfly';
-% ft_databrowser(cfg, data_eeg)
+cfg = [];
+cfg.viewmode = 'butterfly';
+ft_databrowser(cfg, data_eeg)
 
 
 %% Removing line noise
