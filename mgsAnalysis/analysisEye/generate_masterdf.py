@@ -26,8 +26,9 @@ if not os.path.exists(p['meta']):
     os.makedirs(p['meta'])
 
 # Find subjects and days that have been run so far
-sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
+#sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
 sub_dirs = ['sub01', 'sub03', 'sub06', 'sub08', 'sub12', 'sub13', 'sub14', 'sub15', 'sub16']
+#sub_dirs = ['sub01', 'sub03']
 subjIDs = []
 num_subs = len(sub_dirs) # Number of subjects
 print(f"We have {num_subs} subjects so far: {sub_dirs}")
@@ -68,7 +69,7 @@ else:
                         'rnum': ii_sess['r_num'][0, 0].T[0],
                         'istms': ii_sess['istms'][0, 0].T[0], # 1 if TMS is on
                         'ispro': ii_sess['ispro'][0, 0].T[0], # 1 if block was pro
-                        'instimVF': ii_sess['instimVF'][0, 0].T[0], # 1 if stimulus is in VF
+                        'instimVF': ii_sess['instimVF'][0, 0].T[0], # 1 if saccade is in VF
                         # Trial flags
                         'breakfix': ii_sess['break_fix'][0, 0].T[0],
                         'no_prim_sacc': ii_sess['no_prim_sacc'][0, 0].T[0],
@@ -101,8 +102,6 @@ else:
                         'fsacc_peakvel': ii_sess['f_sacc_peakvel'][0, 0].T[0],
                         }
             this_sess_df = pd.DataFrame(sess_data)
-            rotate_to_zero(this_sess_df)
-            rotate_to_scale(this_sess_df)
             if 'master_df' in globals():
                 master_df = pd.concat([master_df, this_sess_df])
             else:
@@ -126,11 +125,11 @@ else:
 
     master_df['TMS_condition'] = ''
     master_df.loc[master_df['istms'] == 0, 'TMS_condition'] = 'No TMS'
-    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
-    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
-    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS outVF'
-    master_df.loc[(master_df['istms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS intoVF'
-
+    master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
+    master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
+    master_df = master_df.reset_index(drop = True)
+    #print(master_df.tail(20))
+    master_df, angular_df = rotate_to_scale(master_df)
     master_df.to_csv(p['df_fname'], index = False)
 
 # Flag trials for rejection: no primary saccade or a large saccade error
