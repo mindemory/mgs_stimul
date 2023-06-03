@@ -67,7 +67,7 @@ for block = 1:end_block
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = I02_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'drift'});
+    [ii_data, ii_cfg, ii_sacc] = I02_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);%, [], {'drift'});
         
     % score trials
     % default parameters should work fine - but see docs for other
