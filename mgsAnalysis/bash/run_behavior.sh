@@ -7,7 +7,7 @@ MATLAB_PATH='/usr/local/bin/matlab9.6'
 PROJECT_DIR=/datc/MD_TMS_EEG
 FILES_DIR=${PROJECT_DIR}/analysis
 RAW_DIR=${PROJECT_DIR}/data/mgs_data
-SUBJ_LIST=(1 3 6 8 13 15 16)
+SUBJ_LIST=(1 3 6 8 12 13 14 15 16)
 DAYS=(1 2 3)
 
 LOG_DIR=$FILES_DIR/logs
