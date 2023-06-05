@@ -37,9 +37,10 @@ def subject_wise_error_plot(df, error_measure, normalizer = False):
             Yerr1[ss, ii] = sem(this_prodf[error_measure])
             Yerr2[ss, ii] = sem(this_antidf[error_measure])
         if normalizer == True:
-            normalizer_val = Y1[ss, 2]
-            Y1[ss, :] = Y1[ss, :] / normalizer_val
-            Y2[ss, :] = Y2[ss, :] / normalizer_val
+            normalizer_val_pro = Y1[ss, 2]
+            normalizer_val_anti = Y2[ss, 2]
+            Y1[ss, :] = np.abs(Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro
+            Y2[ss, :] = (np.abs(Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti) + (normalizer_val_anti - normalizer_val_pro)
     x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
 
     X_sum = [sum(value) for value in zip(X1, X2)]
@@ -74,10 +75,10 @@ def subject_wise_error_plot(df, error_measure, normalizer = False):
         plt.errorbar(X2, np.mean(Y2, axis=0), yerr=sem(Y2, axis=0), fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
         plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
         plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    if normalizer == True and error_measure == 'fsacc_err':
-        plt.ylim([0, 2])
-    elif normalizer == False and error_measure == 'fsacc_err':
-        plt.ylim([0, 2.5])
+    # if normalizer == True and error_measure == 'fsacc_err':
+    #     plt.ylim([0, 2])
+    # elif normalizer == False and error_measure == 'fsacc_err':
+    #     plt.ylim([0, 2.5])
     plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
     plt.ylabel(error_measure, fontsize = axes_fontsize)
     plt.legend()
@@ -85,7 +86,8 @@ def subject_wise_error_plot(df, error_measure, normalizer = False):
 
 def quick_visualization(df):
     cols_to_plot = ['fsaccX', 'fsaccY', 'fsacc_err', 'fsacc_theta_err', 'fsacc_radius_err', 'calib_err', 'fsacc_rt', 'fsacc_theta_rot',
-                    'fsacc_theta_rot_normed', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'isacc_peakvel', 'fsacc_peakvel']
+                    'fsacc_theta_rot_normed', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'isacc_peakvel', 'fsacc_peakvel', 'TarRadius', 'TarRadius_rotated',
+                    'TarTheta', 'TarTheta_rotated']
     # df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
     #                          [0, 1, 2, 3], inplace=True)
     # df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],

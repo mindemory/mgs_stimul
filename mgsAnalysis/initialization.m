@@ -19,7 +19,7 @@ if strcmp(p.hostname, 'syndrome') || strcmp(p.hostname, 'vader') % If running on
     p.fieldtrip = '/hyper/software/fieldtrip-20220104/';
 else % If running on World's best MacBook
     p.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG';
-    p.EEGData = [p.datc '/EEGData/sub' p.subjID];
+    p.EEGData = [p.datc '/EEGData/sub' p.subjID '/day' num2str(p.day, '%02d')];
     p.fieldtrip = '/Users/mrugankdake/Documents/MATLAB/fieldtrip-20220104/';
 end
 p.data = [p.datc '/data'];

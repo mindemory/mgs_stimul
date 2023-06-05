@@ -18,10 +18,11 @@ if hostname == 'syndrome':
     p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
 else:
     p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG'
+analysis_type = 'trialwise'
 p['data'] = p['datc'] + '/data'
-p['analysis'] = p['datc'] + '/analysis'
-p['meta'] = p['analysis'] + '/meta_analysis'
-p['df_fname'] = p['meta'] + '/master_df.csv'
+p['analysis'] = p['datc'] + '/analysis/' + analysis_type 
+p['meta'] = p['datc'] + '/analysis/meta_analysis'
+p['df_fname'] = p['meta'] + '/master_' + analysis_type + '_df.csv'
 if not os.path.exists(p['meta']):
     os.makedirs(p['meta'])
 
@@ -43,7 +44,9 @@ else:
     for ii in range(len(sub_dirs)):
         subjIDs.append(int(sub_dirs[ii][-2:]))
         subjdir = p['analysis'] + '/' + sub_dirs[ii] # Path of current subject directory
-        day_dirs = [dirname for dirname in os.listdir(subjdir) if dirname.startswith("day")]
+        day_dirs = [dirname for dirname in sorted(os.listdir(subjdir)) if dirname.startswith("day")]
+        # print(int(sub_dirs[ii][-2:]))
+        # print(day_dirs)
         days = []
         for dd in range(len(day_dirs)):
             days.append(int(day_dirs[dd][-2:]))
@@ -107,21 +110,12 @@ else:
             else:
                 master_df = this_sess_df
             print()
-    # master_df['ispro'] = master_df['ispro'].astype('Int64')
-    # master_df['instimVF'] = master_df['instimVF'].astype('Int64')
+
     master_df['trial_type'] = ''
     master_df.loc[(master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'trial_type'] = 'pro_intoVF'
     master_df.loc[(master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'trial_type'] = 'pro_outVF'
     master_df.loc[(master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'trial_type'] = 'anti_intoVF'
     master_df.loc[(master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'trial_type'] = 'anti_outVF'
-    
-    # Correcting angular error
-    angular_err_cols = ['isacc_theta_err', 'fsacc_theta_err', 'corrected_theta_err']
-    # for ee in angular_err_cols:
-    #     master_df[ee] = np.where(master_df[ee] < - np.pi, 
-    #                             master_df[ee] % (np.pi), master_df[ee])
-    #     master_df[ee] = np.where(master_df[ee] > np.pi, 
-    #                             master_df[ee] % (np.pi), master_df[ee])
 
     master_df['TMS_condition'] = ''
     master_df.loc[master_df['istms'] == 0, 'TMS_condition'] = 'No TMS'
@@ -132,29 +126,6 @@ else:
     master_df, angular_df = rotate_to_scale(master_df)
     master_df.to_csv(p['df_fname'], index = False)
 
-# Flag trials for rejection: no primary saccade or a large saccade error
-# master_df['rejtrials'] = (master_df['prim_sacc']==0)+(master_df['large_error']==1)*1
-# master_df['typesum'] = 2 * master_df['ispro'] - master_df['instimVF']  #pro-intoVF: 1, pro-outVF: 2; anti-intoVF: 0; anti-outVF: -1
-# conditions = [
-#     master_df['typesum'] == 1,
-#     master_df['typesum'] == 2,
-#     master_df['typesum'] == 0,
-#     master_df['typesum'] == -1
-# ]
-# vals = ['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF']
-# master_df['trial_type'] = np.select(conditions, vals)
-
-# master_df['TMS_condition'] = ''
-# master_df.loc[master_df['tms'] == 0, 'TMS_condition'] = 'No TMS'
-# master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
-# master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
-# master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS outVF'
-# master_df.loc[(master_df['tms'] == 1) & (master_df['ispro'] == 0) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS intoVF'
-
-# # Create a new column for the ispro condition
-# master_df['ispro_condition'] = ''
-# master_df.loc[master_df['ispro'] == 1, 'ispro_condition'] = 'pro'
-# master_df.loc[master_df['ispro'] == 0, 'ispro_condition'] = 'anti'
     
 
 
