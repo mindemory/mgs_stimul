@@ -39,8 +39,8 @@ def subject_wise_error_plot(df, error_measure, normalizer = False):
         if normalizer == True:
             normalizer_val_pro = Y1[ss, 2]
             normalizer_val_anti = Y2[ss, 2]
-            Y1[ss, :] = np.abs(Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro
-            Y2[ss, :] = (np.abs(Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti) + (normalizer_val_anti - normalizer_val_pro)
+            Y1[ss, :] = (Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro #+ (normalizer_val_pro - normalizer_val_pro)
+            Y2[ss, :] = (Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti #+ (normalizer_val_anti - normalizer_val_pro)
     x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
 
     X_sum = [sum(value) for value in zip(X1, X2)]
