@@ -101,7 +101,7 @@ for day = 1:3
             cfg.refchannel = {'TP9', 'TP10'};
             cfg.hpfreq = 1;
             cfg.hpfilter = 'yes';
-            cfg.lpfreq = 50;
+            cfg.lpfreq = 70;
             cfg.lpfilter = 'yes';
             data_eeg = ft_preprocessing(cfg, data_eeg);
             toc
