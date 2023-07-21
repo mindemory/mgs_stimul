@@ -61,7 +61,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     trigger_path_EEG = [trigger_path '/EEG'];
     if prac_status == 1
         parameters.EEG = 0; % set to 0 if there is no EEG recording
-        end_block = 4; % 4 blocks for practice session
+        end_block = 6; % 6 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
         parameters.EEG = 1;
