@@ -1,7 +1,11 @@
-function [ii_sess] = RuniEye(p, taskMap, end_block)
+function [ii_sess] = RuniEye(p, taskMap, end_block, prac_status)
 
 if nargin < 3
     end_block = 10;
+end
+
+if nargin < 4
+    prac_status = 0;
 end
 
 % List of epochs in the task
@@ -78,8 +82,13 @@ for block = 1:end_block
     elseif strcmp(eyecond, 'anti')
         ii_trial{block}.instimVF = ~taskMap(block).stimVF;
     end
-    ii_trial{block}.istms = ones(length(taskMap(block).stimVF), 1) * taskMap(block).TMScond;
+    if prac_status == 0
+        ii_trial{block}.istms = ones(length(taskMap(block).stimVF), 1) * taskMap(block).TMScond;
+    else
+        ii_trial{block}.istms = zeros(length(taskMap(block).stimVF), 1);
+    end
     ii_trial{block}.ispro = ones(length(taskMap(block).stimVF), 1) * strcmp(eyecond, 'pro');
+
     clearvars ii_cfg ii_data;
 end
 

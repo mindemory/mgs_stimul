@@ -33,7 +33,7 @@ if exist(ii_sess_saveName_mat, 'file') == 2
 else
     if ~only_edf2asc
         disp('ii_sess file does not exist. running ieye')
-        ii_sess = RuniEye(p, taskMap, end_block);
+        ii_sess = RuniEye(p, taskMap, end_block, prac_status);
         save(ii_sess_saveName,'ii_sess')
     else
         disp('Running import edf2asc only.')
