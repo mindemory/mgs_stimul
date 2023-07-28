@@ -7,6 +7,8 @@ elseif subjID == 3
     NoTMSdays = 2;
 elseif subjID == 6
     NoTMSdays = 2;
+elseif subjID == 7
+    NoTMSdays = 1;
 elseif subjID == 8
     NoTMSdays = 3;
 elseif subjID == 12
@@ -74,7 +76,7 @@ for day = 1:3
             cfg = [];
             cfg.dataset = fName.concat;
             cfg.demean = 'no';
-            cfg.derivative = 'yes';
+            % cfg.derivative = 'yes';
             cfg.continuous = 'yes';
             data_eeg = ft_preprocessing(cfg);
             toc
