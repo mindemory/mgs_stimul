@@ -15,7 +15,7 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 
-if strcmp(hostname, 'syndrome')
+if strcmp(hostname, 'zod.psych.nyu.edu')
     master_dir = '/d/DATC/datc/MD_TMS_EEG/';
 else
     master_dir = '/Users/mrugankdake/remote/datc/MD_TMS_EEG/';

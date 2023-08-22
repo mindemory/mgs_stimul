@@ -1,7 +1,7 @@
-subs = [1, 3, 6, 8, 12, 13, 14, 15, 16];
+subs = [1, 3, 6, 7, 8, 12, 13, 14, 15, 16, 18];
 %subs = [13];
 days = [1, 2, 3];
-parfor ss = 1:length(subs)
+for ss = 1:length(subs)
     this_sub = subs(ss);
     A01_GetTimeReport(this_sub);
 %     for dd = days
