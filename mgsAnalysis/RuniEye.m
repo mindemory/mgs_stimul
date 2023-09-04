@@ -71,7 +71,7 @@ for block = 1:end_block
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = I02_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);%, [], {'drift'});
+    [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);%, [], {'drift'});
         
     % score trials
     % default parameters should work fine - but see docs for other
@@ -109,6 +109,10 @@ else
     disp(['nan trials ii_sess_anti.i_sacc_err = ', num2str(sum(isnan(ii_sess.i_sacc_err(ii_sess.ispro==0))))])
     disp(['nan trials ii_sess_anti.f_sacc_err = ', num2str(sum(isnan(ii_sess.f_sacc_err(ii_sess.ispro==0))))])
     
+    % Flag trials with bad drift correction
+    ii_sess.bad_drift_correct = double(cell2mat(cellfun(@(x) ismember(11, x), ii_sess.excl_trial, 'UniformOutput', false)));
+    % Flag trials with bad calibration
+    ii_sess.bad_calibration = double(cell2mat(cellfun(@(x) ismember(12, x), ii_sess.excl_trial, 'UniformOutput', false)));
     % Flag trials with fixation breaks
     ii_sess.break_fix = double(cell2mat(cellfun(@(x) ismember(13, x), ii_sess.excl_trial, 'UniformOutput', false)));
     % Flag trials with no primary saccades

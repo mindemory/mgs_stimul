@@ -7,9 +7,14 @@ load(data_path);
 % remove invalid trials and corresponding coil locations
 tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
 
+idx_to_drop = find(tmsRtnTpy.Response.CoilLocation == 3);
+tmsRtnTpy.Response.CoilLocation(idx_to_drop) = [];
+tmsRtnTpy.Response.Detection(idx_to_drop) = [];
+tmsRtnTpy.Response.Drawing(idx_to_drop) = [];
+tmsRtnTpy.Response.CoilLocation(7:end) = tmsRtnTpy.Response.CoilLocation(7:end) - 1;
 % Check for unique coil locations
 LocInds = unique(tmsRtnTpy.Response.CoilLocation);
-%LocInds = [ 4 ];
+%LocInds = [1 3 4 5 6 ];
 % Initialize PhosphReport
 PhosphReport = struct;
 PhosphReport = repmat(PhosphReport, [1, length(LocInds)]);
