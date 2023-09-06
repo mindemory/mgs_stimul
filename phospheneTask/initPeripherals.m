@@ -26,7 +26,7 @@ elseif strcmp(hostname, 'tmsubuntu')
     [~, ~, kboards] = GetKeyboardIndices();
     [~, ~, gpads] = GetGamepadIndices();
     for i = 1:length(kboards)
-        if strcmp(kboards{1, i}.product, 'Mitsumi Electric Apple Extended USB Keyboard')
+        if strcmp(kboards{1, i}.product, 'Mitsumi Electric Apple Extended USB Keyboard') || strcmp(kboards{1, i}.product, 'Dell Dell Wired Multimedia Keyboard')
             devIdx(1) = kboards{1, i}.index;
         end
     end
