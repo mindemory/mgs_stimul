@@ -16,7 +16,7 @@ p.hostname = strtrim(hostname);
 if strcmp(p.hostname, 'syndrome') || strcmp(p.hostname, 'vader') || strcmp(p.hostname, 'zod.psych.nyu.edu') || strcmp(p.hostname, 'loki.psych.nyu.edu')% If running on Syndrome or Vader or Zod
     p.datc = '/datc/MD_TMS_EEG';
     p.EEGData = [p.datc '/EEGData/sub' p.subjID '/day' num2str(p.day, '%02d')];
-    p.fieldtrip = '/hyper/software/fieldtrip-20220104/';
+    p.fieldtrip = '/d/DATA/hyper/software/fieldtrip-20220104/';
 else % If running on World's best MacBook
     p.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG';
     p.EEGData = [p.datc '/EEGData/sub' p.subjID '/day' num2str(p.day, '%02d')];

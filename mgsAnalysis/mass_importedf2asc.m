@@ -11,7 +11,7 @@ for ss = 1:length(subs)
     clearvars -except subs days ss
 end
 
-subs = [1, 3, 5, 6, 7, 8, 12, 13];
+subs = [1, 3, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18];
 days = [1, 2, 3];
 for ss = 1:length(subs)
     disp(['We are running subject' num2str(ss, '%02d')])
