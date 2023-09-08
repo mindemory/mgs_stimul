@@ -41,7 +41,7 @@ for s in ${!SUBJ_LIST[@]}; do
         echo "Date: $DATE"
         printf "Log file: $LOG_FILE\n"
         
-        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG($SUBJ, $DAY)" > $LOG_FILE &
+        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG_temp($SUBJ, $DAY)" > $LOG_FILE &
         (( CORENUM++ ))
         
     done

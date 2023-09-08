@@ -21,7 +21,7 @@ elseif strcmp(computer, 'GLNXA64') % Check this
     % get keyboard and mouse pointers for the current setup
     [~, ~, kboards] = GetKeyboardIndices();
     for i = 1:length(kboards)
-        if strcmp(kboards{1, i}.product, 'Mitsumi Electric Apple Extended USB Keyboard')
+        if strcmp(kboards{1, i}.product, 'Mitsumi Electric Apple Extended USB Keyboard') || strcmp(kboards{1, i}.product, 'Dell Dell Wired Multimedia Keyboard')
             devIdx(1) = kboards{1, i}.index;
         end
     end   

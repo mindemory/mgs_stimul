@@ -21,7 +21,7 @@ NoTMSdict = {
 NoTMSdict = cell2struct(NoTMSdict, {'key', 'value'}, 2);
 
 if nargin < 4
-    steps = {'concat', 'raweeg', 'bandpass', 'epoch', 'rereference'};%, 'TFRfull'};
+    steps = {'concat', 'raweeg'};%, 'bandpass', 'epoch'};%, 'TFRfull'};
 end
 tms_day_counter = 1;
 
@@ -47,16 +47,10 @@ fName.general = [fName.folder '/sub' num2str(p.subjID, '%02d') '_day' num2str(p.
 fName.concat = [fName.general '.vhdr'];
 fName.load = [fName.general '_raweeg.mat'];
 fName.bandpass = [fName.general '_bandpass.mat'];
-fName.epoched_all = [fName.general '_epoched_alltrls.mat'];
 fName.epoched_prointoVF = [fName.general '_epoched_prointoVF.mat'];
 fName.epoched_prooutVF = [fName.general '_epoched_prooutVF.mat'];
 fName.epoched_antiintoVF = [fName.general '_epoched_antiintoVF.mat'];
 fName.epoched_antioutVF = [fName.general '_epoched_antioutVF.mat'];
-fName.epoched_good_prointoVF = [fName.general '_epoched_good_prointoVF.mat'];
-fName.epoched_good_prooutVF = [fName.general '_epoched_good_prooutVF.mat'];
-fName.epoched_good_antiintoVF = [fName.general '_epoched_good_antiintoVF.mat'];
-fName.epoched_good_antioutVF = [fName.general '_epoched_good_antioutVF.mat'];
-
 
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
@@ -106,8 +100,8 @@ if any(strcmp(steps, 'bandpass'))
         cfg.dftfreq = [60 120];
         cfg.bpfilter = 'yes';
         cfg.bpfreq = [0.5 100];
-%         cfg.reref = 'yes';
-%         cfg.refchannel = {'TP9', 'TP10'};
+        cfg.reref = 'yes';
+        cfg.refchannel = {'TP9', 'TP10'};
         data_eeg = ft_preprocessing(cfg, data_eeg);
         toc
         save(fName.bandpass, 'data_eeg', '-v7.3')
@@ -121,25 +115,13 @@ if any(strcmp(steps, 'bandpass'))
     end
 end
 
+%cfg = []; cfg.viewmode = 'vertical'; ft_databrowser(cfg, data_eeg)
 %% Epoch
 if any(strcmp(steps, 'epoch'))
     if ~exist(fName.epoched_prointoVF, 'file') || ~exist(fName.epoched_prooutVF, 'file') || ...
             ~exist(fName.epoched_antiintoVF, 'file') || ~exist(fName.epoched_antioutVF, 'file')
         disp('Epoching the data.')
         tic
-        % Create an epoched data for all the trials irrespective of
-        % trial-type
-        cfg_epoch = [];
-        cfg_epoch.dataset = fName.concat;
-        cfg_epoch.trialfun = 'ft_trialfun_general';
-        cfg_epoch.trialdef.eventtype = 'Stimulus';
-        cfg_epoch.trialdef.prestim = 1; % 1s of fixation and 1s of IT
-        cfg_epoch.trialdef.poststim = 8; %0.5s stimulus, 4s delay, 0.85s resp, 0.8s feedback, 0.85s ITI
-        cfg_epoch.trialdef.eventvalue = {'S  1'};
-        cfg = ft_definetrial(cfg_epoch);
-        epoc_alltrls = ft_redefinetrial(cfg, data_eeg);
-        
-        % Epoch data based on trial-type
         cfg_epoch = [];
         cfg_epoch.dataset = fName.concat;
         cfg_epoch.trialfun = 'ft_trialfun_general';
@@ -149,116 +131,32 @@ if any(strcmp(steps, 'epoch'))
 
         cfg_epoch.trialdef.eventvalue = {'S 11'};
         cfg = ft_definetrial(cfg_epoch);
-        epoc_prointoVF = ft_redefinetrial(cfg, data_eeg);
+        data_eeg_prointoVF = ft_redefinetrial(cfg, data_eeg);
 
         cfg_epoch.trialdef.eventvalue = {'S 12'};
         cfg = ft_definetrial(cfg_epoch);
-        epoc_prooutVF = ft_redefinetrial(cfg, data_eeg);
+        data_eeg_prooutVF = ft_redefinetrial(cfg, data_eeg);
 
         cfg_epoch.trialdef.eventvalue = {'S 13'};
         cfg = ft_definetrial(cfg_epoch);
-        epoc_antioutVF = ft_redefinetrial(cfg, data_eeg);
+        data_eeg_antioutVF = ft_redefinetrial(cfg, data_eeg);
 
         cfg_epoch.trialdef.eventvalue = {'S 14'};
         cfg = ft_definetrial(cfg_epoch);
-        epoc_antiintoVF = ft_redefinetrial(cfg, data_eeg);
+        data_eeg_antiintoVF = ft_redefinetrial(cfg, data_eeg);
         toc
-        save(fName.epoched_all, 'epoc_alltrls', '-v7.3')
-        save(fName.epoched_prointoVF, 'epoc_prointoVF', '-v7.3')
-        save(fName.epoched_prooutVF, 'epoc_prooutVF', '-v7.3')
-        save(fName.epoched_antiintoVF, 'epoc_antioutVF', '-v7.3')
-        save(fName.epoched_antioutVF, 'epoc_antiintoVF', '-v7.3')
+        save(fName.epoched_prointoVF, 'data_eeg_prointoVF', '-v7.3')
+        save(fName.epoched_prooutVF, 'data_eeg_prooutVF', '-v7.3')
+        save(fName.epoched_antiintoVF, 'data_eeg_antioutVF', '-v7.3')
+        save(fName.epoched_antioutVF, 'data_eeg_antiintoVF', '-v7.3')
     else
-        if ~exist(fName.epoched_good_prointoVF, 'file')
-            disp('Epoched files exist, importing mat files.')
-            load(fName.epoched_all)
-            load(fName.epoched_prointoVF)
-            load(fName.epoched_prooutVF)
-            load(fName.epoched_antiintoVF)
-            load(fName.epoched_antioutVF)
-        else
-            disp('Epoched files exist, but not loading it.')
-        end
+        disp('Epoched files exist, importing mat files.')
+        load(fName.epoched_prointoVF)
+        load(fName.epoched_prooutVF)
+        load(fName.epoched_antiintoVF)
+        load(fName.epoched_antioutVF)
     end
 end
-
-%% Artifact rejection
-art_run                    = input('Do you want to trial and channel rejection? (1: rejvisual, 2: databroswer, 0: No): ');
-if art_run                 == 1
-    cfg                    = [];
-    ft_rejectvisual(cfg, epoc_alltrls)
-elseif art_run             == 2
-    cfg                    = [];
-    cfg.viewmode           = 'vertical';
-    ft_databrowser(cfg, epoc_alltrls)
-elseif art_run             == 0
-    disp('You selected to skip artifact-rejection. Make sure that downstream analysis is interpreted accordingly.')
-else
-    disp('Invalid input! Skipping artifact-rejection.')
-end
-
-if subjID == 1
-    if day == 2
-        flg_trls = [5, 181, 182, 281, 282, 388];
-        flg_chans = {'Fp1', 'F7', 'Oz', 'O2', 'TP10', 'F4', 'F8', 'Fp2', ...
-            'AF7', 'AF3', 'AFz', 'F5', 'POz', 'PO8', 'CPz', 'C2', 'F6', 'AF8', 'AF4'};
-    end
-end
-
-%% Re-epoching data and re-referencing to CAR
-if any(strcmp(steps, 'rereference'))    
-    if ~exist(fName.epoched_good_prointoVF, 'file') || ~exist(fName.epoched_good_prooutVF, 'file') || ...
-            ~exist(fName.epoched_good_antiintoVF, 'file') || ~exist(fName.epoched_good_antioutVF, 'file')
-        disp('Re-epoching and re-referencing')
-        tic
-        good_channels = setdiff(epoc_alltrls.label, flg_chans);
-        load([p.save '/EEGflags.mat'])
-        valid_flags = [11, 12, 13, 14];
-        trl_sequence = flags.num(ismember(flags.num, valid_flags));
-
-        % Select good trials and good channels for each epoched data type
-        % prointoVF
-        cfg = [];
-        cfg.channel = good_channels;
-        cfg_reref = [];
-        cfg_reref.reref = 'yes';
-        cfg_reref.refchannel = 'all';
-        % good epoc prointoVF
-        prointoVF_trls = find(trl_sequence == 11);
-        prointoVF_mask = ismember(prointoVF_trls, flg_trls);
-        prointoVF_trls(prointoVF_mask) = 0;
-        cfg.trials = find(prointoVF_trls ~= 0);
-        epoc_good_prointoVF = ft_selectdata(cfg, epoc_prointoVF);
-        epoc_good_prointoVF = ft_preprocessing(cfg_reref, epoc_good_prointoVF);
-        % good epoc prooutVF
-        prooutVF_trls = find(trl_sequence == 12);
-        prooutVF_mask = ismember(prooutVF_trls, flg_trls);
-        prooutVF_trls(prooutVF_mask) = 0;
-        cfg.trials = find(prooutVF_trls ~= 0);
-        epoc_good_prooutVF = ft_selectdata(cfg, epoc_prooutVF);
-        epoc_good_prooutVF = ft_preprocessing(cfg_reref, epoc_good_prooutVF);
-        % good epoc antiintoVF
-        antiintoVF_trls = find(trl_sequence == 13);
-        antiintoVF_mask = ismember(antiintoVF_trls, flg_trls);
-        antiintoVF_trls(antiintoVF_mask) = 0;
-        cfg.trials = find(antiintoVF_trls ~= 0);
-        epoc_good_antiintoVF = ft_selectdata(cfg, epoc_antiintoVF);
-        epoc_good_antiintoVF = ft_preprocessing(cfg_reref, epoc_good_antiintoVF);
-        % good epoc prooutVF
-        antioutVF_trls = find(trl_sequence == 14);
-        antioutVF_mask = ismember(antioutVF_trls, flg_trls);
-        antioutVF_trls(antioutVF_mask) = 0;
-        cfg.trials = find(antioutVF_trls ~= 0);
-        epoc_good_antioutVF = ft_selectdata(cfg, epoc_antioutVF);
-        epoc_good_antioutVF = ft_preprocessing(cfg_reref, epoc_good_antioutVF);
-        toc
-        save(fName.epoched_good_prointoVF, 'epoc_good_prointoVF', '-v7.3')
-        save(fName.epoched_good_prooutVF, 'epoc_good_prooutVF', '-v7.3')
-        save(fName.epoched_good_antiintoVF, 'epoc_good_antioutVF', '-v7.3')
-        save(fName.epoched_good_antioutVF, 'epoc_good_antiintoVF', '-v7.3')
-    end
-end
-%cfg = []; cfg.viewmode = 'vertical'; ft_databrowser(cfg, data_eeg)
 %     if day == NoTMSdays
 %         data_eeg_control_prointoVF = data_eeg_prointoVF;
 %         data_eeg_control_prooutVF = data_eeg_prooutVF;
@@ -267,18 +165,6 @@ end
 %         data_eeg_TMS_prooutVF_holder(tms_day_counter) = data_eeg_prooutVF;
 %         tms_day_counter = tms_day_counter + 1;
 %     end
-tic
-cfg                                   = [];
-cfg.method                            = 'mtmconvol';
-cfg.foi                               = 2:80;
-cfg.taper                             = 'hanning';
-cfg.toi                               = 'all';
-cfg.t_ftimwin                         = 0.2 * ones(size(cfg.foi));%7./cfg.foi;
-freqmat                               = ft_freqanalysis(cfg, epoc_good_prointoVF);
-toc
-t_idx = find(freqmat.time>0.5 & freqmat.time<4.5);
-figure;title('Left');surf(freqmat.time(t_idx),freqmat.freq,permute(abs(freqmat.powspctrm(12,:,t_idx)),[2,3,1]),'EdgeColor','none');%view([0 90]);
-figure;title('Right');surf(freqmat.time(t_idx),freqmat.freq,permute(abs(freqmat.powspctrm(15,:,t_idx)),[2,3,1]),'EdgeColor','none');%view([0 90]);
 
 end
 % end_sample_prointoVF1 = data_eeg_TMS_prointoVF_holder(1).sampleinfo(end, 2);
