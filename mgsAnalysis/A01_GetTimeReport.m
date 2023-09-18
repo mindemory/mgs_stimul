@@ -19,7 +19,8 @@ hostname = strtrim(hostname);
 tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end)-1));
 
-if strcmp(hostname, 'zod.psych.nyu.edu') || strcmp(hostname, 'loki.psych.nyu.edu') || strcmp(hostname, 'syndrome')% If running on Syndrome
+if strcmp(hostname, 'zod.psych.nyu.edu') || strcmp(hostname, 'loki.psych.nyu.edu') ...
+   || strcmp(hostname, 'syndrome') % If running on Syndrome
     direct.datc = '/d/DATC/datc/MD_TMS_EEG';
 else % If running on World's best MacBook
     direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
@@ -113,10 +114,6 @@ for day = 1:days
     end
     % Generate a figure of time stamps
     fig = figure;
-%     fig.Position = [0 0 800 600];
-%     fig.Renderer = 'painters';
-%     fig.RendererSettings.Resolution = 600;
-    %h = suptitle(['sub' subjID '_ day' num2str(day, "%02d") ]);
     h = sgtitle(['sub' subjID '_ day' num2str(day, "%02d") ]);
     %set(h, 'Position', [0.5, -0.03, 0]);
     for ii = 1:length(dur_vars)

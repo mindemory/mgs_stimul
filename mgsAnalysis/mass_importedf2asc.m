@@ -46,12 +46,15 @@ end
 end
 
 
-subs = [ 3, 6, 8, 12, 13, 14, 15, 16];
+subs = [1, 3, 5, 6, 7, 8, 22, 23, 24];
 %subs = [13];
-%days = [1, 2, 3];
-parfor ss = 1:length(subs)
+days = [1, 2, 3];
+for ss = 1:length(subs)
     this_sub = subs(ss);
-    A03_PreprocEEG(this_sub);
+    parfor dd = days
+    
+    A03_PreprocEEG_TMS_temp(this_sub, dd);
+    end
 %     for dd = days
 %         A02_EyeAnalysis(this_sub, dd);
 %     end
