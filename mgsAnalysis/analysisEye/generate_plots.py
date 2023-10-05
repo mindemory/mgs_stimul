@@ -6,8 +6,8 @@ import seaborn as sns
 from scipy.stats import gaussian_kde as gkde
 
 msize = 10
-axes_fontsize = 12
-title_fontsize = 16
+axes_fontsize = 14
+title_fontsize = 18
 #sns.set()
 def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary = False, remove_outliers = False):
     TMSconds = ['No TMS', 'TMS intoVF', 'TMS outVF']
@@ -119,7 +119,7 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
     X1 = [0.3, 0.8, 1.3]
     X2 = [round(x + 0.1, 1) for x in X1]
     X_sum = [sum(value) for value in zip(X1, X2)]
-    x_tick_pos = [round(x/2, 1) for x in X_sum]
+    x_tick_pos = [round(x/2, 2) for x in X_sum]
     x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
     #x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
     # warm_colors = plt.get_cmap('OrRd')
@@ -161,9 +161,9 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
 
 def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
-    X2 = [round(x + 0.1, 1) for x in X1]
-    X_sum = [sum(value) for value in zip(X1, X2)]
-    x_tick_pos = [round(x/2, 1) for x in X_sum]
+    # X2 = [round(x + 0.1, 1) for x in X1]
+    # X_sum = [sum(value) for value in zip(X1, X2)]
+    # x_tick_pos = [round(x/2, 1) for x in X_sum]
     x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
     subjIDs = df['subjID'].unique()
     num_subs = len(subjIDs)
@@ -188,23 +188,81 @@ def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
 
     #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
     
-    ax.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    ax.errorbar(X2, np.mean(Y2, axis=0), yerr=Yerr2, fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-    ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    ax.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    ax.set_xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
-    ax.set_ylabel(error_measure, fontsize = axes_fontsize)
-    ax.set_title(t_string, fontsize = title_fontsize, color='white')
-    if min_y > 0:
-        ax.set_ylim(0.8*min_y, 1.2*max_y)
-    else:
-        ax.set_ylim(1.2*min_y, 1.2*max_y)
-    #plt.ylim([0, max_y])
-    legend = ax.legend()
-    legend.get_frame().set_facecolor((33 / 255, 33 / 255, 33 / 255))  # Set the legend box color
+    bars = ax.bar(X1, np.mean(Y1, axis=0), width = 0.2)
+    bars[0].set_color("#1B9E77")
+    bars[1].set_color("#D95F02")
+    bars[2].set_color("#7570B3")
+    ax.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+    for ss in range(len(subjIDs)):
+        ax.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
+    
+    #ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+    ax.set_xticks(X1, x_label_names, fontsize = 18)
+    if error_measure == 'isacc_rt':
+        ax.set_ylabel('RT (s)', fontsize = 18)
+        ax.set_title('Reaction time', fontsize = 24, color='white')
+    elif error_measure == 'isacc_err':
+        ax.set_ylabel('MGS error (dva)', fontsize = 18)
+        ax.set_title('Memory error', fontsize = 24, color='white')
+    plt.show()
 
-    for text in legend.get_texts():
-        text.set_color('white')
+def group_plot_orig(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
+    X1 = [0.3, 0.8, 1.3]
+    X2 = [round(x + 0.1, 1) for x in X1]
+    X_sum = [sum(value) for value in zip(X1, X2)]
+    x_tick_pos = [round(x/2, 2) for x in X_sum]
+    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
+    subjIDs = df['subjID'].unique()
+    num_subs = len(subjIDs)
+    t_string = t_string + ', #subs = ' + str(num_subs)
+    if error_measure == 'isacc_rt':
+        Y1 = Y1 * 1000
+        Y2 = Y2 * 1000
+    Yerr1 = sem(Y1, axis=0)
+    Yerr2 = sem(Y2, axis=0)
+    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
+    
+    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
+    fig = plt.figure(figsize = (5, 8))
+    
+    print('Prosaccade errors')
+    print(np.mean(Y1, axis = 0))
+    print(Yerr1)
+
+    print('Antisaccade errors')
+    print(np.mean(Y2, axis = 0))
+    print(Yerr2)
+    #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
+    for ss in range(len(subjIDs)):
+        plt.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.2, linestyle = 'dashed', markersize = msize*0.8, label = '__no_legend')
+    
+    plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+    plt.errorbar(X2, np.mean(Y2, axis=0), yerr=Yerr2, fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
+    plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+        #ax.plot(X1, Y1, marker = 's', color = 'blue', alpha = 0.9, linestyle = 'solid', markersize = msize, label = '__no_legend')
+    plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+    plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
+    #ax.set_ylabel(error_measure, fontsize = axes_fontsize)
+    #ax.set_title(t_string, fontsize = title_fontsize, color='white')
+    if error_measure == 'isacc_rt':
+        plt.ylabel('RT (ms)', fontsize = axes_fontsize)
+        plt.ylim([250, 450])
+        plt.title('Reaction time', fontsize = title_fontsize)
+    elif error_measure == 'isacc_err':
+        plt.ylabel('MGS error (dva)', fontsize = axes_fontsize)
+        plt.title('Memory error', fontsize = title_fontsize)
+    
+    # if min_y > 0:
+    #     ax.set_ylim(0.8*min_y, 1.2*max_y)
+    # else:
+    #     ax.set_ylim(1.2*min_y, 1.2*max_y)
+    #ax.set_ylim(0.5, 3)
+    #plt.ylim([0, max_y])
+    # legend = ax.legend()
+    # legend.get_frame().set_facecolor((33 / 255, 33 / 255, 33 / 255))  # Set the legend box color
+
+    # for text in legend.get_texts():
+    #     text.set_color('white')
     
 
     # plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')

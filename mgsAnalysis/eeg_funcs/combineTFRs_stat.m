@@ -1,4 +1,4 @@
-function TFR_mat = combineTFRs(freqmat, hemisphere, ipsi, varargin)
+function TFR_mat = combineTFRs_stat(freqmat, hemisphere, ipsi, varargin)
 left_elecs = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
 right_elecs = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
 

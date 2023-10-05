@@ -234,7 +234,7 @@ if any(strcmp(steps, 'bandpass'))
             save(fName.bandpass, 'data_eeg', '-v7.3')
         end
     else
-        %if ~exist(fName.erp_prointoVF, 'file')
+        if ~exist(fName.erp_prointoVF, 'file')
             disp('Bandpass file exists, importing mat file.')
             if day == NoTMSDays(subjID)
                 load(fName.bandpass)
@@ -242,9 +242,9 @@ if any(strcmp(steps, 'bandpass'))
                 load(fName.bandpass)
                 load(fName.bandpass_TMS)
             end
-        %else
-        %    disp('Bandpass file exists, but not loading it.')
-        %end
+        else
+            disp('Bandpass file exists, but not loading it.')
+        end
     end
 end
 
@@ -306,7 +306,7 @@ end
 
 
 %% Interpolate bad channels
-%if ~exist(fName.erp_prointoVF, 'file')
+if ~exist(fName.erp_prointoVF, 'file')
     if ~isempty(flg_chans) 
         disp('The flagged channels will be reinterpolated before running furhter analyses.')
         cfg = [];
@@ -327,11 +327,11 @@ end
         cfg.senstype       = 'eeg';
         data_eeg       = ft_channelrepair(cfg,data_eeg);
     end
-%end
+end
 
 %% Re-epoching data and re-referencing to CAR
 if any(strcmp(steps, 'rereference'))
-    %if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') %|| %...
+    if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') %|| %...
             %~exist(fName.freqmat_antiintoVF, 'file') || ~exist(fName.freqmat_antioutVF, 'file')
         disp('Re-epoching and re-referencing')
         tic
@@ -345,24 +345,24 @@ if any(strcmp(steps, 'rereference'))
         % prointoVF
         cfg = [];
         cfg.channel = 'all';
-        cfg_reref = [];
-        cfg_reref.reref = 'yes';
-        cfg_reref.refchannel = {'FT9', 'FT10'}; %setdiff(data_eeg.label, flg_chans);
-        cfg_reref.implicitref = 'Cz';
+%         cfg_reref = [];
+%         cfg_reref.reref = 'yes';
+%         cfg_reref.refchannel = setdiff(data_eeg.label, flg_chans);
+%         cfg_reref.implicitref = 'Cz';
         % good epoc prointoVF
         prointoVF_trls = find(data_eeg.trialinfo == 11);
         %prointoVF_mask = ismember(prointoVF_trls, flg_trls);
         %prointoVF_trls(prointoVF_mask) = 0;
         cfg.trials = setdiff(prointoVF_trls, flg_trls);
         epoc_prointoVF = ft_selectdata(cfg, data_eeg);
-        epoc_prointoVF = ft_preprocessing(cfg_reref, epoc_prointoVF);
+        %epoc_prointoVF = ft_preprocessing(cfg_reref, epoc_prointoVF);
         % good epoc prooutVF
         prooutVF_trls = find(data_eeg.trialinfo == 12);
         %prooutVF_mask = ismember(prooutVF_trls, flg_trls);
         %prooutVF_trls(prooutVF_mask) = 0;
         cfg.trials = setdiff(prooutVF_trls, flg_trls);
         epoc_prooutVF = ft_selectdata(cfg, data_eeg);
-        epoc_prooutVF = ft_preprocessing(cfg_reref, epoc_prooutVF);
+        %epoc_prooutVF = ft_preprocessing(cfg_reref, epoc_prooutVF);
         % good epoc antiintoVF
 %         antiintoVF_trls = find(data_eeg.trialinfo == 13);
 %         antiintoVF_mask = ismember(antiintoVF_trls, flg_trls);
@@ -378,11 +378,11 @@ if any(strcmp(steps, 'rereference'))
 %         epoc_antioutVF = ft_selectdata(cfg, data_eeg);
 %         epoc_antioutVF = ft_preprocessing(cfg_reref, epoc_antioutVF);
         toc
-    %end
+    end
 end
 
 if any(strcmp(steps, 'rereference_tms'))
-    %if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') %|| %...
+    if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') %|| %...
          %   ~exist(fName.freqmat_antiintoVF, 'file') || ~exist(fName.freqmat_antioutVF, 'file')
         disp('Re-epoching and re-referencing')
         tic
@@ -406,14 +406,14 @@ if any(strcmp(steps, 'rereference_tms'))
         prointoVF_trls(prointoVF_mask) = 0;
         cfg.trials = find(prointoVF_trls ~= 0);
         tms_epoc_prointoVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_prointoVF = ft_preprocessing(cfg_reref, tms_epoc_prointoVF);
+        %tms_epoc_prointoVF = ft_preprocessing(cfg_reref, tms_epoc_prointoVF);
         % good epoc prooutVF
         prooutVF_trls = find(data_eeg.trialinfo == 12);
         prooutVF_mask = ismember(prooutVF_trls, flg_trls);
         prooutVF_trls(prooutVF_mask) = 0;
         cfg.trials = find(prooutVF_trls ~= 0);
         tms_epoc_prooutVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_prooutVF = ft_preprocessing(cfg_reref, tms_epoc_prooutVF);
+        %tms_epoc_prooutVF = ft_preprocessing(cfg_reref, tms_epoc_prooutVF);
         % good epoc antiintoVF
 %         antiintoVF_trls = find(data_eeg.trialinfo == 13);
 %         antiintoVF_mask = ismember(antiintoVF_trls, flg_trls);
@@ -429,11 +429,11 @@ if any(strcmp(steps, 'rereference_tms'))
 %         tms_epoc_antioutVF = ft_selectdata(cfg, data_tms);
 %         tms_epoc_antioutVF = ft_preprocessing(cfg_reref, tms_epoc_antioutVF);
         toc
-    %end
+    end
 end
 
 if any(strcmp(steps, 'tfr'))
-   % if ~exist(fName.freqmat_prointoVF, 'file') || ~exist(fName.freqmat_prooutVF, 'file') 
+    if ~exist(fName.freqmat_prointoVF, 'file') || ~exist(fName.freqmat_prooutVF, 'file') 
         disp('Computing time-frequency plots')
         tic
         [freqmat_prointoVF, freqmat_prooutVF] = compute_TFRs(epoc_prointoVF, epoc_prooutVF);
@@ -448,7 +448,7 @@ if any(strcmp(steps, 'tfr'))
             save(fName.tms_freqmat_prooutVF, 'tms_freqmat_prooutVF', '-v7.3')
         end
 
-   % end
+    end
 end
 
 %% Time-frequency analysis
@@ -456,16 +456,16 @@ if any(strcmp(steps, 'tfr_trls'))
     if ~exist(fName.trlfreqmat_prointoVF, 'file') || ~exist(fName.trlfreqmat_prooutVF, 'file') 
         disp('Computing time-frequency plots')
         tic
-        [trlfreqmat_prointoVF, trlfreqmat_prooutVF] = compute_TFRs(epoc_prointoVF, epoc_prooutVF, 1);
+        [erp_prointoVF, erp_prooutVF] = compute_TFRs(epoc_prointoVF, epoc_prooutVF, 1);
         toc
         
-        save(fName.trlfreqmat_prointoVF, 'trlfreqmat_prointoVF', '-v7.3')
-        save(fName.trlfreqmat_prooutVF, 'trlfreqmat_prooutVF', '-v7.3')
+        save(fName.trlfreqmat_prointoVF, 'erp_prointoVF', '-v7.3')
+        save(fName.trlfreqmat_prooutVF, 'erp_prooutVF', '-v7.3')
 
         if day ~= NoTMSDays(subjID)
-            [tms_trlfreqmat_prointoVF, tms_trlfreqmat_prooutVF] = compute_TFRs(tms_epoc_prointoVF, tms_epoc_prooutVF, 1);
-            save(fName.tms_trlfreqmat_prointoVF, 'tms_trlfreqmat_prointoVF', '-v7.3')
-            save(fName.tms_trlfreqmat_prooutVF, 'tms_trlfreqmat_prooutVF', '-v7.3')
+            [tms_erp_prointoVF, tms_erp_prooutVF] = compute_TFRs(tms_epoc_prointoVF, tms_epoc_prooutVF, 1);
+            save(fName.tms_trlfreqmat_prointoVF, 'tms_erp_prointoVF', '-v7.3')
+            save(fName.tms_trlfreqmat_prooutVF, 'tms_erp_prooutVF', '-v7.3')
         end
     end
 end
@@ -479,11 +479,11 @@ if any(strcmp(steps, 'tfr_trls_normed'))
         cfg.avgoverrpt = 'yes';
         cfg.keeprptdim = 'no';
         cfg.nanmean    = 'yes';
-        trlfreqmat_prointoVF_avg  = ft_selectdata(cfg, trlfreqmat_prointoVF);
-        trlfreqmat_prooutVF_avg  = ft_selectdata(cfg, trlfreqmat_prooutVF);
+        trlfreqmat_prointoVF_avg  = ft_selectdata(cfg, erp_prointoVF);
+        trlfreqmat_prooutVF_avg  = ft_selectdata(cfg, erp_prooutVF);
         
         cfg = [];
-        cfg.operation = '(x1-x2)';
+        cfg.operation = 'log10(x1)-log10(x2)';
         cfg.parameter = 'powspctrm';
         trlfreqmat_prointoVF_normalized = ft_math(cfg, trlfreqmat_prointoVF_avg, trlfreqmat_prooutVF_avg);
 
@@ -494,8 +494,8 @@ if any(strcmp(steps, 'tfr_trls_normed'))
             cfg.avgoverrpt = 'yes';
             cfg.keeprptdim = 'no';
             cfg.nanmean    = 'yes';
-            trlfreqmat_prointoVF_avg  = ft_selectdata(cfg, tms_trlfreqmat_prointoVF);
-            trlfreqmat_prooutVF_avg  = ft_selectdata(cfg, tms_trlfreqmat_prooutVF);
+            trlfreqmat_prointoVF_avg  = ft_selectdata(cfg, tms_erp_prointoVF);
+            trlfreqmat_prooutVF_avg  = ft_selectdata(cfg, tms_erp_prooutVF);
             
             cfg = [];
             cfg.operation = 'log10(x1)-log10(x2)';
@@ -510,19 +510,13 @@ end
 
 %% Event-related potentials (CDA)
 if any(strcmp(steps, 'erp'))
-    %if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') 
+    if ~exist(fName.erp_prointoVF, 'file') || ~exist(fName.erp_prooutVF, 'file') 
         disp('Computing event-related potentials')
         tic
 
 %         cfg = [];
 %         cfg.keeptrials = 'no';
 %         dataout = ft_timelockanalysis(cfg, datain);
-        cfg_reref = [];
-        cfg_reref.reref = 'yes';
-        cfg_reref.refchannel = setdiff(data_eeg.label, flg_chans);
-        cfg_reref.implicitref = 'Cz';
-        epoc_prointoVF = ft_preprocessing(cfg_reref, epoc_prointoVF);
-        epoc_prointoVF = ft_preprocessing(cfg_reref, epoc_prointoVF);
         [erp_prointoVF, erp_prooutVF] = compute_ERPs(epoc_prointoVF, epoc_prooutVF);
         toc
         
@@ -538,26 +532,28 @@ if any(strcmp(steps, 'erp'))
             tms_epoc_prooutVF = ft_preprocessing(cfg_reref, tms_epoc_prooutVF);
        
             [tms_erp_prointoVF, tms_erp_prooutVF] = compute_ERPs(tms_epoc_prointoVF, tms_epoc_prooutVF);
-            save(fName.tms_erp_prointoVF, 'tms_erp_prointoVF', '-v7.3')
-            save(fName.tms_erp_prooutVF, 'tms_erp_prooutVF', '-v7.3')
+            save(fName.tms_trlfreqmat_prointoVF, 'tms_erp_prointoVF', '-v7.3')
+            save(fName.tms_trlfreqmat_prooutVF, 'tms_erp_prooutVF', '-v7.3')
         end
-    %end
+    end
 end
 
 
-% cfg = [];
-% cfg.operation = 'x1-x2';
-% cfg.parameter = 'avg';
-% CDA_right = ft_math(cfg, erp_prointoVF, erp_prooutVF);
-% 
-% cfg = [];
-% cfg.layout = 'acticap-64_md.mat';
-% ft_multiplotER(cfg, CDA_right)
-% 
-% 
-% cfg = [];
-% cfg.layout = 'acticap-64_md.mat';
-% ft_multiplotER(cfg, erp_prointoVF)
+cfg = [];
+cfg.operation = 'x1-x2';
+cfg.parameter = 'avg';
+% cfg.channel = right_occ_elecs;
+% cfg.avgoverchan = 'yes';
+CDA_right = ft_math(cfg, tms_erp_prointoVF, tms_erp_prooutVF);
+
+cfg = [];
+cfg.layout = 'acticap-64_md.mat';
+ft_multiplotER(cfg, CDA_right)
+
+
+cfg = [];
+cfg.layout = 'acticap-64_md.mat';
+ft_multiplotER(cfg, erp_prointoVF)
 % cfg = [];
 % cfg.avgoverrpt = 'yes';
 % cfg.keeprptdim = 'no';

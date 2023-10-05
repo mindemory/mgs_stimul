@@ -1,8 +1,12 @@
-function TFR_mat = alignelecs(freqmat, hemisphere, varargin)
+function master_statmat = alignelecs_stat(statmat, hemisphere, varargin)
+
+% statmat.mask = squeeze(statmat.mask);
+% statmat.prob = squeeze(statmat.prob);
+% statmat.stat = squeeze(statmat.stat);
+% statmat.dimord = 'chan_time';
 
 if strcmp(hemisphere, 'Right')
-    
-    electrode_labels = freqmat.label;
+    electrode_labels = statmat.label;
     modified_labels = cell(size(electrode_labels));
     pattern = '(\D+)(\d+)$';
 
@@ -28,14 +32,16 @@ if strcmp(hemisphere, 'Right')
             modified_labels{i} = label;
         end
     end
-    freqmat.label = modified_labels;
-    freqmat.cfg.channel = modified_labels;
+    statmat.label = modified_labels;
+    statmat.cfg.channel = modified_labels;
 end
 
 if nargin < 3
-    TFR_mat = freqmat;
+    master_statmat = statmat;
 else
-    TFR_mat = varargin{1};
-    TFR_mat.powspctrm = mean(cat(4, TFR_mat.powspctrm, freqmat.powspctrm), 4, 'omitnan');
+    master_statmat = varargin{1};
+    master_statmat.mask = double(any(cat(2, master_statmat.mask, statmat.mask), 2));
+    master_statmat.prob = mean(cat(2, master_statmat.prob, statmat.prob), 2);
+    master_statmat.stat = mean(cat(2, master_statmat.stat, statmat.stat), 2);
 end
 end

@@ -2,7 +2,9 @@ function A04_BatchAnalysisEEG()
 clearvars; close all; clc;
 warning('off', 'all');
 
-subs =  [5];%[1 3 5 6 7 8 12 13 14 15 16 17 18 22 23 24];
+%subs =  [1 3 5 6 7 8 12 13 14 15 16 17 22 24];
+subs = [1 5 7 6 8 12 24];
+%subs = [1 3 5 6 7 8 12];
 days = [1, 2, 3];
 
 for subjID = subs
@@ -36,6 +38,10 @@ for subjID = subs
         fName.freqmat_ipsi_anti = [fName.general '_freqmat_ipsi_anti.mat'];
         fName.freqmat_contra_pro = [fName.general '_freqmat_contra_pro.mat'];
         fName.freqmat_contra_anti = [fName.general '_freqmat_contra_anti.mat'];
+        fName.freqmat_prointoVF_normalized = [fName.general '_freqmat_prointoVF_normalized.mat'];
+        fName.trlfreqmat_prointoVF_normalized = [fName.general '_trlfreqmat_prointoVF_normalized.mat'];
+
+
         if p.day ~= NoTMSDays(subjID)
             fName.tms_epoched_alltrls = [fName.general '_tms_epoched_alltrls.mat'];
             fName.tms_epoched_prointoVF = [fName.general '_tms_epoched_prointoVF.mat'];
@@ -47,33 +53,41 @@ for subjID = subs
             fName.tms_freqmat_antiintoVF = [fName.general '_tms_freqmat_antiintoVF.mat'];
             fName.tms_freqmat_antioutVF = [fName.general '_tms_freqmat_antioutVF.mat'];
         end
+        [~, flg_chans] = flagged_trls_chans(subjID, day);
         load(fName.freqmat_prointoVF);
+        load(fName.freqmat_prooutVF);
+%         cfg = [];
+%         cfg.operation = '(x1-x2)/(x1+x2)';
+%         cfg.parameter = 'powspctrm';
+%         freqmat_prointoVF = ft_math(cfg, freqmat_prointoVF, freqmat_prooutVF);
+
         logical_idx_before = (freqmat_prointoVF.time > 0.5) & (freqmat_prointoVF.time < 2);
         idx_t_before = find(logical_idx_before);
-        logical_idx_after = (freqmat_prointoVF.time > 3.2) & (freqmat_prointoVF.time < 4.2);
+        logical_idx_after = (freqmat_prointoVF.time > 3) & (freqmat_prointoVF.time < 4.2);
         idx_t_after = find(logical_idx_after);
         idx_t = [idx_t_before idx_t_after];
         
         logical_freq_idx = (freqmat_prointoVF.freq > 10) & (freqmat_prointoVF.freq < 20);
         idx_f = find(logical_freq_idx);
-        max_power = max(freqmat_prointoVF.powspctrm(:, idx_f, idx_t), [], 'all', 'omitnan');
-        min_power = min(freqmat_prointoVF.powspctrm(:, idx_f, idx_t), [], 'all', 'omitnan');
-        freqmat_prointoVF.powspctrm = (freqmat_prointoVF.powspctrm - min_power) / (max_power - min_power);
+
+%         min_data = min(freqmat_prointoVF.powspctrm(:, idx_f, idx_t), [], 'all', 'omitnan');
+%         max_data = max(freqmat_prointoVF.powspctrm(:, idx_f, idx_t), [], 'all', 'omitnan');
+%         freqmat_prointoVF.powspctrm = (freqmat_prointoVF.powspctrm - min_data) / (max_data - min_data);
 
         if p.day == NoTMSDays(subjID)
             tic
-            TFR_notms_prointoVF_ipsi = combineTFRs(freqmat_prointoVF, this_hemisphere, 1);
+            TFR_notms_prointoVF_ipsi = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 1);
             toc
-            TFR_notms_prointoVF_contra = combineTFRs(freqmat_prointoVF, this_hemisphere, 0);
+            TFR_notms_prointoVF_contra = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 0);
             TFR_notms_prointoVF = alignelecs(freqmat_prointoVF, this_hemisphere);
         else
-            if ~exist('TFR_tms_prointoVF', 'var')
-                TFR_tms_prointoVF_ipsi = combineTFRs(freqmat_prointoVF, this_hemisphere, 1);
-                TFR_tms_prointoVF_contra = combineTFRs(freqmat_prointoVF, this_hemisphere, 0);
+            if ~exist('TFR_tms_prointoVF_ipsi', 'var')
+                TFR_tms_prointoVF_ipsi = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 1);
+                TFR_tms_prointoVF_contra = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 0);
                 TFR_tms_prointoVF = alignelecs(freqmat_prointoVF, this_hemisphere);
             else
-                TFR_tms_prointoVF_ipsi = combineTFRs(freqmat_prointoVF, this_hemisphere, 1, TFR_tms_prointoVF_ipsi);
-                TFR_tms_prointoVF_contra = combineTFRs(freqmat_prointoVF, this_hemisphere, 0, TFR_tms_prointoVF_contra);
+                TFR_tms_prointoVF_ipsi = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 1, TFR_tms_prointoVF_ipsi);
+                TFR_tms_prointoVF_contra = combineTFRs_fortalk(freqmat_prointoVF, this_hemisphere, 0, TFR_tms_prointoVF_contra);
                 TFR_tms_prointoVF = alignelecs(freqmat_prointoVF, this_hemisphere, TFR_tms_prointoVF);
             end
         end
@@ -127,14 +141,14 @@ for subjID = subs
     else
         mTFR_tms_prointo = subject_level_grouping(mTFR_tms_prointo, TFR_tms_prointoVF);
     end
-    close all;
+    close all; clearvars TFR_tms_prointoVF_ipsi TFR_tms_prointoVF_contra TFR_tms_prointoVF TFR_notms_prointoVF_ipsi TFR_notms_prointoVF_contra TFR_notms_prointoVF
 end
-mTFR_notms_prointo_ipsi.powspctrm = mean(mTFR_notms_prointo_ipsi.powspctrm, 4, 'omitnan');
-mTFR_notms_prointo_contra.powspctrm = mean(mTFR_notms_prointo_contra.powspctrm, 4, 'omitnan');
-mTFR_tms_prointo_ipsi.powspctrm = mean(mTFR_tms_prointo_ipsi.powspctrm, 4, 'omitnan');
-mTFR_tms_prointo_contra.powspctrm = mean(mTFR_tms_prointo_contra.powspctrm, 4, 'omitnan');
-mTFR_notms_prointo.powspctrm = mean(mTFR_notms_prointo.powspctrm, 4, 'omitnan');
-mTFR_tms_prointo.powspctrm = mean(mTFR_tms_prointo.powspctrm, 4, 'omitnan');
+mTFR_notms_prointo_ipsi.powspctrm = mean(mTFR_notms_prointo_ipsi.powspctrm+1, 4, 'omitnan')-1;
+mTFR_notms_prointo_contra.powspctrm = mean(mTFR_notms_prointo_contra.powspctrm+1, 4, 'omitnan')-1;
+mTFR_tms_prointo_ipsi.powspctrm = mean(mTFR_tms_prointo_ipsi.powspctrm+1, 4, 'omitnan')-1;
+mTFR_tms_prointo_contra.powspctrm = mean(mTFR_tms_prointo_contra.powspctrm+1, 4, 'omitnan')-1;
+mTFR_notms_prointo.powspctrm = mean(mTFR_notms_prointo.powspctrm+1, 4, 'omitnan')-1;
+mTFR_tms_prointo.powspctrm = mean(mTFR_tms_prointo.powspctrm+1, 4, 'omitnan')-1;
 
 figname.master_compare_TFR = [p.figure '/indiv_TFR/compar_TFR_prointoVF_allsubs.png'];
 figname.master_compare_topo = [p.figure '/indiv_topo/compar_topo_prointoVF_allsubs.png'];
@@ -150,3 +164,34 @@ if ~exist(figname.master_compare_topo, 'file')
 end
 end
 
+% cfg = [];
+% cfg.channel = freqmat_prointoVF.label;
+% cfg.latency     = [0.5 4.5]; 
+% cfg.frequency   = [8 12];
+% % cfg.avgoverchan = 'yes';
+% cfg.avgovertime = 'yes';
+% cfg.avgoverfreq = 'yes';
+% cfg.parameter   = 'powspctrm';
+% 
+% cfg.method  = 'stats';
+% cfg.correctm = 'no';
+% cfg.statistic = 'ttest2';
+% 
+% inds_LVF = freqmat_prointoVF.trialinfo;
+% inds_RVF = freqmat_prooutVF.trialinfo;
+% design = ones(1,length(inds_LVF)+length(inds_RVF));
+% % design(inds_LVF) = 1;
+% % design(inds_RVF) = 2;
+% design(length(inds_LVF)+1:length(inds_LVF)+length(inds_RVF)) = 2;
+% 
+% cfg.design = design;
+% cfg_orig = cfg;
+% stats_allChannels = ft_freqstatistics(cfg, freqmat_prointoVF,freqmat_prooutVF);
+% 
+% cfg = [];
+% cfg.xlim = [0.5 4.5];
+% cfg.ylim = [8 12];
+% cfg.layout = 'acticap-64_md.mat';
+% cfg.style = 'straight';
+% cfg.parameter = 'powspctrm';
+% ft_topoplotTFR(cfg, freqmat_prointoVF)
