@@ -24,7 +24,9 @@ def rotate_to_zero(df):
     for ii in range(len(TarTheta)):
         # Get angle for target and corresponding rotation matrix
         this_angle = -1 * TarTheta[ii]
-        radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
+        #radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
+        radial_error = 0 - df.loc[ii, ['TarRadius']][0]
+        
         rotation_matrix = np.array([[np.cos(this_angle), -np.sin(this_angle)],
                                     [np.sin(this_angle), np.cos(this_angle)]])
         for idx in range(len(xcols)):
@@ -63,8 +65,8 @@ def rotate_to_scale(df):
         df[mm + 'Radius'] = np.sqrt(df[mm+'Y']**2 + df[mm+'X']**2)
         df[mm + 'Theta'] = np.arctan2(df[mm+'Y'], df[mm+'X'])
         # Initialize columns to store rotated anlges
-        df[mm+'X_rotated']=0
-        df[mm+'Y_rotated']=0
+        df[mm + 'X_rotated']=0
+        df[mm + 'Y_rotated']=0
     
     subjIDs = df['subjID'].unique()
     instim_idx = np.zeros((len(subjIDs), 600)) # num columns here is hard-coded, this is outright stupid!
@@ -90,13 +92,13 @@ def rotate_to_scale(df):
             this_angle = -1 * instim_mean_theta[subj_idx]
         elif ii in outstim_idx[subj_idx, :]:
             this_angle = -1 * outstim_mean_theta[subj_idx]
-        #radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
+        radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
         rotation_matrix = np.array([[np.cos(this_angle), -np.sin(this_angle)],
                                     [np.sin(this_angle), np.cos(this_angle)]])
         for mm in metrics:
             
-            x = df.loc[ii, [mm+'X']][0] #+ radial_error * np.cos(df.loc[ii, [mm+'Theta']][0])
-            y = df.loc[ii, [mm+'Y']][0] #+ radial_error * np.sin(df.loc[ii, [mm+'Theta']][0])
+            x = df.loc[ii, [mm+'X']][0] + radial_error * np.cos(df.loc[ii, [mm+'Theta']][0])
+            y = df.loc[ii, [mm+'Y']][0] + radial_error * np.sin(df.loc[ii, [mm+'Theta']][0])
             
             input_points = np.vstack((x, y))
             rotated_points = np.dot(rotation_matrix, input_points)

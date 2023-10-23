@@ -1,4 +1,4 @@
-function new_data = block_data(data_eeg, trials)
+function new_data = select_trials(data_eeg, trials)
     new_data.label = data_eeg.label;
     new_data.fsample = data_eeg.fsample;
     new_data.cfg = data_eeg.cfg;
@@ -8,8 +8,4 @@ function new_data = block_data(data_eeg, trials)
     new_data.time = data_eeg.time(1, trials);
     new_data.trialinfo = data_eeg.trialinfo(trials, :);
     new_data.sampleinfo = data_eeg.sampleinfo(trials, :);
-%     events_tags = [1];
-%     for tt = trials
-%         event_tags = [event_tags, ]
-%     end
 end

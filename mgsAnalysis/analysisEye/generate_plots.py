@@ -57,23 +57,32 @@ def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary
             Y2[ss, :] = (Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti + (normalizer_val_anti - normalizer_val_pro)
             #Y1[ss, :] = np.abs(Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro + (normalizer_val_pro - normalizer_val_pro)
             #Y2[ss, :] = np.abs(Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti + (normalizer_val_anti - normalizer_val_pro)
-    
-    if error_measure == 'fsacc_err':
+    ['igain', 'fgain', 'ipea', 
+                    'fpea', 'itheta', 'iamp', 'idir', 'ftheta', 'famp', 'fdir', 'isacc_peakvel', 'fsacc_peakvel']
+    if error_measure == 'fsacc_err' or error_measure == 'ferr':
         t_string = 'Final saccade error'
-    elif error_measure == 'isacc_err':
+    elif error_measure == 'isacc_err' or error_measure == 'ierr':
         t_string = 'Initial saccade error'
     elif error_measure == 'fsacc_rt':
         t_string = 'Final saccade reaction time'
     elif error_measure == 'isacc_rt':
         t_string = 'Initial saccade reaction time'
-    elif error_measure == 'fsacc_radius_err':
-        t_string = 'Final saccade radial error'
-    elif error_measure == 'isacc_radius_err':
-        t_string = 'Initial saccade radial error'
-    elif error_measure == 'fsacc_theta_err':
-        t_string = 'Final saccade angular error'
-    elif error_measure == 'isacc_theta_err':
-        t_string = 'Initial saccade angular error'
+    elif error_measure == 'fgain':
+        t_string = 'Final saccade gain'
+    elif error_measure == 'igain':
+        t_string = 'Initial saccade gain'
+    elif error_measure == 'fpea':
+        t_string = 'Final saccade pea'
+    elif error_measure == 'ipea':
+        t_string = 'Initial saccade pea'
+    elif error_measure == 'ftheta':
+        t_string = 'Final saccade directional error'
+    elif error_measure == 'itheta':
+        t_string = 'Initial saccade directional error'
+    elif error_measure == 'famp':
+        t_string = 'Final saccade amplitude error'
+    elif error_measure == 'iamp':
+        t_string = 'Initial saccade amplitude error'
     elif error_measure == 'corrected_theta_err':
         t_string = 'Corrected angular error'
     elif error_measure == 'corrected_radius_err':
@@ -86,34 +95,8 @@ def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary
 
         tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string)
     else:
-        group_plot(df, Y1, Y2, error_measure, t_string)
-    # LIMS_x = max(X2) + 0.2
-    #LIMS_y = max(max(max(Y1)), max(max(Y2))) * 1.2
-    # LIMS = [LIMS_x, LIMS_y]
+        group_plot_orig(df, Y1, Y2, error_measure, t_string)
     
-    # fig = plt.figure(figsize = (7, 9))
-    # if len(subjIDs) == 1:
-    #     plt.title(subjIDs, fontsize = title_fontsize)
-    # else:
-    #     plt.title(error_measure +' across ' + str(len(subjIDs)) + ' subjects', fontsize = title_fontsize)
-    # for ss in range(len(subjIDs)):
-    #     plt.plot(X1, Y1[ss, :], color = ccols[0], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
-    #     plt.plot(X2, Y2[ss, :], color = wcols[0], linestyle = 'dashdot', label = '__no_legend', markersize = msize)
-    
-    # if len(subjIDs) < 3:
-    #     plt.errorbar(X1, Y1[ss, :], yerr = Yerr1[ss, :], fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    #     plt.errorbar(X2, Y2[ss, :], yerr = Yerr2[ss, :], fmt = '.', ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-    #     plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    #     plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    # else:
-    #     plt.errorbar(X1, np.mean(Y1, axis=0), yerr=sem(Y1, axis=0), fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    #     plt.errorbar(X2, np.mean(Y2, axis=0), yerr=sem(Y2, axis=0), fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-    #     plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    #     plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    # plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
-    # plt.ylabel(error_measure, fontsize = axes_fontsize)
-    # plt.legend()
-    # plt.show()
 
 def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
@@ -121,12 +104,6 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
     X_sum = [sum(value) for value in zip(X1, X2)]
     x_tick_pos = [round(x/2, 2) for x in X_sum]
     x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
-    #x_label_names = ['No TMS', 'MGS into\n TMS VF', 'MGS away\n from TMS VF']
-    # warm_colors = plt.get_cmap('OrRd')
-    # cool_colors = plt.get_cmap('Blues')
-    # wcols = warm_colors(np.linspace(0.3, 0.7, len(subjIDs)))
-    # ccols = cool_colors(np.linspace(0.3, 0.7, len(subjIDs)))
-    
     
     TMSconds = ['No TMS', 'TMS intoVF', 'TMS outVF']
     subjIDs = df['subjID'].unique()
@@ -159,6 +136,53 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
     #plt.legend('Location', )
     plt.show()
 
+def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
+    X1 = [0.3, 0.8, 1.3]
+    # X2 = [round(x + 0.1, 1) for x in X1]
+    # X_sum = [sum(value) for value in zip(X1, X2)]
+    # x_tick_pos = [round(x/2, 1) for x in X_sum]
+    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
+    subjIDs = df['subjID'].unique()
+    num_subs = len(subjIDs)
+    t_string = t_string + ', #subs = ' + str(num_subs)
+    Yerr1 = sem(Y1, axis=0)
+    Yerr2 = sem(Y2, axis=0)
+    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
+    
+    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
+    fig = plt.figure(figsize = (5, 8))
+    fig.patch.set_facecolor((33/255, 33/255, 33/255))
+    ax = fig.add_subplot(111)
+    ax.set_facecolor((33/255, 33/255, 33/255))
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+
+    #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
+    
+    bars = ax.bar(X1, np.mean(Y1, axis=0), width = 0.2)
+    bars[0].set_color("#1B9E77")
+    bars[1].set_color("#D95F02")
+    bars[2].set_color("#7570B3")
+    ax.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+    for ss in range(len(subjIDs)):
+        ax.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
+    
+    #ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+    ax.set_xticks(X1, x_label_names, fontsize = 18)
+    if error_measure == 'isacc_rt':
+        ax.set_ylabel('RT (s)', fontsize = 18)
+        ax.set_title('Reaction time', fontsize = 24, color='white')
+    elif error_measure == 'isacc_err':
+        ax.set_ylabel('MGS error (dva)', fontsize = 18)
+        ax.set_title('Memory error', fontsize = 24, color='white')
+    plt.show()
+    
 def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
     # X2 = [round(x + 0.1, 1) for x in X1]
@@ -251,56 +275,17 @@ def group_plot_orig(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     elif error_measure == 'isacc_err':
         plt.ylabel('MGS error (dva)', fontsize = axes_fontsize)
         plt.title('Memory error', fontsize = title_fontsize)
-    
-    # if min_y > 0:
-    #     ax.set_ylim(0.8*min_y, 1.2*max_y)
-    # else:
-    #     ax.set_ylim(1.2*min_y, 1.2*max_y)
-    #ax.set_ylim(0.5, 3)
-    #plt.ylim([0, max_y])
-    # legend = ax.legend()
-    # legend.get_frame().set_facecolor((33 / 255, 33 / 255, 33 / 255))  # Set the legend box color
-
-    # for text in legend.get_texts():
-    #     text.set_color('white')
-    
-
-    # plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    # plt.errorbar(X2, np.mean(Y2, axis=0), yerr=Yerr2, fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-    # plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    # plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    # plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
-    # plt.ylabel(error_measure, fontsize = axes_fontsize)
-    # plt.title(t_string, fontsize = title_fontsize)
-    # if min_y > 0:
-    #     plt.ylim(0.8*min_y, 1.2*max_y)
-    # else:
-    #     plt.ylim(1.2*min_y, 1.2*max_y)
-    # #plt.ylim([0, max_y])
-    # plt.legend()
     plt.show()
 
-def quick_visualization(df):
-    cols_to_plot = ['fsaccX', 'fsaccY', 'fsacc_err', 'fsacc_theta_err', 'fsacc_radius_err', 'calib_err', 'fsacc_rt', 'fsacc_theta_rot',
-                    'fsacc_theta_rot_normed', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'isacc_peakvel', 'fsacc_peakvel', 'TarRadius', 'TarRadius_rotated',
-                    'TarTheta', 'TarTheta_rotated']
-    # df['trial_type'].replace(['pro_intoVF', 'pro_outVF', 'anti_intoVF', 'anti_outVF'],
-    #                          [0, 1, 2, 3], inplace=True)
-    # df['TMS_condition'].replace(['No TMS', 'TMS intoVF', 'TMS outVF'],
-    #                     [0, 1, 2], inplace=True) 
-    pd.plotting.scatter_matrix(df[cols_to_plot], figsize = (25, 25), alpha = 0.8)
-    plt.suptitle('Quick overview', fontsize = title_fontsize)
-    plt.show()
 
-    # Visualizing data in 2-d, kept out because not sure how it is doing it.
-    # pd.plotting.radviz(df[cols_to_plot], 'TMS_condition')
-    # plt.suptitle('Quick overview', fontsize = title_fontsize)
-    # plt.show()
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
     #df = df[df['fsacc_err']<4]
-    errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'fsacc_theta_rot', 'fsacc_theta_rot_normed',
-                    'fsacc_radius_err', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
+    #errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'fsacc_theta_rot', 'fsacc_theta_rot_normed',
+    #                'fsacc_radius_err', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
+    errs_to_plot = ['ierr', 'ferr', 'igain', 'fgain', 'ipea', 
+                    'fpea', 'itheta', 'iamp', 'idir', 'isacc_peakvel']
+    
     n_rows = 2
     n_cols = 5
     alpha_val = 0.8

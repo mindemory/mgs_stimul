@@ -86,14 +86,14 @@ else:
                         # errors added
                         'isacc_err': ii_sess['i_sacc_err'][0, 0].T[0], # raw euclidean distance error wrt target for isacc
                         'fsacc_err': ii_sess['f_sacc_err'][0, 0].T[0], # raw euclidean distance error wrt target for fsacc
-                        #'isacc_theta_err': ii_sess['isacc_theta_err'][0, 0].T[0], # angular error: isacc - targ
-                        #'fsacc_theta_err': ii_sess['fsacc_theta_err'][0, 0].T[0], # angular error: fsacc - targ
-                        #'corrected_theta_err': ii_sess['corrected_theta_err'][0, 0].T[0], # angular error: fsacc - isacc
-                        #'isacc_radius_err': ii_sess['isacc_radius_err'][0, 0].T[0], # radial error: isacc - targ 
-                        #'fsacc_radius_err': ii_sess['fsacc_radius_err'][0, 0].T[0], # radial error: fsacc - targ
-                        #'corrected_radius_err': ii_sess['corrected_radius_err'][0, 0].T[0], # radial error: fsacc - isacc
+                        'isacc_theta_err': ii_sess['isacc_theta_err'][0, 0].T[0], # angular error: isacc - targ
+                        'fsacc_theta_err': ii_sess['fsacc_theta_err'][0, 0].T[0], # angular error: fsacc - targ
+                        'corrected_theta_err': ii_sess['corrected_theta_err'][0, 0].T[0], # angular error: fsacc - isacc
+                        'isacc_radius_err': ii_sess['isacc_radius_err'][0, 0].T[0], # radial error: isacc - targ 
+                        'fsacc_radius_err': ii_sess['fsacc_radius_err'][0, 0].T[0], # radial error: fsacc - targ
+                        'corrected_radius_err': ii_sess['corrected_radius_err'][0, 0].T[0], # radial error: fsacc - isacc
                         'nsacc': ii_sess['n_sacc'][0, 0].T[0],
-                        'calib_err': ii_sess['calib_err'][0, 0].T[0],
+                        #'calib_err': ii_sess['calib_err'][0, 0].T[0],
                         # Reaction times added
                         'isacc_rt': ii_sess['i_sacc_rt'][0, 0].T[0], # RT for isacc wrt response epoch start
                         'fsacc_rt': ii_sess['f_sacc_rt'][0, 0].T[0], # RT for fsacc wrt response epoch start
@@ -119,5 +119,6 @@ else:
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
     master_df = master_df.reset_index(drop = True)
-    master_df, angular_df = rotate_to_scale(master_df)
+    #master_df, angular_df = rotate_to_scale(master_df)
+    master_df = rotate_to_zero(master_df)
     master_df.to_csv(p['df_fname'], index = False)

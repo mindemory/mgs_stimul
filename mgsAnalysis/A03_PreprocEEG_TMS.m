@@ -1,4 +1,22 @@
 function A03_PreprocEEG_TMS(subjID, day, steps)
+% Created by Mrugank:
+% For Working Memory Memory-Guided Saccade EEG analysis
+% The script performs preprocessing of EEG data for with and without TMS
+% datasets for each subject and each session. The "step" argument lets you
+% pass in which steps of preprocessing you would like to run. The current
+% order is:
+% Step 1: Concatenate data: if multiple sessions
+% Step 2: Preprocess and epoch data to stimulus onset
+% Step 3: Remove pulse artifact and interpolate (for TMS only)
+% Step 4: Bandpass filter the data [0.5 100] Hz and remove line noise at
+% 60Hz
+% Artifact rejection (needs to be done manually and any flagged channels
+% and trials should be added to flagged_trls_chans.m file
+% Step 5: Reepoch data: reference to CAR and reepoch after removing bad
+% trials
+% Step 6: Event-related potential (ERP) for epoched data
+% Step 7: Time-frequency analysis using wavelet method: ERSP, ITC and phase
+% are computed
 clearvars -except subjID day steps; close all; clc;
 
 %% Intialization
@@ -23,9 +41,9 @@ trls_to_remove = (block_flag - 1) * 40 + trl_flag;
 HemiStimulated = table2cell(meta_data(:, ["HemisphereStimulated"]));
 NoTMSDays = table2array(meta_data(:, ["NoTMSDay"]));
 if day == NoTMSDays(subjID) % If this is a No TMS day
-    steps = {'concat', 'raweeg', 'bandpass', 'rereference', 'tfr'};
+    steps = {'concat', 'raweeg', 'bandpass', 'reepoch', 'erp', 'tfr'};
 else % if this is a TMS day
-    steps = {'concat', 'raweeg', 'remove_pulse', 'bandpass', 'rereference', 'rereference_tms', 'tfr'};
+    steps = {'concat', 'raweeg', 'remove_pulse', 'bandpass', 'reepoch', 'erp', 'tfr'};
 end
 %EEGfile = ['sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d') '_concat.vhdr'];
 
@@ -35,249 +53,141 @@ end
 % Step 3: Epoch data 'subXX_dayXX_epoched.mat'
 
 % File names
-fName.folder = [p.saveEEG '/sub' num2str(p.subjID, '%02d') '/day' num2str(p.day, '%02d')];
+fName.folder                    = [p.saveEEG '/sub' p.subjID '/day' num2str(p.day,'%02d')];
 if ~exist(fName.folder, 'dir')
     mkdir(fName.folder)
 end
-fName.general = [fName.folder '/sub' num2str(p.subjID, '%02d') '_day' num2str(p.day, '%02d')];
-fName.concat = [fName.general '.vhdr'];
-fName.load = [fName.general '_raweeg.mat'];
-fName.removed_pulse_whole = [fName.general '_eeg_removed_pulse_whole.mat'];
-fName.ica = [fName.general '_ica.mat'];
-fName.interp = [fName.general '_interpolated.mat'];
-fName.bandpass = [fName.general '_bandpass.mat'];
-fName.bandpass_TMS = [fName.general '_bandpass_TMS.mat'];
-fName.epoched_alltrls = [fName.general '_epoched_alltrls.mat'];
-fName.epoched_prointoVF = [fName.general '_epoched_prointoVF.mat'];
-fName.epoched_prooutVF = [fName.general '_epoched_prooutVF.mat'];
-fName.epoched_antiintoVF = [fName.general '_epoched_antiintoVF.mat'];
-fName.epoched_antioutVF = [fName.general '_epoched_antioutVF.mat'];
-fName.freqmat_prointoVF = [fName.general '_freqmat_prointoVF.mat'];
-fName.freqmat_prooutVF = [fName.general '_freqmat_prooutVF.mat'];
-fName.freqmat_antiintoVF = [fName.general '_freqmat_antiintoVF.mat'];
-fName.freqmat_antioutVF = [fName.general '_freqmat_antioutVF.mat'];
-
-fName.tms_epoched_alltrls = [fName.general '_tms_epoched_alltrls.mat'];
-fName.tms_epoched_prointoVF = [fName.general '_tms_epoched_prointoVF.mat'];
-fName.tms_epoched_prooutVF = [fName.general '_tms_epoched_prooutVF.mat'];
-fName.tms_epoched_antiintoVF = [fName.general '_tms_epoched_antiintoVF.mat'];
-fName.tms_epoched_antioutVF = [fName.general '_tms_epoched_antioutVF.mat'];
-fName.tms_freqmat_prointoVF = [fName.general '_tms_freqmat_prointoVF.mat'];
-fName.tms_freqmat_prooutVF = [fName.general '_tms_freqmat_prooutVF.mat'];
-fName.tms_freqmat_antiintoVF = [fName.general '_tms_freqmat_antiintoVF.mat'];
-fName.tms_freqmat_antioutVF = [fName.general '_tms_freqmat_antioutVF.mat'];
-
-
+fName.general                   = [fName.folder '/sub' p.subjID '_day' num2str(p.day,'%02d')];
+fName.concat                    = [fName.general '.vhdr'];
+fName.load                      = [fName.general '_raweeg.mat'];
+fName.ica                       = [fName.general '_ica.mat'];
+fName.bandpass                  = [fName.general '_bandpass.mat'];
+fName.bandpass_TMS              = [fName.general '_bandpass_TMS.mat'];
+fName.erp                       = [fName.general '_erp.mat'];
+fName.tms_erp                   = [fName.general '_tms_erp.mat'];
+fName.TFR                       = [fName.general '_TFR.mat'];
+fName.TMS_TFR                   = [fName.general '_TMS_TFR.mat'];
 
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
     if ~exist(fName.concat, 'file')
         disp('Concatenated file does not exist. Concatenating EEG data.')
-        tic
         ConcatEEG(p, fName);
-        toc
     else
         disp('Concatenated file exists. Skipping this step.')
     end
 end
 
-%% Creating mat file from EEG data
+%% Reading segmented data
+% stim-locked: 
+%   'S 11': prointoVF
+%   'S 12': prooutVF
+%   'S 13': antiintoVF
+%   'S 14': antioutVF
+% fixation: 1s
+% sample: 0.5s
+% delay1: 2s
+% delay2: 2s
+% response: 0.85s
+% feedback: 0.8s
+% iti: 1/2s
 if any(strcmp(steps, 'raweeg'))
-    if ~exist(fName.load, 'file')
-        % Importing data
-        disp('Raw file does not exist. Creating mat file.')
-        tic
-        cfg = [];
-        cfg.dataset = fName.concat;
-        cfg.trialdef.prestim = 0;
-        cfg.trialdef.poststim = 7;
-        cfg.trialdef.eventtype = 'Stimulus';
-        cfg.trialdef.eventvalue = {'S  1'};
-        cfg = ft_definetrial(cfg);
-        %orig_trl = cfg.trl;
-        cfg.continuous = 'yes';
-        data_eeg = ft_preprocessing(cfg);
-
-        cfg = [];
-        cfg.channel = setdiff(data_eeg.label, {'LM', 'RM'});
+    if ~exist(fName.bandpass, 'file')
+        % Reading segmented data
+        disp('Reading segmented data.')
+        cfg                           = [];
+        cfg.dataset                   = fName.concat;
+        cfg.trialdef.prestim          = 1.5;
+        cfg.trialdef.poststim         = 6.65;
+        cfg.trialdef.eventtype        = 'Stimulus';
+        cfg.trialdef.eventvalue       = {'S 11', 'S 12', 'S 13', 'S 14'};
+        cfg                           = ft_definetrial(cfg);
+        cfg.continuous                = 'yes';
+        data_eeg                      = ft_preprocessing(cfg);
+        
+        % Removing LM and RM electrodes which were not used and bad trials
+        % with timing issues
+        cfg                           = [];
+        cfg.channel                   = setdiff(data_eeg.label, {'LM', 'RM'});
         if ~isempty(trls_to_remove)
-            cfg.trials = setdiff(1:length(data_eeg.trialinfo), trls_to_remove);
+            cfg.trials                = setdiff(1:length(data_eeg.trialinfo), trls_to_remove);
         end
-        data_eeg = ft_selectdata(cfg, data_eeg);
-        toc
-        save(fName.load, 'data_eeg', '-v7.3')
-    else
-        if ~exist(fName.bandpass, 'file')
-            disp('Raw file exists, importing mat file.')
-            load(fName.load)
-        else
-            disp('Raw file exists, but not loading it.')
-        end
+        data_eeg                      = ft_selectdata(cfg, data_eeg);
     end
 end
+
 
 %% Remove TMS pulse from data
 if any(strcmp(steps, 'remove_pulse'))
     if ~exist(fName.bandpass, 'file') 
         % Remove TMS pulse
         disp('Removing pulse and interpolating the data between.')
-        tic
+        cfg                                    = [];
+        cfg.dataset                            = fName.concat;
+        cfg.continuous                         = 'yes';
+        cfg.trialdef.prestim                   = 1.5;
+        cfg.trialdef.poststim                  = 6.65;
+        cfg.trialdef.eventtype                 = 'Stimulus';
+        cfg.trialdef.eventvalue                = {'S 11', 'S 12', 'S 13', 'S 14'};
+        cfg                                    = ft_definetrial(cfg);
+        orig_trl                               = cfg.trl;
 
-        % Remove TMS pulse from whole trial
-        cfg = [];
-        cfg.dataset = fName.concat;
-        cfg.continuous = 'yes';
-        cfg.trialdef.prestim = 0;
-        cfg.trialdef.poststim = 7;
-        cfg.trialdef.eventtype = 'Stimulus';
-        cfg.trialdef.eventvalue = {'S  1'};
-        cfg = ft_definetrial(cfg);
-        orig_trl = cfg.trl;
+        cfg                                    = [];
+        cfg.dataset                            = fName.concat;
+        cfg.method                             = 'marker';
+        cfg.prestim                            = -2.5;
+        cfg.poststim                           = 2.8;
+        cfg.trialdef.eventtype                 = 'Stimulus';
+        cfg.trialdef.eventvalue                = {'S 11', 'S 12', 'S 13', 'S 14'};
+        cfg_ringing                            = ft_artifact_tms(cfg);
 
-        cfg = [];
-        cfg.dataset = fName.concat;
-        cfg.method = 'marker';
-        cfg.prestim = -3.5;
-        cfg.poststim = 3.8;
-        cfg.trialdef.eventtype = 'Stimulus';
-        cfg.trialdef.eventvalue = {'S  1'};
-        cfg_ringing = ft_artifact_tms(cfg);
+        cfg_art                                = [];
+        cfg_art.dataset                        = fName.concat;
+        cfg_art.artfctdef.ringing.artifact     = cfg_ringing.artfctdef.tms.artifact;
+        cfg_art.artfctdef.reject               = 'partial';
+        cfg_art.trl                            = orig_trl;
+        cfg_art.artfctdef.minaccepttim         = 1;
+        cfg                                    = ft_rejectartifact(cfg_art);
+        data_tms_segmented_whole               = ft_preprocessing(cfg);
 
-        cfg_artifact = [];
-        cfg_artifact.dataset = fName.concat;
-        cfg_artifact.artfctdef.ringing.artifact = cfg_ringing.artfctdef.tms.artifact;
-        cfg_artifact.artfctdef.reject = 'partial';
-        cfg_artifact.trl = orig_trl;
-        cfg_artifact.artfctdef.minaccepttim = 1;
-        cfg = ft_rejectartifact(cfg_artifact);
-        data_tms_segmented_whole = ft_preprocessing(cfg);
+        cfg                                    = [];
+        cfg.channel                            = setdiff(data_tms_segmented_whole.label, {'LM', 'RM'});
+        data_tms_segmented_whole               = ft_selectdata(cfg, data_tms_segmented_whole);
 
-        cfg = [];
-        cfg.channel = setdiff(data_tms_segmented_whole.label, {'LM', 'RM'});
-        data_tms_segmented_whole = ft_selectdata(cfg, data_tms_segmented_whole);
+        cfg                                    = [];
+        cfg.trl                                = orig_trl;
+        data_tms_clean                         = ft_redefinetrial(cfg, data_tms_segmented_whole);
 
-        cfg = [];
-        cfg.trl = orig_trl;
-        data_tms_clean = ft_redefinetrial(cfg, data_tms_segmented_whole);
-
-        cfg = [];
+        cfg                                    = [];
         if ~isempty(trls_to_remove)
-            cfg.trials = setdiff(1:length(data_tms_clean.trialinfo), trls_to_remove);
+            cfg.trials                         = setdiff(1:length(data_tms_clean.trialinfo), trls_to_remove);
         end
-        data_tms_clean = ft_selectdata(cfg, data_tms_clean);
+        data_tms_clean                         = ft_selectdata(cfg, data_tms_clean);
 
-        cfg = [];
-        cfg.method = 'pchip';
-        cfg.prewindow = 0.1;
-        cfg.postwindow = 0.1;
-        data_tms_clean_interp = ft_interpolatenan(cfg, data_tms_clean);
+        cfg                                    = [];
+        cfg.method                             = 'pchip';
+        cfg.prewindow                          = 0.1;
+        cfg.postwindow                         = 0.1;
+        data_tms_clean_interp                  = ft_interpolatenan(cfg, data_tms_clean);
         toc
-    end
+   end
 end
-
-%% Independent Component Analysis
-if any(strcmp(steps, 'ica'))
-    if ~exist(fName.ica, 'file')
-        % Running ICA
-        disp('ICA does not exist. Creating mat file.')
-        tic
-        cfg = [];
-        cfg.demean = 'yes';
-        cfg.method = 'fastica';
-        cfg.fastica.approach = 'symm';
-        cfg.fastica.g = 'gauss';
-        comp_tms = ft_componentanalysis(cfg, data_tms_segmented_delay);
-        toc
-        save(fName.ica, 'comp_tms', '-v7.3')
-    else
-        if ~exist(fName.interp, 'file')
-            disp('ICA file exists, importing mat file.')
-            load(fName.ica)
-        else
-            disp('ICA file exists, but not loading it.')
-        end
-    end
-end
-
-% 
-% cfg = []; cfg.preproc.demean = 'yes';
-% data_eeg_avg = ft_timelockanalysis(cfg, data_tms);
-% cfg = []; ft_databrowser(cfg, data_eeg_avg)
-% cfg = [];
-% ft_databrowser(cfg, data_tms_clean_interp)
-%
-% cfg = [];
-% cfg.preproc.demean = 'yes';
-% % cfg.preproc.baselinewindow = [-1 0];
-% data_eeg_avg = ft_timelockanalysis(cfg, data_tms_clean_interp);
-% cfg = [];
-% ft_databrowser(cfg, data_eeg_avg)
-%
-%
-% cfg = [];
-% cfg.preproc.demean = 'yes';
-% % cfg.preproc.baselinewindow = [-1 0];
-% data_tms_avg = ft_timelockanalysis(cfg, data_tms_segmented_whole);
-% cfg = [];
-% ft_databrowser(cfg, data_tms_avg)
-% channel = 'O2';
-%
-% figure;
-% i = find(strcmp(channel, data_tms_avg.label));
-% plot(data_tms_avg.time, data_tms_avg.avg(i,:));   % Plot data
-% xlim([3.5 4.3]);    % Here we can specify the limits of what to plot on the x-axis
-% ylim([-20 25]);      % Here we can specify the limits of what to plot on the y-axis
-% title(['Channel ' data_tms_avg.label{i}]);
-% ylabel('Amplitude (uV)')
-% xlabel('Time (s)');
-%
-% cfg = [];
-% comp_tms_avg = ft_timelockanalysis(cfg, comp_tms);
-%
-% figure;
-% cfg = [];
-% cfg.viewmode = 'butterfly';
-% ft_databrowser(cfg, comp_tms_avg);
-%
-% figure;
-% cfg           = [];
-% cfg.component = [1:65];
-% cfg.comment   = 'no';
-% cfg.layout    = 'acticap-64_md.mat';
-% ft_topoplotIC(cfg, comp_tms);
-
-% cfg = [];
-% cfg.layout = 'acticap-64_md.mat';
-% cfg.viewmode = 'component';
-% ft_databrowser(cfg, comp_tms)
 
 %% Bandpass filter
 if any(strcmp(steps, 'bandpass'))
     if ~exist(fName.bandpass, 'file') && ~exist(fName.bandpass_TMS, 'file')
         disp('Bandpass filtered data does not exist. Applying band pass filter.')
-        tic
-        if day == NoTMSDays(subjID)
-            data_eeg = RunBandPass(data_eeg);
-            toc
-            save(fName.bandpass, 'data_eeg', '-v7.3')
-        else
-            data_tms = RunBandPass(data_tms_clean_interp);
-            data_eeg = RunBandPass(data_eeg);
-            toc
+        data_eeg                               = RunBandPass(data_eeg);
+        save(fName.bandpass, 'data_eeg', '-v7.3')
+        if day                                 ~= NoTMSDays(subjID)
+            data_tms                           = RunBandPass(data_tms_clean_interp);
             save(fName.bandpass_TMS, 'data_tms', '-v7.3')
-            save(fName.bandpass, 'data_eeg', '-v7.3')
         end
     else
-        if ~exist(fName.freqmat_prointoVF, 'file')
-            disp('Bandpass file exists, importing mat file.')
-            if day == NoTMSDays(subjID)
-                load(fName.bandpass)
-            else
-                load(fName.bandpass)
-                load(fName.bandpass_TMS)
-            end
-        else
-            disp('Bandpass file exists, but not loading it.')
+        disp('Bandpass file exists, importing mat file.')
+        load(fName.bandpass)
+        if day                                 ~= NoTMSDays(subjID)
+            load(fName.bandpass_TMS)
         end
     end
 end
@@ -304,170 +214,275 @@ elseif art_run             == 2
         cfg.viewmode           = 'vertical';
         cfg.channel            = union(left_occ_elecs, right_occ_elecs);
         ft_databrowser(cfg, data_eeg);
+
+        cfg = []; cfg.preproc.demean = 'yes'; cfg.keeptrials = 'no';
+        data_eeg_avg = ft_timelockanalysis(cfg, data_eeg);
+        cfg = []; cfg.viewmode = 'vertical'; 
+        ft_databrowser(cfg, data_eeg_avg);
+        
+        cfg                    = [];
+        cfg.viewmode           = 'butterfly';
+        %cfg.trl                = sampleinfo(union(find(data_tms.trialinfo ==11), find(data_tms.trialinfo == 12)), :);
+        cfg.channel            = union(left_occ_elecs, right_occ_elecs);
+        ft_databrowser(cfg, data_eeg);
     else % if this is a TMS day
         %load(fName.bandpass_TMS)
-        cfg                    = [];
-        cfg.viewmode           = 'vertical';
-        cfg.channel            = union(left_occ_elecs, right_occ_elecs);
+        cfg = []; cfg.preproc.demean = 'yes'; cfg.keeptrials = 'no';
+        data_tms_avg = ft_timelockanalysis(cfg, data_tms);
+
+        cfg = []; cfg.viewmode = 'vertical'; 
+        ft_databrowser(cfg, data_tms_avg);
+
+        cfg                            = [];
+        cfg.viewmode                   = 'butterfly';
+        %cfg.trl                = sampleinfo(union(find(data_tms.trialinfo ==11), find(data_tms.trialinfo == 12)), :);
+        cfg.channel                    = union(left_occ_elecs, right_occ_elecs);
         ft_databrowser(cfg, data_tms);
     end
     
-elseif art_run             == 0
+elseif art_run                         == 0
     disp('You selected to skip artifact-rejection. Make sure that downstream analysis is interpreted accordingly.')
 else
     disp('Invalid input! Skipping artifact-rejection.')
 end
 
-[flg_trls, flg_chans] = flagged_trls_chans(subjID, day);
-%% Re-epoching data and re-referencing to CAR
-if any(strcmp(steps, 'rereference'))
-    if ~exist(fName.freqmat_prointoVF, 'file') || ~exist(fName.freqmat_prooutVF, 'file') || ...
-            ~exist(fName.freqmat_antiintoVF, 'file') || ~exist(fName.freqmat_antioutVF, 'file')
-        disp('Re-epoching and re-referencing')
-        tic
-        %load(fName.bandpass)
-        good_channels = setdiff(data_eeg.label, flg_chans);
-        load([p.save '/EEGflags.mat'])
-        valid_flags = [11, 12, 13, 14];
-        trl_sequence = flags.num(ismember(flags.num, valid_flags));
+[flg_trls, flg_chans]                  = flagged_trls_chans(subjID, day);
 
-        % Select good trials and good channels for each epoched data type
-        % prointoVF
-        cfg = [];
-        cfg.channel = good_channels;
-        cfg_reref = [];
-        cfg_reref.reref = 'yes';
-        cfg_reref.refchannel = 'all';
-        cfg_reref.implicitref = 'Cz';
-        % good epoc prointoVF
-        prointoVF_trls = find(trl_sequence == 11);
-        prointoVF_mask = ismember(prointoVF_trls, flg_trls);
-        prointoVF_trls(prointoVF_mask) = 0;
-        cfg.trials = find(prointoVF_trls ~= 0);
-        epoc_prointoVF = ft_selectdata(cfg, data_eeg);
-        epoc_prointoVF = ft_preprocessing(cfg_reref, epoc_prointoVF);
-        % good epoc prooutVF
-        prooutVF_trls = find(trl_sequence == 12);
-        prooutVF_mask = ismember(prooutVF_trls, flg_trls);
-        prooutVF_trls(prooutVF_mask) = 0;
-        cfg.trials = find(prooutVF_trls ~= 0);
-        epoc_prooutVF = ft_selectdata(cfg, data_eeg);
-        epoc_prooutVF = ft_preprocessing(cfg_reref, epoc_prooutVF);
-        % good epoc antiintoVF
-        antiintoVF_trls = find(trl_sequence == 13);
-        antiintoVF_mask = ismember(antiintoVF_trls, flg_trls);
-        antiintoVF_trls(antiintoVF_mask) = 0;
-        cfg.trials = find(antiintoVF_trls ~= 0);
-        epoc_antiintoVF = ft_selectdata(cfg, data_eeg);
-        epoc_antiintoVF = ft_preprocessing(cfg_reref, epoc_antiintoVF);
-        % good epoc prooutVF
-        antioutVF_trls = find(trl_sequence == 14);
-        antioutVF_mask = ismember(antioutVF_trls, flg_trls);
-        antioutVF_trls(antioutVF_mask) = 0;
-        cfg.trials = find(antioutVF_trls ~= 0);
-        epoc_antioutVF = ft_selectdata(cfg, data_eeg);
-        epoc_antioutVF = ft_preprocessing(cfg_reref, epoc_antioutVF);
-        toc
-    end
-end
-
-if any(strcmp(steps, 'rereference_tms'))
-    if ~exist(fName.freqmat_prointoVF, 'file') || ~exist(fName.freqmat_prooutVF, 'file') || ...
-            ~exist(fName.freqmat_antiintoVF, 'file') || ~exist(fName.freqmat_antioutVF, 'file')
-        disp('Re-epoching and re-referencing')
-        tic
-        %load(fName.bandpass_TMS)
-        good_channels = setdiff(data_tms.label, flg_chans);
-        load([p.save '/EEGflags.mat'])
-        valid_flags = [11, 12, 13, 14];
-        trl_sequence = flags.num(ismember(flags.num, valid_flags));
-
-        % Select good trials and good channels for each epoched data type
-        % prointoVF
-        cfg = [];
-        cfg.channel = good_channels;
-        cfg_reref = [];
-        cfg_reref.reref = 'yes';
-        cfg_reref.refchannel = 'all';
-        cfg_reref.implicitref = 'Cz';
-        % good epoc prointoVF
-        prointoVF_trls = find(trl_sequence == 11);
-        prointoVF_mask = ismember(prointoVF_trls, flg_trls);
-        prointoVF_trls(prointoVF_mask) = 0;
-        cfg.trials = find(prointoVF_trls ~= 0);
-        tms_epoc_prointoVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_prointoVF = ft_preprocessing(cfg_reref, tms_epoc_prointoVF);
-        % good epoc prooutVF
-        prooutVF_trls = find(trl_sequence == 12);
-        prooutVF_mask = ismember(prooutVF_trls, flg_trls);
-        prooutVF_trls(prooutVF_mask) = 0;
-        cfg.trials = find(prooutVF_trls ~= 0);
-        tms_epoc_prooutVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_prooutVF = ft_preprocessing(cfg_reref, tms_epoc_prooutVF);
-        % good epoc antiintoVF
-        antiintoVF_trls = find(trl_sequence == 13);
-        antiintoVF_mask = ismember(antiintoVF_trls, flg_trls);
-        antiintoVF_trls(antiintoVF_mask) = 0;
-        cfg.trials = find(antiintoVF_trls ~= 0);
-        tms_epoc_antiintoVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_antiintoVF = ft_preprocessing(cfg_reref, tms_epoc_antiintoVF);
-        % good epoc prooutVF
-        antioutVF_trls = find(trl_sequence == 14);
-        antioutVF_mask = ismember(antioutVF_trls, flg_trls);
-        antioutVF_trls(antioutVF_mask) = 0;
-        cfg.trials = find(antioutVF_trls ~= 0);
-        tms_epoc_antioutVF = ft_selectdata(cfg, data_tms);
-        tms_epoc_antioutVF = ft_preprocessing(cfg_reref, tms_epoc_antioutVF);
-        toc
-    end
-end
-
-%% Time-frequency analysis
-if any(strcmp(steps, 'tfr'))
-    if ~exist(fName.freqmat_prointoVF, 'file') || ~exist(fName.freqmat_prooutVF, 'file') || ...
-            ~exist(fName.freqmat_antiintoVF, 'file') || ~exist(fName.freqmat_antioutVF, 'file')
-        disp('Computing time-frequency plots')
-        [freqmat_prointoVF, freqmat_prooutVF] = compute_TFRs(epoc_prointoVF, epoc_prooutVF);
-        [freqmat_antiintoVF, freqmat_antioutVF] = compute_TFRs(epoc_antiintoVF, epoc_antioutVF);
-        
-        save(fName.freqmat_prointoVF, 'freqmat_prointoVF', '-v7.3')
-        save(fName.freqmat_prooutVF, 'freqmat_prooutVF', '-v7.3')
-        save(fName.freqmat_antiintoVF, 'freqmat_antiintoVF', '-v7.3')
-        save(fName.freqmat_antioutVF, 'freqmat_antioutVF', '-v7.3')
-
-        if day ~= NoTMSDays(subjID)
-            [tms_freqmat_prointoVF, tms_freqmat_prooutVF] = compute_TFRs(tms_epoc_prointoVF, tms_epoc_prooutVF);
-            [tms_freqmat_antiintoVF, tms_freqmat_antioutVF] = compute_TFRs(tms_epoc_antiintoVF, tms_epoc_antioutVF);
-            save(fName.tms_freqmat_prointoVF, 'tms_freqmat_prointoVF', '-v7.3')
-            save(fName.tms_freqmat_prooutVF, 'tms_freqmat_prooutVF', '-v7.3')
-            save(fName.tms_freqmat_antiintoVF, 'tms_freqmat_antiintoVF', '-v7.3')
-            save(fName.tms_freqmat_antioutVF, 'tms_freqmat_antioutVF', '-v7.3')
+%% Independent Component Analysis
+% Added by Mrugank (09/11/2023): The goal was to remove eye-blink, muscle
+% and cardiac artifacts from the data as well as the decaying artifact in
+% TMS datasets. However, this is still is work in progress and has not been
+% used for analyzing any of the data so far.
+if any(strcmp(steps, 'ica'))
+    if ~exist(fName.ica, 'file')
+        % Running ICA
+        disp('ICA does not exist. Creating mat file.')
+        cfg                            = [];
+        cfg.demean                     = 'yes';
+        cfg.method                     = 'fastica';
+        cfg.fastica.approach           = 'symm';
+        cfg.fastica.g                  = 'gauss';
+        comp_tms                       = ft_componentanalysis(cfg, data_tms_segmented_delay);
+        save(fName.ica, 'comp_tms', '-v7.3')
+    else
+        if ~exist(fName.interp, 'file')
+            disp('ICA file exists, importing mat file.')
+            load(fName.ica)
+        else
+            disp('ICA file exists, but not loading it.')
         end
     end
 end
 
-% t_idx = find(freqmat_ipsi_pro.time>0.5 & freqmat_ipsi_pro.time<4.5);
-% figure;
-% subplot(1, 3, 1)
-% title('Ipsi');
-% surf(freqmat_ipsi_pro.time(t_idx),freqmat_ipsi_pro.freq,permute(abs(freqmat_ipsi_pro.powspctrm(:,:,t_idx)),[2,3,1]),'EdgeColor','none');view([0 90]);
-% subplot(1, 3, 2)
-% title('Contra');
-% surf(freqmat_contra_pro.time(t_idx),freqmat_contra_pro.freq,permute(abs(freqmat_contra_pro.powspctrm(:,:,t_idx)),[2,3,1]),'EdgeColor','none');view([0 90]);
-% subplot(1, 3, 3)
-% title('difference');
-% surf(freqmat_contra_pro.time(t_idx),freqmat_contra_pro.freq,permute(freqmat_contra_pro.powspctrm(:,:,t_idx)-freqmat_ipsi_pro.powspctrm(:,:,t_idx),[2,3,1]),'EdgeColor','none');view([0 90]);
+%% Interpolate bad channels and rereference
+%if ~exist(fName.erp_prointoVF, 'file')
+if ~isempty(flg_chans) 
+    disp('The flagged channels will be reinterpolated before running furhter analyses.')
+    % Create a neighbor template
+    cfg_neighbor                       = [];
+    cfg_neighbor.method                = 'triangulation';
+    cfg_neighbor.compress              = 'yes';
+    cfg_neighbor.layout                = 'acticap-64_md.mat';
+    cfg_neighbor.feedback              = 'no';
+    neighbors                          = ft_prepare_neighbours(cfg_neighbor, data_eeg);
 
-% t_idx = find(freqmat_ipsi_anti.time>0.5 & freqmat_ipsi_anti.time<4.5);
-% figure;
-% subplot(1, 3, 1)
-% title('Ipsi');
-% surf(freqmat_ipsi_anti.time(t_idx),freqmat_ipsi_anti.freq,permute(abs(freqmat_ipsi_anti.powspctrm(:,:,t_idx)),[2,3,1]),'EdgeColor','none');view([0 90]);
-% subplot(1, 3, 2)
-% title('Contra');
-% surf(freqmat_contra_anti.time(t_idx),freqmat_contra_anti.freq,permute(abs(freqmat_contra_anti.powspctrm(:,:,t_idx)),[2,3,1]),'EdgeColor','none');view([0 90]);
-% subplot(1, 3, 3)
-% title('difference');
-% surf(freqmat_contra_anti.time(t_idx),freqmat_contra_anti.freq,permute(freqmat_contra_anti.powspctrm(:,:,t_idx)-freqmat_ipsi_anti.powspctrm(:,:,t_idx),[2,3,1]),'EdgeColor','none');view([0 90]);
+    % Interpolate bad channels
+    cfg_chanrepair                     = [];
+    cfg_chanrepair.badchannel          = flg_chans;
+    cfg_chanrepair.method              = 'spline';
+    cfg_chanrepair.neighbours          = neighbors;
+    cfg_chanrepair.layout              = 'acticap-64_md.mat';
+    cfg_chanrepair.senstype            = 'eeg';
+    data_eeg                           = ft_channelrepair(cfg_chanrepair,data_eeg);
 
+    % Do the same for TMS artifact cleared data
+    if day ~= NoTMSDays(subjID)
+        data_tms                       = ft_channelrepair(cfg_chanrepair,data_tms);
+    end 
+end
+
+%% Re-epoching and eliminating bad trials
+if any(strcmp(steps, 'reepoch'))
+    %if ~exist(fName.erp, 'file') 
+        disp('Re-epoching and eliminating bad trials')
+        %load(fName.bandpass)
+        %good_channels = setdiff(data_eeg.label, flg_chans);
+        %load([p.save '/EEGflags.mat'])
+        %valid_flags = [11, 12, 13, 14];
+        %trl_sequence = flags.num(ismember(flags.num, valid_flags));
+
+        % Re-reference data to CAR
+        cfg                            = [];
+        cfg.reref                      = 'yes';
+        cfg.refchannel                 = 'all';
+        cfg.refmethod                  = 'avg';
+        data_eeg                       = ft_preprocessing(cfg, data_eeg);
+    
+        % Do the same for TMS artifact cleared data
+        if day ~= NoTMSDays(subjID)
+            data_tms                   = ft_preprocessing(cfg, data_tms);
+        end 
+        
+        % Select good trials for each epoched data type
+        cfg                            = [];
+        cfg.channel                    = 'all';
+        
+        % good epoc prointoVF
+        prointoVF_trls                 = find(data_eeg.trialinfo == 11);
+        cfg.trials                     = setdiff(prointoVF_trls, flg_trls);
+        epoc_prointoVF                 = ft_selectdata(cfg, data_eeg);
+        if day ~= NoTMSDays(subjID)
+            tms_epoc_prointoVF         = ft_selectdata(cfg, data_tms);
+        end 
+        
+        % good epoc prooutVF
+        prooutVF_trls                  = find(data_eeg.trialinfo == 12);
+        cfg.trials                     = setdiff(prooutVF_trls, flg_trls);
+        epoc_prooutVF                  = ft_selectdata(cfg, data_eeg);
+        if day ~= NoTMSDays(subjID)
+            tms_epoc_prooutVF          = ft_selectdata(cfg, data_tms);
+        end 
+        
+        % good epoc antiintoVF
+        antiintoVF_trls                = find(data_eeg.trialinfo == 13);
+        cfg.trials                     = setdiff(antiintoVF_trls, flg_trls);
+        epoc_antiintoVF                = ft_selectdata(cfg, data_eeg);
+        if day ~= NoTMSDays(subjID)
+            tms_epoc_antiintoVF        = ft_selectdata(cfg, data_tms);
+        end 
+
+        % good epoc antioutVF
+        antioutVF_trls                 = find(data_eeg.trialinfo == 14);
+        cfg.trials                     = setdiff(antioutVF_trls, flg_trls);
+        epoc_antioutVF                 = ft_selectdata(cfg, data_eeg);
+        if day ~= NoTMSDays(subjID)
+            tms_epoc_antioutVF         = ft_selectdata(cfg, data_tms);
+        end 
+    %end
+end
+
+%% Event-related potentials (CDA)
+if any(strcmp(steps, 'erp'))
+    if ~exist(fName.erp, 'file')
+        disp('Computing event-related potentials')
+        [ERP.prointoVF, ERP.prooutVF]                   = compute_ERPs(epoc_prointoVF, epoc_prooutVF);
+        [ERP.antiintoVF, ERP.antioutVF]                 = compute_ERPs(epoc_antiintoVF, epoc_antioutVF);
+        save(fName.erp, 'ERP', '-v7.3')
+
+        if day ~= NoTMSDays(subjID)
+            [TMS_ERP.prointoVF, TMS_ERP.prooutVF]       = compute_ERPs(tms_epoc_prointoVF, tms_epoc_prooutVF);
+            [TMS_ERP.antiintoVF, TMS_ERP.antioutVF]     = compute_ERPs(tms_epoc_antiintoVF, tms_epoc_antioutVF);
+            save(fName.tms_erp, 'TMS_ERP', '-v7.3')
+        end
+    end
+end
+
+% cfg = [];
+% cfg.channel = left_occ_elecs;
+% cfg.figure = 'gcf';
+% cfg.xlim = [0 4.5];
+% figure();
+% subplot(2, 2, 1)
+% ft_singleplotER(cfg, ERP.prointoVF)
+% subplot(2, 2, 2)
+% ft_singleplotER(cfg, ERP.antiintoVF)
+% subplot(2, 2, 3)
+% ft_singleplotER(cfg, ERP.prooutVF)
+% subplot(2, 2, 4)
+% ft_singleplotER(cfg, ERP.antioutVF)
+% 
+% cfg = [];
+% cfg.channel = left_occ_elecs;
+% cfg.figure = 'gcf';
+% cfg.xlim = [0 4.5];
+% figure();
+% subplot(2, 2, 1)
+% ft_singleplotER(cfg, TMS_ERP.prointoVF)
+% subplot(2, 2, 2)
+% ft_singleplotER(cfg, TMS_ERP.antiintoVF)
+% subplot(2, 2, 3)
+% ft_singleplotER(cfg, TMS_ERP.prooutVF)
+% subplot(2, 2, 4)
+% ft_singleplotER(cfg, TMS_ERP.antioutVF)
+%% Time-Frequency Analysis (TFA)
+if any(strcmp(steps, 'tfr'))
+   if ~exist(fName.TFR, 'file') 
+        disp('Running time-frequency analysis')
+        [POW.prointoVF, ITC.prointoVF, PHASE.prointoVF]          = compute_TFRs(epoc_prointoVF, 1);
+        [POW.prooutVF, ITC.prooutVF, PHASE.prooutVF]             = compute_TFRs(epoc_prooutVF, 1);
+        [POW.antiintoVF, ITC.antiintoVF, PHASE.antiintoVF]       = compute_TFRs(epoc_antiintoVF, 1);
+        [POW.antioutVF, ITC.antioutVF, PHASE.antioutVF]          = compute_TFRs(epoc_antioutVF, 1);
+        save(fName.TFR, 'POW', 'ITC', 'PHASE', '-v7.3')
+
+        if day ~= NoTMSDays(subjID)
+            [TMSPOW.prointoVF, TMSITC.prointoVF, TMSPHASE.prointoVF]          = compute_TFRs(tms_epoc_prointoVF, 1);
+            [TMSPOW.prooutVF, TMSITC.prooutVF, TMSPHASE.prooutVF]             = compute_TFRs(tms_epoc_prooutVF, 1);
+            [TMSPOW.antiintoVF, TMSITC.antiintoVF, TMSPHASE.antiintoVF]       = compute_TFRs(tms_epoc_antiintoVF, 1);
+            [TMSPOW.antioutVF, TMSITC.antioutVF, TMSPHASE.antioutVF]          = compute_TFRs(tms_epoc_antioutVF, 1);
+            save(fName.TMS_TFR, 'TMSPOW', 'TMSITC', 'TMSPHASE', '-v7.3')
+        end
+   end
+end
+%% Testing here
+% cfg = [];
+% cfg.avgoverrpt = 'yes';
+% avgTFR_power_intoVF = ft_selectdata(cfg, TMSPOW.antiintoVF);
+% avgTFR_power_outVF = ft_selectdata(cfg, TMSPOW.antioutVF);
+% cfg = [];
+% cfg.operation = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
+% cfg.parameter = 'powspctrm';
+% TFR_contrast = ft_math(cfg, avgTFR_power_intoVF, avgTFR_power_outVF);
+% % cfg = [];
+% % cfg.operation = '(x1-x2)';
+% % cfg.parameter = 'itcspctrm';
+% % itc_contrast = ft_math(cfg, ITC.prointoVF, ITC.prooutVF);
+% 
+% cfg = [];
+% cfg.figure = 'gcf';
+% cfg.channel = left_occ_elecs;
+% cfg.ylim = [7 50];
+% %cfg.zlim = [-2.5 2.5];
+% figure();
+% subplot(3, 2, 1)
+% ft_singleplotTFR(cfg, avgTFR_power_intoVF);
+% subplot(3, 2, 3)
+% ft_singleplotTFR(cfg, avgTFR_power_outVF);
+% subplot(3, 2, 5)
+% ft_singleplotTFR(cfg, TFR_contrast);
+% 
+% cfg.channel = right_occ_elecs;
+% subplot(3, 2, 2)
+% ft_singleplotTFR(cfg, avgTFR_power_intoVF);
+% subplot(3, 2, 4)
+% ft_singleplotTFR(cfg, avgTFR_power_outVF);
+% subplot(3, 2, 6)
+% ft_singleplotTFR(cfg, TFR_contrast);
+% 
+% 
+% cfg = [];
+% cfg.operation = '(x1-x2)';
+% cfg.parameter = 'itcspctrm';
+% itc_contrast = ft_math(cfg, TMSITC.antiintoVF, TMSITC.antioutVF);
+% 
+% cfg = [];
+% cfg.figure = 'gcf';
+% cfg.channel = left_occ_elecs;
+% cfg.ylim = [7 50];
+% cfg.parameter = 'itcspctrm';
+% %cfg.zlim = [-2.5 2.5];
+% figure();
+% subplot(3, 2, 1)
+% ft_singleplotTFR(cfg, TMSITC.prointoVF);
+% subplot(3, 2, 3)
+% ft_singleplotTFR(cfg, TMSITC.prooutVF);
+% subplot(3, 2, 5)
+% ft_singleplotTFR(cfg, itc_contrast);
+% 
+% cfg.channel = right_occ_elecs;
+% subplot(3, 2, 2)
+% ft_singleplotTFR(cfg, TMSITC.prointoVF);
+% subplot(3, 2, 4)
+% ft_singleplotTFR(cfg, TMSITC.prooutVF);
+% subplot(3, 2, 6)
+% ft_singleplotTFR(cfg, itc_contrast);
 end

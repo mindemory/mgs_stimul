@@ -26,7 +26,7 @@ ii_params.drift_epoch = [1 10 2 3]; % XDAT values for drift correction (
 ii_params.drift_fixation_mode  = 'mode';
 ii_params.calibrate_epoch = 5; % XDAT value for when we calibrate (feedback stim)
 ii_params.calibrate_select_mode = 'last'; % how do we select fixation with which to calibrate?
-ii_params.calibrate_mode = 'scale';%'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
+ii_params.calibrate_mode = 'run';%'run'; % scale: trial-by-trial, rescale each trial; 'run' - run-wise polynomial fit
 ii_params.blink_thresh = 0.1;
 ii_params.blink_window = [100 100]; % how long before/after blink (ms) to drop?
 ii_params.plot_epoch = [10 2 3 4 5];  % what epochs do we plot for preprocessing?
@@ -71,12 +71,12 @@ for block = 1:end_block
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params);%, [], {'drift'});
+    [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'calibration'});
         
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    [ii_trial{block},~] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'lenient');
+    [ii_trial{block},~] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'strict');
     if strcmp(eyecond, 'pro')
         ii_trial{block}.instimVF = taskMap(block).stimVF;
     elseif strcmp(eyecond, 'anti')

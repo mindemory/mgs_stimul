@@ -1,34 +1,6 @@
 function [flg_trls, flg_chans] = flagged_trls_chans(subjID, day)
 
 
-
-% cfg = []; cfg.preproc.demean = 'yes'; cfg.keeptrials = 'no';
-% data_eeg_avg = ft_timelockanalysis(cfg, data_eeg);
-% cfg = []; cfg.viewmode = 'vertical'; 
-% ft_databrowser(cfg, data_eeg_avg);
-% 
-% cfg = []; cfg.preproc.demean = 'yes'; cfg.keeptrials = 'no';
-% data_tms_avg = ft_timelockanalysis(cfg, data_tms);
-% cfg = []; cfg.viewmode = 'vertical'; 
-% %cfg.channel = setdiff(data_tms_avg.label, flg_chans);
-% ft_databrowser(cfg, data_tms_avg);
-% 
-% left_occ_elecs = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
-% right_occ_elecs = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
-% cfg                    = [];
-% cfg.viewmode           = 'butterfly';
-% cfg.channel            = union(left_occ_elecs, right_occ_elecs);
-% ft_databrowser(cfg, data_tms);
-% 
-% left_occ_elecs = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
-% right_occ_elecs = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
-% cfg                    = [];
-% cfg.viewmode           = 'butterfly';
-% cfg.channel            = union(left_occ_elecs, right_occ_elecs);
-% ft_databrowser(cfg, data_eeg);
-
-
-
 if subjID               == 1
     if day              == 1
         flg_trls         = [37 56 57 66 69 239 240 308 309 366];
