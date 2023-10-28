@@ -169,7 +169,6 @@ if any(strcmp(steps, 'remove_pulse'))
         cfg.prewindow                          = 0.1;
         cfg.postwindow                         = 0.1;
         data_tms_clean_interp                  = ft_interpolatenan(cfg, data_tms_clean);
-        toc
    end
 end
 
@@ -275,35 +274,36 @@ if any(strcmp(steps, 'ica'))
 end
 
 %% Interpolate bad channels and rereference
-%if ~exist(fName.erp_prointoVF, 'file')
-if ~isempty(flg_chans) 
-    disp('The flagged channels will be reinterpolated before running furhter analyses.')
-    % Create a neighbor template
-    cfg_neighbor                       = [];
-    cfg_neighbor.method                = 'triangulation';
-    cfg_neighbor.compress              = 'yes';
-    cfg_neighbor.layout                = 'acticap-64_md.mat';
-    cfg_neighbor.feedback              = 'no';
-    neighbors                          = ft_prepare_neighbours(cfg_neighbor, data_eeg);
-
-    % Interpolate bad channels
-    cfg_chanrepair                     = [];
-    cfg_chanrepair.badchannel          = flg_chans;
-    cfg_chanrepair.method              = 'spline';
-    cfg_chanrepair.neighbours          = neighbors;
-    cfg_chanrepair.layout              = 'acticap-64_md.mat';
-    cfg_chanrepair.senstype            = 'eeg';
-    data_eeg                           = ft_channelrepair(cfg_chanrepair,data_eeg);
-
-    % Do the same for TMS artifact cleared data
-    if day ~= NoTMSDays(subjID)
-        data_tms                       = ft_channelrepair(cfg_chanrepair,data_tms);
-    end 
+if ~exist(fName.TFR, 'file')
+    if ~isempty(flg_chans) 
+        disp('The flagged channels will be reinterpolated before running furhter analyses.')
+        % Create a neighbor template
+        cfg_neighbor                       = [];
+        cfg_neighbor.method                = 'triangulation';
+        cfg_neighbor.compress              = 'yes';
+        cfg_neighbor.layout                = 'acticap-64_md.mat';
+        cfg_neighbor.feedback              = 'no';
+        neighbors                          = ft_prepare_neighbours(cfg_neighbor, data_eeg);
+    
+        % Interpolate bad channels
+        cfg_chanrepair                     = [];
+        cfg_chanrepair.badchannel          = flg_chans;
+        cfg_chanrepair.method              = 'spline';
+        cfg_chanrepair.neighbours          = neighbors;
+        cfg_chanrepair.layout              = 'acticap-64_md.mat';
+        cfg_chanrepair.senstype            = 'eeg';
+        data_eeg                           = ft_channelrepair(cfg_chanrepair,data_eeg);
+    
+        % Do the same for TMS artifact cleared data
+        if day ~= NoTMSDays(subjID)
+            data_tms                       = ft_channelrepair(cfg_chanrepair,data_tms);
+        end 
+    end
 end
 
 %% Re-epoching and eliminating bad trials
 if any(strcmp(steps, 'reepoch'))
-    %if ~exist(fName.erp, 'file') 
+    if ~exist(fName.TFR, 'file') 
         disp('Re-epoching and eliminating bad trials')
         %load(fName.bandpass)
         %good_channels = setdiff(data_eeg.label, flg_chans);
@@ -331,7 +331,7 @@ if any(strcmp(steps, 'reepoch'))
         prointoVF_trls                 = find(data_eeg.trialinfo == 11);
         cfg.trials                     = setdiff(prointoVF_trls, flg_trls);
         epoc_prointoVF                 = ft_selectdata(cfg, data_eeg);
-        if day ~= NoTMSDays(subjID)
+        if day                         ~= NoTMSDays(subjID)
             tms_epoc_prointoVF         = ft_selectdata(cfg, data_tms);
         end 
         
@@ -339,7 +339,7 @@ if any(strcmp(steps, 'reepoch'))
         prooutVF_trls                  = find(data_eeg.trialinfo == 12);
         cfg.trials                     = setdiff(prooutVF_trls, flg_trls);
         epoc_prooutVF                  = ft_selectdata(cfg, data_eeg);
-        if day ~= NoTMSDays(subjID)
+        if day                         ~= NoTMSDays(subjID)
             tms_epoc_prooutVF          = ft_selectdata(cfg, data_tms);
         end 
         
@@ -347,7 +347,7 @@ if any(strcmp(steps, 'reepoch'))
         antiintoVF_trls                = find(data_eeg.trialinfo == 13);
         cfg.trials                     = setdiff(antiintoVF_trls, flg_trls);
         epoc_antiintoVF                = ft_selectdata(cfg, data_eeg);
-        if day ~= NoTMSDays(subjID)
+        if day                         ~= NoTMSDays(subjID)
             tms_epoc_antiintoVF        = ft_selectdata(cfg, data_tms);
         end 
 
@@ -355,10 +355,10 @@ if any(strcmp(steps, 'reepoch'))
         antioutVF_trls                 = find(data_eeg.trialinfo == 14);
         cfg.trials                     = setdiff(antioutVF_trls, flg_trls);
         epoc_antioutVF                 = ft_selectdata(cfg, data_eeg);
-        if day ~= NoTMSDays(subjID)
+        if day                         ~= NoTMSDays(subjID)
             tms_epoc_antioutVF         = ft_selectdata(cfg, data_tms);
         end 
-    %end
+    end
 end
 
 %% Event-related potentials (CDA)
@@ -369,7 +369,7 @@ if any(strcmp(steps, 'erp'))
         [ERP.antiintoVF, ERP.antioutVF]                 = compute_ERPs(epoc_antiintoVF, epoc_antioutVF);
         save(fName.erp, 'ERP', '-v7.3')
 
-        if day ~= NoTMSDays(subjID)
+        if day                                          ~= NoTMSDays(subjID)
             [TMS_ERP.prointoVF, TMS_ERP.prooutVF]       = compute_ERPs(tms_epoc_prointoVF, tms_epoc_prooutVF);
             [TMS_ERP.antiintoVF, TMS_ERP.antioutVF]     = compute_ERPs(tms_epoc_antiintoVF, tms_epoc_antioutVF);
             save(fName.tms_erp, 'TMS_ERP', '-v7.3')
@@ -414,7 +414,7 @@ if any(strcmp(steps, 'tfr'))
         [POW.antioutVF, ITC.antioutVF, PHASE.antioutVF]          = compute_TFRs(epoc_antioutVF, 1);
         save(fName.TFR, 'POW', 'ITC', 'PHASE', '-v7.3')
 
-        if day ~= NoTMSDays(subjID)
+        if day                                                                ~= NoTMSDays(subjID)
             [TMSPOW.prointoVF, TMSITC.prointoVF, TMSPHASE.prointoVF]          = compute_TFRs(tms_epoc_prointoVF, 1);
             [TMSPOW.prooutVF, TMSITC.prooutVF, TMSPHASE.prooutVF]             = compute_TFRs(tms_epoc_prooutVF, 1);
             [TMSPOW.antiintoVF, TMSITC.antiintoVF, TMSPHASE.antiintoVF]       = compute_TFRs(tms_epoc_antiintoVF, 1);
@@ -485,4 +485,5 @@ end
 % ft_singleplotTFR(cfg, TMSITC.prooutVF);
 % subplot(3, 2, 6)
 % ft_singleplotTFR(cfg, itc_contrast);
+disp('Woosh! That was a lot of work.')
 end

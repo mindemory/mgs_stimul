@@ -7,7 +7,7 @@ MATLAB_PATH='/usr/local/bin/matlab9.6'
 PROJECT_DIR=/datc/MD_TMS_EEG
 FILES_DIR=${PROJECT_DIR}/EEGfiles
 RAW_DIR=${PROJECT_DIR}/EEGData
-SUBJ_LIST=(1 5 7 8 12 13 14 15 16 17 22 24)
+SUBJ_LIST=(22 23 24)
 DAYS=(1 2 3)
 
 LOG_DIR=$FILES_DIR/logs
@@ -41,7 +41,7 @@ for s in ${!SUBJ_LIST[@]}; do
         echo "Date: $DATE"
         printf "Log file: $LOG_FILE\n"
         
-        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG_TMS_temp($SUBJ, $DAY)" > $LOG_FILE &
+        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG_TMS($SUBJ, $DAY)" > $LOG_FILE &
         (( CORENUM++ ))
         
     done

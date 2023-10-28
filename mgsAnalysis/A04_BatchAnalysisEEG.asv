@@ -175,13 +175,12 @@ else
     load(fName.mTFR)
 end
 
-% Figure names for master plots
 figname.masterTFR_pro                       = [p.figure '/tfrplots/allsubs_TFRpro.png'];
 figname.masterTFR_anti                      = [p.figure '/tfrplots/allsubs_TFRanti.png'];
 figname.masterTOPO_pro                      = [p.figure '/topoplots/allsubs_TOPOpro.png'];
 figname.masterTOPO_anti                     = [p.figure '/topoplots/allsubs_TOPOanti.png'];
 
-% Master figure plots for TFR and TOPO
+
 if ~exist(figname.masterTFR_pro, 'file')
     compare_conds(mTFR, tidx, fidx, 'P')
     saveas(gcf, figname.masterTFR_pro, 'png')

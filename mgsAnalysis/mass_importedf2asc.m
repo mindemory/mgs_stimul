@@ -66,6 +66,7 @@ subs = [1 3 5 6 7 8];
 days = [1, 2, 3];
 parfor ss = 1:length(subs)
     this_sub = subs(ss);
+    disp(this_sub, days)
     for dd = days
     A03_PreprocEEG_TMS(this_sub, dd);
     end

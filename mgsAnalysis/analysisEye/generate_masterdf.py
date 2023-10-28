@@ -119,6 +119,6 @@ else:
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
     master_df = master_df.reset_index(drop = True)
-    #master_df, angular_df = rotate_to_scale(master_df)
-    master_df = rotate_to_zero(master_df)
+    master_df, angular_df = rotate_to_scale(master_df)
+    #master_df = rotate_to_zero(master_df)
     master_df.to_csv(p['df_fname'], index = False)
