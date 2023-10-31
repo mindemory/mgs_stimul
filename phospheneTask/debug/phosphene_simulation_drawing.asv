@@ -66,18 +66,16 @@ for yy = 1:outputy
 end
 noiseeNorm = (noisee - min(noisee, [], 'all'))./(max(noisee, [], 'all') - min(noisee, [], 'all'));
 noiseMask = noiseeNorm .* output_phosph';
-
 figure();
-imagesc(noiseMask.*0.9 )
+imagesc(noiseMask.*0.8 )
 colormap('gray'); 
 caxis([0, 1])
 hold on;
 % Draw fixation cross
-line(screen.xCenter.*[0.95, 1.05], screen.yCenter.*[1, 1], 'Color', 'white', 'LineWidth', 2);
-line(screen.xCenter.*[1, 1], screen.yCenter.*[0.95, 1.05], 'Color', 'white', 'LineWidth', 2);
+line(screen.xCenter.*[-0.95, 1.05], screen.yCenter.*[1, 1], 'Color', 'white', 'LineWidth', 2);
+line(screen.xCenter.*[1, 1], screen.yCenter.*[-0.95, 1.05], 'Color', 'white', 'LineWidth', 2);
 
 
-loops = 40;
-M(loops) = struct('cdata',[],'colormap',[]);
+
 
 
