@@ -3,6 +3,7 @@ import pandas as pd
 from scipy.stats import circmean
 
 def rotate_to_zero(df):
+    
     TarTheta = np.arctan2(df['TarY'], df['TarX'])
     df['TarTheta'] = TarTheta
     df['TarRadius'] = np.sqrt(df['TarX']**2+df['TarY']**2)
@@ -24,8 +25,8 @@ def rotate_to_zero(df):
     for ii in range(len(TarTheta)):
         # Get angle for target and corresponding rotation matrix
         this_angle = -1 * TarTheta[ii]
-        #radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
-        radial_error = 0 - df.loc[ii, ['TarRadius']][0]
+        radial_error = np.max(df['TarRadius']) - df.loc[ii, ['TarRadius']][0]
+        #radial_error = 0 - df.loc[ii, ['TarRadius']][0]
         
         rotation_matrix = np.array([[np.cos(this_angle), -np.sin(this_angle)],
                                     [np.sin(this_angle), np.cos(this_angle)]])

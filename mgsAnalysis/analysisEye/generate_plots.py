@@ -95,7 +95,8 @@ def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary
 
         tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string)
     else:
-        group_plot_orig(df, Y1, Y2, error_measure, t_string)
+        ###       group_plot_orig(df, Y1, Y2, error_measure, t_string)
+        group_plot(df, Y1, Y2, error_measure, t_string)
     
 
 def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes here'):
@@ -151,39 +152,33 @@ def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     
     max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
     fig = plt.figure(figsize = (5, 8))
-    fig.patch.set_facecolor((33/255, 33/255, 33/255))
-    ax = fig.add_subplot(111)
-    ax.set_facecolor((33/255, 33/255, 33/255))
-    ax.spines['bottom'].set_color('white')
-    ax.spines['top'].set_color('white')
-    ax.spines['left'].set_color('white')
-    ax.spines['right'].set_color('white')
-    ax.xaxis.label.set_color('white')
-    ax.yaxis.label.set_color('white')
-    ax.tick_params(axis='x', colors='white')
-    ax.tick_params(axis='y', colors='white')
 
+    print('Prosaccade errors')
+    print(np.mean(Y1, axis = 0))
+    print(Yerr1)
     #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
     
-    bars = ax.bar(X1, np.mean(Y1, axis=0), width = 0.2)
+    bars = plt.bar(X1, np.mean(Y1, axis=0), width = 0.2)
     bars[0].set_color("#1B9E77")
     bars[1].set_color("#D95F02")
     bars[2].set_color("#7570B3")
-    ax.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
+    plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
     for ss in range(len(subjIDs)):
-        ax.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
+        plt.plot(X1, Y1[ss, :], marker = 'o', color = 'black', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
     
     #ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    ax.set_xticks(X1, x_label_names, fontsize = 18)
+    plt.xticks(X1, x_label_names, fontsize = 18)
     if error_measure == 'isacc_rt':
-        ax.set_ylabel('RT (s)', fontsize = 18)
-        ax.set_title('Reaction time', fontsize = 24, color='white')
+        plt.ylabel('RT (s)', fontsize = 18)
+        plt.title('Reaction time', fontsize = 24, color='black')
     elif error_measure == 'isacc_err':
-        ax.set_ylabel('MGS error (dva)', fontsize = 18)
-        ax.set_title('Memory error', fontsize = 24, color='white')
+        plt.ylabel('MGS error (dva)', fontsize = 18)
+        plt.title('Memory error', fontsize = 24, color='black')
+    plt.savefig('/d/DATA/hyper/conferences/Dake_SfN2023/behavior_ierr.eps', format='eps', dpi = 1200)
     plt.show()
     
-def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
+    
+def group_plot_black(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
     # X2 = [round(x + 0.1, 1) for x in X1]
     # X_sum = [sum(value) for value in zip(X1, X2)]
