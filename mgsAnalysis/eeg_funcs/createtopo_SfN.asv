@@ -18,15 +18,15 @@ Allout_tfr.powspctrm                             = mean(cat(4, NTout_tfr.powspct
 cfg                                              = [];
 cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
 cfg.parameter                                    = 'powspctrm';
-NTcontrast                                       = ft_math(cfg, NTout_tfr, NTin_tfr);
-Tcontrast                                        = ft_math(cfg, Tout_tfr, Tin_tfr);
+NTcontrast                                       = ft_math(cfg, NTin_tfr, NTout_tfr);
+Tcontrast                                        = ft_math(cfg, Tin_tfr, Tout_tfr);
 %diffcontrast                                     = ft_math(cfg, Tcontrast, NTcontrast);
 Allcontrast                                      = ft_math(cfg, Allin_tfr, Allout_tfr);
 
 cfg                                              = [];
-cfg.operation                                    = '(x1 - x2)';
+cfg.operation                                    = '(10^(x1/10) - 10^(x2/10))';
 cfg.parameter                                    = 'powspctrm';
-diffcontrast                                     = ft_math(cfg, NTcontrast, Tcontrast);
+diffcontrast                                     = ft_math(cfg, Tcontrast, NTcontrast);
 
 occ_elecs                                        = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7', 'O2', ...
                                                     'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
@@ -40,6 +40,8 @@ T_pmin                                           = min(Tcontrast.powspctrm(T_idx
 
 min_pow                                          = min([NT_pmin, T_pmin]);
 max_pow                                          = max([NT_pmax, T_pmax]);
+%min_pow = 0;
+%max_pow = 1;
 
 % figure('Renderer', 'painters', 'Position', [0 1000 1600 800])
 % if strcmp(t_type, 'P')
@@ -110,6 +112,8 @@ max_pow                                          = max([NT_pmax, T_pmax]);
 % cfg.title                                        = [freqband ' @ 3.5:4.2s'];
 % ft_topoplotTFR(cfg, diffcontrast)
 
+
+
 %% Clubbing
 figure('Renderer', 'painters', 'Position', [0 1000 1600 800])
 if strcmp(t_type, 'P')
@@ -120,6 +124,7 @@ end
 cfg                                              = []; 
 cfg.layout                                       = 'acticap-64_md.mat'; 
 cfg.figure                                       = 'gcf';
+%cfg.style                                        = 'straight';
 if strcmp(freqband, 'alpha')
     cfg.ylim                                     = [8 12]; 
 elseif strcmp(freqband, 'beta')
@@ -127,29 +132,27 @@ elseif strcmp(freqband, 'beta')
 elseif strcmp(freqband, 'gamma')
     cfg.ylim                                     = [30 50];
 end
+%cfg.highlight                                      = 'on'; 
+%cfg.highlightsymbol                              = 'x'; 
+%cfg.highlightsize                                  = 8;
 cfg.colorbar                                     = 'yes'; 
 cfg.comment                                      = 'no'; 
 cfg.colormap                                     = '*RdBu'; 
 cfg.marker                                       = 'on';
+%cfg.zlim                                         = [-0.1 0.1];
 cfg.interpolatenan                               = 'no';
 
 subplot(3, 2, 1)
 cfg.xlim                                         = [0.5 2];
 cfg.zlim                                         = [-0.05 0.05];
 cfg.title                                        = [freqband ' @ 0.5:2.0s'];
-ft_topoplotTFR(cfg, NTcontrast)
+ft_topoplotTFR(cfg, Allcontrast)
 
 subplot(3, 2, 2)
 cfg.xlim                                         = [2.8 4.2];
 cfg.zlim                                         = [-0.05 0.05];
 cfg.title                                        = [freqband ' @ 2.8:4.2s'];
 ft_topoplotTFR(cfg, NTcontrast)
-
-subplot(3, 2, 3)
-cfg.xlim                                         = [0.5 2];
-cfg.zlim                                         = [-0.05 0.05];
-cfg.title                                        = [freqband ' @ 0.5:2.0s'];
-ft_topoplotTFR(cfg, Tcontrast)
 
 subplot(3, 2, 4)
 cfg.xlim                                         = [2.8 4.2];

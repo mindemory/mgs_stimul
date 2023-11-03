@@ -14,8 +14,8 @@ Tout_tfr                                         = TFR.T.(out_type).all;
 cfg                                              = [];
 cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
 cfg.parameter                                    = 'powspctrm';
-NTcontrast                                       = ft_math(cfg, NTout_tfr, NTin_tfr);
-Tcontrast                                        = ft_math(cfg, Tout_tfr, Tin_tfr);
+NTcontrast                                       = ft_math(cfg, NTin_tfr, NTout_tfr);
+Tcontrast                                        = ft_math(cfg, Tin_tfr, Tout_tfr);
 
 occ_elecs                                        = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7', 'O2', ...
                                                     'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};

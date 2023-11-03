@@ -285,8 +285,9 @@ elseif subjID           == 26
         flg_chans        = {'FC1', 'F1', 'Fp1', 'Fp2', 'O1', 'FC6', 'P1', 'POz', ...
                             'AF8', 'P1', 'P3'};
     elseif day          == 3
-        flg_trls         = [];
-        flg_chans        = {};
+        flg_trls         = [22 25 90 158 190 217 241 243 244 271 281 321];
+        flg_chans        = {'Pz', 'Fp1', 'O1', 'Fp2', 'P7', 'FC4', 'AF8', ...
+                            'P7', 'PO3'};
     end
 elseif subjID           == 27
     if day              == 1

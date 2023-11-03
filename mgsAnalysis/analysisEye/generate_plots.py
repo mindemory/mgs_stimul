@@ -165,8 +165,7 @@ def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
     for ss in range(len(subjIDs)):
         plt.plot(X1, Y1[ss, :], marker = 'o', color = 'black', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
-    
-    #ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
+        
     plt.xticks(X1, x_label_names, fontsize = 18)
     if error_measure == 'isacc_rt':
         plt.ylabel('RT (s)', fontsize = 18)

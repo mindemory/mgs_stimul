@@ -10,10 +10,10 @@ screen.screenYpixels = 1080;
 screen.xCenter = screen.screenXpixels/2;
 screen.yCenter = screen.screenYpixels/2;
 % Parameters
-power = 3;
-alpha = 4.2;
-a = 17;
-b = 3;
+power = 1;
+alpha = 4.4;
+a = 15;
+b = 1.5;
 
 %% Phosphene location
 % Creating a noise mask
@@ -27,8 +27,8 @@ mask_location = zeros(screen.screenYpixels, screen.screenXpixels);
 xpixs = 1:screen.screenXpixels;  % plotting range from -5 to 5
 ypixs = 1:screen.screenXpixels;
 [x, y] = meshgrid(xpixs, ypixs);  % Get 2-D mesh for x and y based on r
-delx = screen.xCenter;
-dely = screen.yCenter + 700;
+delx = screen.xCenter + 100;
+dely = screen.yCenter + 800;
 x = x - delx; y = y-dely;
 ellipse_phosph = (((x.*cos(alpha) + y.*sin(alpha)).^2)./a) + ...
     (((x.*sin(alpha) - y.*cos(alpha)).^2)./b) - 150.*x < 0;
@@ -76,8 +76,5 @@ hold on;
 line(screen.xCenter.*[0.95, 1.05], screen.yCenter.*[1, 1], 'Color', 'white', 'LineWidth', 2);
 line(screen.xCenter.*[1, 1], screen.yCenter.*[0.95, 1.05], 'Color', 'white', 'LineWidth', 2);
 
-
-loops = 40;
-M(loops) = struct('cdata',[],'colormap',[]);
 
 

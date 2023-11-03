@@ -1,8 +1,8 @@
-function A04_BatchAnalysisEEG()
+function A04_BatchTFRAnalysis()
 clearvars; close all; clc;
 warning('off', 'all');
 
-subs                                        = [1 3 5 6 7 8 11 12 13 14 15 16 17 18 21 22 23 25 27];
+subs                                        = [1 3 5 6 7 8 11 12 13 14 15 16 17 18 22 23 24 25 26 27];
 goodsubs                                    = [1 3 5 6 14 15 16 17 22 25];
 [~, sidx]                                   = ismember(goodsubs, subs);
 days                                        = [1 2 3];
@@ -237,10 +237,87 @@ if ~exist(figname.masterTFR_pro, 'file')
     compare_conds(mTFR, tidx, fidx, 'A')
     saveas(gcf, figname.masterTFR_anti, 'png')
 end
-%if ~exist(figname.masterTOPO_pro, 'file')
+if ~exist(figname.masterTOPO_pro, 'file')
     create_topo(mTFR, tidx, fidx, 'P', 'alpha')
     saveas(gcf, figname.masterTOPO_pro, 'png')
     create_topo(mTFR, tidx, fidx, 'A', 'alpha')
     saveas(gcf, figname.masterTOPO_anti, 'png')
+end
+
+%% If running for all subjects regardless (temporarily made for SfN (maybe?)
+for ss = 1:20
+    NTin_tfr                                         = mTFR.NT.Pin.all;
+    NTout_tfr                                        = mTFR.NT.Pout.all;
+    Tin_tfr                                          = mTFR.T.Pin.all;
+    Tout_tfr                                         = mTFR.T.Pout.all;
+    NTin_tfr.powspctrm                               = squeeze(NTin_tfr.powspctrm(:,:,:,ss));
+    NTout_tfr.powspctrm                              = squeeze(NTout_tfr.powspctrm(:,:,:,ss));
+    Tin_tfr.powspctrm                                = squeeze(Tin_tfr.powspctrm(:,:,:,ss));
+    Tout_tfr.powspctrm                               = squeeze(Tout_tfr.powspctrm(:,:,:,ss));
+    
+    cfg                                              = [];
+    cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
+    cfg.parameter                                    = 'powspctrm';
+    NTcontrast                                       = ft_math(cfg, NTin_tfr, NTout_tfr);
+    Tcontrast                                        = ft_math(cfg, Tin_tfr, Tout_tfr);
+    cfg                                              = [];
+    cfg.operation                                    = 'x1-x2';
+    cfg.parameter                                    = 'powspctrm';
+    diffcontrast                                     = ft_math(cfg, NTcontrast, Tcontrast);
+    % Fing electrodes that are statistically different from 0
+    tlateidx                                         = find(diffcontrast.time > 2.8 & diffcontrast.time < 3.2);
+    diff_powmat                                      = squeeze(mean(diffcontrast.powspctrm(:, fidx, tlateidx), [2, 3], 'omitnan'));
+    if ~exist('diffmaster', 'var')
+        diffmaster = diff_powmat;
+    else
+        diffmaster = cat(3, diffmaster, diff_powmat);
+    end
+    %diffmaster = [diffmaster; diff_powmat];
+    clearvars NTin_tfr NTout_tfr Tin_tfr Tout_tfr NTcontrast Tcontrast diffcontrast diff_powmat;
+end
+
+
+for ii = 1:length(mTFR.NT.Pin.all.label)
+    [h, p, ci, stats]                                = ttest(diffmaster(ii, 1, :), 0, 'alpha', 0.05);
+    if h == 1
+        disp([mTFR.NT.Pin.all.label{ii} ': ' num2str(p, '%.03f')])
+        %disp([mTFR.NT.Pin.all.label{ii} ': ' num2str(h)])
+        %disp(p, stats)
+    end
+end
+
+% Average all mTFRs for plotting
+for tt = t_types_in
+    mTFR.NT.(tt).ipsi.powspctrm         = mean(mTFR.NT.(tt).ipsi.powspctrm, 1, 'omitnan');
+    mTFR.NT.(tt).contra.powspctrm       = mean(mTFR.NT.(tt).contra.powspctrm, 1, 'omitnan');
+    mTFR.NT.(tt).all.powspctrm          = mean(mTFR.NT.(tt).all.powspctrm, 4, 'omitnan');
+end
+mTFR.NT.Pout.all.powspctrm              = mean(mTFR.NT.Pout.all.powspctrm, 4, 'omitnan');
+mTFR.NT.Aout.all.powspctrm              = mean(mTFR.NT.Aout.all.powspctrm, 4, 'omitnan');
+for tt = t_types
+    mTFR.T.(tt).ipsi.powspctrm          = mean(mTFR.T.(tt).ipsi.powspctrm, 1, 'omitnan');
+    mTFR.T.(tt).contra.powspctrm        = mean(mTFR.T.(tt).contra.powspctrm, 1, 'omitnan');
+    mTFR.T.(tt).all.powspctrm           = mean(mTFR.T.(tt).all.powspctrm, 4, 'omitnan');
+end
+    
+
+% Figure names for master plots
+figname.masterTFR_pro                       = [p.figure '/tfrplots/allsubs_TFRpro.png'];
+figname.masterTFR_anti                      = [p.figure '/tfrplots/allsubs_TFRanti.png'];
+figname.masterTOPO_pro                      = [p.figure '/topoplots/allsubs_TOPOpro.png'];
+figname.masterTOPO_anti                     = [p.figure '/topoplots/allsubs_TOPOanti.png'];
+
+% Master figure plots for TFR and TOPO
+if ~exist(figname.masterTFR_pro, 'file')
+    compare_conds(mTFR, tidx, fidx, 'P')
+    saveas(gcf, figname.masterTFR_pro, 'png')
+    compare_conds(mTFR, tidx, fidx, 'A')
+    saveas(gcf, figname.masterTFR_anti, 'png')
+end
+%if ~exist(figname.masterTOPO_pro, 'file')
+    createtopo_SfN(mTFR, tidx, fidx, 'P', 'alpha')
+    %saveas(gcf, figname.masterTOPO_pro, 'png')
+    createtopo_SfN(mTFR, tidx, fidx, 'A', 'alpha')
+    %saveas(gcf, figname.masterTOPO_anti, 'png')
 %end
 end
