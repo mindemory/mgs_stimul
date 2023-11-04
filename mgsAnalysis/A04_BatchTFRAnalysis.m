@@ -263,6 +263,7 @@ for tt = t_types
     mTFR.T.(tt).contra.powspctrm        = mean(mTFR.T.(tt).contra.powspctrm, 1, 'omitnan');
     mTFR.T.(tt).all.powspctrm           = mean(mTFR.T.(tt).all.powspctrm, 4, 'omitnan');
 end
+    
 
 % Figure names for master plots
 figname.masterTFR_pro                       = [p.figure '/tfrplots/allsubs_TFRpro.png'];

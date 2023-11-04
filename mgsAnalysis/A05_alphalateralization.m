@@ -18,7 +18,7 @@ tidx                                        = find((mTFR.NT.Pout.all.time >= t_s
 fidx                                        = find((mTFR.NT.Pout.all.freq >= f_stamp(1)) ...
                                                     & (mTFR.NT.Pout.all.freq <= f_stamp(2)));
 [~, sidx]                                   = ismember(goodsubs, subs);
-nsubs                                       = length(sidx); %size(mTFR.NT.Pout.all.powspctrm, 1);
+nsubs                                       = length(sidx); 
 ALI                                         = struct();
 ALImean                                     = struct();
 ALIsem                                      = struct();
