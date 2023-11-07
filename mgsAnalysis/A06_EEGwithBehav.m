@@ -3,7 +3,7 @@ clearvars; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 8 11 12 13 14 15 16 17 18 22 23 24 25 26 27];
-subs                                        = [1 3 5 6 8 12];
+%subs                                        = [1 3 5 6 8 12];
 % goodsubs                                    = [1 3 5 6 14 15 16 17 22 25];
 goodsubs                                    = [26];
 %subs = [26];
@@ -171,62 +171,245 @@ for tt = ttypes
     [irt_sort.NT.(tt), idx_rt.NT.(tt)]          = sort(irt.NT.(tt), 'descend', 'MissingPlacement', 'last');
     [ierr_sort.T.(tt), idx_e.T.(tt)]            = sort(ierr.T.(tt), 'descend', 'MissingPlacement', 'last');
     [irt_sort.T.(tt), idx_rt.T.(tt)]            = sort(irt.T.(tt), 'descend', 'MissingPlacement', 'last');
-    idx_e.NT.(tt)(find(isnan(ierr_sort.NT.(tt)))) = [];
-    idx_rt.NT.(tt)(find(isnan(irt_sort.NT.(tt)))) = [];
-    idx_e.T.(tt)(find(isnan(ierr_sort.T.(tt)))) = [];
-    idx_rt.T.(tt)(find(isnan(irt_sort.T.(tt)))) = [];
+
+    [ferr_sort.NT.(tt), fdx_e.NT.(tt)]          = sort(ferr.NT.(tt), 'descend', 'MissingPlacement', 'last');
+    [frt_sort.NT.(tt), fdx_rt.NT.(tt)]          = sort(frt.NT.(tt), 'descend', 'MissingPlacement', 'last');
+    [ferr_sort.T.(tt), fdx_e.T.(tt)]            = sort(ferr.T.(tt), 'descend', 'MissingPlacement', 'last');
+    [frt_sort.T.(tt), fdx_rt.T.(tt)]            = sort(frt.T.(tt), 'descend', 'MissingPlacement', 'last');
+
+    idx_e.NT.(tt)(isnan(ierr_sort.NT.(tt))) = [];
+    idx_rt.NT.(tt)(isnan(irt_sort.NT.(tt))) = [];
+    idx_e.T.(tt)(isnan(ierr_sort.T.(tt))) = [];
+    idx_rt.T.(tt)(isnan(irt_sort.T.(tt))) = [];
+
+    fdx_e.NT.(tt)(isnan(ferr_sort.NT.(tt))) = [];
+    fdx_rt.NT.(tt)(isnan(frt_sort.NT.(tt))) = [];
+    fdx_e.T.(tt)(isnan(ferr_sort.T.(tt))) = [];
+    fdx_rt.T.(tt)(isnan(frt_sort.T.(tt))) = [];
+    
+    ierr_sort.NT.(tt)(isnan(ierr_sort.NT.(tt))) = [];
+    irt_sort.NT.(tt)(isnan(irt_sort.NT.(tt))) = [];
+    ierr_sort.T.(tt)(isnan(ierr_sort.T.(tt))) = [];
+    irt_sort.T.(tt)(isnan(irt_sort.T.(tt))) = [];
+
+    ferr_sort.NT.(tt)(isnan(ferr_sort.NT.(tt))) = [];
+    frt_sort.NT.(tt)(isnan(frt_sort.NT.(tt))) = [];
+    ferr_sort.T.(tt)(isnan(ferr_sort.T.(tt))) = [];
+    frt_sort.T.(tt)(isnan(frt_sort.T.(tt))) = [];
 end
 
+crange = [-5 5];
 figfolder = '/datc/MD_TMS_EEG/Figures/ALI_trialwise/';
+t_array = linspace(-0.5, 4.5, size(mALI.NT.Pin, 2));
+bt = find(t_array<0);
 for cc = conds
     for tt = ttypes
-        tname = ['ALI error: ' char(cc) '_' char(tt)];
-        fname = ['ALI_error_' char(cc) '_' char(tt)];
+        % Initial saccade error
+        tname = ['ALI Ierror: ' char(cc) ' ' char(tt)];
+        fname = ['ALI_ierror_' char(cc) '_' char(tt)];
         figure();
+        subplot(1, 2, 1)
+        position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position1);
+        barh(1:length(idx_e.(cc).(tt)), ierr_sort.(cc).(tt))
+        set(gca, 'YDir', 'reverse');
+        ylabel('Trials')
+        xlabel('Ierr (dva)')
+        subplot(1, 2, 2)
+        position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position2);
         imagesc(mALI.(cc).(tt)(idx_e.(cc).(tt), :))
         xt = get(gca, 'XTick'); 
         xtlbl = linspace(-0.5, 4.5, numel(xt));                  
         set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
-        caxis([-5 5])
+        yticks([]);
+        caxis(crange)
         colorbar;
+        xlabel('Time (s)')
+        title(tname)
+        saveas(gcf, [figfolder fname], 'png')
+
+        % Final saccade error
+        tname = ['ALI Ferror: ' char(cc) ' ' char(tt)];
+        fname = ['ALI_ferror_' char(cc) '_' char(tt)];
+        figure();
+        subplot(1, 2, 1)
+        position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position1);
+        barh(1:length(fdx_e.(cc).(tt)), ferr_sort.(cc).(tt))
+        set(gca, 'YDir', 'reverse');
+        ylabel('Trials')
+        xlabel('Ferr (dva)')
+        subplot(1, 2, 2)
+        position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position2);
+        imagesc(mALI.(cc).(tt)(fdx_e.(cc).(tt), :))
+        xt = get(gca, 'XTick'); 
+        xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+        set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+        yticks([]);
+        caxis(crange)
+        colorbar;
+        xlabel('Time (s)')
+        title(tname)
+        saveas(gcf, [figfolder fname], 'png')
+
+        % Initial saccade reaction time
+        tname = ['ALI Irt: ' char(cc) ' ' char(tt)];
+        fname = ['ALI_irt_' char(cc) '_' char(tt)];
+        figure();
+        subplot(1, 2, 1)
+        position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position1);
+        barh(1:length(idx_rt.(cc).(tt)), irt_sort.(cc).(tt))
+        set(gca, 'YDir', 'reverse');
+        ylabel('Trials')
+        xlabel('Irt (s)')
+        subplot(1, 2, 2)
+        position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position2);
+        imagesc(mALI.(cc).(tt)(idx_rt.(cc).(tt), :))
+        xt = get(gca, 'XTick'); 
+        xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+        set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+        yticks([]);
+        caxis(crange)
+        colorbar;
+        xlabel('Time (s)')
+        title(tname)
+        saveas(gcf, [figfolder fname], 'png')
+
+        % Final saccade reaction time
+        tname = ['ALI Frt: ' char(cc) ' ' char(tt)];
+        fname = ['ALI_frt_' char(cc) '_' char(tt)];
+        figure();
+        subplot(1, 2, 1)
+        position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position1);
+        barh(1:length(fdx_rt.(cc).(tt)), frt_sort.(cc).(tt))
+        set(gca, 'YDir', 'reverse');
+        ylabel('Trials')
+        xlabel('Frt (s)')
+        subplot(1, 2, 2)
+        position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+        set(gca, 'Position', position2);
+        imagesc(mALI.(cc).(tt)(fdx_rt.(cc).(tt), :))
+        xt = get(gca, 'XTick'); 
+        xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+        set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+        yticks([]);
+        caxis(crange)
+        colorbar;
+        xlabel('Time (s)')
         title(tname)
         saveas(gcf, [figfolder fname], 'png')
     end
-end
+end 
 
-subplot(4, 2, 2)
-imagesc(mALI.T.Pin(idx_e.T.Pin, :))
-subplot(4, 2, 3)
-imagesc(mALI.NT.Pout(idx_e.NT.Pout, :))
-subplot(4, 2, 4)
-imagesc(mALI.T.Pout(idx_e.T.Pout, :))
-subplot(4, 2, 5)
-imagesc(mALI.NT.Ain(idx_e.NT.Ain, :))
-subplot(4, 2, 6)
-imagesc(mALI.T.Ain(idx_e.T.Ain, :))
-subplot(4, 2, 7)
-imagesc(mALI.NT.Aout(idx_e.NT.Aout, :))
-subplot(4, 2, 8)
-imagesc(mALI.T.Aout(idx_e.T.Aout, :))
-
-figure();
-subplot(4, 2, 1)
-imagesc(mALI.NT.Pin(idx_rt.NT.Pin, :))
-subplot(4, 2, 2)
-imagesc(mALI.T.Pin(idx_rt.T.Pin, :))
-subplot(4, 2, 3)
-imagesc(mALI.NT.Pout(idx_rt.NT.Pout, :))
-subplot(4, 2, 4)
-imagesc(mALI.T.Pout(idx_rt.T.Pout, :))
-subplot(4, 2, 5)
-imagesc(mALI.NT.Ain(idx_rt.NT.Ain, :))
-subplot(4, 2, 6)
-imagesc(mALI.T.Ain(idx_rt.T.Ain, :))
-subplot(4, 2, 7)
-imagesc(mALI.NT.Aout(idx_rt.NT.Aout, :))
-subplot(4, 2, 8)
-imagesc(mALI.T.Aout(idx_rt.T.Aout, :))
-
-
-
+% 
+% for cc = conds
+%     for tt = ttypes
+%         this_ALI = mALI.(cc).(tt);
+%         bALI = this_ALI - mean(this_ALI(:, bt), "all", "omitnan");
+%         % Initial saccade error
+%         tname = ['ALI Ierror: ' char(cc) ' ' char(tt)];
+%         fname = ['ALI_ierror_' char(cc) '_' char(tt)];
+%         figure();
+%         subplot(1, 2, 1)
+%         position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position1);
+%         barh(1:length(idx_e.(cc).(tt)), ierr_sort.(cc).(tt))
+%         set(gca, 'YDir', 'reverse');
+%         ylabel('Trials')
+%         xlabel('Ierr (dva)')
+%         subplot(1, 2, 2)
+%         position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position2);
+%         imagesc(bALI(idx_e.(cc).(tt), :))
+%         xt = get(gca, 'XTick'); 
+%         xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+%         set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+%         yticks([]);
+%         caxis(crange)
+%         colorbar;
+%         xlabel('Time (s)')
+%         title(tname)
+%         saveas(gcf, [figfolder fname], 'png')
+% 
+%         % Final saccade error
+%         tname = ['ALI Ferror: ' char(cc) ' ' char(tt)];
+%         fname = ['ALI_ferror_' char(cc) '_' char(tt)];
+%         figure();
+%         subplot(1, 2, 1)
+%         position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position1);
+%         barh(1:length(fdx_e.(cc).(tt)), ferr_sort.(cc).(tt))
+%         set(gca, 'YDir', 'reverse');
+%         ylabel('Trials')
+%         xlabel('Ferr (dva)')
+%         subplot(1, 2, 2)
+%         position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position2);
+%         imagesc(bALI(fdx_e.(cc).(tt), :))
+%         xt = get(gca, 'XTick'); 
+%         xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+%         set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+%         yticks([]);
+%         caxis(crange)
+%         colorbar;
+%         xlabel('Time (s)')
+%         title(tname)
+%         saveas(gcf, [figfolder fname], 'png')
+% 
+%         % Initial saccade reaction time
+%         tname = ['ALI Irt: ' char(cc) ' ' char(tt)];
+%         fname = ['ALI_irt_' char(cc) '_' char(tt)];
+%         figure();
+%         subplot(1, 2, 1)
+%         position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position1);
+%         barh(1:length(idx_rt.(cc).(tt)), irt_sort.(cc).(tt))
+%         set(gca, 'YDir', 'reverse');
+%         ylabel('Trials')
+%         xlabel('Irt (s)')
+%         subplot(1, 2, 2)
+%         position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position2);
+%         imagesc(bALI(idx_rt.(cc).(tt), :))
+%         xt = get(gca, 'XTick'); 
+%         xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+%         set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+%         yticks([]);
+%         caxis(crange)
+%         colorbar;
+%         xlabel('Time (s)')
+%         title(tname)
+%         saveas(gcf, [figfolder fname], 'png')
+% 
+%         % Final saccade reaction time
+%         tname = ['ALI Frt: ' char(cc) ' ' char(tt)];
+%         fname = ['ALI_frt_' char(cc) '_' char(tt)];
+%         figure();
+%         subplot(1, 2, 1)
+%         position1 = [0.1, 0.1, 0.15, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position1);
+%         barh(1:length(fdx_rt.(cc).(tt)), frt_sort.(cc).(tt))
+%         set(gca, 'YDir', 'reverse');
+%         ylabel('Trials')
+%         xlabel('Frt (s)')
+%         subplot(1, 2, 2)
+%         position2 = [0.3, 0.1, 0.65, 0.8]; % [left, bottom, width, height]
+%         set(gca, 'Position', position2);
+%         imagesc(bALI(fdx_rt.(cc).(tt), :))
+%         xt = get(gca, 'XTick'); 
+%         xtlbl = linspace(-0.5, 4.5, numel(xt));                  
+%         set(gca, 'XTick', xt, 'XTickLabel', round(xtlbl, 2)) 
+%         yticks([]);
+%         caxis(crange)
+%         colorbar;
+%         xlabel('Time (s)')
+%         title(tname)
+%         saveas(gcf, [figfolder fname], 'png')
+%     end
+% end 
 end

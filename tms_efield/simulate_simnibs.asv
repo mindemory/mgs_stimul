@@ -1,0 +1,16 @@
+clear; close all; clc;
+addpath("/users/mrugank/Applications/SimNIBS-4.0/matlab_tools/")
+m2mfoldpath = '/d/DATC/datc/MD_TMS_EEG/SIMN'
+S = sim_struct('SESSION');
+% Select the head mesh
+S.fnamehead = 'sub01.msh';
+% Add a TMSLIST to the SESSION
+S.poslist{1} = sim_struct('TMSLIST');
+% Select the coil from those available in the ccd-coils subfolder
+S.poslist{1}.fnamecoil = 'Magstim_70mm_Fig8.nii.gz';
+% Place the coil over C3
+S.poslist{1}.pos(1).centre = 'C3';
+% Point the coil towards CP3
+S.poslist{1}.pos(1).pos_ydir = 'CP3';
+%  4 mm distance between coil and head
+S.poslist{1}.pos(1).distance = 4;
