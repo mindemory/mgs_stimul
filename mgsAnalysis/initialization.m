@@ -13,7 +13,8 @@ end
 p.hostname = strtrim(hostname);
 
 % Initialize all the paths
-if strcmp(p.hostname, 'syndrome') || strcmp(p.hostname, 'vader') || strcmp(p.hostname, 'zod.psych.nyu.edu') || strcmp(p.hostname, 'loki.psych.nyu.edu')% If running on Syndrome or Vader or Zod
+if strcmp(p.hostname, 'syndrome') || strcmp(p.hostname, 'vader') || ...
+        strcmp(p.hostname, 'zod') || strcmp(p.hostname, 'zod.psych.nyu.edu') || strcmp(p.hostname, 'loki.psych.nyu.edu')% If running on Syndrome or Vader or Zod
     p.datc = '/datc/MD_TMS_EEG';
     p.EEGData = [p.datc '/EEGData/sub' p.subjID '/day' num2str(p.day, '%02d')];
     p.fieldtrip = '/d/DATA/hyper/software/fieldtrip-20220104/';

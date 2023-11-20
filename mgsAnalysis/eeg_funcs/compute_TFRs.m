@@ -2,7 +2,7 @@ function [TFR_power, TFR_itc, TFR_phase]       = compute_TFRs(data, base_corr)
 % Created by Mrugank (10/04/2023)
 % Creates a complex fourier spectrogram and extract absolute power, ITC and
 % phase information.
-if nargin < 1
+if nargin < 2
     base_corr                                  = 0;
 end
 
@@ -27,7 +27,7 @@ TFR_power                                      = TFR_fourier;
 TFR_power.powspctrm                            = 10*log10(abs(TFR_fourier.fourierspctrm).^2);
 TFR_power                                      = rmfield(TFR_power, 'fourierspctrm');
 TFR_power                                      = rmfield(TFR_power, 'cumtapcnt');
-if base_corr
+if base_corr                                   == 1
     baseline_time_indices                      = find(time_points >= -1 & time_points < 0);
     baseline_mean                              = mean(TFR_power.powspctrm(:, :, :, baseline_time_indices), 4);
     baseline_mean_expanded                     = repmat(baseline_mean, [1, 1, 1, size(TFR_power.powspctrm, 4)]);

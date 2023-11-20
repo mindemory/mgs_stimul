@@ -173,7 +173,7 @@ def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     elif error_measure == 'isacc_err':
         plt.ylabel('MGS error (dva)', fontsize = 18)
         plt.title('Memory error', fontsize = 24, color='black')
-    plt.savefig('/d/DATA/hyper/conferences/Dake_SfN2023/behavior_ierr.eps', format='eps', dpi = 1200)
+    #plt.savefig('/d/DATA/hyper/conferences/Dake_SfN2023/behavior_ierr.eps', format='eps', dpi = 1200)
     plt.show()
     
     

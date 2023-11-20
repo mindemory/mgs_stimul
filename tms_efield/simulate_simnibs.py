@@ -4,12 +4,14 @@ subs = [1, 3, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 22, 23, 24, 25, 26, 27
 stim_intensities = [55, 47, 56, 63, 60, 53, 54, 55, 60, 44, 46, 58, 47, 55, 50, 53, 50, 48, 50, 50]
 stim_dIdt = [round((a / 60) * 87 *1e6) for a in stim_intensities]
 
+stim_dIdt = [1e6 for a in stim_intensities]
+
 coilpath = '/Users/mrugank/Applications/SimNIBS-4.0/simnibs_env/lib/python3.9/site-packages/simnibs/resources/coil_models/Drakaki_BrainStim_2022/MagVenture_Cool-B70.ccd'
 masterpath = "/d/DATC/datc/MD_TMS_EEG/SIMNIBS_output/"
 brainsightpath = masterpath+"session_txts/"
 
 #s.add_tmslist(tms_list_targets)
-for idx in [17, 18, 19]:
+for idx in range(len(subs)):
     sub = subs[idx]
     sub_id = f"sub{sub:02d}"
     navfile = f"{brainsightpath}{sub_id}.txt"
@@ -17,7 +19,8 @@ for idx in [17, 18, 19]:
 
     # print(tms_list_samples)
     m2mfoldpath = f"{masterpath}{sub_id}/m2m_{sub_id}"
-    simfoldpath = f"{masterpath}{sub_id}/simulation"
+    #simfoldpath = f"{masterpath}{sub_id}/simulation"
+    simfoldpath = f"{masterpath}{sub_id}/simstandard"
 
     if not os.path.exists(simfoldpath):
         os.mkdir(simfoldpath)

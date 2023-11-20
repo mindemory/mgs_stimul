@@ -447,10 +447,10 @@ if any(strcmp(steps, 'tfr_induced'))
         for k = 1:numel(epoc_antioutVF.trial)
             epoc_antioutVF_minus_ERP.trial{k}                    = epoc_antioutVF.trial{k} - ERP.antioutVF.avg;
         end
-        [POW.prointoVF, ITC.prointoVF, PHASE.prointoVF]          = compute_TFRs(epoc_prointoVF_minus_ERP, 1);
-        [POW.prooutVF, ITC.prooutVF, PHASE.prooutVF]             = compute_TFRs(epoc_prooutVF_minus_ERP, 1);
-        [POW.antiintoVF, ITC.antiintoVF, PHASE.antiintoVF]       = compute_TFRs(epoc_antiintoVF_minus_ERP, 1);
-        [POW.antioutVF, ITC.antioutVF, PHASE.antioutVF]          = compute_TFRs(epoc_antioutVF_minus_ERP, 1);
+        [POW.prointoVF, ITC.prointoVF, PHASE.prointoVF]          = compute_TFRs(epoc_prointoVF_minus_ERP);
+        [POW.prooutVF, ITC.prooutVF, PHASE.prooutVF]             = compute_TFRs(epoc_prooutVF_minus_ERP);
+        [POW.antiintoVF, ITC.antiintoVF, PHASE.antiintoVF]       = compute_TFRs(epoc_antiintoVF_minus_ERP);
+        [POW.antioutVF, ITC.antioutVF, PHASE.antioutVF]          = compute_TFRs(epoc_antioutVF_minus_ERP);
         save(fName.TFR_induced, 'POW', 'ITC', 'PHASE', '-v7.3')
 
         if day                                                                ~= NoTMSDays(subjID)
@@ -472,75 +472,75 @@ if any(strcmp(steps, 'tfr_induced'))
             for k = 1:numel(tms_epoc_antioutVF.trial)
                 TMSepoc_antioutVF_minus_ERP.trial{k}                    = tms_epoc_antioutVF.trial{k} - TMS_ERP.antioutVF.avg;
             end
-            [TMSPOW.prointoVF, TMSITC.prointoVF, TMSPHASE.prointoVF]          = compute_TFRs(TMSepoc_prointoVF_minus_ERP, 1);
-            [TMSPOW.prooutVF, TMSITC.prooutVF, TMSPHASE.prooutVF]             = compute_TFRs(TMSepoc_prooutVF_minus_ERP, 1);
-            [TMSPOW.antiintoVF, TMSITC.antiintoVF, TMSPHASE.antiintoVF]       = compute_TFRs(TMSepoc_antiintoVF_minus_ERP, 1);
-            [TMSPOW.antioutVF, TMSITC.antioutVF, TMSPHASE.antioutVF]          = compute_TFRs(TMSepoc_antioutVF_minus_ERP, 1);
+            [TMSPOW.prointoVF, TMSITC.prointoVF, TMSPHASE.prointoVF]          = compute_TFRs(TMSepoc_prointoVF_minus_ERP);
+            [TMSPOW.prooutVF, TMSITC.prooutVF, TMSPHASE.prooutVF]             = compute_TFRs(TMSepoc_prooutVF_minus_ERP);
+            [TMSPOW.antiintoVF, TMSITC.antiintoVF, TMSPHASE.antiintoVF]       = compute_TFRs(TMSepoc_antiintoVF_minus_ERP);
+            [TMSPOW.antioutVF, TMSITC.antioutVF, TMSPHASE.antioutVF]          = compute_TFRs(TMSepoc_antioutVF_minus_ERP);
             save(fName.TMS_TFR_induced, 'TMSPOW', 'TMSITC', 'TMSPHASE', '-v7.3')
         end
    end
 end
 %% Testing here
-% cfg = [];
-% cfg.avgoverrpt = 'yes';
-% avgTFR_power_intoVF = ft_selectdata(cfg, TMSPOW.prointoVF);
-% avgTFR_power_outVF = ft_selectdata(cfg, TMSPOW.prooutVF);
-% cfg = [];
-% cfg.operation = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
-% cfg.parameter = 'powspctrm';
-% TFR_contrast = ft_math(cfg, avgTFR_power_intoVF, avgTFR_power_outVF);
-% % cfg = [];
-% % cfg.operation = '(x1-x2)';
-% % cfg.parameter = 'itcspctrm';
-% % itc_contrast = ft_math(cfg, ITC.prointoVF, ITC.prooutVF);
-% 
-% cfg = [];
-% cfg.figure = 'gcf';
-% cfg.channel = left_occ_elecs;
-% cfg.ylim = [7 50];
-% %cfg.zlim = [-2.5 2.5];
-% figure();
-% subplot(3, 2, 1)
-% ft_singleplotTFR(cfg, avgTFR_power_intoVF);
-% subplot(3, 2, 3)
-% ft_singleplotTFR(cfg, avgTFR_power_outVF);
-% subplot(3, 2, 5)
-% ft_singleplotTFR(cfg, TFR_contrast);
-% 
-% cfg.channel = right_occ_elecs;
-% subplot(3, 2, 2)
-% ft_singleplotTFR(cfg, avgTFR_power_intoVF);
-% subplot(3, 2, 4)
-% ft_singleplotTFR(cfg, avgTFR_power_outVF);
-% subplot(3, 2, 6)
-% ft_singleplotTFR(cfg, TFR_contrast);
-% 
-% 
+cfg = [];
+cfg.avgoverrpt = 'yes';
+avgTFR_power_intoVF = ft_selectdata(cfg, TMSPOW.prointoVF);
+avgTFR_power_outVF = ft_selectdata(cfg, TMSPOW.prooutVF);
+cfg = [];
+cfg.operation = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
+cfg.parameter = 'powspctrm';
+TFR_contrast = ft_math(cfg, avgTFR_power_intoVF, avgTFR_power_outVF);
 % cfg = [];
 % cfg.operation = '(x1-x2)';
 % cfg.parameter = 'itcspctrm';
-% itc_contrast = ft_math(cfg, TMSITC.prointoVF, TMSITC.prooutVF);
-% 
-% cfg = [];
-% cfg.figure = 'gcf';
-% cfg.channel = left_occ_elecs;
-% cfg.ylim = [7 50];
-% cfg.parameter = 'itcspctrm';
-% %cfg.zlim = [-2.5 2.5];
-% figure();
-% subplot(3, 2, 1)
-% ft_singleplotTFR(cfg, TMSITC.prointoVF);
-% subplot(3, 2, 3)
-% ft_singleplotTFR(cfg, TMSITC.prooutVF);
-% subplot(3, 2, 5)
-% ft_singleplotTFR(cfg, itc_contrast);
-% 
-% cfg.channel = right_occ_elecs;
-% subplot(3, 2, 2)
-% ft_singleplotTFR(cfg, TMSITC.prointoVF);
-% subplot(3, 2, 4)
-% ft_singleplotTFR(cfg, TMSITC.prooutVF);
-% subplot(3, 2, 6)
-% ft_singleplotTFR(cfg, itc_contrast);
+% itc_contrast = ft_math(cfg, ITC.prointoVF, ITC.prooutVF);
+
+cfg = [];
+cfg.figure = 'gcf';
+cfg.channel = left_occ_elecs;
+cfg.ylim = [7 50];
+%cfg.zlim = [-2.5 2.5];
+figure();
+subplot(3, 2, 1)
+ft_singleplotTFR(cfg, avgTFR_power_intoVF);
+subplot(3, 2, 3)
+ft_singleplotTFR(cfg, avgTFR_power_outVF);
+subplot(3, 2, 5)
+ft_singleplotTFR(cfg, TFR_contrast);
+
+cfg.channel = right_occ_elecs;
+subplot(3, 2, 2)
+ft_singleplotTFR(cfg, avgTFR_power_intoVF);
+subplot(3, 2, 4)
+ft_singleplotTFR(cfg, avgTFR_power_outVF);
+subplot(3, 2, 6)
+ft_singleplotTFR(cfg, TFR_contrast);
+
+
+cfg = [];
+cfg.operation = '(x1-x2)';
+cfg.parameter = 'itcspctrm';
+itc_contrast = ft_math(cfg, TMSITC.prointoVF, TMSITC.prooutVF);
+
+cfg = [];
+cfg.figure = 'gcf';
+cfg.channel = left_occ_elecs;
+cfg.ylim = [7 50];
+cfg.parameter = 'itcspctrm';
+%cfg.zlim = [-2.5 2.5];
+figure();
+subplot(3, 2, 1)
+ft_singleplotTFR(cfg, TMSITC.prointoVF);
+subplot(3, 2, 3)
+ft_singleplotTFR(cfg, TMSITC.prooutVF);
+subplot(3, 2, 5)
+ft_singleplotTFR(cfg, itc_contrast);
+
+cfg.channel = right_occ_elecs;
+subplot(3, 2, 2)
+ft_singleplotTFR(cfg, TMSITC.prointoVF);
+subplot(3, 2, 4)
+ft_singleplotTFR(cfg, TMSITC.prooutVF);
+subplot(3, 2, 6)
+ft_singleplotTFR(cfg, itc_contrast);
 disp('Woosh! That was a lot of work.')
 end
