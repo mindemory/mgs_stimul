@@ -75,6 +75,12 @@ else
     return;
 end
 
+% Adding 15 blocks for day04
+if day == 4
+    end_block = 15;
+    stim_times = [0.1 1.7];
+end
+
 % Initialize data paths
 addpath(genpath(phosphene_data_path));
 addpath(genpath(mgs_data_path));
@@ -195,6 +201,9 @@ for block = start_block:end_block
     
     trialArray = 1:trialNum;
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
+    if day == 4 % control task
+        D1 = Shuffle(repmat(stim_times, [1 trialNum/2]));
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Task Starts
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,12 +390,16 @@ for block = start_block:end_block
         end
         drawTextures(parameters, screen, 'FixationCross');
         
+        % Determine the delay 1 duration based on 'day'
+        d1_dur = (day < 4) * parameters.delay1Duration * 0.9 + (day >= 4) * D1(trial) * 0.9;
+
         if eyetrackfeedback == 1
             % Check for blinks during delay1 window
             gxold = screen.xCenter;
             gyold = screen.yCenter;
             fixbreaks = 0;
-            while GetSecs-delay1StartTime < parameters.delay1Duration * 0.9
+
+            while GetSecs-delay1StartTime < d1_dur
                 if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
@@ -409,12 +422,13 @@ for block = start_block:end_block
                     gyold = gy;
                 end
             end
+
             eyetrack_errors.delay1(trial) = fixbreaks;
             clearvars gx gy gxold gyold evt fixbreaks
         end
         
-        if GetSecs - delay1StartTime < parameters.delay1Duration
-            WaitSecs(parameters.delay1Duration - (GetSecs-delay1StartTime));
+        if GetSecs - delay1StartTime < d1_dur
+            WaitSecs(d1_dur - (GetSecs-delay1StartTime));
         end
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
         
@@ -436,7 +450,7 @@ for block = start_block:end_block
         end
         
         %record to the edf file that noise mask is started
-        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker 
             Eyelink('command', 'record_status_message "TRIAL %i/%i /delay2"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 3);
         end
@@ -446,13 +460,16 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'Aperture');
         end
         drawTextures(parameters, screen, 'FixationCross');
-        
+
+        % Get the second delay duration, dependent on day
+        d2_dur = (day < 4) * parameters.delay2Duration * 0.9 + (day >= 4) * (parameters.delayDuration - D1(trial)) * 0.9;
+
         if eyetrackfeedback == 1
             % Check for blinks during delay1 window
             gxold = screen.xCenter;
             gyold = screen.yCenter;
             fixbreaks = 0;
-            while GetSecs-delay2StartTime < parameters.delay2Duration * 0.9
+            while GetSecs-delay2StartTime < d2_dur
                 if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
@@ -498,7 +515,7 @@ for block = start_block:end_block
         end
         saccLoc = tMap.saccLocpix(trial, :);
         %record to the edf file that response cue is started
-        if parameters.eyetracker% && Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker
             Eyelink('command', 'record_status_message "TRIAL %i/%i /response"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 4);
             Eyelink('Message', 'TarX %s ', num2str(saccLoc(1)));
@@ -561,7 +578,7 @@ for block = start_block:end_block
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that feedback is started
-        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker 
             Eyelink('command', 'record_status_message "TRIAL %i/%i /feedback"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 5);
         end
@@ -639,7 +656,7 @@ for block = start_block:end_block
             trig_counter = trig_counter + 1;
         end
         %record to the edf file that iti is started
-        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+        if parameters.eyetracker 
             Eyelink('command', 'record_status_message "TRIAL %i/%i /iti"', trial, trialNum);
             Eyelink('Message', 'XDAT %i ', 6);
             Eyelink('Message', 'TarX %s ', num2str(screen.xCenter));
@@ -654,24 +671,7 @@ for block = start_block:end_block
         if GetSecs - itiStartTime < ITI(trial)
             WaitSecs(ITI(trial) - (GetSecs - itiStartTime));
         end
-        %         KbQueueFlush(kbx);
-        %         KbQueueStart(kbx);
-        %         [keyIsDown, ~] = KbQueueCheck(kbx);
-        %         while ~keyIsDown
-        %             WaitSecs(ITI(trial));
-        %             [~, keyCode] = KbQueueCheck(kbx);
-        %             cmndKey = KbName(keyCode);
-        %             break;
-        %         end
-        %         % check for end of block PS: This chunk is not working!
-        %         if strcmp(cmndKey, parameters.exit_key)
-        %             KbQueueStart(kbx);
-        %             [keyIsDown, ~] = KbQueueCheck(kbx);
-        %             while ~keyIsDown
-        %                 showprompts(screen, 'TrialPause');
-        %                 [keyIsDown, ~] = KbQueueCheck(kbx);
-        %             end
-        %         end
+        
         timeReport.itiDuration(trial) = GetSecs - itiStartTime;
         timeReport.trialDuration(trial) = GetSecs-sampleStartTime;
     end

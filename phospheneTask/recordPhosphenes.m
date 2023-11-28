@@ -44,7 +44,7 @@ end
 hostname = strtrim(hostname);
 
 % Load PTB and toolboxes
-if strcmp(hostname, 'syndrome')
+if strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod')
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
     parameters.isDemoMode = true; %set to true if you want the screen to be transparent
