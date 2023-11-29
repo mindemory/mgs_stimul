@@ -78,7 +78,7 @@ end
 % Adding 15 blocks for day04
 if day == 4
     end_block = 15;
-    stim_times = [0.1 1.7];
+    stim_times = [0 3.7];
 end
 
 % Initialize data paths
@@ -370,65 +370,67 @@ for block = start_block:end_block
         % Delay1 window
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         delay1StartTime = GetSecs;
-        if parameters.EEG
-            fname = ['sudo python3 ' trigger_path_EEG '/eegflag2.py'];
-            system(fname);
-            EEGtimeReport.delay1(trial) = GetSecs;
-            trigReport(trig_counter) =  2;
-            trig_counter = trig_counter + 1;
-        end
-        
-        %record to the edf file that delay1 is started
-        if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
-            Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
-            Eyelink('Message', 'XDAT %i ', 2);
-        end
-        
-        % Draw fixation cross
-        if aperture == 1
-            drawTextures(parameters, screen, 'Aperture');
-        end
-        drawTextures(parameters, screen, 'FixationCross');
-        
-        % Determine the delay 1 duration based on 'day'
-        d1_dur = (day < 4) * parameters.delay1Duration * 0.9 + (day >= 4) * D1(trial) * 0.9;
-
-        if eyetrackfeedback == 1
-            % Check for blinks during delay1 window
-            gxold = screen.xCenter;
-            gyold = screen.yCenter;
-            fixbreaks = 0;
-
-            while GetSecs-delay1StartTime < d1_dur
-                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
-                    evt = Eyelink('NewestFloatSample');
-                    gx = evt.gx(el.eye_used+1);
-                    gy = evt.gy(el.eye_used+1);
-                    % In case of blinks or something, make gx and gy back
-                    % to center, crude fix
-                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
-                        gx = screen.xCenter;
-                        gy = screen.yCenter;
-                    end
-
-                    % see if there was a fixation break
-                    if (gx~=gxold || gy~=gyold)
-                        va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
-                        if va_now > parameters.fixbreakthresh
-                            fixbreaks = fixbreaks + 1;
-                        end
-                    end
-                    gxold = gx;
-                    gyold = gy;
-                end
+        if D1(trial) > 0
+            if parameters.EEG
+                fname = ['sudo python3 ' trigger_path_EEG '/eegflag2.py'];
+                system(fname);
+                EEGtimeReport.delay1(trial) = GetSecs;
+                trigReport(trig_counter) =  2;
+                trig_counter = trig_counter + 1;
             end
 
-            eyetrack_errors.delay1(trial) = fixbreaks;
-            clearvars gx gy gxold gyold evt fixbreaks
-        end
-        
-        if GetSecs - delay1StartTime < d1_dur
-            WaitSecs(d1_dur - (GetSecs-delay1StartTime));
+            %record to the edf file that delay1 is started
+            if parameters.eyetracker %&& Eyelink('NewFloatSampleAvailable') > 0
+                Eyelink('command', 'record_status_message "TRIAL %i/%i /delay1"', trial, trialNum);
+                Eyelink('Message', 'XDAT %i ', 2);
+            end
+
+            % Draw fixation cross
+            if aperture == 1
+                drawTextures(parameters, screen, 'Aperture');
+            end
+            drawTextures(parameters, screen, 'FixationCross');
+
+            % Determine the delay 1 duration based on 'day'
+            d1_dur = (day < 4) * parameters.delay1Duration + (day >= 4) * D1(trial);
+
+            if eyetrackfeedback == 1
+                % Check for blinks during delay1 window
+                gxold = screen.xCenter;
+                gyold = screen.yCenter;
+                fixbreaks = 0;
+
+                while GetSecs-delay1StartTime < d1_dur * 0.9
+                    if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                        evt = Eyelink('NewestFloatSample');
+                        gx = evt.gx(el.eye_used+1);
+                        gy = evt.gy(el.eye_used+1);
+                        % In case of blinks or something, make gx and gy back
+                        % to center, crude fix
+                        if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                            gx = screen.xCenter;
+                            gy = screen.yCenter;
+                        end
+
+                        % see if there was a fixation break
+                        if (gx~=gxold || gy~=gyold)
+                            va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                            if va_now > parameters.fixbreakthresh
+                                fixbreaks = fixbreaks + 1;
+                            end
+                        end
+                        gxold = gx;
+                        gyold = gy;
+                    end
+                end
+
+                eyetrack_errors.delay1(trial) = fixbreaks;
+                clearvars gx gy gxold gyold evt fixbreaks
+            end
+
+            if GetSecs - delay1StartTime < d1_dur
+                WaitSecs(d1_dur - (GetSecs-delay1StartTime));
+            end
         end
         timeReport.delay1Duration(trial) = GetSecs - delay1StartTime;
         
@@ -462,14 +464,17 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'FixationCross');
 
         % Get the second delay duration, dependent on day
-        d2_dur = (day < 4) * parameters.delay2Duration * 0.9 + (day >= 4) * (parameters.delayDuration - D1(trial)) * 0.9;
-
+        if d1_dur > 0
+            d2_dur = (day < 4) * parameters.delay2Duration + (day >= 4) * (parameters.delayDuration - D1(trial));
+        else
+            d2_dur = parameters.delayDuration - timeReport.delay1Duration(trial);
+        end
         if eyetrackfeedback == 1
             % Check for blinks during delay1 window
             gxold = screen.xCenter;
             gyold = screen.yCenter;
             fixbreaks = 0;
-            while GetSecs-delay2StartTime < d2_dur
+            while GetSecs-delay2StartTime < d2_dur * 0.9
                 if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
                     evt = Eyelink('NewestFloatSample');
                     gx = evt.gx(el.eye_used+1);
@@ -496,8 +501,8 @@ for block = start_block:end_block
             clearvars gx gy gxold gyold evt fixbreaks
         end
         
-        if GetSecs - delay2StartTime < parameters.delay2Duration
-            WaitSecs(parameters.delay2Duration - (GetSecs - delay2StartTime));
+        if GetSecs - delay2StartTime < d2_dur
+            WaitSecs(d2_dur - (GetSecs - delay2StartTime));
         end
         timeReport.delay2Duration(trial) = GetSecs - delay2StartTime;
         
