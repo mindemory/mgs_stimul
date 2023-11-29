@@ -1,4 +1,4 @@
-function drawTextures(parameters, screen, texture_name, x, y, XY)
+function drawTextures(parameters, screen, texture_name, this_dev, x, y, XY)
 % created by Mrugank (06/15/2022):
 % drawTexture can be called with texture_name to draw either a fixation
 % cross or a stimulus at periphery. color argument is optional. Default
@@ -30,15 +30,19 @@ switch texture_name
     case 'FixationCross'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        if strcmp(this_dev, 'linux')
+            Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        end
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
     case 'MousePointer'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        if strcmp(this_dev, 'linux')
+            Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        end
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         % Drawing Mouse Pointer
         Screen('FillOval', screen.win, parameters.pointer_color, ...
@@ -47,8 +51,10 @@ switch texture_name
     case 'PhospheneDrawing'
         % Drawing Fixation Cross
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        if strcmp(this_dev, 'linux')
+            Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter], 1); % 2 is for smoothing
+        end
         Screen('FillOval', screen.win, parameters.fixation_color, centeredRect_inner, maxDiameter_inner);
         % Drawing Mouse Pointer
         Screen('FillOval', screen.win, parameters.pointer_color, ...

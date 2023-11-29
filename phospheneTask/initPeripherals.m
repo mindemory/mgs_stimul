@@ -1,4 +1,4 @@
-function [kbx, mbx, parameters] = initPeripherals(parameters, hostname)
+function [kbx, mbx, parameters] = initPeripherals(parameters, thisdev)
 % Detects peripherals: mouse and keyboard and runs KbQueueCreate on
 % each of them. Code is adapted for Mac and Ubuntu.
 
@@ -6,7 +6,7 @@ function [kbx, mbx, parameters] = initPeripherals(parameters, hostname)
 KbName('UnifyKeyNames');
 
 %% Mac Optimized
-if strcmp(hostname, 'syndrome')
+if strcmp(thisdev, 'mac')
     % get keyboard and mouse pointers for the current setup
     devices = PsychHID('Devices');
     devIdx(1) = find([devices(:).usageValue] == 6);
@@ -14,12 +14,12 @@ if strcmp(hostname, 'syndrome')
     
     parameters.left_key = 1;
     parameters.right_key = 2;
-    parameters.trial_key = '1';
-    parameters.newloc_key = '2';
-    parameters.quit_key = '3';
+    parameters.trial_key = '1!';
+    parameters.newloc_key = '2@';
+    parameters.quit_key = '3#';
     
 %% Ubuntu Optimized
-elseif strcmp(hostname, 'tmsubuntu')
+elseif strcmp(thisdev, 'linux')
     % Ubuntu does not support PsychHID. Instead GetKeyboardIndices and
     % GetGamepadIndices is used.
     % get keyboard and mouse pointers for the current setup

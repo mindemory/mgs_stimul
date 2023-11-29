@@ -39,12 +39,16 @@ row3_pro = arrayfun(@(x) strcmp(x.condition, 'pro'), tMap3);
 tMap3_pro = tMap3(row3_pro);
 
 % Combining the 3 tMaps into a common structure for day 4
-taskMap = [tMap1_pro, tMap2_pro, tMap3_pro];
+taskMapMaster = [tMap1_pro, tMap2_pro, tMap3_pro];
 for ii = 1:15
-    taskMap(ii).TMScond = 1;
+    taskMapMaster(ii).TMScond = 1;
 end
 
 % Save the taskMap file as day04
+taskMap = taskMapMaster(1:8);
 saveName_taskMap = [phosphene_data_path '/taskMap_sub' subjID '_day04_antitype_mirror.mat'];
+save(saveName_taskMap,'taskMap')
+taskMap = taskMapMaster(9:15);
+saveName_taskMap = [phosphene_data_path '/taskMap_sub' subjID '_day05_antitype_mirror.mat'];
 save(saveName_taskMap,'taskMap')
 end
