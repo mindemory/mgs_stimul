@@ -47,8 +47,10 @@ switch texture_name
         
         % Draw Fixation cross
         Screen('FillOval', screen.win, screen.black, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        if strcmp(computer, 'GLNXA64')
+            Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        end
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
     
@@ -80,8 +82,10 @@ switch texture_name
         
         % Draw Fixation cross
         Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_outer, maxDiameter_outer);
-        Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
-            fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        if strcmp(computer, 'GLNXA64')
+            Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        end
         Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
         

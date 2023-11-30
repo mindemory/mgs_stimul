@@ -144,7 +144,7 @@ while 1
             % New trial
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if strcmp(cmndKey, parameters.trial_key)                
-                drawTextures(parameters, screen, 'FixationCross', thisdev);
+                drawTextures(parameters, screen, 'FixationCross');
                 trialInd = trialInd+1;
                 display(sprintf('\n\tready for puls'));
                 % send a signal to the a USB to trigger the TMS pulse
@@ -169,7 +169,7 @@ while 1
                     while ~any(clickCode)
                         [~, clickCode] = KbQueueCheck(mbx);
                         [x,y,~]=GetMouse(screen.win);
-                        drawTextures(parameters, screen, 'MousePointer', thisdev, x, y);
+                        drawTextures(parameters, screen, 'MousePointer', x, y);
                     end
                     KbQueueStop(mbx);
                     Response.CoilLocation(trialInd) = coilLocInd;
@@ -200,7 +200,7 @@ while 1
                             XY = [XY; x y];
                             % Generate phosphene drawing
                             if XY(end,1) ~= XY(end-1,1) || XY(end,2) ~= XY(end-1,2)
-                                drawTextures(parameters, screen, 'PhospheneDrawing', thisdev, x, y, XY);
+                                drawTextures(parameters, screen, 'PhospheneDrawing', x, y, XY);
                             end
                             Screen('Flip', screen.win,[],1);
                         end
@@ -210,7 +210,7 @@ while 1
                     end % end of recording the drawing process
                 end
                 Screen('Flip', screen.win); % clear Flip buffer
-                drawTextures(parameters, screen, 'FixationCross', thisdev);
+                drawTextures(parameters, screen, 'FixationCross');
                 tmsRtnTpy.Response = Response;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % New coil location
@@ -224,7 +224,7 @@ while 1
             elseif strcmp(cmndKey, parameters.quit_key) % quit the task if "q" is pressed
                 break
             end
-            drawTextures(parameters, screen, 'FixationCross', thisdev);
+            drawTextures(parameters, screen, 'FixationCross');
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % End run
