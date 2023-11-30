@@ -44,7 +44,8 @@ end
 hostname = strtrim(hostname);
 
 % Load PTB and toolboxes
-if strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod') || strcmp(hostname, 'catwoman') || strcmp(hostname, 'catwoman.psych.nyu.edu')
+if strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod') || strcmp(hostname, 'catwoman') ...
+        || strcmp(hostname, 'catwoman.psych.nyu.edu')
     thisdev = 'mac';
     % Syndrome Mac
     addpath(genpath('/Users/Shared/Psychtoolbox'))
@@ -53,6 +54,13 @@ if strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod') || strcmp(hostname, '
     data_path = '/datc/MD_TMS_EEG/data/phosphene_data';
     Screen('Preference','SkipSyncTests', 0)
     %Screen('Preference', 'SyncTestSettings', .0004);
+elseif strcmp(hostname, 'mindemory')
+    thisdev = 'mac';
+    addpath(genpath('/'))
+    parameters.isDemoMode = true; %set to true if you want the screen to be transparent
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    data_path = '/datc/MD_TMS_EEG/data/phosphene_data';
+    Screen('Preference','SkipSyncTests', 0)
 elseif strcmp(hostname, 'tmsubuntu')
     thisdev = 'linux';
     % Ubuntu Stimulus Display
