@@ -48,7 +48,7 @@ end
 taskMap = taskMapMaster(1:8);
 saveName_taskMap = [phosphene_data_path '/taskMap_sub' subjID '_day04_antitype_mirror.mat'];
 save(saveName_taskMap,'taskMap')
-taskMap = taskMapMaster(9:15);
+taskMap = taskMapMaster(8:15);
 saveName_taskMap = [phosphene_data_path '/taskMap_sub' subjID '_day05_antitype_mirror.mat'];
 save(saveName_taskMap,'taskMap')
 end

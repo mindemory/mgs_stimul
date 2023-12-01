@@ -80,7 +80,7 @@ if day == 4
     end_block = 8;
     D1 = 0;
 elseif day == 5
-    end_block = 7;
+    end_block = 8;
     D1 = 3.7;
 end
 
@@ -204,9 +204,9 @@ for block = start_block:end_block
     
     trialArray = 1:trialNum;
     ITI = Shuffle(repmat(parameters.itiDuration, [1 trialNum/2]));
-    if day == 4 % control task
-        D1 = Shuffle(repmat(stim_times, [1 trialNum/2]));
-    end
+%     if day == 4 % control task
+%         D1 = Shuffle(repmat(stim_times, [1 trialNum/2]));
+%     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Task Starts
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -395,7 +395,7 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'FixationCross');
 
             % Determine the delay 1 duration based on 'day'
-            if exist('D1', 'var')
+            if ~exist('D1', 'var')
                 d1_dur = D1;
             else
                 d1_dur = parameters.delay1Duration;
@@ -471,10 +471,12 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'FixationCross');
 
         % Get the second delay duration, dependent on day
-        if d1_dur > 0
-            d2_dur = (day < 4) * parameters.delay2Duration + (day >= 4) * (parameters.delayDuration - D1(trial));
+        if ~exist('D1', 'var') % Run this only if delay 1 exists (aka days 1-3) or if delay is greater than 0
+            d2_dur = parameters.delay2Duration;
+        elseif D1 > 0
+            d2_dur = parameters.delayDuration - d1_dur;
         else
-            d2_dur = parameters.delayDuration - timeReport.delay1Duration(trial);
+            d2_dur = parameters.delayDuration;
         end
         if eyetrackfeedback == 1
             % Check for blinks during delay1 window
