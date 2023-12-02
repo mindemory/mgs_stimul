@@ -95,9 +95,9 @@ def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary
 
         tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string)
     else:
-        ###       group_plot_orig(df, Y1, Y2, error_measure, t_string)
-        group_plot(df, Y1, Y2, error_measure, t_string)
-    
+        group_plot_orig(df, Y1, Y2, error_measure, t_string)
+        #group_plot(df, Y1, Y2, error_measure, t_string)
+   
 
 def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
@@ -136,6 +136,10 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
     plt.suptitle(t_string, fontsize = title_fontsize, y = 0, fontweight = 'bold')
     #plt.legend('Location', )
     plt.show()
+def calculate_mean_and_se(group):
+    mean = group['ierr'].mean()
+    se = group['ierr'].sem()
+    return pd.Series({'mean_ierr': mean, 'se_ierr': se})
 
 def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]

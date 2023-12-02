@@ -14,7 +14,7 @@ hostname = socket.gethostname()
 from helpers import rotate_to_zero, rotate_to_scale
 
 p = {}
-if hostname == 'syndrome' or hostname == 'zod.psych.nyu.edu':
+if hostname == 'syndrome' or hostname == 'zod.psych.nyu.edu' or hostname == 'zod':
     p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
 else:
     p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG'
@@ -50,7 +50,7 @@ else:
 
             # Check if this was a TMS session
             phosphene_data_path = p['data'] + '/phosphene_data/' + sub_dirs[ii]
-            taskMapfilename =phosphene_data_path + '/taskMap_' + sub_dirs[ii] + '_' + day_dirs[dd] + '_antitype_mirror.mat'
+            taskMapfilename = phosphene_data_path + '/taskMap_' + sub_dirs[ii] + '_' + day_dirs[dd] + '_antitype_mirror.mat'
             taskMap = loadmat(taskMapfilename)['taskMap']
             tms_status = taskMap[0, 0]['TMScond'][0][0]
             
@@ -119,6 +119,6 @@ else:
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 1), 'TMS_condition'] = 'TMS intoVF'
     master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
     master_df = master_df.reset_index(drop = True)
-    master_df, angular_df = rotate_to_scale(master_df)
+    #master_df, angular_df = rotate_to_scale(master_df)
     #master_df = rotate_to_zero(master_df)
     master_df.to_csv(p['df_fname'], index = False)

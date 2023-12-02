@@ -69,9 +69,11 @@ def rotate_to_scale(df):
         df[mm + 'X_rotated']=0
         df[mm + 'Y_rotated']=0
     
+    tot_trs = 1000
+    
     subjIDs = df['subjID'].unique()
-    instim_idx = np.zeros((len(subjIDs), 600)) # num columns here is hard-coded, this is outright stupid!
-    outstim_idx = np.zeros((len(subjIDs), 600))
+    instim_idx = np.empty((len(subjIDs), tot_trs)) # num columns here is hard-coded, this is outright stupid!
+    outstim_idx = np.empty((len(subjIDs), tot_trs))
     instim_mean_theta = np.zeros((len(subjIDs), ))
     outstim_mean_theta = np.zeros((len(subjIDs), ))
     instim_theta_range = np.zeros((len(subjIDs), ))
@@ -79,12 +81,14 @@ def rotate_to_scale(df):
 
     for ss in range(len(subjIDs)):
         this_subjID = subjIDs[ss]
-        instim_idx[ss, :] = df.index[(df['instimVF']==1) & (df['subjID'] == this_subjID)]
-        outstim_idx[ss :] = df.index[(df['instimVF']==0) & (df['subjID'] == this_subjID)]
-        instim_mean_theta[ss] = circmean(df.loc[instim_idx[ss, :], ['TarTheta']], high=np.pi, low=-np.pi)
-        outstim_mean_theta[ss] = circmean(df.loc[outstim_idx[ss, :], ['TarTheta']], high=np.pi, low=-np.pi)
-        instim_theta_range[ss] = compute_angular_range(df.loc[instim_idx[ss, :], ['TarTheta']])
-        outstim_theta_range[ss] = compute_angular_range(df.loc[outstim_idx[ss, :], ['TarTheta']])
+        inidx = df.index[(df['instimVF']==1) & (df['subjID'] == this_subjID)]
+        outidx = df.index[(df['instimVF']==0) & (df['subjID'] == this_subjID)]
+        instim_idx[ss, 1:len(inidx)] = inidx
+        outstim_idx[ss, 1:len(outidx)] = outidx 
+        instim_mean_theta[ss] = circmean(df.loc[inidx, ['TarTheta']], high=np.pi, low=-np.pi)
+        outstim_mean_theta[ss] = circmean(df.loc[outidx, ['TarTheta']], high=np.pi, low=-np.pi)
+        instim_theta_range[ss] = compute_angular_range(df.loc[inidx, ['TarTheta']])
+        outstim_theta_range[ss] = compute_angular_range(df.loc[outidx, ['TarTheta']])
     
     for ii in range(len(df['TarTheta'])):
         subj_idx = np.where(subjIDs == df.loc[ii, ['subjID'][0]])[0][0]
@@ -97,7 +101,6 @@ def rotate_to_scale(df):
         rotation_matrix = np.array([[np.cos(this_angle), -np.sin(this_angle)],
                                     [np.sin(this_angle), np.cos(this_angle)]])
         for mm in metrics:
-            
             x = df.loc[ii, [mm+'X']][0] + radial_error * np.cos(df.loc[ii, [mm+'Theta']][0])
             y = df.loc[ii, [mm+'Y']][0] + radial_error * np.sin(df.loc[ii, [mm+'Theta']][0])
             
