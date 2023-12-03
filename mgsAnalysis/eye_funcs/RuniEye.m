@@ -72,6 +72,11 @@ for block = 1:end_block
     
     % run preprocessing!
     [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'calibration'});
+    
+%     ii_data.XDAT(ii_data.XDAT == 5) = 4;
+%     ii_sacc.epoch_start(ii_sacc.epoch_start == 5) = 4;
+    %ii_sacc.epoch_end(
+    
         
     % score trials
     % default parameters should work fine - but see docs for other
