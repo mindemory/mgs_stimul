@@ -73,14 +73,14 @@ for block = 1:end_block
     % run preprocessing!
     [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'calibration'});
     
-    ii_data.XDAT(ii_data.XDAT == 4) = 5;
-    ii_sacc.epoch_start(ii_sacc.epoch_start == 4) = 5;
-    ii_sacc.epoch_end(ii_sacc.epoch_end == 4) = 5;
+    %ii_data.XDAT(ii_data.XDAT == 4) = 5;
+    ii_sacc.epoch_start(ii_sacc.epoch_start == 5) = 4;
+    %ii_sacc.epoch_end(ii_sacc.epoch_end == 4) = 5;
 
     % score trials
     % default parameters should work fine - but see docs for other
     % arguments you can/should give when possible
-    [ii_trial{block},~] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],5,[],excl_criteria,[],'strict');
+    [ii_trial{block},~] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],4,[],excl_criteria,[],'strict');
     if strcmp(eyecond, 'pro')
         ii_trial{block}.instimVF = taskMap(block).stimVF;
     elseif strcmp(eyecond, 'anti')
