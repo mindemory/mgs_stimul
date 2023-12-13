@@ -20,7 +20,7 @@ tmp = pwd; tmp2 = strfind(tmp,filesep);
 direct.master = tmp(1:(tmp2(end)-1));
 
 if strcmp(hostname, 'zod.psych.nyu.edu') || strcmp(hostname, 'loki.psych.nyu.edu') ...
-   || strcmp(hostname, 'syndrome') % If running on Syndrome
+   || strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod')% If running on Syndrome
     direct.datc = '/d/DATC/datc/MD_TMS_EEG';
 else % If running on World's best MacBook
     direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
