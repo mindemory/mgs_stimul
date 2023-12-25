@@ -25,18 +25,17 @@ p['df_fname'] = p['meta'] + '/master_df.csv'
 if not os.path.exists(p['meta']):
     os.makedirs(p['meta'])
 
-# Find subjects and days that have been run so far
-sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
-subjIDs = []
-num_subs = len(sub_dirs) # Number of subjects
-print(f"We have {num_subs} subjects so far: {sub_dirs}")
-print()
-
 if os.path.exists(p['df_fname']):
     print('Loading existing dataframe! If this is not desired, delete the current mater_df.csv')
     master_df = pd.read_csv(p['df_fname'])
 else:
     print('Creating a new dataframe.')
+    # Find subjects and days that have been run so far
+    sub_dirs = [dirname for dirname in os.listdir(p['analysis']) if dirname.startswith("sub0") or dirname.startswith("sub1")  or dirname.startswith("sub2")  or dirname.startswith("sub3")]
+    subjIDs = []
+    num_subs = len(sub_dirs) # Number of subjects
+    print(f"We have {num_subs} subjects so far: {sub_dirs}")
+    print()
     # Create a master dataframe
     for ii in range(len(sub_dirs)):
         subjIDs.append(int(sub_dirs[ii][-2:]))
