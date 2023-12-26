@@ -1,6 +1,6 @@
 function A01_GetTimeReport(subjID, prac_status)
 % Created by Mrugank (02/24/2022): The file 
-clearvars -except subjID prac_status; close all; clc;
+clearvars -except subjID prac_status; close all; %clc;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
@@ -23,7 +23,7 @@ if strcmp(hostname, 'zod.psych.nyu.edu') || strcmp(hostname, 'loki.psych.nyu.edu
    || strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod')% If running on Syndrome
     direct.datc = '/d/DATC/datc/MD_TMS_EEG';
 else % If running on World's best MacBook
-    direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc';
+    direct.datc = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG';
 end
 
 % Initialize all the paths
