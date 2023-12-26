@@ -135,6 +135,7 @@ else:
                 'delay2dur': d2dur[~np.isnan(d2dur)].flatten(),
                 'respdur': rdur[~np.isnan(rdur)].flatten(),
                 'feedbackdur': fdur[~np.isnan(fdur)].flatten(),
+                'itidur': itidur[~np.isnan(itidur)].flatten(),
                 'trialdur': trdur[~np.isnan(trdur)].flatten(),
             }
             session_dfs.append(pd.DataFrame(sess_data))
