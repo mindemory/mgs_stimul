@@ -26,13 +26,16 @@ summary_df = pd.read_csv(os.path.join(p['analysis'] + '/EEG_TMS_meta_Summary.csv
 All_metadata = {row['Subject ID']: row for _, row in summary_df.iterrows()}
 
 for proc_type in ['calib', 'nocalib']:
-    mdf_fname = 'master_df' + proc_type + '.csv'
+    mdf_fname = 'master_df_' + proc_type + '.csv'
     df_name = 'df_' + proc_type + '_fname'
     p[df_name] = os.path.join(p['meta'], mdf_fname)
 
     if os.path.exists(p[df_name]):
         print('Loading existing dataframe! If this is not desired, delete the current mater_df.csv')
-        master_df = pd.read_csv(p[df_name])
+        if proc_type == 'calib':
+            master_calib_df = pd.read_csv(p[df_name])
+        elif proc_type == 'nocalib':
+            master_nocalib_df = pd.read_csv(p[df_name])
     else:
         print('Creating a new dataframe.')
         # Find subjects and days that have been run so far
@@ -162,3 +165,7 @@ for proc_type in ['calib', 'nocalib']:
         master_df.loc[(master_df['istms'] == 1) & (master_df['instimVF'] == 0), 'TMS_condition'] = 'TMS outVF'
         master_df = master_df.reset_index(drop = True)
         master_df.to_csv(p[df_name], index = False)
+        if proc_type == 'calib':
+            master_calib_df = master_df
+        elif proc_type == 'nocalib':
+            master_nocalib_df = master_df

@@ -136,6 +136,7 @@ def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes h
     plt.suptitle(t_string, fontsize = title_fontsize, y = 0, fontweight = 'bold')
     #plt.legend('Location', )
     plt.show()
+
 def calculate_mean_and_se(group):
     mean = group['ierr'].mean()
     se = group['ierr'].sem()
@@ -180,53 +181,6 @@ def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     #plt.savefig('/d/DATA/hyper/conferences/Dake_SfN2023/behavior_ierr.eps', format='eps', dpi = 1200)
     plt.show()
     
-    
-def group_plot_black(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
-    X1 = [0.3, 0.8, 1.3]
-    # X2 = [round(x + 0.1, 1) for x in X1]
-    # X_sum = [sum(value) for value in zip(X1, X2)]
-    # x_tick_pos = [round(x/2, 1) for x in X_sum]
-    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
-    subjIDs = df['subjID'].unique()
-    num_subs = len(subjIDs)
-    t_string = t_string + ', #subs = ' + str(num_subs)
-    Yerr1 = sem(Y1, axis=0)
-    Yerr2 = sem(Y2, axis=0)
-    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
-    
-    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
-    fig = plt.figure(figsize = (5, 8))
-    fig.patch.set_facecolor((33/255, 33/255, 33/255))
-    ax = fig.add_subplot(111)
-    ax.set_facecolor((33/255, 33/255, 33/255))
-    ax.spines['bottom'].set_color('white')
-    ax.spines['top'].set_color('white')
-    ax.spines['left'].set_color('white')
-    ax.spines['right'].set_color('white')
-    ax.xaxis.label.set_color('white')
-    ax.yaxis.label.set_color('white')
-    ax.tick_params(axis='x', colors='white')
-    ax.tick_params(axis='y', colors='white')
-
-    #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
-    
-    bars = ax.bar(X1, np.mean(Y1, axis=0), width = 0.2)
-    bars[0].set_color("#1B9E77")
-    bars[1].set_color("#D95F02")
-    bars[2].set_color("#7570B3")
-    ax.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    for ss in range(len(subjIDs)):
-        ax.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
-    
-    #ax.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    ax.set_xticks(X1, x_label_names, fontsize = 18)
-    if error_measure == 'isacc_rt':
-        ax.set_ylabel('RT (s)', fontsize = 18)
-        ax.set_title('Reaction time', fontsize = 24, color='white')
-    elif error_measure == 'isacc_err':
-        ax.set_ylabel('MGS error (dva)', fontsize = 18)
-        ax.set_title('Memory error', fontsize = 24, color='white')
-    plt.show()
 
 def group_plot_orig(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
     X1 = [0.3, 0.8, 1.3]
@@ -318,7 +272,43 @@ def distribution_plots(df):
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS intoVF']['fsacc_err'], alpha = 0.5, label='TMS intoVF')
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
         
+def daywise_heatmap(df, df_all5, sub_list, metric):
+    col_names = [
+                    f"Day {day} Block {rnum}" 
+                    for day in range(1, 6) 
+                    for rnum in range(1, (df[df['day'] == day]['rnum'].max() if day < 4 else df_all5[df_all5['day'] == day]['rnum'].max()) + 1)
+                ]
+    matrix_df = pd.DataFrame(index=sub_list, columns=col_names)
 
+    for sub in sub_list:
+        for day in range(1, 6):
+            if day < 4:
+                df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)]
+            else:
+                df_sub_day = df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
+
+            for rnum in df_sub_day['rnum'].unique():
+                if metric == 'trial_count':
+                    metric_summary = df_sub_day[df_sub_day['rnum'] == rnum]['tnum'].count()
+                elif metric == 'ierr':
+                    metric_summary = df_sub_day[df_sub_day['rnum'] == rnum]['ierr'].mean()
+                matrix_df.at[sub, f"Day {day} Block {rnum}"] = metric_summary
+
+    matrix_df.fillna(0, inplace=True)
+
+    day_dfs = {}
+    for day in range(1, 6):
+        day_columns = [col for col in matrix_df.columns if f"Day {day}" in col]
+        day_dfs[day] = matrix_df[day_columns]
+
+    fig, axs = plt.subplots(1, 5, figsize=(20, 10))
+    for day, ax in zip(day_dfs.keys(), axs.flatten()):
+        sns.heatmap(day_dfs[day], cmap=sns.cm.flare_r, cbar = False, annot=True, ax=ax)
+        ax.set_title(f'Day {day}')
+        ax.set_xlabel('Block')
+        ax.set_ylabel('Subject')
+    plt.tight_layout()
+    plt.show()
 
         
         
