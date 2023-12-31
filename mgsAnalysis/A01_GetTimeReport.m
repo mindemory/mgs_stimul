@@ -1,11 +1,15 @@
-function A01_GetTimeReport(subjID, prac_status)
+function A01_GetTimeReport(subjID, proc_type, prac_status)
 % Created by Mrugank (02/24/2022): The file 
-clearvars -except subjID prac_status; close all; %clc;
+clearvars -except subjID proc_type prac_status; close all; %clc;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin < 2
+    proc_type = 'calib';
+end
+
+if nargin < 3
     prac_status = 0; % default is no practice aka actual run
 end
 subjID = num2str(subjID, "%02d");
@@ -33,7 +37,7 @@ if prac_status == 1
     direct.analysis = [direct.datc '/analysis/practice/sub' subjID];
     direct.mgs = [direct.data '/mgs_practice_data/sub' subjID];
 else
-    direct.analysis = [direct.datc '/analysis/sub' subjID];
+    direct.analysis = [direct.datc '/analysis/' proc_type '/sub' subjID];
     direct.mgs = [direct.data '/mgs_data/sub' subjID];
 end
 addpath(genpath(direct.data));
