@@ -88,12 +88,6 @@ for proc_type in ['calib', 'nocalib']:
                 itidur = timeStruct['itiDuration'][0, 0][th_day-1, :, :]
                 trdur = timeStruct['trialDuration'][0, 0][th_day-1, :, :]
 
-                # # Get stimulus properties from taskMap
-                # taskMapfilename = os.path.join(phosphene_data_path, 'taskMap_' + subdir_name + '_' + dd + '_antitype_mirror.mat')
-                # taskMap = loadmat(taskMapfilename)['taskMap']
-                # print(taskMap[0, 0]['dotSizeStim'][0, 0])
-                #tms_status = taskMap[0, 0]['TMScond'][0][0]
-
                 sess_data = {
                     'subjID': [ss] * tcount,
                     'day': [th_day] * tcount,

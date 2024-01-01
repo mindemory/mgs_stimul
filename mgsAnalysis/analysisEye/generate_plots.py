@@ -290,8 +290,8 @@ def daywise_heatmap(df, df_all5, sub_list, metric):
             for rnum in df_sub_day['rnum'].unique():
                 if metric == 'trial_count':
                     metric_summary = df_sub_day[df_sub_day['rnum'] == rnum]['tnum'].count()
-                elif metric == 'ierr':
-                    metric_summary = df_sub_day[df_sub_day['rnum'] == rnum]['ierr'].mean()
+                else:
+                    metric_summary = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
                 matrix_df.at[sub, f"Day {day} Block {rnum}"] = metric_summary
 
     matrix_df.fillna(0, inplace=True)
@@ -303,14 +303,90 @@ def daywise_heatmap(df, df_all5, sub_list, metric):
 
     fig, axs = plt.subplots(1, 5, figsize=(20, 10))
     for day, ax in zip(day_dfs.keys(), axs.flatten()):
-        sns.heatmap(day_dfs[day], cmap=sns.cm.flare_r, cbar = False, annot=True, ax=ax)
+        if metric == 'trial_count':
+            sns.heatmap(day_dfs[day], cmap='viridis', cbar = False, annot=True, ax=ax)
+        else:
+            cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+            sns.heatmap(day_dfs[day], cmap='viridis', cbar = True, cbar_ax = cbar_ax, annot=True, ax=ax)
         ax.set_title(f'Day {day}')
         ax.set_xlabel('Block')
         ax.set_ylabel('Subject')
-    plt.tight_layout()
     plt.show()
 
-        
-        
+def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metric):
+    def compute_errors(df, df_all5):
+        mean_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
+        std_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
+
+        for sub in sub_list:
+            for day in range(1, 6):
+                df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
+                for rnum in df_sub_day['rnum'].unique():
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
+                    std_error = df_sub_day[df_sub_day['rnum'] == rnum][metric].std() / np.sqrt(df_sub_day[df_sub_day['rnum'] == rnum].shape[0])
+                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
+
+        mean_errors_df.fillna(0, inplace=True)
+        std_errors_df.fillna(0, inplace=True)
+        return mean_errors_df, std_errors_df
+
+    col_names = [
+        f"Day {day} Block {rnum}" 
+        for day in range(1, 6) 
+        for rnum in range(1, (df_calib[df_calib['day'] == day]['rnum'].max() if day < 4 else df_calib_all5[df_calib_all5['day'] == day]['rnum'].max()) + 1)
+    ]
+
+    mean_errors_calib, std_errors_calib = compute_errors(df_calib, df_calib_all5)
+    mean_errors_nocalib, std_errors_nocalib = compute_errors(df_nocalib, df_nocalib_all5)
+
+    fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
+    for idx, sub in enumerate(sub_list):
+        ax = axs[idx]
+        x = range(len(col_names))
+
+        y_calib = mean_errors_calib.loc[sub]
+        yerr_calib = std_errors_calib.loc[sub]
+        y_calib = y_calib.where(y_calib != 0, np.nan)
+        yerr_calib = yerr_calib.where(yerr_calib != 0, np.nan)
 
 
+        y_nocalib = mean_errors_nocalib.loc[sub]
+        yerr_nocalib = std_errors_nocalib.loc[sub]
+        y_nocalib = y_nocalib.where(y_nocalib != 0, np.nan)
+        yerr_nocalib = yerr_nocalib.where(yerr_nocalib != 0, np.nan)
+
+        ax.plot(x, y_calib, label='Calib Mean Error', color='black')
+        ax.fill_between(x, y_calib - yerr_calib, y_calib + yerr_calib, color='black', alpha=0.3)
+
+        ax.plot(x, y_nocalib, label='NoCalib Mean Error', color='blue')
+        ax.fill_between(x, y_nocalib - yerr_nocalib, y_nocalib + yerr_nocalib, color='blue', alpha=0.3)
+
+        for col_idx, col in enumerate(mean_errors_calib.columns):
+            block_num = int(col.split(' ')[-1])
+            day_num = int(col.split(' ')[1])
+
+            block_df = df_calib[(df_calib['day'] == day_num) & (df_calib['rnum'] == block_num) & (df_calib['subjID'] == sub)]
+            is_pro_block = False
+            if not block_df.empty and day_num < 4:
+                is_pro_block = block_df['ispro'].iloc[0] == 1
+
+            color = 'lightblue' if is_pro_block else 'lightcoral' if not is_pro_block and day_num < 4 else 'white'
+            ax.axvspan(col_idx - 0.5, col_idx + 0.5, facecolor=color, alpha=0.3)
+
+            if col.endswith("Block 1"):
+                if block_df['istms'].eq(0).any():
+                    ax.axvline(x=col_idx-0.5, color='orange', linewidth=2)
+                else:
+                    ax.axvline(x=col_idx-0.5, color='black', linewidth=2)
+            else:
+                ax.axvline(x=col_idx-0.5, color='grey', linestyle='--')
+
+        ax.set_title(f'Subject {sub}')
+        ax.set_xlabel('Day and Block')
+        ax.set_ylabel('Error')
+        ax.set_xticks(x)
+        ax.set_xticklabels(col_names, rotation=90)
+        ax.legend()
+
+    plt.tight_layout()
+    plt.show()
