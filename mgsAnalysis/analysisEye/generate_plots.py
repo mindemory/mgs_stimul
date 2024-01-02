@@ -317,7 +317,6 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
     def compute_errors(df, df_all5):
         mean_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
         std_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
-
         for sub in sub_list:
             for day in range(1, 6):
                 df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
@@ -325,19 +324,31 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
                     mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
                     std_error = df_sub_day[df_sub_day['rnum'] == rnum][metric].std() / np.sqrt(df_sub_day[df_sub_day['rnum'] == rnum].shape[0])
                     std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
-
         mean_errors_df.fillna(0, inplace=True)
         std_errors_df.fillna(0, inplace=True)
         return mean_errors_df, std_errors_df
+    
+    def compute_tcount(df, df_all5):
+        mean_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
+        for sub in sub_list:
+            for day in range(1, 6):
+                df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
+                for rnum in df_sub_day['rnum'].unique():
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum]['tnum'].count()
+        mean_errors_df.fillna(0, inplace=True)
+        return mean_errors_df
 
     col_names = [
         f"Day {day} Block {rnum}" 
         for day in range(1, 6) 
         for rnum in range(1, (df_calib[df_calib['day'] == day]['rnum'].max() if day < 4 else df_calib_all5[df_calib_all5['day'] == day]['rnum'].max()) + 1)
     ]
-
-    mean_errors_calib, std_errors_calib = compute_errors(df_calib, df_calib_all5)
-    mean_errors_nocalib, std_errors_nocalib = compute_errors(df_nocalib, df_nocalib_all5)
+    if metric == 'trial_count':
+        mean_errors_calib = compute_tcount(df_calib, df_calib_all5)
+        mean_errors_nocalib = compute_tcount(df_nocalib, df_nocalib_all5)
+    else:
+        mean_errors_calib, std_errors_calib = compute_errors(df_calib, df_calib_all5)
+        mean_errors_nocalib, std_errors_nocalib = compute_errors(df_nocalib, df_nocalib_all5)
 
     fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
     for idx, sub in enumerate(sub_list):
@@ -345,21 +356,20 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
         x = range(len(col_names))
 
         y_calib = mean_errors_calib.loc[sub]
-        yerr_calib = std_errors_calib.loc[sub]
         y_calib = y_calib.where(y_calib != 0, np.nan)
-        yerr_calib = yerr_calib.where(yerr_calib != 0, np.nan)
-
-
         y_nocalib = mean_errors_nocalib.loc[sub]
-        yerr_nocalib = std_errors_nocalib.loc[sub]
         y_nocalib = y_nocalib.where(y_nocalib != 0, np.nan)
-        yerr_nocalib = yerr_nocalib.where(yerr_nocalib != 0, np.nan)
-
         ax.plot(x, y_calib, label='Calib Mean Error', color='black')
-        ax.fill_between(x, y_calib - yerr_calib, y_calib + yerr_calib, color='black', alpha=0.3)
-
         ax.plot(x, y_nocalib, label='NoCalib Mean Error', color='blue')
-        ax.fill_between(x, y_nocalib - yerr_nocalib, y_nocalib + yerr_nocalib, color='blue', alpha=0.3)
+        
+        if metric != 'trial_count':
+            yerr_calib = std_errors_calib.loc[sub]
+            yerr_calib = yerr_calib.where(yerr_calib != 0, np.nan)
+            yerr_nocalib = std_errors_nocalib.loc[sub]
+            yerr_nocalib = yerr_nocalib.where(yerr_nocalib != 0, np.nan)
+            ax.fill_between(x, y_calib - yerr_calib, y_calib + yerr_calib, color='black', alpha=0.3)
+            ax.fill_between(x, y_nocalib - yerr_nocalib, y_nocalib + yerr_nocalib, color='blue', alpha=0.3)
+        
 
         for col_idx, col in enumerate(mean_errors_calib.columns):
             block_num = int(col.split(' ')[-1])
@@ -383,7 +393,11 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
 
         ax.set_title(f'Subject {sub}')
         ax.set_xlabel('Day and Block')
-        ax.set_ylabel('Error')
+        ax.set_ylabel(metric)
+        if metric == 'trial_count':
+            ax.set_ylim([0, 42])
+        elif metric == 'ierr' or metric == 'ferr':
+            ax.set_ylim([])
         ax.set_xticks(x)
         ax.set_xticklabels(col_names, rotation=90)
         ax.legend()

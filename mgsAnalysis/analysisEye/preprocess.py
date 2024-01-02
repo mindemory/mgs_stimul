@@ -96,3 +96,37 @@ def filter_data(df):
     valid_subjects = subject_counts[subject_counts == 5].index
     df_all5 = df[df['subjID'].isin(valid_subjects)  & (df['ispro'] == 1)]
     return df, df_all5
+
+def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
+    def remove_low_trial_blocks(df, sub_rem):
+        # Remove specified subjects
+        df = df[~df['subjID'].isin(sub_rem)]
+        # Remove blocks with trials less than 25
+        blocks_to_remove = df.groupby(['day', 'rnum']).filter(lambda x: x['tnum'].count() <= 25)[['day', 'rnum']].drop_duplicates()
+        df = df[~df.set_index(['day', 'rnum']).index.isin(blocks_to_remove.set_index(['day', 'rnum']).index)]
+        return df, blocks_to_remove
+
+    summary = {"Removed Subjects": sub_rem, "Removed Blocks": {}}
+
+    # Remove blocks with low trial count and update summary
+    df1, removed_blocks_df1 = remove_low_trial_blocks(df1, sub_rem)
+    summary["Removed Blocks"]["df1"] = removed_blocks_df1
+
+    df1_all5, removed_blocks_df1_all5 = remove_low_trial_blocks(df1_all5, sub_rem)
+    summary["Removed Blocks"]["df1_all5"] = removed_blocks_df1_all5
+
+    df2, removed_blocks_df2 = remove_low_trial_blocks(df2, sub_rem)
+    summary["Removed Blocks"]["df2"] = removed_blocks_df2
+
+    df2_all5, removed_blocks_df2_all5 = remove_low_trial_blocks(df2_all5, sub_rem)
+    summary["Removed Blocks"]["df2_all5"] = removed_blocks_df2_all5
+
+    for key, value in summary.items():
+        if key == "Removed Blocks":
+            print(f"{key}:")
+            for df_key, blocks in value.items():
+                print(f"  {df_key}: {blocks}")
+        else:
+            print(f"{key}: {value}")
+
+    return df1, df1_all5, df2, df2_all5
