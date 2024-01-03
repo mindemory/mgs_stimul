@@ -119,3 +119,47 @@ def variance_error_summary(df):
             # print(cc)
         df[cc + '_normed'] = temp_normed
     return df
+
+def compute_errors(df, df_all5, sub_list, metric):
+    mean_errors_df = pd.DataFrame(index=sub_list)
+    std_errors_df = pd.DataFrame(index=sub_list)
+    for sub in sub_list:
+        for day in range(1, 6):
+            df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
+            if day < 4:
+                max_run = 10
+            elif day == 4:
+                max_run = 6
+            elif day == 5:
+                max_run = 7
+            for rnum in range(1, max_run+1):
+                if rnum in df_sub_day['rnum'].unique():
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
+                    std_error = df_sub_day[df_sub_day['rnum'] == rnum][metric].std() / np.sqrt(df_sub_day[df_sub_day['rnum'] == rnum].shape[0])
+                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
+                else:
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = 0
+                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
+    mean_errors_df.fillna(0, inplace=True)
+    std_errors_df.fillna(0, inplace=True)
+    return mean_errors_df, std_errors_df
+
+
+def compute_tcount(df, df_all5, sub_list):
+    mean_errors_df = pd.DataFrame(index=sub_list)#, columns=col_names)
+    for sub in sub_list:
+        for day in range(1, 6):
+            df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
+            if day < 4:
+                max_run = 10
+            elif day == 4:
+                max_run = 6
+            elif day == 5:
+                max_run = 7
+            for rnum in range(1, max_run+1):
+                if rnum in df_sub_day['rnum'].unique():
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum]['tnum'].count()
+                else:
+                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = 0
+    mean_errors_df.fillna(0, inplace=True)
+    return mean_errors_df

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import gaussian_kde as gkde
 
+from helpers import compute_errors, compute_tcount
+
 msize = 10
 axes_fontsize = 14
 title_fontsize = 18
@@ -273,13 +275,18 @@ def distribution_plots(df):
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
         
 def daywise_heatmap(df, df_all5, sub_list, metric):
-    col_names = [
-                    f"Day {day} Block {rnum}" 
-                    for day in range(1, 6) 
-                    for rnum in range(1, (df[df['day'] == day]['rnum'].max() if day < 4 else df_all5[df_all5['day'] == day]['rnum'].max()) + 1)
-                ]
-    matrix_df = pd.DataFrame(index=sub_list, columns=col_names)
+    # col_names = []
+    # for day in range(1, 6):
+    #     if day < 4:
+    #         max_run = 10
+    #     elif day == 4:
+    #         max_run = 6
+    #     elif day == 5:
+    #         max_run = 7
+    # col_names = col_names.append(f"Day {day} Block {rnum}" for rnum in range(1, max_run))
+    # print(col_names)
 
+    matrix_df = pd.DataFrame(index=sub_list)#, columns=col_names)
     for sub in sub_list:
         for day in range(1, 6):
             if day < 4:
@@ -293,7 +300,6 @@ def daywise_heatmap(df, df_all5, sub_list, metric):
                 else:
                     metric_summary = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
                 matrix_df.at[sub, f"Day {day} Block {rnum}"] = metric_summary
-
     matrix_df.fillna(0, inplace=True)
 
     day_dfs = {}
@@ -313,43 +319,24 @@ def daywise_heatmap(df, df_all5, sub_list, metric):
         ax.set_ylabel('Subject')
     plt.show()
 
+
+def plot_metric(ax, x, y_data, y_error, color, label, fill_alpha=0.3):
+    y_data = y_data.where(y_data != 0, np.nan)
+    y_error = y_error.where(y_error != 0, np.nan)
+    ax.plot(x, y_data, label=label, color=color)
+    ax.fill_between(x, y_data - y_error, y_data + y_error, color=color, alpha=fill_alpha)
+
+
 def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metric):
-    def compute_errors(df, df_all5):
-        mean_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
-        std_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
-        for sub in sub_list:
-            for day in range(1, 6):
-                df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
-                for rnum in df_sub_day['rnum'].unique():
-                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum][metric].mean()
-                    std_error = df_sub_day[df_sub_day['rnum'] == rnum][metric].std() / np.sqrt(df_sub_day[df_sub_day['rnum'] == rnum].shape[0])
-                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
-        mean_errors_df.fillna(0, inplace=True)
-        std_errors_df.fillna(0, inplace=True)
-        return mean_errors_df, std_errors_df
-    
-    def compute_tcount(df, df_all5):
-        mean_errors_df = pd.DataFrame(index=sub_list, columns=col_names)
-        for sub in sub_list:
-            for day in range(1, 6):
-                df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
-                for rnum in df_sub_day['rnum'].unique():
-                    mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = df_sub_day[df_sub_day['rnum'] == rnum]['tnum'].count()
-        mean_errors_df.fillna(0, inplace=True)
-        return mean_errors_df
 
-    col_names = [
-        f"Day {day} Block {rnum}" 
-        for day in range(1, 6) 
-        for rnum in range(1, (df_calib[df_calib['day'] == day]['rnum'].max() if day < 4 else df_calib_all5[df_calib_all5['day'] == day]['rnum'].max()) + 1)
-    ]
     if metric == 'trial_count':
-        mean_errors_calib = compute_tcount(df_calib, df_calib_all5)
-        mean_errors_nocalib = compute_tcount(df_nocalib, df_nocalib_all5)
+        mean_errors_calib = compute_tcount(df_calib, df_calib_all5, sub_list)
+        mean_errors_nocalib = compute_tcount(df_nocalib, df_nocalib_all5, sub_list)
     else:
-        mean_errors_calib, std_errors_calib = compute_errors(df_calib, df_calib_all5)
-        mean_errors_nocalib, std_errors_nocalib = compute_errors(df_nocalib, df_nocalib_all5)
-
+        mean_errors_calib, std_errors_calib = compute_errors(df_calib, df_calib_all5, sub_list, metric)
+        mean_errors_nocalib, std_errors_nocalib = compute_errors(df_nocalib, df_nocalib_all5, sub_list, metric)
+    col_names = mean_errors_calib.columns
+    
     fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
     for idx, sub in enumerate(sub_list):
         ax = axs[idx]
@@ -369,18 +356,21 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
             yerr_nocalib = yerr_nocalib.where(yerr_nocalib != 0, np.nan)
             ax.fill_between(x, y_calib - yerr_calib, y_calib + yerr_calib, color='black', alpha=0.3)
             ax.fill_between(x, y_nocalib - yerr_nocalib, y_nocalib + yerr_nocalib, color='blue', alpha=0.3)
-        
 
-        for col_idx, col in enumerate(mean_errors_calib.columns):
+        for col_idx, col in enumerate(col_names):
             block_num = int(col.split(' ')[-1])
             day_num = int(col.split(' ')[1])
 
-            block_df = df_calib[(df_calib['day'] == day_num) & (df_calib['rnum'] == block_num) & (df_calib['subjID'] == sub)]
-            is_pro_block = False
-            if not block_df.empty and day_num < 4:
-                is_pro_block = block_df['ispro'].iloc[0] == 1
-
-            color = 'lightblue' if is_pro_block else 'lightcoral' if not is_pro_block and day_num < 4 else 'white'
+            block_df = df_nocalib[(df_nocalib['day'] == day_num) & (df_nocalib['rnum'] == block_num) & (df_nocalib['subjID'] == sub)]
+            
+            if block_df.shape[0] == 0:
+                color = 'white'
+            else:
+                if block_df['ispro'].iloc[0] == 1:
+                    color = 'lightblue'
+                else:
+                    color = 'lightcoral'
+            
             ax.axvspan(col_idx - 0.5, col_idx + 0.5, facecolor=color, alpha=0.3)
 
             if col.endswith("Block 1"):
@@ -397,10 +387,65 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
         if metric == 'trial_count':
             ax.set_ylim([0, 42])
         elif metric == 'ierr' or metric == 'ferr':
-            ax.set_ylim([])
+            ax.set_ylim([0, 4])
+        elif metric == 'isacc_rt' or metric == 'fsacc_rt':
+            ax.set_ylim([0, 1])
         ax.set_xticks(x)
         ax.set_xticklabels(col_names, rotation=90)
         ax.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metrics):
+    metric1, metric2 = metrics
+    mean_errors_calib1, std_errors_calib1 = compute_errors(df_calib, df_calib_all5, metric1, sub_list)
+    mean_errors_nocalib1, std_errors_nocalib1 = compute_errors(df_nocalib, df_nocalib_all5, metric1, sub_list)
+    mean_errors_calib2, std_errors_calib2 = compute_errors(df_calib, df_calib_all5, metric2, sub_list)
+    mean_errors_nocalib2, std_errors_nocalib2 = compute_errors(df_nocalib, df_nocalib_all5, metric2, sub_list)
+    col_names = mean_errors_calib1.columns
+
+    fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
+    for idx, sub in enumerate(sub_list):
+        ax1 = axs[idx]
+        ax2 = ax1.twinx()
+
+        x = range(len(col_names))
+
+        y_calib1 = mean_errors_calib1.loc[sub]
+        y_calib1 = y_calib1.where(y_calib1 != 0, np.nan)
+        y_nocalib1 = mean_errors_nocalib1.loc[sub]
+        y_nocalib1 = y_nocalib1.where(y_nocalib1 != 0, np.nan)
+        yerr_calib1 = std_errors_calib1.loc[sub]
+        yerr_calib1 = yerr_calib1.where(yerr_calib1 != 0, np.nan)
+        yerr_nocalib1 = std_errors_nocalib1.loc[sub]
+        yerr_nocalib1 = yerr_nocalib1.where(yerr_nocalib1 != 0, np.nan)
+        ax1.plot(x, y_calib1, label=f'{metric1} Calib', color='black')
+        ax1.plot(x, y_nocalib1, label=f'{metric1} NoCalib', color='blue')
+        ax1.fill_between(x, y_calib1 - yerr_calib1, y_calib1 + yerr_calib1, color='black', alpha=0.3)
+        ax1.fill_between(x, y_nocalib1 - yerr_nocalib1, y_nocalib1 + yerr_nocalib1, color='blue', alpha=0.3)
+
+        # # Plotting for metric2
+        # y_calib2 = mean_errors_calib2.loc[sub]
+        # y_calib2 = y_calib2.where(y_calib2 != 0, np.nan)
+        # y_nocalib2 = mean_errors_nocalib2.loc[sub]
+        # y_nocalib2 = y_nocalib2.where(y_nocalib2 != 0, np.nan)
+        # ax2.plot(x, y_calib2, label=f'{metric2} Calib', color='red', linestyle='--')
+        # ax2.plot(x, y_nocalib2, label=f'{metric2} NoCalib', color='green', linestyle='--')
+        # ax2.fill_between(x, y_calib2 - std_errors_calib2.loc[sub], y_calib2 + std_errors_calib2.loc[sub], color='red', alpha=0.3)
+        # ax2.fill_between(x, y_nocalib2 - std_errors_nocalib2.loc[sub], y_nocalib2 + std_errors_nocalib2.loc[sub], color='green', alpha=0.3)
+
+        ax1.set_title(f'Subject {sub}')
+        ax1.set_xlabel('Day and Block')
+        ax1.set_ylabel(metric1)
+        ax2.set_ylabel(metric2)
+
+        ax1.set_xticks(x)
+        ax1.set_xticklabels(col_names, rotation=90)
+
+        ax1.legend(loc='upper left')
+        ax2.legend(loc='upper right')
 
     plt.tight_layout()
     plt.show()

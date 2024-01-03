@@ -2,6 +2,19 @@ import numpy as np
 import pandas as pd
 
 def add_metrics(df):
+    '''
+    This function computes additional metrics:
+    i/f refers to initial and final saccade landing points
+    i/f errX, errY: horizontal and vertical errors
+    i/f err: Euclidean distance of saccade landing points from the target location
+    i/f gain: Ratio of saccade vector to target vector
+    eccentricity/polang: eccentricity and polar angle of the target from the center
+    i/f pea: Percentage error in saccade amplitude, this was adopted from Muri et al., 1996
+    i/f ang: Angular deviation of saccade landing point relative to the target point
+    i/f theta: Angular difference between the error vector and the target vector
+    i/f radial: Radial difference between the error vector and the target fector
+    i/f tangential: Tangential difference between the error vector and the target vector
+    '''
     # error vectors and magnitudes
     df['ierrX'] = df['isaccX'] - df['TarX']
     df['ierrY'] = df['isaccY'] - df['TarY']
@@ -102,31 +115,20 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
         # Remove specified subjects
         df = df[~df['subjID'].isin(sub_rem)]
         # Remove blocks with trials less than 25
-        blocks_to_remove = df.groupby(['day', 'rnum']).filter(lambda x: x['tnum'].count() <= 25)[['day', 'rnum']].drop_duplicates()
+        blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 25)[['subjID', 'day', 'rnum']].drop_duplicates()
         df = df[~df.set_index(['day', 'rnum']).index.isin(blocks_to_remove.set_index(['day', 'rnum']).index)]
         return df, blocks_to_remove
 
-    summary = {"Removed Subjects": sub_rem, "Removed Blocks": {}}
 
     # Remove blocks with low trial count and update summary
     df1, removed_blocks_df1 = remove_low_trial_blocks(df1, sub_rem)
-    summary["Removed Blocks"]["df1"] = removed_blocks_df1
-
     df1_all5, removed_blocks_df1_all5 = remove_low_trial_blocks(df1_all5, sub_rem)
-    summary["Removed Blocks"]["df1_all5"] = removed_blocks_df1_all5
-
     df2, removed_blocks_df2 = remove_low_trial_blocks(df2, sub_rem)
-    summary["Removed Blocks"]["df2"] = removed_blocks_df2
-
     df2_all5, removed_blocks_df2_all5 = remove_low_trial_blocks(df2_all5, sub_rem)
-    summary["Removed Blocks"]["df2_all5"] = removed_blocks_df2_all5
 
-    for key, value in summary.items():
-        if key == "Removed Blocks":
-            print(f"{key}:")
-            for df_key, blocks in value.items():
-                print(f"  {df_key}: {blocks}")
-        else:
-            print(f"{key}: {value}")
+    # Print a summary of subjects and blocks that have been removed
+    print(f"Removed subjects: {sub_rem}")
+    print("Removed blocks:")
+    print(removed_blocks_df1.reset_index(drop=True))
 
     return df1, df1_all5, df2, df2_all5
