@@ -115,8 +115,8 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
         # Remove specified subjects
         df = df[~df['subjID'].isin(sub_rem)]
         # Remove blocks with trials less than 25
-        blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 25)[['subjID', 'day', 'rnum']].drop_duplicates()
-        df = df[~df.set_index(['day', 'rnum']).index.isin(blocks_to_remove.set_index(['day', 'rnum']).index)]
+        blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 30)[['subjID', 'day', 'rnum']].drop_duplicates()
+        df = df[~df.set_index(['subjID', 'day', 'rnum']).index.isin(blocks_to_remove.set_index(['subjID', 'day', 'rnum']).index)]
         return df, blocks_to_remove
 
 
@@ -128,7 +128,21 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
 
     # Print a summary of subjects and blocks that have been removed
     print(f"Removed subjects: {sub_rem}")
-    print("Removed blocks:")
+    print("Removed blocks df1:")
     print(removed_blocks_df1.reset_index(drop=True))
+    # print('Blocks remaining df calib:')
+    # conditions = {
+    #     'MidTMS pro': (df1['ispro'] == 1) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 1),
+    #     'NoTMS pro': (df1['ispro'] == 1) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 0),
+    #     'MidTMS anti': (df1['ispro'] == 0) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 1),
+    #     'NoTMS anti': (df1['ispro'] == 0) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 0),
+    #     'EarlyTMS': (df1['day'] == 4),
+    #     'MidTMS dangit': (df1['day'] == 5)
+    # }
+    # df1_copy = df1.copy()
+    # df1_copy['condition'] = df1_copy.apply(lambda row: next((key for key, value in conditions.items() if value(row)), None), axis=1)
+    # summary_df = df1_copy.groupby(['subjID', 'condition']).agg({'rnum': 'nunique', 'tnum': 'nunique'}).reset_index()
+    # summary_df.columns = ['subjID', 'condition', 'blocks_left', 'trials_left']
+    # print(summary_df)
 
     return df1, df1_all5, df2, df2_all5

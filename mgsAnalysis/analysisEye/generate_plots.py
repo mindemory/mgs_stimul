@@ -234,16 +234,12 @@ def group_plot_orig(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
 
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
-    #df = df[df['fsacc_err']<4]
-    #errs_to_plot = ['fsacc_err', 'fsacc_theta_err', 'fsacc_theta_rot', 'fsacc_theta_rot_normed',
-    #                'fsacc_radius_err', 'fsacc_err_rot', 'fsacc_err_rot_normed', 'fsacc_rt', 'isacc_peakvel', 'fsacc_peakvel']
     errs_to_plot = ['ierr', 'ferr', 'igain', 'fgain', 'ipea', 
                     'fpea', 'itheta', 'iamp', 'idir', 'isacc_peakvel']
     
     n_rows = 2
     n_cols = 5
     alpha_val = 0.8
-    #tmp_df = df[df['TMS_condition']=='No TMS']
     for ss in range(len(subjIDs)):
         subj_df =  df[df['subjID']==subjIDs[ss]]
         fig, axes = plt.subplots(n_rows, n_cols, figsize = (25, 10))
@@ -275,18 +271,8 @@ def distribution_plots(df):
         # sns.histplot(data=df, x=df[df['TMS_condition']=='TMS outVF']['fsacc_err'], alpha = 0.5, label='TMS outVF')
         
 def daywise_heatmap(df, df_all5, sub_list, metric):
-    # col_names = []
-    # for day in range(1, 6):
-    #     if day < 4:
-    #         max_run = 10
-    #     elif day == 4:
-    #         max_run = 6
-    #     elif day == 5:
-    #         max_run = 7
-    # col_names = col_names.append(f"Day {day} Block {rnum}" for rnum in range(1, max_run))
-    # print(col_names)
 
-    matrix_df = pd.DataFrame(index=sub_list)#, columns=col_names)
+    matrix_df = pd.DataFrame(index=sub_list)
     for sub in sub_list:
         for day in range(1, 6):
             if day < 4:
@@ -320,11 +306,40 @@ def daywise_heatmap(df, df_all5, sub_list, metric):
     plt.show()
 
 
-def plot_metric(ax, x, y_data, y_error, color, label, fill_alpha=0.3):
+def plot_metric(ax, x, y_data, color, label, y_error=None):
+    '''
+    This function plots data and error as shaded line around it.
+    '''
     y_data = y_data.where(y_data != 0, np.nan)
-    y_error = y_error.where(y_error != 0, np.nan)
     ax.plot(x, y_data, label=label, color=color)
-    ax.fill_between(x, y_data - y_error, y_data + y_error, color=color, alpha=fill_alpha)
+    if y_error is not None:
+        y_error = y_error.where(y_error != 0, np.nan)
+        ax.fill_between(x, y_data - y_error, y_data + y_error, color=color, alpha=0.3)
+
+def plot_block_splitters(ax, col_names, df, sub):
+    for col_idx, col in enumerate(col_names):
+        block_num = int(col.split(' ')[-1])
+        day_num = int(col.split(' ')[1])
+
+        block_df = df[(df['day'] == day_num) & (df['rnum'] == block_num) & (df['subjID'] == sub)]
+        
+        if block_df.shape[0] == 0:
+            color = 'white'
+        else:
+            if block_df['ispro'].iloc[0] == 1:
+                color = 'lightblue'
+            else:
+                color = 'lightcoral'
+        
+        ax.axvspan(col_idx - 0.5, col_idx + 0.5, facecolor=color, alpha=0.3)
+
+        if col.endswith("Block 1"):
+            if block_df['istms'].eq(0).any():
+                ax.axvline(x=col_idx-0.5, color='orange', linewidth=2)
+            else:
+                ax.axvline(x=col_idx-0.5, color='black', linewidth=2)
+        else:
+            ax.axvline(x=col_idx-0.5, color='grey', linestyle='--')
 
 
 def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metric):
@@ -343,43 +358,17 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
         x = range(len(col_names))
 
         y_calib = mean_errors_calib.loc[sub]
-        y_calib = y_calib.where(y_calib != 0, np.nan)
         y_nocalib = mean_errors_nocalib.loc[sub]
-        y_nocalib = y_nocalib.where(y_nocalib != 0, np.nan)
-        ax.plot(x, y_calib, label='Calib Mean Error', color='black')
-        ax.plot(x, y_nocalib, label='NoCalib Mean Error', color='blue')
-        
-        if metric != 'trial_count':
+        if metric == 'trial_count':
+            plot_metric(ax, x, y_calib, 'black', 'Calib Count')
+            plot_metric(ax, x, y_nocalib, 'blue', 'NoCalib Count')
+        else:
             yerr_calib = std_errors_calib.loc[sub]
-            yerr_calib = yerr_calib.where(yerr_calib != 0, np.nan)
             yerr_nocalib = std_errors_nocalib.loc[sub]
-            yerr_nocalib = yerr_nocalib.where(yerr_nocalib != 0, np.nan)
-            ax.fill_between(x, y_calib - yerr_calib, y_calib + yerr_calib, color='black', alpha=0.3)
-            ax.fill_between(x, y_nocalib - yerr_nocalib, y_nocalib + yerr_nocalib, color='blue', alpha=0.3)
+            plot_metric(ax, x, y_calib, 'black', 'Calib Count', yerr_calib)
+            plot_metric(ax, x, y_nocalib, 'blue', 'NoCalib Count', yerr_nocalib)
 
-        for col_idx, col in enumerate(col_names):
-            block_num = int(col.split(' ')[-1])
-            day_num = int(col.split(' ')[1])
-
-            block_df = df_nocalib[(df_nocalib['day'] == day_num) & (df_nocalib['rnum'] == block_num) & (df_nocalib['subjID'] == sub)]
-            
-            if block_df.shape[0] == 0:
-                color = 'white'
-            else:
-                if block_df['ispro'].iloc[0] == 1:
-                    color = 'lightblue'
-                else:
-                    color = 'lightcoral'
-            
-            ax.axvspan(col_idx - 0.5, col_idx + 0.5, facecolor=color, alpha=0.3)
-
-            if col.endswith("Block 1"):
-                if block_df['istms'].eq(0).any():
-                    ax.axvline(x=col_idx-0.5, color='orange', linewidth=2)
-                else:
-                    ax.axvline(x=col_idx-0.5, color='black', linewidth=2)
-            else:
-                ax.axvline(x=col_idx-0.5, color='grey', linestyle='--')
+        plot_block_splitters(ax, col_names, df_nocalib, sub)
 
         ax.set_title(f'Subject {sub}')
         ax.set_xlabel('Day and Block')
@@ -400,11 +389,11 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
 
 def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metrics):
     metric1, metric2 = metrics
-    mean_errors_calib1, std_errors_calib1 = compute_errors(df_calib, df_calib_all5, metric1, sub_list)
-    mean_errors_nocalib1, std_errors_nocalib1 = compute_errors(df_nocalib, df_nocalib_all5, metric1, sub_list)
-    mean_errors_calib2, std_errors_calib2 = compute_errors(df_calib, df_calib_all5, metric2, sub_list)
-    mean_errors_nocalib2, std_errors_nocalib2 = compute_errors(df_nocalib, df_nocalib_all5, metric2, sub_list)
-    col_names = mean_errors_calib1.columns
+    mean_calib1, std_calib1 = compute_errors(df_calib, df_calib_all5, metric1, sub_list)
+    mean_nocalib1, std_nocalib1 = compute_errors(df_nocalib, df_nocalib_all5, metric1, sub_list)
+    mean_calib2, std_calib2 = compute_errors(df_calib, df_calib_all5, metric2, sub_list)
+    mean_nocalib2, std_nocalib2 = compute_errors(df_nocalib, df_nocalib_all5, metric2, sub_list)
+    col_names = mean_calib1.columns
 
     fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
     for idx, sub in enumerate(sub_list):
@@ -413,29 +402,22 @@ def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_al
 
         x = range(len(col_names))
 
-        y_calib1 = mean_errors_calib1.loc[sub]
-        y_calib1 = y_calib1.where(y_calib1 != 0, np.nan)
-        y_nocalib1 = mean_errors_nocalib1.loc[sub]
-        y_nocalib1 = y_nocalib1.where(y_nocalib1 != 0, np.nan)
-        yerr_calib1 = std_errors_calib1.loc[sub]
-        yerr_calib1 = yerr_calib1.where(yerr_calib1 != 0, np.nan)
-        yerr_nocalib1 = std_errors_nocalib1.loc[sub]
-        yerr_nocalib1 = yerr_nocalib1.where(yerr_nocalib1 != 0, np.nan)
-        ax1.plot(x, y_calib1, label=f'{metric1} Calib', color='black')
-        ax1.plot(x, y_nocalib1, label=f'{metric1} NoCalib', color='blue')
-        ax1.fill_between(x, y_calib1 - yerr_calib1, y_calib1 + yerr_calib1, color='black', alpha=0.3)
-        ax1.fill_between(x, y_nocalib1 - yerr_nocalib1, y_nocalib1 + yerr_nocalib1, color='blue', alpha=0.3)
+        y_calib1 = mean_calib1.loc[sub]
+        yerr_calib1 = std_calib1.loc[sub]
+        y_nocalib1 = mean_nocalib1.loc[sub]
+        yerr_nocalib1 = std_nocalib1.loc[sub]
+        plot_metric(ax1, x, y_calib1,'black', f'{metric1} Calib', yerr_calib1)
+        plot_metric(ax1, x, y_nocalib1,'blue', f'{metric1} Nocalib', yerr_nocalib1)
+        
 
-        # # Plotting for metric2
-        # y_calib2 = mean_errors_calib2.loc[sub]
-        # y_calib2 = y_calib2.where(y_calib2 != 0, np.nan)
-        # y_nocalib2 = mean_errors_nocalib2.loc[sub]
-        # y_nocalib2 = y_nocalib2.where(y_nocalib2 != 0, np.nan)
-        # ax2.plot(x, y_calib2, label=f'{metric2} Calib', color='red', linestyle='--')
-        # ax2.plot(x, y_nocalib2, label=f'{metric2} NoCalib', color='green', linestyle='--')
-        # ax2.fill_between(x, y_calib2 - std_errors_calib2.loc[sub], y_calib2 + std_errors_calib2.loc[sub], color='red', alpha=0.3)
-        # ax2.fill_between(x, y_nocalib2 - std_errors_nocalib2.loc[sub], y_nocalib2 + std_errors_nocalib2.loc[sub], color='green', alpha=0.3)
+        y_calib2 = mean_calib2.loc[sub]
+        yerr_calib2 = std_calib2.loc[sub]
+        y_nocalib2 = mean_nocalib2.loc[sub]
+        yerr_nocalib2 = std_nocalib2.loc[sub]
+        plot_metric(ax1, x, y_calib2,'black', f'{metric2} Calib', yerr_calib2)
+        plot_metric(ax1, x, y_nocalib2,'blue', f'{metric2} Nocalib', yerr_nocalib2)
 
+        
         ax1.set_title(f'Subject {sub}')
         ax1.set_xlabel('Day and Block')
         ax1.set_ylabel(metric1)

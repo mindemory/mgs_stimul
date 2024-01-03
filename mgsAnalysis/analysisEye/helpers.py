@@ -139,14 +139,14 @@ def compute_errors(df, df_all5, sub_list, metric):
                     std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
                 else:
                     mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = 0
-                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = std_error
+                    std_errors_df.at[sub, f"Day {day} Block {rnum}"] = 0
     mean_errors_df.fillna(0, inplace=True)
     std_errors_df.fillna(0, inplace=True)
     return mean_errors_df, std_errors_df
 
 
 def compute_tcount(df, df_all5, sub_list):
-    mean_errors_df = pd.DataFrame(index=sub_list)#, columns=col_names)
+    mean_errors_df = pd.DataFrame(index=sub_list)
     for sub in sub_list:
         for day in range(1, 6):
             df_sub_day = df[(df['subjID'] == sub) & (df['day'] == day)] if day < 4 else df_all5[(df_all5['subjID'] == sub) & (df_all5['day'] == day)]
