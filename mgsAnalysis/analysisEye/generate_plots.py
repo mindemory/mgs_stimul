@@ -389,10 +389,10 @@ def daywise_trend(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list
 
 def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_all5, sub_list, metrics):
     metric1, metric2 = metrics
-    mean_calib1, std_calib1 = compute_errors(df_calib, df_calib_all5, metric1, sub_list)
-    mean_nocalib1, std_nocalib1 = compute_errors(df_nocalib, df_nocalib_all5, metric1, sub_list)
-    mean_calib2, std_calib2 = compute_errors(df_calib, df_calib_all5, metric2, sub_list)
-    mean_nocalib2, std_nocalib2 = compute_errors(df_nocalib, df_nocalib_all5, metric2, sub_list)
+    mean_calib1, std_calib1 = compute_errors(df_calib, df_calib_all5, sub_list, metric1)
+    mean_nocalib1, std_nocalib1 = compute_errors(df_nocalib, df_nocalib_all5, sub_list, metric1)
+    mean_calib2, std_calib2 = compute_errors(df_calib, df_calib_all5, sub_list, metric2)
+    mean_nocalib2, std_nocalib2 = compute_errors(df_nocalib, df_nocalib_all5, sub_list, metric2)
     col_names = mean_calib1.columns
 
     fig, axs = plt.subplots(len(sub_list), 1, figsize=(15, 5 * len(sub_list)))
@@ -401,7 +401,6 @@ def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_al
         ax2 = ax1.twinx()
 
         x = range(len(col_names))
-
         y_calib1 = mean_calib1.loc[sub]
         yerr_calib1 = std_calib1.loc[sub]
         y_nocalib1 = mean_nocalib1.loc[sub]
@@ -409,14 +408,12 @@ def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_al
         plot_metric(ax1, x, y_calib1,'black', f'{metric1} Calib', yerr_calib1)
         plot_metric(ax1, x, y_nocalib1,'blue', f'{metric1} Nocalib', yerr_nocalib1)
         
-
         y_calib2 = mean_calib2.loc[sub]
         yerr_calib2 = std_calib2.loc[sub]
         y_nocalib2 = mean_nocalib2.loc[sub]
         yerr_nocalib2 = std_nocalib2.loc[sub]
-        plot_metric(ax1, x, y_calib2,'black', f'{metric2} Calib', yerr_calib2)
-        plot_metric(ax1, x, y_nocalib2,'blue', f'{metric2} Nocalib', yerr_nocalib2)
-
+        plot_metric(ax2, x, y_calib2,'black', f'{metric2} Calib', yerr_calib2)
+        plot_metric(ax2, x, y_nocalib2,'blue', f'{metric2} Nocalib', yerr_nocalib2)
         
         ax1.set_title(f'Subject {sub}')
         ax1.set_xlabel('Day and Block')
@@ -425,9 +422,6 @@ def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_al
 
         ax1.set_xticks(x)
         ax1.set_xticklabels(col_names, rotation=90)
-
-        ax1.legend(loc='upper left')
-        ax2.legend(loc='upper right')
 
     plt.tight_layout()
     plt.show()
