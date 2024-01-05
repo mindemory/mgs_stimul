@@ -100,25 +100,11 @@ def rotate_to_scale(df):
                               'outstim_theta_range': outstim_theta_range})
     return df, angular_df
 
-def variance_error_summary(df):
-    subjIDs = df['subjID'].unique()
-    new_cols = ['isacc_err_rot', 'fsacc_err_rot', 'isacc_theta_rot', 'fsacc_theta_rot']
-    df['isacc_err_rot'] = (df['isaccX_rotated']-df['TarX_rotated'])**2 + (df['isaccY_rotated']-df['TarY_rotated'])**2
-    df['fsacc_err_rot'] = (df['fsaccX_rotated']-df['TarX_rotated'])**2 + (df['fsaccY_rotated']-df['TarY_rotated'])**2
-    df['isacc_theta_rot'] = df['isaccTheta_rotated'] - df['TarTheta_rotated']
-    df['fsacc_theta_rot'] = df['fsaccTheta_rotated'] - df['TarTheta_rotated']
-    for cc in new_cols:
-        #df[cc + '_normed'] = 0
-        temp_normed = np.zeros((len(df['TarX']), 1))
-        for ss in range(len(subjIDs)):
-            subj_df = df[df['subjID'] == subjIDs[ss]]
-            subj_idx = df.index[df['subjID'] == subjIDs[ss]]
-            this_subj_norm_factor = subj_df['TarTheta_rotated'].max() - subj_df['TarTheta_rotated'].min()
-            temp_normed[subj_idx] = df.loc[subj_idx, [cc]]/this_subj_norm_factor
-            # print(subjIDs[ss], this_subj_norm_factor, len(subj_idx))
-            # print(cc)
-        df[cc + '_normed'] = temp_normed
-    return df
+
+def calculate_mean_and_se(group, error_metric):
+    mean = group[error_metric].mean()
+    se = group[error_metric].sem()
+    return pd.Series({'mean': mean, 'se': se})
 
 def compute_errors(df, df_all5, sub_list, metric):
     mean_errors_df = pd.DataFrame(index=sub_list)

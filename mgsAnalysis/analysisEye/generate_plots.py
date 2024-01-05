@@ -5,232 +5,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import gaussian_kde as gkde
 
-from helpers import compute_errors, compute_tcount
+from helpers import compute_errors, compute_tcount, calculate_mean_and_se
 
 msize = 10
 axes_fontsize = 14
 title_fontsize = 18
 #sns.set()
-def subject_wise_error_plot(df, error_measure, normalizer = False, indiv_summary = False, remove_outliers = False):
-    TMSconds = ['No TMS', 'TMS intoVF', 'TMS outVF']
-    subjIDs = df['subjID'].unique()
-    Y1 = np.zeros((len(subjIDs), len(TMSconds)))
-    Y2 = np.zeros((len(subjIDs), len(TMSconds)))
-    Yerr1 = np.zeros((len(subjIDs), len(TMSconds)))
-    Yerr2 = np.zeros((len(subjIDs), len(TMSconds)))
-
-    for ss in range(len(subjIDs)):
-        for ii in range(len(TMSconds)):
-            this_prodf = df[(df['subjID'] == subjIDs[ss]) & 
-                            (df['TMS_condition'] == TMSconds[ii]) &
-                            ((df['ispro'] == 1))]
-            this_antidf = df[(df['subjID'] == subjIDs[ss]) & 
-                            (df['TMS_condition'] == TMSconds[ii]) &
-                            ((df['ispro'] == 0))]
-            
-            # individualized normalizer is intended to detrend the data to make comparisons across subjects more meaningful
-            if normalizer == 'individualized' or normalizer == 'both':
-                this_df = df[(df['subjID'] == subjIDs[ss])]
-                this_mean = np.nanmean(this_df[error_measure])
-                this_prodf.loc[:, error_measure] -= this_mean
-                this_antidf.loc[:, error_measure] -= this_mean
-
-            # remove outliers for each subject for pro and anti for each condition that are 3 stdevs away from mean
-            if remove_outliers == True:
-                stdev_pro = np.nanstd(this_prodf[error_measure])
-                stdev_anti = np.nanstd(this_antidf[error_measure])
-                mean_pro = np.nanmean(this_prodf[error_measure])
-                mean_anti = np.nanmean(this_antidf[error_measure])
-                nstdevs = 2
-                this_prodf = this_prodf[(this_prodf[error_measure] > mean_pro-nstdevs*stdev_pro) &
-                                        (this_prodf[error_measure] < mean_pro+nstdevs*stdev_pro)]
-                this_antidf = this_antidf[(this_antidf[error_measure] > mean_anti-nstdevs*stdev_anti) &
-                                          (this_antidf[error_measure] < mean_anti+nstdevs*stdev_anti)]
-
-            Y1[ss, ii] = np.nanmean(this_prodf[error_measure])
-            Y2[ss, ii] = np.nanmean(this_antidf[error_measure])
-            
-            Yerr1[ss, ii] = sem(this_prodf[error_measure], nan_policy='omit')
-            Yerr2[ss, ii] = sem(this_antidf[error_measure], nan_policy='omit')
-        if normalizer == 'group_level' or normalizer == 'both':
-            normalizer_val_pro = Y1[ss, 0]
-            normalizer_val_anti = Y2[ss, 0]
-            Y1[ss, :] = (Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro + (normalizer_val_pro - normalizer_val_pro)
-            Y2[ss, :] = (Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti + (normalizer_val_anti - normalizer_val_pro)
-            #Y1[ss, :] = np.abs(Y1[ss, :] - normalizer_val_pro) / normalizer_val_pro + (normalizer_val_pro - normalizer_val_pro)
-            #Y2[ss, :] = np.abs(Y2[ss, :] - normalizer_val_anti) / normalizer_val_anti + (normalizer_val_anti - normalizer_val_pro)
-    ['igain', 'fgain', 'ipea', 
-                    'fpea', 'itheta', 'iamp', 'idir', 'ftheta', 'famp', 'fdir', 'isacc_peakvel', 'fsacc_peakvel']
-    if error_measure == 'fsacc_err' or error_measure == 'ferr':
-        t_string = 'Final saccade error'
-    elif error_measure == 'isacc_err' or error_measure == 'ierr':
-        t_string = 'Initial saccade error'
-    elif error_measure == 'fsacc_rt':
-        t_string = 'Final saccade reaction time'
-    elif error_measure == 'isacc_rt':
-        t_string = 'Initial saccade reaction time'
-    elif error_measure == 'fgain':
-        t_string = 'Final saccade gain'
-    elif error_measure == 'igain':
-        t_string = 'Initial saccade gain'
-    elif error_measure == 'fpea':
-        t_string = 'Final saccade pea'
-    elif error_measure == 'ipea':
-        t_string = 'Initial saccade pea'
-    elif error_measure == 'ftheta':
-        t_string = 'Final saccade directional error'
-    elif error_measure == 'itheta':
-        t_string = 'Initial saccade directional error'
-    elif error_measure == 'famp':
-        t_string = 'Final saccade amplitude error'
-    elif error_measure == 'iamp':
-        t_string = 'Initial saccade amplitude error'
-    elif error_measure == 'corrected_theta_err':
-        t_string = 'Corrected angular error'
-    elif error_measure == 'corrected_radius_err':
-        t_string = 'Corrected radial error'
-    if indiv_summary == True:
-        if normalizer == 'individualized':
-            t_string = t_string + ', normalizer = individualized'
-        elif normalizer == 'group_level':
-            t_string = t_string + ', normalizer = group-level'
-
-        tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string)
-    else:
-        group_plot_orig(df, Y1, Y2, error_measure, t_string)
-        #group_plot(df, Y1, Y2, error_measure, t_string)
-   
-
-def tiled_plot(df, Y1, Y2, Yerr1, Yerr2, error_measure, t_string = 'Title goes here'):
-    X1 = [0.3, 0.8, 1.3]
-    X2 = [round(x + 0.1, 1) for x in X1]
-    X_sum = [sum(value) for value in zip(X1, X2)]
-    x_tick_pos = [round(x/2, 2) for x in X_sum]
-    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
-    
-    TMSconds = ['No TMS', 'TMS intoVF', 'TMS outVF']
-    subjIDs = df['subjID'].unique()
-    N1 = [1, 1, 2, 2, 2, 2, 2, 2, 3, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4] # num rows for tiled plot
-    N2 = [1, 2, 2, 2, 3, 3, 4, 4, 3, 5, 4, 4, 5, 5, 5, 4, 5, 5, 5, 5] # num cols for tiled plot
-    nrows = N1[len(subjIDs)-1]
-    ncols = N2[len(subjIDs)-1]
-
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(20, 20))
-    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
-    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
-    print(min_y)
-    for ss in range(len(subjIDs)):
-        ax = axes[ss // ncols, ss % ncols]
-        ax.errorbar(X1, Y1[ss, :], yerr = Yerr1[ss, :], fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-        ax.errorbar(X2, Y2[ss, :], yerr = Yerr2[ss, :], fmt = '.', ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-        ax.plot(X1, Y1[ss, :], marker = 'o', color = 'blue', linestyle = 'solid', markersize = msize, label = '__no_legend')
-        ax.plot(X2, Y2[ss, :], marker = 'o',  color = 'red', linestyle = 'solid', markersize = msize, label = '__no_legend')
-        ax.set_ylabel(error_measure, fontsize = axes_fontsize)
-        ax.set_title('subjID: ' +  str(subjIDs[ss]), fontsize = axes_fontsize)
-        ax.set_xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
-        if min_y > 0:
-            ax.set_ylim(0.8*min_y, 1.2*max_y)
-        else:
-            ax.set_ylim(1.2*min_y, 1.2*max_y)
-        #ax.set_aspect('equal')
-    plt.tight_layout()
-    
-    plt.suptitle(t_string, fontsize = title_fontsize, y = 0, fontweight = 'bold')
-    #plt.legend('Location', )
-    plt.show()
-
-def calculate_mean_and_se(group):
-    mean = group['ierr'].mean()
-    se = group['ierr'].sem()
-    return pd.Series({'mean_ierr': mean, 'se_ierr': se})
-
-def group_plot(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
-    X1 = [0.3, 0.8, 1.3]
-    # X2 = [round(x + 0.1, 1) for x in X1]
-    # X_sum = [sum(value) for value in zip(X1, X2)]
-    # x_tick_pos = [round(x/2, 1) for x in X_sum]
-    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
-    subjIDs = df['subjID'].unique()
-    num_subs = len(subjIDs)
-    t_string = t_string + ', #subs = ' + str(num_subs)
-    Yerr1 = sem(Y1, axis=0)
-    Yerr2 = sem(Y2, axis=0)
-    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
-    
-    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
-    fig = plt.figure(figsize = (5, 8))
-
-    print('Prosaccade errors')
-    print(np.mean(Y1, axis = 0))
-    print(Yerr1)
-    #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
-    
-    bars = plt.bar(X1, np.mean(Y1, axis=0), width = 0.2)
-    bars[0].set_color("#1B9E77")
-    bars[1].set_color("#D95F02")
-    bars[2].set_color("#7570B3")
-    plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = 'o', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    for ss in range(len(subjIDs)):
-        plt.plot(X1, Y1[ss, :], marker = 'o', color = 'black', alpha = 0.3, linestyle = 'dashed', markersize = msize*0.5, label = '__no_legend')
-        
-    plt.xticks(X1, x_label_names, fontsize = 18)
-    if error_measure == 'isacc_rt':
-        plt.ylabel('RT (s)', fontsize = 18)
-        plt.title('Reaction time', fontsize = 24, color='black')
-    elif error_measure == 'isacc_err':
-        plt.ylabel('MGS error (dva)', fontsize = 18)
-        plt.title('Memory error', fontsize = 24, color='black')
-    #plt.savefig('/d/DATA/hyper/conferences/Dake_SfN2023/behavior_ierr.eps', format='eps', dpi = 1200)
-    plt.show()
-    
-
-def group_plot_orig(df, Y1, Y2, error_measure, t_string = 'Title goes here'):
-    X1 = [0.3, 0.8, 1.3]
-    X2 = [round(x + 0.1, 1) for x in X1]
-    X_sum = [sum(value) for value in zip(X1, X2)]
-    x_tick_pos = [round(x/2, 2) for x in X_sum]
-    x_label_names = ['No TMS', 'MGS inVF', 'MGS outVF']
-    subjIDs = df['subjID'].unique()
-    num_subs = len(subjIDs)
-    t_string = t_string + ', #subs = ' + str(num_subs)
-    if error_measure == 'isacc_rt':
-        Y1 = Y1 * 1000
-        Y2 = Y2 * 1000
-    Yerr1 = sem(Y1, axis=0)
-    Yerr2 = sem(Y2, axis=0)
-    min_y = min(np.nanmin(Y1-Yerr1), np.nanmin(Y2-Yerr2))
-    
-    max_y = max(np.nanmax(Y1+Yerr1), np.nanmax(Y2+Yerr2))
-    fig = plt.figure(figsize = (5, 8))
-    
-    print('Prosaccade errors')
-    print(np.mean(Y1, axis = 0))
-    print(Yerr1)
-
-    print('Antisaccade errors')
-    print(np.mean(Y2, axis = 0))
-    print(Yerr2)
-    #legend = ax.legend(handles=[line], labels=['Legend Label'], loc='upper right')
-    for ss in range(len(subjIDs)):
-        plt.plot(X1, Y1[ss, :], marker = 'o', color = 'white', alpha = 0.2, linestyle = 'dashed', markersize = msize*0.8, label = '__no_legend')
-    
-    plt.errorbar(X1, np.mean(Y1, axis=0), yerr=Yerr1, fmt = '.', ecolor = 'blue', markersize = msize, markerfacecolor = 'blue', markeredgecolor = 'blue', label = 'pro')
-    plt.errorbar(X2, np.mean(Y2, axis=0), yerr=Yerr2, fmt = '.',  ecolor = 'red', markersize = msize, markerfacecolor = 'red', markeredgecolor = 'red', label = 'anti')
-    plt.plot(X1, np.mean(Y1, axis=0), marker = 's', color = 'blue', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-        #ax.plot(X1, Y1, marker = 's', color = 'blue', alpha = 0.9, linestyle = 'solid', markersize = msize, label = '__no_legend')
-    plt.plot(X2, np.mean(Y2, axis=0), marker = 's',  color = 'red', linestyle = 'solid', markersize = msize*1.2, label = '__no_legend')
-    plt.xticks(x_tick_pos, x_label_names, fontsize = axes_fontsize)
-    #ax.set_ylabel(error_measure, fontsize = axes_fontsize)
-    #ax.set_title(t_string, fontsize = title_fontsize, color='white')
-    if error_measure == 'isacc_rt':
-        plt.ylabel('RT (ms)', fontsize = axes_fontsize)
-        plt.ylim([250, 450])
-        plt.title('Reaction time', fontsize = title_fontsize)
-    elif error_measure == 'isacc_err':
-        plt.ylabel('MGS error (dva)', fontsize = axes_fontsize)
-        plt.title('Memory error', fontsize = title_fontsize)
-    plt.show()
-
 
 def distribution_plots(df):
     subjIDs = df['subjID'].unique()
@@ -425,3 +205,65 @@ def daywise_trend_dual_metric(df_calib, df_calib_all5, df_nocalib, df_nocalib_al
 
     plt.tight_layout()
     plt.show()
+
+
+def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
+    
+    conds_all5 = {
+        'No TMS': df_all5[(df_all5['TMS_condition'] == 'No TMS') & (df_all5['day'].isin([1, 2, 3]))],
+        'mid inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'].isin([1, 2, 3]))],
+        'mid outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'].isin([1, 2, 3]))],
+        'early inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'] == 4)],
+        'early outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'] == 4)],
+        'mid dangit inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'] == 5)],
+        'mid dangit outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'] == 5)],
+    }
+
+    conds = {
+        'No TMS pro': df[(df['TMS_condition'] == 'No TMS') & (df['ispro'] == 1) & (df['day'].isin([1, 2, 3]))],
+        'No TMS anti': df[(df['TMS_condition'] == 'No TMS') & (df['ispro'] == 0) & (df['day'].isin([1, 2, 3]))],
+        'TMS inVF pro': df[(df['TMS_condition'] == 'TMS intoVF') & (df['ispro'] == 1) & (df['day'].isin([1, 2, 3]))],
+        'TMS inVF anti': df[(df['TMS_condition'] == 'TMS intoVF') & (df['ispro'] == 0) & (df['day'].isin([1, 2, 3]))],
+        'TMS outVF pro': df[(df['TMS_condition'] == 'TMS outVF') & (df['ispro'] == 1) & (df['day'].isin([1, 2, 3]))],
+        'TMS outVF anti': df[(df['TMS_condition'] == 'TMS outVF') & (df['ispro'] == 0) & (df['day'].isin([1, 2, 3]))]
+    }
+    if metric == 'ierr':
+        y_range = [0, 3]
+    elif metric == 'ferr':
+        y_range = [0, 2]
+    elif metric == 'isacc_rt':
+        y_range = [0, 0.6]
+
+    results_all5 = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds_all5.items()}
+    combined_all5 = pd.concat(results_all5, names=['Condition']).reset_index()
+    results = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds.items()}
+    combined = pd.concat(results, names=['Condition']).reset_index()
+    
+
+    combined['Type'] = combined['Condition'].apply(lambda x: 'pro' if 'pro' in x else 'anti')
+    combined['TMS'] = combined['Condition'].apply(lambda x: 'NoTMS' if 'No TMS' in x else ('TMS inVF' if 'inVF' in x else 'TMS outVF'))
+    
+    fig, axs = plt.subplots(2, 1, figsize=(8, 10))
+    sns.pointplot(data=combined_all5, x='Condition', y='mean', linestyle="none", capsize=.2, errorbar="se", ax = axs[0])
+    sns.stripplot(data=combined_all5, x='Condition', y='mean', color="black", jitter=False, size=6, ax = axs[0])
+    sns.lineplot(data=combined_all5, x='Condition', y='mean', hue='subjID', 
+                    palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[0])
+    axs[0].set_title(f'Mean {metric} with Standard Error (N = {len(sublist_all5)} subjects)')
+    axs[0].set_ylabel(f'Mean {metric}')
+    axs[0].set_xlabel('Condition')
+    axs[0].set_ylim(y_range)
+
+    sns.pointplot(data=combined, x = 'Condition', y = 'mean', linestyle = 'none', hue = 'Type', capsize=.2, errobar="se", ax = axs[1])
+    sns.stripplot(data=combined, x='Condition', y='mean', color="black", hue = 'Type', jitter=False, size=6, ax = axs[1], label='')
+    # sns.lineplot(data=combined, x='Condition', y='mean', hue='subjID', 
+    #                 palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[1])
+
+    axs[1].set_title(f'Mean {metric} for Pro and Anti Conditions (N = {len(sublist)} subjects)')
+    axs[1].set_ylabel(f'Mean {metric}')
+    axs[1].set_xlabel('Condition')
+    axs[1].set_ylim(y_range)
+    
+    plt.tight_layout()
+    plt.show()
+
+    return combined, combined_all5
