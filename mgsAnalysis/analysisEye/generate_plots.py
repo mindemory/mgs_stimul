@@ -236,10 +236,9 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
 
     results_all5 = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds_all5.items()}
     combined_all5 = pd.concat(results_all5, names=['Condition']).reset_index()
+    combined_all5['time'] = combined_all5['Condition'].apply(lambda x: 'notms' if 'No TMS' in x else ('early' if 'early' in x else ('mid dangit' if 'mid dangit' in x else 'mid')))
     results = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds.items()}
     combined = pd.concat(results, names=['Condition']).reset_index()
-    
-
     combined['Type'] = combined['Condition'].apply(lambda x: 'pro' if 'pro' in x else 'anti')
     combined['TMS'] = combined['Condition'].apply(lambda x: 'NoTMS' if 'No TMS' in x else ('TMS inVF' if 'inVF' in x else 'TMS outVF'))
     
@@ -253,8 +252,8 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
     axs[0].set_xlabel('Condition')
     axs[0].set_ylim(y_range)
 
-    sns.pointplot(data=combined, x = 'Condition', y = 'mean', linestyle = 'none', hue = 'Type', capsize=.2, errobar="se", ax = axs[1])
-    sns.stripplot(data=combined, x='Condition', y='mean', color="black", hue = 'Type', jitter=False, size=6, ax = axs[1], label='')
+    sns.pointplot(data=combined, x = 'Condition', y = 'mean', linestyle = 'none', hue = 'Type', capsize=.2, errorbar="se", ax = axs[1])
+    sns.stripplot(data=combined, x='Condition', y='mean', palette="dark:black", hue = 'Type', jitter=False, size=6, ax = axs[1])
     # sns.lineplot(data=combined, x='Condition', y='mean', hue='subjID', 
     #                 palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[1])
 
