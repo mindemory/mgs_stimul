@@ -7,7 +7,8 @@ if nargin < 2
 end
 
 % Define frequencies, cycles and timepoints
-frequencies                                    = linspace(2, 55, 73);
+%frequencies                                    = linspace(2, 55, 73);
+frequencies                                    = linspace(2, 40, 53);
 cycles                                         = linspace(4, 15, numel(frequencies));
 time_points                                    = linspace(-1, 6, 200);
 

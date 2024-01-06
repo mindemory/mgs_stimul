@@ -32,10 +32,8 @@ for ii=1:length(fNames)
     else
         data_concat = [data_concat, dat];
     end
-    %data_concat = [data_concat, dat(1:63, :)];
 end
 hdr.nSamples = sample_count;
-%hdr.nChans = 63;
 
 % Fix the redundant flag issue (Added on 03/17/2023)
 drop_evts = [];

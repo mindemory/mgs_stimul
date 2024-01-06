@@ -50,7 +50,7 @@ end
 
 
 % Folder to save analysis data
-p.save = [p.analysis '/sub' p.subjID '/day' num2str(p.day, '%02d')];
+p.save = [p.analysis '/calib/sub' p.subjID '/day' num2str(p.day, '%02d')];
 p.save_eyedata = [p.save '/EyeData'];
 if ~exist(p.save, 'dir')
     mkdir(p.save);

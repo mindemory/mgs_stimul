@@ -130,19 +130,5 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
     print(f"Removed subjects: {sub_rem}")
     print("Removed blocks df1:")
     print(removed_blocks_df1.reset_index(drop=True))
-    # print('Blocks remaining df calib:')
-    # conditions = {
-    #     'MidTMS pro': (df1['ispro'] == 1) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 1),
-    #     'NoTMS pro': (df1['ispro'] == 1) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 0),
-    #     'MidTMS anti': (df1['ispro'] == 0) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 1),
-    #     'NoTMS anti': (df1['ispro'] == 0) & (df1['day'].isin([1, 2, 3])) & (df1['istms'] == 0),
-    #     'EarlyTMS': (df1['day'] == 4),
-    #     'MidTMS dangit': (df1['day'] == 5)
-    # }
-    # df1_copy = df1.copy()
-    # df1_copy['condition'] = df1_copy.apply(lambda row: next((key for key, value in conditions.items() if value(row)), None), axis=1)
-    # summary_df = df1_copy.groupby(['subjID', 'condition']).agg({'rnum': 'nunique', 'tnum': 'nunique'}).reset_index()
-    # summary_df.columns = ['subjID', 'condition', 'blocks_left', 'trials_left']
-    # print(summary_df)
 
     return df1, df1_all5, df2, df2_all5
