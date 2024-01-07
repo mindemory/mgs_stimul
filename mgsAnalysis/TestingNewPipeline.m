@@ -1,6 +1,6 @@
 function TestingNewPipeline(subjID, day)
 clearvars -except subjID day; close all;
-
+% subjID = 1; day = 2;
 left_occ_elecs = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
 right_occ_elecs = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
 
@@ -55,19 +55,19 @@ if any(strcmp(steps, 'concat'))
     end
 end
 
-%% Reading segmented data
-% stim-locked:
-%   'S 11': prointoVF
-%   'S 12': prooutVF
-%   'S 13': antiintoVF
-%   'S 14': antioutVF
-% fixation: 1s
-% sample: 0.5s
-% delay1: 2s
-% delay2: 2s
-% response: 0.85s
-% feedback: 0.8s
-% iti: 1/2s
+% %% Reading segmented data
+% % stim-locked:
+% %   'S 11': prointoVF
+% %   'S 12': prooutVF
+% %   'S 13': antiintoVF
+% %   'S 14': antioutVF
+% % fixation: 1s
+% % sample: 0.5s
+% % delay1: 2s
+% % delay2: 2s
+% % response: 0.85s
+% % feedback: 0.8s
+% % iti: 1/2s
 % if any(strcmp(steps, 'raweeg'))
 %     %if ~exist(fName.bandpass, 'file')
 %     % Reading segmented data
@@ -104,7 +104,7 @@ end
 % % ft_databrowser(cfg, data_eeg);
 % 
 % % cfg = []; cfg.viewmode = 'vertical'; ft_databrowser(cfg, data_eeg)
-% unrolled_data = data_eeg
+% % unrolled_data = data_eeg
 % 
 % flg_trls = [];
 % 
@@ -181,5 +181,4 @@ end
 % [POW.prooutVF, ITC.prooutVF, PHASE.prooutVF]             = compute_TFRs(epoc_prooutVF_minus_ERP, 1);
 % [POW.antiintoVF, ITC.antiintoVF, PHASE.antiintoVF]       = compute_TFRs(epoc_antiintoVF_minus_ERP, 1);
 % [POW.antioutVF, ITC.antioutVF, PHASE.antioutVF]          = compute_TFRs(epoc_antioutVF_minus_ERP, 1);
-% 
 end

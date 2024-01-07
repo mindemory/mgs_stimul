@@ -103,6 +103,7 @@ end
 % ft_databrowser(cfg, data_eeg);
 
 % cfg = []; cfg.viewmode = 'vertical'; ft_databrowser(cfg, data_eeg)
+% unrolled_data = data_eeg
 
 flg_trls = [];
 
@@ -110,7 +111,7 @@ cfg                            = [];
 cfg.reref                      = 'yes';
 cfg.refchannel                 = {'TP9', 'TP10'};
 cfg.refmethod                  = 'avg';
-cfg.implicitref                = {'Cz'};
+cfg.implicitref                = 'Cz';
 data_eeg                       = ft_preprocessing(cfg, data_eeg);
 
 % Select good trials for each epoched data type
