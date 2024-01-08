@@ -219,6 +219,17 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
         'mid dangit outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'] == 5)],
     }
 
+    conds_all5_analysis = {
+        'No TMS inVF': df_all5[(df_all5['TMS_condition'] == 'No TMS') & (df_all5['instimVF'] == 1) & (df_all5['day'].isin([1, 2, 3]))],
+        'No TMS outVF': df_all5[(df_all5['TMS_condition'] == 'No TMS') & (df_all5['instimVF'] == 0) & (df_all5['day'].isin([1, 2, 3]))],
+        'mid inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'].isin([1, 2, 3]))],
+        'mid outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'].isin([1, 2, 3]))],
+        'early inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'] == 4)],
+        'early outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'] == 4)],
+        'mid dangit inVF': df_all5[(df_all5['TMS_condition'] == 'TMS intoVF') & (df_all5['day'] == 5)],
+        'mid dangit outVF': df_all5[(df_all5['TMS_condition'] == 'TMS outVF') & (df_all5['day'] == 5)],
+    }
+
     conds = {
         'No TMS pro': df[(df['TMS_condition'] == 'No TMS') & (df['ispro'] == 1) & (df['day'].isin([1, 2, 3]))],
         'No TMS anti': df[(df['TMS_condition'] == 'No TMS') & (df['ispro'] == 0) & (df['day'].isin([1, 2, 3]))],
@@ -237,6 +248,14 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
     results_all5 = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds_all5.items()}
     combined_all5 = pd.concat(results_all5, names=['Condition']).reset_index()
     combined_all5['time'] = combined_all5['Condition'].apply(lambda x: 'notms' if 'No TMS' in x else ('early' if 'early' in x else ('mid dangit' if 'mid dangit' in x else 'mid')))
+    combined_all5['VF'] = combined_all5['Condition'].apply(lambda x: 1 if 'inVF' in x else 0)
+    
+    results_all5_analysis = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds_all5_analysis.items()}
+    combined_all5_analysis = pd.concat(results_all5_analysis, names=['Condition']).reset_index()
+    combined_all5_analysis['time'] = combined_all5_analysis['Condition'].apply(lambda x: 'notms' if 'No TMS' in x else ('early' if 'early' in x else ('mid dangit' if 'mid dangit' in x else 'mid')))
+    combined_all5_analysis['VF'] = combined_all5_analysis['Condition'].apply(lambda x: 1 if 'inVF' in x else 0)
+    
+    
     results = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds.items()}
     combined = pd.concat(results, names=['Condition']).reset_index()
     combined['Type'] = combined['Condition'].apply(lambda x: 'pro' if 'pro' in x else 'anti')
@@ -265,4 +284,4 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
     plt.tight_layout()
     plt.show()
 
-    return combined, combined_all5
+    return combined, combined_all5, combined_all5_analysis

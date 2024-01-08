@@ -84,10 +84,17 @@ def filter_data(df):
     )
 
     original_shape = df.shape
-    df = df[conditions].dropna()
+    df = df[conditions]
+    timing_shape = df.shape
+
+    # Remove trials that have no saccades detected
+    df = df.dropna(subset=['ierr', 'ferr'])
+    missingsaccade_shape = df.shape
 
     # Also remove trials with reaction times that are too small or too big
     df = df[(df['isacc_rt'] > 0.15) & (df['isacc_rt'] < 1.0) & (df['fsacc_rt'] < 1.0)]
+    reactiontime_shape = df.shape
+
     gstats_initial = df.groupby('subjID')['ierr'].agg(['mean', 'std'])
     gstats_final = df.groupby('subjID')['ferr'].agg(['mean', 'std'])
     gstats_initial['ierr_threshold'] = gstats_initial.apply(lambda x: min(x['mean'] + 3 * x['std'], 6), axis=1)
@@ -103,6 +110,11 @@ def filter_data(df):
         'delay1dur', 'delay2dur', 'respdur', 'feedbackdur', 'isacc_err', 'fsacc_err'])
     filtered_shape = df.shape
     print(f'Trials removed = {original_shape[0] - filtered_shape[0]} = {round((original_shape[0] - filtered_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Timing issues = {original_shape[0] - timing_shape[0]} = {round((original_shape[0] - timing_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'No saccades detected issues = {timing_shape[0] - missingsaccade_shape[0]} = {round((timing_shape[0] - missingsaccade_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Reaction time issues = {missingsaccade_shape[0] - reactiontime_shape[0]} = {round((missingsaccade_shape[0]-reactiontime_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Large errors = {reactiontime_shape[0] - filtered_shape[0]} = {round((reactiontime_shape[0]-filtered_shape[0])*100/original_shape[0], 2)}% ')
+    print()
 
     # Create a df for subjects that have all 5 days completed
     subject_counts = df.groupby('subjID')['day'].nunique()

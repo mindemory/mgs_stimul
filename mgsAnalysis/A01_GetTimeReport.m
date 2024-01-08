@@ -117,7 +117,7 @@ for day = 1:days
         clear matFile;
     end
     % Generate a figure of time stamps
-    fig = figure;
+    fig = figure('visible', 'off');
     h = sgtitle(['sub' subjID '_ day' num2str(day, "%02d") ]);
     %set(h, 'Position', [0.5, -0.03, 0]);
     for ii = 1:length(dur_vars)
