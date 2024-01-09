@@ -99,6 +99,8 @@ for proc_type in ['calib', 'nocalib']:
                     'age': [metadata['Age']] * tcount,
                     'weight': [metadata['Weight (kg)']] * tcount,
                     'eegsize': [metadata['EEG Cap Size (cm)']] * tcount,
+                    'PT': [metadata['PT']] * tcount,
+                    'StimIntensity': [metadata['Stim Intensity']] * tcount,
                     # Trial data
                     'rnum': ii_sess['r_num'][0, 0].T[0],
                     'tnum': ii_sess['t_num'][0, 0].T[0],
