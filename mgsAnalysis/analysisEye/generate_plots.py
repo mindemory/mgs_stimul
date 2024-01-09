@@ -255,7 +255,6 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
     combined_all5_analysis['time'] = combined_all5_analysis['Condition'].apply(lambda x: 'notms' if 'No TMS' in x else ('early' if 'early' in x else ('mid dangit' if 'mid dangit' in x else 'mid')))
     combined_all5_analysis['VF'] = combined_all5_analysis['Condition'].apply(lambda x: 1 if 'inVF' in x else 0)
     
-    
     results = {cond: data.groupby('subjID').apply(calculate_mean_and_se, error_metric=metric) for cond, data in conds.items()}
     combined = pd.concat(results, names=['Condition']).reset_index()
     combined['Type'] = combined['Condition'].apply(lambda x: 'pro' if 'pro' in x else 'anti')
@@ -273,14 +272,20 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
 
     sns.pointplot(data=combined, x = 'Condition', y = 'mean', linestyle = 'none', hue = 'Type', capsize=.2, errorbar="se", ax = axs[1])
     sns.stripplot(data=combined, x='Condition', y='mean', palette="dark:black", hue = 'Type', jitter=False, size=6, ax = axs[1])
-    # sns.lineplot(data=combined, x='Condition', y='mean', hue='subjID', 
-    #                 palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[1])
-
     axs[1].set_title(f'Mean {metric} for Pro and Anti Conditions (N = {len(sublist)} subjects)')
     axs[1].set_ylabel(f'Mean {metric}')
     axs[1].set_xlabel('Condition')
     axs[1].set_ylim(y_range)
     
+
+    # sns.pointplot(data=combined_all5, x='Condition', y='mean', linestyle="none", capsize=.2, errorbar="se", ax = axs[0])
+    # sns.stripplot(data=combined_all5, x='Condition', y='mean', color="black", jitter=False, size=6, ax = axs[0])
+    # sns.lineplot(data=combined_all5, x='Condition', y='mean', hue='subjID', 
+    #                 palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[0])
+    # axs[2].set_title(f'Mean {metric} with Standard Error (N = {len(sublist_all5)} subjects)')
+    # axs[2].set_ylabel(f'Mean {metric}')
+    # axs[2].set_xlabel('Condition')
+    # axs[2].set_ylim(y_range)
     plt.tight_layout()
     plt.show()
 
