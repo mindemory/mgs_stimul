@@ -277,16 +277,22 @@ def plot_error_metric(df, df_all5, sublist, sublist_all5, metric):
     axs[1].set_xlabel('Condition')
     axs[1].set_ylim(y_range)
     
-
-    # sns.pointplot(data=combined_all5, x='Condition', y='mean', linestyle="none", capsize=.2, errorbar="se", ax = axs[0])
-    # sns.stripplot(data=combined_all5, x='Condition', y='mean', color="black", jitter=False, size=6, ax = axs[0])
-    # sns.lineplot(data=combined_all5, x='Condition', y='mean', hue='subjID', 
-    #                 palette=['gray']*len(sublist_all5), legend=False, dashes=True, linewidth=1, ax = axs[0])
-    # axs[2].set_title(f'Mean {metric} with Standard Error (N = {len(sublist_all5)} subjects)')
-    # axs[2].set_ylabel(f'Mean {metric}')
-    # axs[2].set_xlabel('Condition')
-    # axs[2].set_ylim(y_range)
     plt.tight_layout()
     plt.show()
 
     return combined, combined_all5, combined_all5_analysis
+
+
+def plot_permutation_result(tstat_permuted, tstat_real, pval_2side, pval_1side, ii, pairs_to_test, ax):
+    title_text = pairs_to_test[ii][2]
+    sns.histplot(tstat_permuted[:, ii], element='step', fill=False, ax=ax)
+    ax.axvline(x=tstat_real[ii], color='k', linestyle='--')
+    x1, x2 = ax.get_xlim()
+    y1, y2 = ax.get_ylim()
+    ax.text(x1 + (x2-x1) * 0.01, y2 - (y2-y1) * 0.15, 
+            f't-stat = {tstat_real[ii]:.3f}\npval (both) = {pval_2side[ii]:.3f}', 
+            fontsize=9, color='black')
+    # ax.text(x1 + (x2-x1) * 0.01, y2 - (y2-y1) * 0.15, 
+    #         f't-stat = {tstat_real[ii]:.3f}\npval (both) = {pval_2side[ii]:.3f}\npval (greater) = {pval_1side[ii]:.3f}', 
+    #         fontsize=9, color='black')
+    ax.set_title(title_text)

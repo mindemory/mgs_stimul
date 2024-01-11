@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import circmean
+from scipy import stats
+import time
 
 def rotate_to_zero(df):
     TarTheta = np.arctan2(df['TarY'], df['TarX'])
@@ -69,8 +70,8 @@ def rotate_to_scale(df):
         outidx = df.index[(df['instimVF']==0) & (df['subjID'] == this_subjID)]
         instim_idx[ss, 1:len(inidx)] = inidx
         outstim_idx[ss, 1:len(outidx)] = outidx 
-        instim_mean_theta[ss] = circmean(df.loc[inidx, ['TarTheta']], high=np.pi, low=-np.pi)
-        outstim_mean_theta[ss] = circmean(df.loc[outidx, ['TarTheta']], high=np.pi, low=-np.pi)
+        instim_mean_theta[ss] = stats.circmean(df.loc[inidx, ['TarTheta']], high=np.pi, low=-np.pi)
+        outstim_mean_theta[ss] = stats.circmean(df.loc[outidx, ['TarTheta']], high=np.pi, low=-np.pi)
         instim_theta_range[ss] = compute_angular_range(df.loc[inidx, ['TarTheta']])
         outstim_theta_range[ss] = compute_angular_range(df.loc[outidx, ['TarTheta']])
     
@@ -149,3 +150,60 @@ def compute_tcount(df, df_all5, sub_list):
                     mean_errors_df.at[sub, f"Day {day} Block {rnum}"] = 0
     mean_errors_df.fillna(0, inplace=True)
     return mean_errors_df
+
+def get_permutation_tstat(df_in, metric, cond1, cond2):
+        data1 = df_in[df_in['condition'] == cond1].reset_index()
+        data2 = df_in[df_in['condition'] == cond2].reset_index()
+        result1 = data1.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
+        result2 = data2.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
+        tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
+        return tstat
+
+def perform_permutation_test(df, pairs_to_test, metric, iter_count):
+    start = time.time()
+    n_tests = len(pairs_to_test)
+    tstat_permuted = np.zeros((iter_count, n_tests))
+    tstat_real = np.zeros((n_tests, ))
+    pval_2side = np.zeros((n_tests, ))
+    pval_1side = np.zeros((n_tests, ))
+
+    df_master = df.copy()[['subjID', 'day', 'ierr', 'ferr', 'isacc_rt', 'istms', 'instimVF']]
+
+    cond_array = [
+        (df_master['istms'] == 0) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+        (df_master['istms'] == 0) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 4),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 4),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 5),
+        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 5)
+    ]
+    cond_names = [
+        'notms inVF', 'notms outVF', 'mid inVF', 'mid outVF', 
+        'early inVF', 'early outVF', 'mid dangit inVF', 'mid dangit outVF'
+    ]
+
+    df_master['condition'] = np.select(cond_array, cond_names, default='Other')
+
+    for jj in range(n_tests):
+        cond1 = pairs_to_test[jj][0]
+        cond2 = pairs_to_test[jj][1]
+        df_temp = df_master[(df_master['condition'] == cond1) | (df_master['condition'] == cond2)]
+        tstat_real[jj] = get_permutation_tstat(df_temp, metric, cond1, cond2)
+        for ii in range(iter_count):
+            df_shuffle = df_temp.copy()
+            df_shuffle['condition'] = np.random.permutation(df_shuffle['condition'])
+            tstat_permuted[ii, jj] = get_permutation_tstat(df_shuffle, metric, cond1, cond2)
+        # Compute pvalue of the real statistic given the tstat_permuted
+        if tstat_real[jj] >= 0:
+            samps_bothside = sum(tstat_permuted[:, jj] >= tstat_real[jj]) + sum(tstat_permuted[:, jj] < -tstat_real[jj])
+        else:
+            samps_bothside = sum(tstat_permuted[:, jj] >= -tstat_real[jj]) + sum(tstat_permuted[:, jj] < tstat_real[jj])
+        samps_oneside = sum(tstat_permuted[:, jj] >= tstat_real[jj])
+        pval_2side[jj] = (samps_bothside/iter_count)
+        pval_1side[jj] = (samps_oneside/iter_count)
+
+    print(f"Total time taken for running {iter_count} permutations: {round(time.time()-start, 3)} s")
+
+    return tstat_real, tstat_permuted, pval_1side, pval_2side
