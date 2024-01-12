@@ -142,27 +142,27 @@ if any(strcmp(steps, 'remove_pulse'))
         cfg_art.trl                            = orig_trl;
         cfg_art.artfctdef.minaccepttim         = 1;
         cfg                                    = ft_rejectartifact(cfg_art);
-        data_eeg                               = ft_preprocessing(cfg);
+        data_tms_segmented_whole               = ft_preprocessing(cfg);
 
         cfg                                    = [];
-        cfg.channel                            = setdiff(data_eeg.label, {'LM', 'RM'});
-        data_eeg                               = ft_selectdata(cfg, data_eeg);
+        cfg.channel                            = setdiff(data_tms_segmented_whole.label, {'LM', 'RM'});
+        data_tms_segmented_whole               = ft_selectdata(cfg, data_tms_segmented_whole);
 
         cfg                                    = [];
         cfg.trl                                = orig_trl;
-        data_eeg                               = ft_redefinetrial(cfg, data_eeg);
+        data_tms_clean                         = ft_redefinetrial(cfg, data_tms_segmented_whole);
 
         cfg                                    = [];
         if ~isempty(trls_to_remove)
-            cfg.trials                         = setdiff(1:length(data_eeg.trialinfo), trls_to_remove);
+            cfg.trials                         = setdiff(1:length(data_tms_clean.trialinfo), trls_to_remove);
         end
-        data_eeg                               = ft_selectdata(cfg, data_eeg);
+        data_tms_clean                         = ft_selectdata(cfg, data_tms_clean);
 
         cfg                                    = [];
         cfg.method                             = 'pchip';
         cfg.prewindow                          = 0.1;
         cfg.postwindow                         = 0.1;
-        data_eeg                               = ft_interpolatenan(cfg, data_eeg);
+        data_tms_clean_interp                  = ft_interpolatenan(cfg, data_tms_clean);
    end
 end
 
@@ -173,7 +173,7 @@ if any(strcmp(steps, 'bandpass'))
         data_eeg                               = RunBandPass(data_eeg);
         save(fName.bandpass, 'data_eeg', '-v7.3')
         if day                                 ~= NoTMSDays(subjID)
-            data_tms                           = RunBandPass(data_eeg);
+            data_tms                           = RunBandPass(data_tms_clean_interp);
             save(fName.bandpass_TMS, 'data_tms', '-v7.3')
         end
     else
@@ -184,13 +184,6 @@ if any(strcmp(steps, 'bandpass'))
         end
     end
 end
-
-% Automated channel rejection
-unrolled_data = [];
-for ii = 1:length(bandpass_TMS.trialinfo)
-    unrolled_data = [unrolled_data bandpass_TMS.trial{ii}];
-end
-
 
 %% Artifact rejection
 art_run                    = 0;%input('Do you want to trial and channel rejection? (1: rejvisual, 2: databroswer, 0: No): ');
