@@ -74,6 +74,29 @@ if any(strcmp(steps, 'concat'))
     end
 end
 
+% Load up the continuous raw data
+cfg = []; cfg.dataset = fName.concat;
+cfg.hpfilter = 'yes';
+cfg.hpfreq = 0.5; 
+cfg.hpfilttype = 'firws';
+cfg.hpfiltdir = 'onepass-zerophase';
+cfg.plotfiltresp = 'yes';
+cfg.continuous = 'yes';
+whole_raw = ft_preprocessing(cfg);
+
+cfg = [];
+cfg.channel = setdiff(whole_raw.label, {'LM', 'RM', 'TP9', 'TP10'});
+whole_raw  = ft_selectdata(cfg, whole_raw);
+
+tseries = whole_raw.trial{1};
+ch_names = whole_raw.label;
+ch_var = var(tseries, 0, 2);
+ch_mean = mean(tseries, 2);
+z_tseries = (tseries - ch_mean)./ch_var;
+z_sum = sum(z_tseries)./sqrt(length(ch_names));
+
+% Remove bad channels automatically
+
 %% Reading segmented data
 % stim-locked: 
 %   'S 11': prointoVF
@@ -83,8 +106,7 @@ end
 % fixation: 1s
 % sample: 0.5s
 % delay1: 2s
-% delay2: 2s
-% response: 0.85s
+% delay2: 2s% response: 0.85s
 % feedback: 0.8s
 % iti: 1/2s
 if any(strcmp(steps, 'raweeg'))
