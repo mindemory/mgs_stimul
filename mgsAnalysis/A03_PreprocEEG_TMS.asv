@@ -74,6 +74,95 @@ if any(strcmp(steps, 'concat'))
     end
 end
 
+cfg                           = [];
+cfg.dataset                   = fName.concat;
+cfg.continuous                = 'yes';
+cfg.hpfilter                  = 'yes';
+cfg.hpfilttype                = 'firws';
+cfg.hpfiltdir                 = 'onepass-zerophase';
+cfg.hpfreq                    = 0.5;
+cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
+raw_data                      = ft_preprocessing(cfg);
+
+cfg                           = [];
+cfg.dataset                   = fName.concat;
+cfg.continuous                = 'yes';
+cfg.trialdef.prestim          = 1;
+cfg.trialdef.poststim         = 7.5;
+cfg.trialdef.eventtype        = 'Stimulus';
+cfg.trialdef.eventvalue       = {'S  1'};
+cfg                           = ft_definetrial(cfg);
+cfg_new = [];
+cfg_new.trl = cfg.trl;
+trl_info                      = cfg.trl;
+raw_epoc                      = ft_redefinetrial(cfg_new, raw_data);
+
+cfg                           = [];
+if ~isempty(trls_to_remove)
+    cfg.trials                = setdiff(1:length(raw_epoc.trialinfo), trls_to_remove);
+    trl_info                  = trl_info(cfg.trials, :);
+end
+raw_epoc                      = ft_selectdata(cfg, raw_epoc);
+
+thresh = [];
+thresh.pval = 90;
+thresh.prop_badtrials = 0.25;
+ch_names = raw_data.label;
+tseries = raw_data.trial{1};
+ch_std = std(tseries, 0, 2);
+ch_med = median(ch_std);
+rej_thresh = prctile(abs(ch_std - ch_med), thresh.pval);
+bad_ch1 = ch_names(abs(ch_std - ch_med)>rej_thresh);
+
+ntrials = length(raw_epoc.trialinfo);
+nchans = length(ch_names);
+flagged_data = zeros(ntrials, nchans);
+for ii = 1:ntrials
+    tr_std = std(raw_epoc.trial{ii}, 0, 2);
+    flagged_data(ii, :) = abs(tr_std - ch_med) > rej_thresh;
+end
+bad_chan_num = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
+flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
+bad_trls = find(sum(flagged_data) > 0);
+% Reject channel if flat or too noisy
+bad_ch = ch_names((ch_std < 0.01) | (ch_std > 100));
+bad_ch = [bad_ch, ch_names(bad_chan_num)];
+
+cfg                           = [];
+cfg.dataset                   = fName.concat;
+cfg.continuous                = 'yes';
+cfg.hpfilter                  = 'yes';
+cfg.hpfilttype                = 'firws';
+cfg.hpfiltdir                 = 'onepass-zerophase';
+cfg.hpfreq                    = 1;
+cfg.lpfilter                  = 'yes';
+cfg.lpfilttype                = 'firws';
+cfg.lpfiltdir                 = 'onepass-zerophase';
+cfg.lpfreq                    = 55;
+cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
+raw_data                      = ft_preprocessing(cfg);
+
+cfg                           = [];
+cfg.channel                   = setdiff(ch_names, bad_ch);
+raw_cleaned                   = ft_selectdata(cfg, raw_data);
+
+cfg                           = [];
+cfg.implicitref               = 'Cz';
+cfg.reref                     = 'yes';
+cfg.refchannel                = 'all';
+cfg.refmethod                 = 'avg';
+raw_cleaned_reref             = ft_preprocessing(cfg, raw_cleaned);
+
+cfg = []; cfg.method = 'fastica';
+cfg.randomseed = 42;
+ica_comp = ft_componentanalysis(cfg, raw_cleaned_reref);
+cfg = []; cfg.component = 1:20; cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no';
+ft_topoplotIC(cfg, ica_comp)
+% aa = corr(raw_cleaned.trial{1}');
+% figure(); imagesc(aa)
+% 
+% bb = corr(raw_cleaned_reref.trial{1}');
+% figure(); imagesc(bb)
 %% Reading segmented data
 % stim-locked: 
 %   'S 11': prointoVF
@@ -142,27 +231,27 @@ if any(strcmp(steps, 'remove_pulse'))
         cfg_art.trl                            = orig_trl;
         cfg_art.artfctdef.minaccepttim         = 1;
         cfg                                    = ft_rejectartifact(cfg_art);
-        data_tms_segmented_whole               = ft_preprocessing(cfg);
+        data_eeg                               = ft_preprocessing(cfg);
 
         cfg                                    = [];
-        cfg.channel                            = setdiff(data_tms_segmented_whole.label, {'LM', 'RM'});
-        data_tms_segmented_whole               = ft_selectdata(cfg, data_tms_segmented_whole);
+        cfg.channel                            = setdiff(data_eeg.label, {'LM', 'RM'});
+        data_eeg                               = ft_selectdata(cfg, data_eeg);
 
         cfg                                    = [];
         cfg.trl                                = orig_trl;
-        data_tms_clean                         = ft_redefinetrial(cfg, data_tms_segmented_whole);
+        data_eeg                               = ft_redefinetrial(cfg, data_eeg);
 
         cfg                                    = [];
         if ~isempty(trls_to_remove)
-            cfg.trials                         = setdiff(1:length(data_tms_clean.trialinfo), trls_to_remove);
+            cfg.trials                         = setdiff(1:length(data_eeg.trialinfo), trls_to_remove);
         end
-        data_tms_clean                         = ft_selectdata(cfg, data_tms_clean);
+        data_eeg                               = ft_selectdata(cfg, data_eeg);
 
         cfg                                    = [];
         cfg.method                             = 'pchip';
         cfg.prewindow                          = 0.1;
         cfg.postwindow                         = 0.1;
-        data_tms_clean_interp                  = ft_interpolatenan(cfg, data_tms_clean);
+        data_eeg                               = ft_interpolatenan(cfg, data_eeg);
    end
 end
 
@@ -172,18 +261,21 @@ if any(strcmp(steps, 'bandpass'))
         disp('Bandpass filtered data does not exist. Applying band pass filter.')
         data_eeg                               = RunBandPass(data_eeg);
         save(fName.bandpass, 'data_eeg', '-v7.3')
-        if day                                 ~= NoTMSDays(subjID)
-            data_tms                           = RunBandPass(data_tms_clean_interp);
-            save(fName.bandpass_TMS, 'data_tms', '-v7.3')
-        end
+%         if day                                 ~= NoTMSDays(subjID)
+%             data_tms                           = RunBandPass(data_eeg);
+%             save(fName.bandpass_TMS, 'data_tms', '-v7.3')
+%         end
     else
         disp('Bandpass file exists, importing mat file.')
         load(fName.bandpass)
-        if day                                 ~= NoTMSDays(subjID)
-            load(fName.bandpass_TMS)
-        end
+%         if day                                 ~= NoTMSDays(subjID)
+%             load(fName.bandpass_TMS)
+%         end
     end
 end
+
+
+
 
 %% Artifact rejection
 art_run                    = 0;%input('Do you want to trial and channel rejection? (1: rejvisual, 2: databroswer, 0: No): ');

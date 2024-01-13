@@ -74,6 +74,46 @@ if any(strcmp(steps, 'concat'))
     end
 end
 
+cfg                           = [];
+cfg.dataset                   = fName.concat;
+cfg.continuous                = 'yes';
+cfg.hpfilter                  = 'yes';
+cfg.hpfilttype                = 'firws';
+cfg.hpfiltdir                 = 'onepass-zerophase';
+cfg.hpfreq                    = 0.5;
+cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
+raw_data                      = ft_preprocessing(cfg);
+
+cfg                           = [];
+cfg.dataset                   = fName.concat;
+cfg.continuous                = 'yes';
+cfg.trialdef.eventtype        = 'Stimulus';
+cfg.trialdef.eventvalue       = {'S  1'};
+cfg                           = ft_definetrial(cfg);
+trl_info                      = cfg.trl;
+raw_epoc                      = ft_redefinetrial(cfg, raw_data);
+
+for ii = 1:length(raw_epoc.trialinfo)
+end
+
+cfg.trialdef.prestim          = 1.5;
+cfg.trialdef.poststim         = 5.5;
+cfg.trialdef.eventtype        = 'Stimulus';
+cfg.trialdef.eventvalue       = {'S 11', 'S 12', 'S 13', 'S 14'};
+cfg                           = ft_definetrial(cfg);
+
+% Removing bad trials with timing issues
+cfg                           = [];
+if ~isempty(trls_to_remove)
+    cfg.trials                = setdiff(1:length(data_eeg.trialinfo), trls_to_remove);
+end
+data_eeg                      = ft_selectdata(cfg, data_eeg);
+% Automated channel rejection
+ch_names = data_eeg.label;
+unrolled_tseries = horzcat(data_eeg.trial{:});
+ch_var = var(unrolled_tseries, 0, 2);
+ch_dev = abs(ch_var - median(ch_var));
+thresh = prctile(ch_dev, 90);
 %% Reading segmented data
 % stim-locked: 
 %   'S 11': prointoVF
@@ -172,24 +212,20 @@ if any(strcmp(steps, 'bandpass'))
         disp('Bandpass filtered data does not exist. Applying band pass filter.')
         data_eeg                               = RunBandPass(data_eeg);
         save(fName.bandpass, 'data_eeg', '-v7.3')
-        if day                                 ~= NoTMSDays(subjID)
-            data_tms                           = RunBandPass(data_eeg);
-            save(fName.bandpass_TMS, 'data_tms', '-v7.3')
-        end
+%         if day                                 ~= NoTMSDays(subjID)
+%             data_tms                           = RunBandPass(data_eeg);
+%             save(fName.bandpass_TMS, 'data_tms', '-v7.3')
+%         end
     else
         disp('Bandpass file exists, importing mat file.')
         load(fName.bandpass)
-        if day                                 ~= NoTMSDays(subjID)
-            load(fName.bandpass_TMS)
-        end
+%         if day                                 ~= NoTMSDays(subjID)
+%             load(fName.bandpass_TMS)
+%         end
     end
 end
 
-% Automated channel rejection
-unrolled_data = [];
-for ii = 1:length(bandpass_TMS.trialinfo)
-    unrolled_data = [unrolled_data bandpass_TMS.trial{ii}];
-end
+
 
 
 %% Artifact rejection
