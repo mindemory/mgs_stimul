@@ -122,13 +122,16 @@ bad_ch1 = ch_names(abs(ch_std - ch_med)>rej_thresh);
 ntrials = length(raw_epoc.trialinfo);
 nchans = length(ch_names);
 flagged_data = zeros(ntrials, nchans);
+
 for ii = 1:ntrials
     tr_std = std(raw_epoc.trial{ii}, 0, 2);
     flagged_data(ii, :) = abs(tr_std - ch_med) > rej_thresh;
 end
+
 bad_chan_num = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
 flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
 bad_trls = find(sum(flagged_data) > 0);
+
 % Reject channel if flat or too noisy
 bad_ch = ch_names((ch_std < 0.01) | (ch_std > 100));
 bad_ch = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
