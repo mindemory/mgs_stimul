@@ -81,27 +81,26 @@ cfg.continuous                = 'yes';
 % cfg.hpfilttype                = 'firws';
 % cfg.hpfiltdir                 = 'onepass-zerophase';
 % cfg.hpfreq                    = 0.5;
-cfg.bpfilter = 'yes';
-cfg.bpfreq = [0.5 50];
-cfg.bpfilttype = 'but';
-cfg.bpfiltord = 4; 
-cfg.bpfiltdir = 'twopass'; 
+cfg.bpfilter                  = 'yes';
+cfg.bpfreq                    = [0.5 50];
+cfg.bpfilttype                = 'but';
+cfg.bpfiltord                 = 4; 
+cfg.bpfiltdir                 = 'twopass'; 
 cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
 raw_data                      = ft_preprocessing(cfg);
 
 cfg                           = [];
 cfg.dataset                   = fName.concat;
 cfg.continuous                = 'yes';
-cfg.trialdef.prestim          = 1;
-cfg.trialdef.poststim         = 7.5;
+cfg.trialdef.prestim          = 0.5;
+cfg.trialdef.poststim         = 5.5;
 cfg.trialdef.eventtype        = 'Stimulus';
 cfg.trialdef.eventvalue       = {'S  1'};
 cfg                           = ft_definetrial(cfg);
-cfg_new = [];
-cfg_new.trl = cfg.trl;
+cfg_new                       = [];
+cfg_new.trl                   = cfg.trl;
 trl_info                      = cfg.trl;
 raw_epoc                      = ft_redefinetrial(cfg_new, raw_data);
-
 cfg                           = [];
 if ~isempty(trls_to_remove)
     cfg.trials                = setdiff(1:length(raw_epoc.trialinfo), trls_to_remove);
@@ -118,42 +117,38 @@ ch_std = std(tseries, 0, 2);
 ch_med = median(ch_std);
 rej_thresh = prctile(abs(ch_std - ch_med), thresh.pval);
 bad_ch1 = ch_names(abs(ch_std - ch_med)>rej_thresh);
-
 ntrials = length(raw_epoc.trialinfo);
 nchans = length(ch_names);
 flagged_data = zeros(ntrials, nchans);
-
 for ii = 1:ntrials
     tr_std = std(raw_epoc.trial{ii}, 0, 2);
     flagged_data(ii, :) = abs(tr_std - ch_med) > rej_thresh;
 end
-
 bad_chan_num = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
 flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
 bad_trls = find(sum(flagged_data) > 0);
-
 % Reject channel if flat or too noisy
 bad_ch = ch_names((ch_std < 0.01) | (ch_std > 100));
 bad_ch = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
 
-cfg                           = [];
-cfg.dataset                   = fName.concat;
-cfg.continuous                = 'yes';
-% cfg.hpfilter                  = 'yes';
-% cfg.hpfilttype                = 'firws';
-% cfg.hpfiltdir                 = 'onepass-zerophase';
-% cfg.hpfreq                    = 1;
-% cfg.lpfilter                  = 'yes';
-% cfg.lpfilttype                = 'firws';
-% cfg.lpfiltdir                 = 'onepass-zerophase';
-% cfg.lpfreq                    = 55;
-cfg.bpfilter = 'yes';
-cfg.bpfreq = [0.1 50];
-cfg.bpfilttype = 'but';
-cfg.bpfiltord = 4; 
-cfg.bpfiltdir = 'twopass'; 
-cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
-raw_data                      = ft_preprocessing(cfg);
+% cfg                           = [];
+% cfg.dataset                   = fName.concat;
+% cfg.continuous                = 'yes';
+% % cfg.hpfilter                  = 'yes';
+% % cfg.hpfilttype                = 'firws';
+% % cfg.hpfiltdir                 = 'onepass-zerophase';
+% % cfg.hpfreq                    = 1;
+% % cfg.lpfilter                  = 'yes';
+% % cfg.lpfilttype                = 'firws';
+% % cfg.lpfiltdir                 = 'onepass-zerophase';
+% % cfg.lpfreq                    = 55;
+% cfg.bpfilter = 'yes';
+% cfg.bpfreq = [0.1 50];
+% cfg.bpfilttype = 'but';
+% cfg.bpfiltord = 4; 
+% cfg.bpfiltdir = 'twopass'; 
+% cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
+% raw_data                      = ft_preprocessing(cfg);
 
 cfg                           = [];
 cfg.channel                   = setdiff(ch_names, bad_ch);
@@ -169,17 +164,101 @@ raw_cleaned_reref             = ft_preprocessing(cfg, raw_cleaned);
 cfg = []; cfg.method = 'fastica';
 cfg.randomseed = 42;
 ica_comp = ft_componentanalysis(cfg, raw_cleaned_reref);
+
 cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no';
 ft_topoplotIC(cfg, ica_comp)
+
 cfg = [];
 cfg.layout = 'acticap-64_md.mat'; % specify the layout file that should be used for plotting
 cfg.viewmode = 'component';
 ft_databrowser(cfg, ica_comp)
-% aa = corr(raw_cleaned.trial{1}');
-% figure(); imagesc(aa)
-% 
-% bb = corr(raw_cleaned_reref.trial{1}');
-% figure(); imagesc(bb)
+
+cfg = [];
+cfg.component = [30 39];
+raw_ica_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_cleaned_reref);
+
+cfg = []; cfg.viewmode = 'vertical';
+ft_databrowser(cfg, raw_cleaned_reref)
+ft_databrowser(cfg, raw_ica_cleaned)
+
+
+% Interpolate bad channels
+load('helper/neighbors.mat');
+% Interpolate bad channels
+cfg_chanrepair                     = [];
+cfg_chanrepair.badchannel          = bad_ch;
+cfg_chanrepair.method              = 'weighted';
+cfg_chanrepair.neighbours          = neighbors;
+cfg_chanrepair.layout              = 'acticap-64_md.mat';
+cfg_chanrepair.senstype            = 'eeg';
+raw_new                            = ft_channelrepair(cfg_chanrepair,raw_ica_cleaned);
+    
+proinVF = create_epochs(fName, 'S 11', raw_new);
+prooutVF = create_epochs(fName, 'S 12', raw_new);
+antiinVF = create_epochs(fName, 'S 13', raw_new);
+antioutVF = create_epochs(fName, 'S 14', raw_new);
+
+[erp_proinVF, erp_prooutVF]          = compute_ERPs(proinVF, prooutVF);
+[erp_antioutVF, erp_antioutVF]       = compute_ERPs(antiinVF, antioutVF);
+
+[TFR_proinVF, ~, ~]       = compute_TFRs(proinVF);
+[TFR_prooutVF, ~, ~]       = compute_TFRs(prooutVF);
+[TFR_antiinVF, ~, ~]       = compute_TFRs(antiinVF);
+[TFR_antioutVF, ~, ~]       = compute_TFRs(antioutVF);
+
+cfg                                              = [];
+cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
+cfg.parameter                                    = 'powspctrm';
+pro_contrast                                       = ft_math(cfg, TFR_proinVF, TFR_prooutVF);
+
+
+cfg                                              = []; 
+cfg.layout                                       = 'acticap-64_md.mat'; 
+cfg.figure                                       = 'gcf';
+%cfg.style                                        = 'straight';
+freqband = 'alpha';
+if strcmp(freqband, 'alpha')
+    cfg.ylim                                     = [8 12]; 
+elseif strcmp(freqband, 'beta')
+    cfg.ylim                                     = [13 30];
+elseif strcmp(freqband, 'gamma')
+    cfg.ylim                                     = [30 50];
+end
+cfg.colorbar                                     = 'yes'; 
+cfg.comment                                      = 'no'; 
+cfg.colormap                                     = '*RdBu'; 
+cfg.marker                                       = 'on';
+%cfg.zlim                                         = [min_pow max_pow];
+cfg.interpolatenan                               = 'no';
+
+subplot(2, 2, 1)
+cfg.xlim                                         = [0.5 1.5];
+cfg.title                                        = [freqband ' @ 0.5:1.5s'];
+ft_topoplotTFR(cfg, pro_contrast)
+subplot(2, 2, 2)
+cfg.xlim                                         = [1.5 2.5];
+cfg.title                                        = [freqband ' @ 1.5:2.5s'];
+ft_topoplotTFR(cfg, pro_contrast)
+subplot(2, 2, 3)
+cfg.xlim                                         = [3 3.5];
+cfg.title                                        = [freqband ' @ 2.8:3.3s'];
+ft_topoplotTFR(cfg, pro_contrast)
+subplot(2, 2, 4)
+cfg.xlim                                         = [3.5 4.5];
+cfg.title                                        = [freqband ' @ 3.5:4.5s'];
+ft_topoplotTFR(cfg, pro_contrast)
+
+% cfg_new = [];
+% cfg_new.trl = trlproinVF_info;
+% proinVF = ft_redefinetrial(cfg_new, raw_new);
+% cfg_new.trl = trlprooutVF_info;
+% prooutVF = ft_redefinetrial(cfg_new, raw_new);
+% cfg_new.trl = trlantiinVF_info;
+% antiinVF = ft_redefinetrial(cfg_new, raw_new);
+% cfg_new.trl = trlantioutVF_info;
+% antioutVF = ft_redefinetrial(cfg_new, raw_new);
+
+
 %% Reading segmented data
 % stim-locked: 
 %   'S 11': prointoVF
