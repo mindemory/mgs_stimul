@@ -18,7 +18,7 @@ function A03_NewPipelineEEG_TMS(subjID, day)
 % Step 7: Time-frequency analysis using wavelet method: ERSP, ITC and phase
 % are computed
 clearvars -except subjID day steps; close all;
-disp(subjID)
+
 %% Intialization
 left_occ_elecs = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
 right_occ_elecs = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
@@ -92,10 +92,10 @@ if any(strcmp(steps, 'raweeg'))
         cfg                           = [];
         cfg.dataset                   = fName.concat;
         cfg.continuous                = 'yes';
-        cfg.trialdef.prestim          = 0.5;
-        cfg.trialdef.poststim         = 5.5;
+        cfg.trialdef.prestim          = 1.5;
+        cfg.trialdef.poststim         = 4.5;
         cfg.trialdef.eventtype        = 'Stimulus';
-        cfg.trialdef.eventvalue       = {'S 11'};
+        cfg.trialdef.eventvalue       = {'S 11', 'S 12', 'S 13', 'S 14'};
         cfg                           = ft_definetrial(cfg);
         cfg_new                       = [];
         cfg_new.trl                   = cfg.trl;
@@ -109,6 +109,7 @@ if any(strcmp(steps, 'raweeg'))
         end
         raw_epoc                      = ft_selectdata(cfg, raw_epoc);
         
+        % Detect bad channels
         thresh                        = [];
         thresh.pval                   = 90;
         thresh.prop_badtrials         = 0.25;
@@ -121,21 +122,21 @@ if any(strcmp(steps, 'raweeg'))
         ntrials                       = length(raw_epoc.trialinfo);
         nchans                        = length(ch_names);
         flagged_data                  = zeros(ntrials, nchans);
-        for ii = 1:ntrials
-            tr_std = std(raw_epoc.trial{ii}, 0, 2);
-            flagged_data(ii, :) = abs(tr_std - ch_med) > rej_thresh;
+        for ii                        = 1:ntrials
+            tr_std                    = std(raw_epoc.trial{ii}, 0, 2);
+            flagged_data(ii, :)       = abs(tr_std - ch_med) > rej_thresh;
         end
-        bad_chan_num = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
+        bad_chan_num                  = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
         flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
-        bad_trls = find(sum(flagged_data) > 0);
-        % Reject channel if flat or too noisy
-        bad_ch = ch_names((ch_std < 0.01) | (ch_std > 100));
-        bad_ch = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
+        bad_trls                      = find(sum(flagged_data) > 0);
+        bad_ch                        = ch_names((ch_std < 0.01) | (ch_std > 100)); % Reject channel if flat or too noisy
+        bad_ch                        = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
         
         cfg                           = [];
         cfg.channel                   = setdiff(ch_names, bad_ch);
         raw_data                      = ft_selectdata(cfg, raw_data);
         
+        % Average reference
         cfg                           = [];
         cfg.implicitref               = 'Cz';
         cfg.reref                     = 'yes';
@@ -170,34 +171,34 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Code for ICA visualization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no';
-% ft_topoplotIC(cfg, ica_comp)
-% 
-% cfg = [];
-% cfg.layout = 'acticap-64_md.mat'; % specify the layout file that should be used for plotting
-% cfg.viewmode = 'component';
-% ft_databrowser(cfg, ica_comp)
-% 
-% cfg = [];
-% cfg.component = [30 39];
-% raw_ica_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_cleaned_reref);
-% 
+% cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no'; ft_topoplotIC(cfg, ica_comp)
+% cfg = []; cfg.layout = 'acticap-64_md.mat'; cfg.viewmode = 'component'; ft_databrowser(cfg, ica_comp)
+%
+
+if any(strcmp(steps, 'ica_correct'))
+    % Reject bad components
+    cfg = []; 
+    cfg.component = [30 39]; 
+    raw_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_data);
+    
+    % Interpolate bad channels
+    load('helper/neighbors.mat');
+    % Interpolate bad channels
+    cfg_chanrepair                     = [];
+    cfg_chanrepair.badchannel          = bad_ch;
+    cfg_chanrepair.method              = 'weighted';
+    cfg_chanrepair.neighbours          = neighbors;
+    cfg_chanrepair.layout              = 'acticap-64_md.mat';
+    cfg_chanrepair.senstype            = 'eeg';
+    raw_cleaned                        = ft_channelrepair(cfg_chanrepair,raw_cleaned);
+end
 % save(fName.raw_cleaned, 'raw_data')
 % cfg = []; cfg.viewmode = 'vertical';
 % ft_databrowser(cfg, raw_cleaned_reref)
 % ft_databrowser(cfg, raw_ica_cleaned)
 % 
 
-% % Interpolate bad channels
-% load('helper/neighbors.mat');
-% % Interpolate bad channels
-% cfg_chanrepair                     = [];
-% cfg_chanrepair.badchannel          = bad_ch;
-% cfg_chanrepair.method              = 'weighted';
-% cfg_chanrepair.neighbours          = neighbors;
-% cfg_chanrepair.layout              = 'acticap-64_md.mat';
-% cfg_chanrepair.senstype            = 'eeg';
-% raw_new                            = ft_channelrepair(cfg_chanrepair,raw_ica_cleaned);
+
 %     
 % proinVF = create_epochs(fName, 'S 11', raw_new);
 % prooutVF = create_epochs(fName, 'S 12', raw_new);
