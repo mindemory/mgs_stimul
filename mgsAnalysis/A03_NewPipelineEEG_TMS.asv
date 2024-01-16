@@ -37,9 +37,9 @@ trls_to_remove = (block_flag - 1) * 40 + trl_flag;
 HemiStimulated = table2cell(meta_data(:, ["HemisphereStimulated"]));
 NoTMSDays = table2array(meta_data(:, ["NoTMSDay"]));
 if day == NoTMSDays(subjID) % If this is a No TMS day
-    steps = {'concat', 'raweeg'};
+    steps = {'concat', 'raweeg', 'ica'};
 else % if this is a TMS day
-    steps = {'concat'};
+    steps = {'concat', 'raweeg', 'ica'};
 end
 
 % List of files to be saved
@@ -77,17 +77,20 @@ end
 if any(strcmp(steps, 'raweeg'))
     if ~exist(fName.load, 'file')
         % Load up raw data
-        cfg                           = [];
-        cfg.dataset                   = fName.concat;
-        cfg.continuous                = 'yes';
-        cfg.bpfilter                  = 'yes';
-        cfg.bpfreq                    = [0.5 50];
-        cfg.bpfilttype                = 'but';
-        cfg.bpfiltord                 = 4; 
-        cfg.bpfiltdir                 = 'twopass'; 
-        cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
-        raw_data                      = ft_preprocessing(cfg);
-        
+        if day == NoTMSDays(subjID)
+            cfg                           = [];
+            cfg.dataset                   = fName.concat;
+            cfg.continuous                = 'yes';
+            cfg.bpfilter                  = 'yes';
+            cfg.bpfreq                    = [0.5 50];
+            cfg.bpfilttype                = 'but';
+            cfg.bpfiltord                 = 4; 
+            cfg.bpfiltdir                 = 'twopass'; 
+            cfg.channel                   = {'all', '-LM', '-RM', '-TP9', '-TP10'};
+            raw_data                      = ft_preprocessing(cfg);
+        else
+            [raw_data, trls_to_remove]    = remove_tms_pulse(fName, trls_to_remove);
+        end
         % Epoch data to trial start
         cfg                           = [];
         cfg.dataset                   = fName.concat;
@@ -127,8 +130,8 @@ if any(strcmp(steps, 'raweeg'))
             flagged_data(ii, :)       = abs(tr_std - ch_med) > rej_thresh;
         end
         bad_chan_num                  = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
-        flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
-        bad_trls                      = find(sum(flagged_data) > 0);
+        %flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
+        %bad_trls                      = find(sum(flagged_data) > 0);
         bad_ch                        = ch_names((ch_std < 0.01) | (ch_std > 100)); % Reject channel if flat or too noisy
         bad_ch                        = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
         
@@ -157,14 +160,18 @@ end
 
 %% Run ICA
 if any(strcmp(steps, 'ica'))
-    if ~exist(fName.ica, 'ica')
+    if ~exist(fName.ica, 'file')
         cfg = []; cfg.method = 'fastica';
         cfg.randomseed = 42;
         ica_comp = ft_componentanalysis(cfg, raw_data);
         save(fName.ica, 'ica_comp')
     else
-        disp('ICA already ran. Loading existing ICA.')
-        load(fName.ica)
+        if ~exist(fName.raw_cleaned, 'file')
+            disp('ICA already ran. Loading existing ICA.')
+            load(fName.ica)
+        else
+            disp('ICA already ran, but loading it.')
+        end
     end
 end
 
@@ -176,28 +183,29 @@ end
 %
 
 if any(strcmp(steps, 'ica_correct'))
-    % Reject bad components
-    cfg = []; 
-    cfg.component = [30 39]; 
-    raw_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_data);
-    
-    % Interpolate bad channels
-    load('helper/neighbors.mat');
-    % Interpolate bad channels
-    cfg_chanrepair                     = [];
-    cfg_chanrepair.badchannel          = bad_ch;
-    cfg_chanrepair.method              = 'weighted';
-    cfg_chanrepair.neighbours          = neighbors;
-    cfg_chanrepair.layout              = 'acticap-64_md.mat';
-    cfg_chanrepair.senstype            = 'eeg';
-    raw_cleaned                        = ft_channelrepair(cfg_chanrepair,raw_cleaned);
+    if ~exist(fName.raw_cleaned, 'file')
+        % Reject bad components
+        cfg = []; 
+        cfg.component = bad_component_list(subjID, day);
+        raw_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_data);
+        
+        % Interpolate bad channels
+        load('helper/neighbors.mat');
+        % Interpolate bad channels
+        cfg_chanrepair                     = [];
+        cfg_chanrepair.badchannel          = bad_ch;
+        cfg_chanrepair.method              = 'weighted';
+        cfg_chanrepair.neighbours          = neighbors;
+        cfg_chanrepair.layout              = 'acticap-64_md.mat';
+        cfg_chanrepair.senstype            = 'eeg';
+        raw_cleaned                        = ft_channelrepair(cfg_chanrepair,raw_cleaned);
+        save(fName.raw_cleaned, 'raw_cleaned')
+        %delete(fName.load)
+    else
+        disp('Cleaned data already exists. Loading existing data.')
+        load(fName.raw_cleaned)
+    end
 end
-% save(fName.raw_cleaned, 'raw_data')
-% cfg = []; cfg.viewmode = 'vertical';
-% ft_databrowser(cfg, raw_cleaned_reref)
-% ft_databrowser(cfg, raw_ica_cleaned)
-% 
-
 
 %     
 % proinVF = create_epochs(fName, 'S 11', raw_new);
