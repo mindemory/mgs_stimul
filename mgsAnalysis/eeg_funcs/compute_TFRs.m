@@ -10,7 +10,7 @@ end
 %frequencies                                    = linspace(2, 55, 73);
 frequencies                                    = linspace(2, 40, 53);
 cycles                                         = linspace(4, 15, numel(frequencies));
-time_points                                    = linspace(-1, 6, 200);
+time_points                                    = linspace(-1.5, 6, 200);
 
 % Compute the full Fourier spectrogram for all trials
 cfg                                            = [];
@@ -29,7 +29,7 @@ TFR_power.powspctrm                            = 10*log10(abs(TFR_fourier.fourie
 TFR_power                                      = rmfield(TFR_power, 'fourierspctrm');
 TFR_power                                      = rmfield(TFR_power, 'cumtapcnt');
 if base_corr                                   == 1
-    baseline_time_indices                      = find(time_points >= -1 & time_points < 0);
+    baseline_time_indices                      = find(time_points < 0);
     baseline_mean                              = mean(TFR_power.powspctrm(:, :, :, baseline_time_indices), 4);
     baseline_mean_expanded                     = repmat(baseline_mean, [1, 1, 1, size(TFR_power.powspctrm, 4)]);
     TFR_power.powspctrm                        = TFR_power.powspctrm - baseline_mean_expanded;

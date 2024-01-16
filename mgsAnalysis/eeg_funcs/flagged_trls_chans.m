@@ -3,28 +3,25 @@ function [flg_trls, flg_chans] = flagged_trls_chans(subjID, day)
 
 if subjID               == 1
     if day              == 1
-        flg_trls         = [37 56 57 66 69 239 240 308 309 366];
+        flg_trls         = [];
         flg_chans        = {};
     elseif day          == 2
-        flg_trls         = [3 4 21 79 92 119 149 179 199 224 232 239 249 ...
-                            250 262 337];
-        flg_chans        = {'Fp1', 'Oz', 'Fp2', 'AF7', 'F6', 'AF8', 'AF4'};
+        flg_trls         = [];
+        flg_chans        = {};
     elseif day          == 3
-        flg_trls         = [1 34 42 80 81 118 129 144 145 208 217 222 227 ...
-                            280 295 297 313 333];
-        flg_chans        = {'Oz', 'POz'};
+        flg_trls         = [];
+        flg_chans        = {};
     end
-elseif subjID           == 3 % Trial rejection not done well
+elseif subjID           == 3 
     if day              == 1
-        flg_trls         = [41 138 139 141 142 161 228 241 321 340 397];
-        flg_chans        = {'Pz', 'F1', 'CP1', 'FC2', 'Fz', 'CPz', 'T7', 'P2', ...
-                            'AFz', 'FT10', 'Fp1', 'Fp2', 'POz', 'PO4'};
+        flg_trls         = [];
+        flg_chans        = {};
     elseif day          == 2
-        flg_trls         = [116 250 251 252];
-        flg_chans        = {'FC1', 'CP6', 'Fp1', 'Fp2', 'AFz', 'AF4', 'O2'};
+        flg_trls         = [];
+        flg_chans        = {};
     elseif day          == 3
-        flg_trls         = [25 143 144 200 202 204 205 280 320 360 361 362];
-        flg_chans        = {'PO4'};
+        flg_trls         = [];
+        flg_chans        = {};
     end
 elseif subjID           == 5
     if day              == 1

@@ -54,15 +54,16 @@ if ~exist(fName.folder, 'dir')
 end
 fName.general                   = [fName.folder '/sub' p.subjID '_day' num2str(p.day,'%02d')];
 fName.concat                    = [fName.general '.vhdr'];
+fName.flag_data                 = [fName.general '_flagdata.mat'];
 fName.load                      = [fName.general '_raweeg.mat'];
 fName.ica                       = [fName.general '_ica.mat'];
 fName.raw_cleaned               = [fName.general '_raw_cleaned.mat'];
+fName.trl_idx                   = [fName.general '_trl_idx.mat'];
+fName.epoc_all                  = [fName.general '_epoc_all.mat'];
+fName.epoc                      = [fName.general '_epoc.mat'];
 fName.erp                       = [fName.general '_erp.mat'];
-fName.tms_erp                   = [fName.general '_tms_erp.mat'];
-fName.TFR                       = [fName.general '_TFR.mat'];
-fName.TMS_TFR                   = [fName.general '_TMS_TFR.mat'];
+fName.TFR_evoked                = [fName.general '_TFR_evoked.mat'];
 fName.TFR_induced               = [fName.general '_TFR_induced.mat'];
-fName.TMS_TFR_induced           = [fName.general '_TMS_TFR_induced.mat'];
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
     if ~exist(fName.concat, 'file')
@@ -113,27 +114,7 @@ if any(strcmp(steps, 'raweeg'))
         raw_epoc                      = ft_selectdata(cfg, raw_epoc);
         
         % Detect bad channels
-        thresh                        = [];
-        thresh.pval                   = 90;
-        thresh.prop_badtrials         = 0.25;
-        ch_names                      = raw_data.label;
-        tseries                       = raw_data.trial{1};
-        ch_std                        = std(tseries, 0, 2);
-        ch_med                        = median(ch_std);
-        rej_thresh                    = prctile(abs(ch_std - ch_med), thresh.pval);
-        bad_ch1                       = ch_names(abs(ch_std - ch_med)>rej_thresh);
-        ntrials                       = length(raw_epoc.trialinfo);
-        nchans                        = length(ch_names);
-        flagged_data                  = zeros(ntrials, nchans);
-        for ii                        = 1:ntrials
-            tr_std                    = std(raw_epoc.trial{ii}, 0, 2);
-            flagged_data(ii, :)       = abs(tr_std - ch_med) > rej_thresh;
-        end
-        bad_chan_num                  = find(sum(flagged_data, 1) > thresh.prop_badtrials * ntrials);
-        %flagged_data(:, bad_chan_num) = zeros(ntrials, length(bad_chan_num));
-        %bad_trls                      = find(sum(flagged_data) > 0);
-        bad_ch                        = ch_names((ch_std < 0.01) | (ch_std > 100)); % Reject channel if flat or too noisy
-        bad_ch                        = unique([bad_ch; ch_names(bad_chan_num); bad_ch1]);
+        [bad_ch, ~] = auto_reject(raw, epoc);
         
         cfg                           = [];
         cfg.channel                   = setdiff(ch_names, bad_ch);
@@ -146,15 +127,17 @@ if any(strcmp(steps, 'raweeg'))
         cfg.refchannel                = 'all';
         cfg.refmethod                 = 'avg';
         raw_data                      = ft_preprocessing(cfg, raw_data);
-        
-        save(fName.load, 'raw_data', 'bad_ch')
+        clearvars raw_epoc;
+        save(fName.flag_data, 'bad_ch', 'trls_to_remove')
+        save(fName.load, 'raw_data')
     else
-        if ~exist(fName.ica, 'file')
-            disp('Cleaned data exists. Loading existing file.')
+        if ~exist(fName.raw_cleaned, 'file')
+            disp('Raw data exists. Loading existing file.')
             load(fName.load)
         else
-            disp('Cleaned data exists, but not loading it.')
+            disp('Raw data exists, but not loading it.')
         end
+        load(fName.flag_data)
     end
 end
 
@@ -187,18 +170,20 @@ if any(strcmp(steps, 'ica_correct'))
         % Reject bad components
         cfg = []; 
         cfg.component = bad_component_list(subjID, day);
+        cfg.demean     = 'no';
         raw_cleaned = ft_rejectcomponent(cfg, ica_comp, raw_data);
         
         % Interpolate bad channels
         load('helper/neighbors.mat');
         % Interpolate bad channels
-        cfg_chanrepair                     = [];
-        cfg_chanrepair.badchannel          = bad_ch;
-        cfg_chanrepair.method              = 'weighted';
-        cfg_chanrepair.neighbours          = neighbors;
-        cfg_chanrepair.layout              = 'acticap-64_md.mat';
-        cfg_chanrepair.senstype            = 'eeg';
-        raw_cleaned                        = ft_channelrepair(cfg_chanrepair,raw_cleaned);
+        cfg                     = [];
+        cfg.badchannel          = bad_ch;
+        cfg.method              = 'weighted';
+        cfg.neighbours          = neighbors;
+        cfg.layout              = 'acticap-64_md.mat';
+        cfg.senstype            = 'eeg';
+        raw_cleaned             = ft_channelrepair(cfg,raw_cleaned);
+        clearvars ica_comp raw_data;
         save(fName.raw_cleaned, 'raw_cleaned')
         %delete(fName.load)
     else
@@ -207,14 +192,100 @@ if any(strcmp(steps, 'ica_correct'))
     end
 end
 
-%     
-% proinVF = create_epochs(fName, 'S 11', raw_new);
-% prooutVF = create_epochs(fName, 'S 12', raw_new);
-% antiinVF = create_epochs(fName, 'S 13', raw_new);
-% antioutVF = create_epochs(fName, 'S 14', raw_new);
+%% Epoch data
+if any(strcmp(steps, 'epoch'))
+    if ~exist(fName.epoc_all, 'file') 
+        cfg                           = [];
+        cfg.dataset                   = fName.concat;
+        cfg.continuous                = 'yes';
+        cfg.trialdef.prestim          = 1.5;
+        cfg.trialdef.poststim         = 6;
+        cfg.trialdef.eventtype        = 'Stimulus';
+        cfg.trialdef.eventvalue       = {'S 11', 'S 12', 'S 13', 'S 14'};
+        cfg                           = ft_definetrial(cfg);
+        trl_info                      = cfg.trl;
+        cfg_new                       = [];
+        cfg_new.trl                   = trl_info;
+        epoc_cleaned                  = ft_redefinetrial(cfg_new, raw_cleaned);
+        cfg                                  = [];
+        cfg.resamplefs                       = 200;
+        cfg.method                           = 'downsample';
+        epoc_cleaned                           = ft_resampledata(cfg, epoc_cleaned);
+        
+        save(fName.epoc_all, 'epoc_cleaned')
+        % Do trial-rejection if needed here.
+        % cfg = []; cfg.method = 'summary'; cfg.ylim = [-1e-12 1e-12]; dummy = ft_rejectvisual(cfg, epoc_cleaned);
+        [flg_trls, ~] = flagged_trls_chans(subjID, day);
+        if ~isempty(flg_trls)
+            orig_len = length(trls_to_remove);
+            trls_to_remove = unique([trls_to_remove flg_trls]);
+            if length(trls_to_remove) > length(orig_len)
+                disp('here')
+                save(fName.flag_data, 'bad_ch', 'trls_to_remove')
+            end
+        end
+    else
+        disp('Epoched all trials already exist. Loading extisting data.')
+        load(fName.epoc_all)
+    end
+end
+
+% if ~isempty(flg_chans)
+%     orig_len = length(bad_ch);
+%     bad_ch = unique([bad_ch flg_chans]);
+%     if length(bad_ch) > length(orig_len)
+%         disp('here again')
+%         save(fName.flag_data, 'bad_ch', 'trls_to_remove')
+%     end
+% end
+
+if any(strcmp(steps, 'reepoch'))
+    if ~exist(fName.epoc, 'file') 
+        disp('Re-epoching and eliminating bad trials')
+        % Select good trials for each epoched data type
+        cfg                            = [];
+        cfg.channel                    = 'all';
+        
+        % epoch data by trial types and remove bad trials
+        [trl_idx.pin, epoc.pin]        = create_epochs(epoc_cleaned, 11, trls_to_remove);
+        [trl_idx.pout, epoc.pout]      = create_epochs(epoc_cleaned, 12, trls_to_remove);
+        [trl_idx.ain, epoc.ain]        = create_epochs(epoc_cleaned, 13, trls_to_remove);
+        [trl_idx.aout, epoc.aout]      = create_epochs(epoc_cleaned, 14, trls_to_remove);
+        save(fName.epoc, 'epoc')
+        save(fName.trl_idx, 'trl_idx')
+    end
+end
+
+if any(strcmp(steps, 'erp'))
+    if ~exist(fName.erp, 'file')
+        [ERP.pin, ERP.pout]            = compute_ERPs(epoc_pin, epoc_pout);
+        [ERP.ain, ERP.aout]            = compute_ERPs(epoc_ain, epoc_aout);
+        save(fName.erp, 'ERP');
+    else
+        load(fName.erp)
+    end
+end
+
+if any(strcmp(steps, 'tfr_evoked'))
+    if ~exist(fName.TFR_evoked, 'file')
+        [POW.pin, ITC.pin, PHASE.pin]       = compute_TFRs(epoc_pin);
+        [POW.pout, ITC.pout, PHASE.pout]       = compute_TFRs(epoc_pout);
+        [POW.ain, ITC.ain, PHASE.ain]       = compute_TFRs(epoc_ain);
+        [POW.aout, ITC.aout, PHASE.aout]       = compute_TFRs(epoc_aout);
+        save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE');
+    end
+end
+
+if any(strcmp(steps, 'tfr_evoked'))
+    if ~exist(fName.TFR_evoked, 'file')
+        [POW.pin, ITC.pin, PHASE.pin]       = compute_TFRs(epoc_pin);
+        [POW.pout, ITC.pout, PHASE.pout]       = compute_TFRs(epoc_pout);
+        [POW.ain, ITC.ain, PHASE.ain]       = compute_TFRs(epoc_ain);
+        [POW.aout, ITC.aout, PHASE.aout]       = compute_TFRs(epoc_aout);
+        save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE');
+    end
+end
 % 
-% [erp_proinVF, erp_prooutVF]          = compute_ERPs(proinVF, prooutVF);
-% [erp_antioutVF, erp_antioutVF]       = compute_ERPs(antiinVF, antioutVF);
 % 
 % [TFR_proinVF, ~, ~]       = compute_TFRs(proinVF);
 % [TFR_prooutVF, ~, ~]       = compute_TFRs(prooutVF);
