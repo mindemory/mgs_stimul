@@ -14,7 +14,7 @@ if subjID               == 1
     end
 elseif subjID           == 3 
     if day              == 1
-        flg_trls         = [];
+        flg_trls         = [1, 81, 139, 141, 144, 145, 147, 148, 149, 150, 151, 153, 327, 328, 339, 340, 397];
         flg_chans        = {};
     elseif day          == 2
         flg_trls         = [];

@@ -36,12 +36,9 @@ trls_to_remove = (block_flag - 1) * 40 + trl_flag;
 
 HemiStimulated = table2cell(meta_data(:, ["HemisphereStimulated"]));
 NoTMSDays = table2array(meta_data(:, ["NoTMSDay"]));
-if day == NoTMSDays(subjID) % If this is a No TMS day
-    steps = {'concat', 'raweeg', 'ica'};
-else % if this is a TMS day
-    steps = {'concat', 'raweeg', 'ica'};
-end
+steps = {'concat', 'raweeg', 'ica', 'ica_correct', 'epoch', 'reepoch', 'erp', 'tfr_evoked', 'tfr_induced'};
 
+cond_list = ["pin", "pout", "ain", "aout"];
 % List of files to be saved
 % Step 1: Loading data 'subXX_dayXX_raweeg.mat'
 % Step 2: Remove low frequency drifts 'subXX_dayXX_highpass.mat'
@@ -64,6 +61,7 @@ fName.epoc                      = [fName.general '_epoc.mat'];
 fName.erp                       = [fName.general '_erp.mat'];
 fName.TFR_evoked                = [fName.general '_TFR_evoked.mat'];
 fName.TFR_induced               = [fName.general '_TFR_induced.mat'];
+
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
     if ~exist(fName.concat, 'file')
@@ -103,22 +101,17 @@ if any(strcmp(steps, 'raweeg'))
         cfg                           = ft_definetrial(cfg);
         cfg_new                       = [];
         cfg_new.trl                   = cfg.trl;
-        trl_info                      = cfg.trl;
         raw_epoc                      = ft_redefinetrial(cfg_new, raw_data);
         cfg                           = [];
         % Remove trials that have bad timing
         if ~isempty(trls_to_remove)
             cfg.trials                = setdiff(1:length(raw_epoc.trialinfo), trls_to_remove);
-            trl_info                  = trl_info(cfg.trials, :);
+            %trl_info                  = trl_info(cfg.trials, :);
         end
         raw_epoc                      = ft_selectdata(cfg, raw_epoc);
         
         % Detect bad channels
-        [bad_ch, ~] = auto_reject(raw, epoc);
-        
-        cfg                           = [];
-        cfg.channel                   = setdiff(ch_names, bad_ch);
-        raw_data                      = ft_selectdata(cfg, raw_data);
+        [bad_ch, ~, raw_data]         = auto_reject(raw_data, raw_epoc);        
         
         % Average reference
         cfg                           = [];
@@ -129,7 +122,7 @@ if any(strcmp(steps, 'raweeg'))
         raw_data                      = ft_preprocessing(cfg, raw_data);
         clearvars raw_epoc;
         save(fName.flag_data, 'bad_ch', 'trls_to_remove')
-        save(fName.load, 'raw_data')
+        save(fName.load, 'raw_data', '-v7.3')
     else
         if ~exist(fName.raw_cleaned, 'file')
             disp('Raw data exists. Loading existing file.')
@@ -147,7 +140,7 @@ if any(strcmp(steps, 'ica'))
         cfg = []; cfg.method = 'fastica';
         cfg.randomseed = 42;
         ica_comp = ft_componentanalysis(cfg, raw_data);
-        save(fName.ica, 'ica_comp')
+        save(fName.ica, 'ica_comp', '-v7.3')
     else
         if ~exist(fName.raw_cleaned, 'file')
             disp('ICA already ran. Loading existing ICA.')
@@ -164,7 +157,6 @@ end
 % cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no'; ft_topoplotIC(cfg, ica_comp)
 % cfg = []; cfg.layout = 'acticap-64_md.mat'; cfg.viewmode = 'component'; ft_databrowser(cfg, ica_comp)
 %
-
 if any(strcmp(steps, 'ica_correct'))
     if ~exist(fName.raw_cleaned, 'file')
         % Reject bad components
@@ -182,10 +174,11 @@ if any(strcmp(steps, 'ica_correct'))
         cfg.neighbours          = neighbors;
         cfg.layout              = 'acticap-64_md.mat';
         cfg.senstype            = 'eeg';
-        raw_cleaned             = ft_channelrepair(cfg,raw_cleaned);
+        raw_cleaned             = ft_channelrepair(cfg, raw_cleaned);
         clearvars ica_comp raw_data;
-        save(fName.raw_cleaned, 'raw_cleaned')
-        %delete(fName.load)
+        save(fName.raw_cleaned, 'raw_cleaned', '-v7.3')
+%         delete(fName.load)
+%         delete(fName.ica)
     else
         disp('Cleaned data already exists. Loading existing data.')
         load(fName.raw_cleaned)
@@ -212,7 +205,7 @@ if any(strcmp(steps, 'epoch'))
         cfg.method                           = 'downsample';
         epoc_cleaned                           = ft_resampledata(cfg, epoc_cleaned);
         
-        save(fName.epoc_all, 'epoc_cleaned')
+        save(fName.epoc_all, 'epoc_cleaned', '-v7.3')
         % Do trial-rejection if needed here.
         % cfg = []; cfg.method = 'summary'; cfg.ylim = [-1e-12 1e-12]; dummy = ft_rejectvisual(cfg, epoc_cleaned);
         [flg_trls, ~] = flagged_trls_chans(subjID, day);
@@ -239,6 +232,7 @@ end
 %     end
 % end
 
+%% Repoch by condition
 if any(strcmp(steps, 'reepoch'))
     if ~exist(fName.epoc, 'file') 
         disp('Re-epoching and eliminating bad trials')
@@ -247,54 +241,58 @@ if any(strcmp(steps, 'reepoch'))
         cfg.channel                    = 'all';
         
         % epoch data by trial types and remove bad trials
-        [trl_idx.pin, epoc.pin]        = create_epochs(epoc_cleaned, 11, trls_to_remove);
-        [trl_idx.pout, epoc.pout]      = create_epochs(epoc_cleaned, 12, trls_to_remove);
-        [trl_idx.ain, epoc.ain]        = create_epochs(epoc_cleaned, 13, trls_to_remove);
-        [trl_idx.aout, epoc.aout]      = create_epochs(epoc_cleaned, 14, trls_to_remove);
-        save(fName.epoc, 'epoc')
+        for ii = 1:length(cond_list)
+            cc = cond_list(ii);
+            [trl_idx.(cc), epoc.(cc)]        = create_epochs(epoc_cleaned, 10+ii, trls_to_remove);
+        end
+    
+        save(fName.epoc, 'epoc', '-v7.3')
         save(fName.trl_idx, 'trl_idx')
+    else
+        load(fName.epoc)
     end
 end
 
+%% Compute ERPs
 if any(strcmp(steps, 'erp'))
     if ~exist(fName.erp, 'file')
-        [ERP.pin, ERP.pout]            = compute_ERPs(epoc_pin, epoc_pout);
-        [ERP.ain, ERP.aout]            = compute_ERPs(epoc_ain, epoc_aout);
-        save(fName.erp, 'ERP');
+        [ERP.pin, ERP.pout]                     = compute_ERPs(epoc.pin, epoc.pout);
+        [ERP.ain, ERP.aout]                     = compute_ERPs(epoc.ain, epoc.aout);
+        save(fName.erp, 'ERP', '-v7.3');
     else
         load(fName.erp)
     end
 end
 
+%% Compute evoked TFR
 if any(strcmp(steps, 'tfr_evoked'))
     if ~exist(fName.TFR_evoked, 'file')
-        [POW.pin, ITC.pin, PHASE.pin]       = compute_TFRs(epoc_pin);
-        [POW.pout, ITC.pout, PHASE.pout]       = compute_TFRs(epoc_pout);
-        [POW.ain, ITC.ain, PHASE.ain]       = compute_TFRs(epoc_ain);
-        [POW.aout, ITC.aout, PHASE.aout]       = compute_TFRs(epoc_aout);
-        save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE');
+        for cc = cond_list
+            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc));
+        end
+        save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE', '-v7.3');
+        clearvars POW ITC PHASE;
     end
 end
 
-if any(strcmp(steps, 'tfr_evoked'))
-    if ~exist(fName.TFR_evoked, 'file')
-        epoc_prointoVF_minus_ERP                                 = epoc_prointoVF;
-        for k = 1:numel(epoc_prointoVF.trial)
-            epoc_prointoVF_minus_ERP.trial{k}                    = epoc_prointoVF.trial{k} - ERP.prointoVF.avg;
+%% Compute induced TFR
+if any(strcmp(steps, 'tfr_induced'))
+    if ~exist(fName.TFR_induced, 'file')
+        for cc = cond_list
+            epoc_minus_erp                       = epoc.(cc);
+            for k = 1:numel(epoc.(cc).trial)
+                epoc_minus_erp.trial{k}          = epoc.(cc).trial{k} - ERP.(cc).avg;
+            end
+            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc_minus_erp);
         end
-        [POW.pin, ITC.pin, PHASE.pin]       = compute_TFRs(epoc_pin);
-        [POW.pout, ITC.pout, PHASE.pout]       = compute_TFRs(epoc_pout);
-        [POW.ain, ITC.ain, PHASE.ain]       = compute_TFRs(epoc_ain);
-        [POW.aout, ITC.aout, PHASE.aout]       = compute_TFRs(epoc_aout);
-        save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE');
+        save(fName.TFR_induced, 'POW', 'ITC', 'PHASE', '-v7.3');
     end
 end
-% 
-% 
-% [TFR_proinVF, ~, ~]       = compute_TFRs(proinVF);
-% [TFR_prooutVF, ~, ~]       = compute_TFRs(prooutVF);
-% [TFR_antiinVF, ~, ~]       = compute_TFRs(antiinVF);
-% [TFR_antioutVF, ~, ~]       = compute_TFRs(antioutVF);
+
+% cfg = [];
+% cfg.parameter = 'powspctrm';
+% cfg.avg
+
 % 
 % cfg                                              = [];
 % cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';

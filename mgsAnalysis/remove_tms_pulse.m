@@ -42,13 +42,34 @@ cfg_new                                = [];
 cfg_new.trl                            = trlInf;
 epoced_dat                             = ft_redefinetrial(cfg_new, data);
 
-ptimes                                 = zeros(1, length(epoced_dat.trialinfo));
-for tt                                 = 1:length(epoced_dat.trialinfo)
-    median_arr                         = median(abs(epoced_dat.trial{tt}), 2);
-    tms_samps                          = abs(epoced_dat.trial{tt}(1, :)) > 1.1 * median_arr(1);
-    tms_time                           = epoced_dat.time{tt}(tms_samps);
-    npulses                            = length(tms_time);
-    ptimes(tt)                         = npulses>0;
+% ptimes                                 = zeros(1, length(epoced_dat.trialinfo));
+% for tt                                 = 1:length(epoced_dat.trialinfo)
+%     median_arr                         = median(abs(epoced_dat.trial{tt}), 2);
+%     tms_samps                          = abs(epoced_dat.trial{tt}(1, :)) > 1.5 * median_arr(1);
+%     tms_time                           = epoced_dat.time{tt}(tms_samps);
+%     npulses                            = length(tms_time);
+%     ptimes(tt)                         = npulses>0;
+% end
+
+ptimes = zeros(1, length(epoced_dat.trialinfo));
+for tt = 1:length(epoced_dat.trialinfo)
+    num_channels = size(epoced_dat.trial{tt}, 1);
+    channel_pulse_count = 0;
+
+    for ch = 1:num_channels
+        median_arr = median(abs(epoced_dat.trial{tt}(ch, :)), 2);
+        tms_samps = abs(epoced_dat.trial{tt}(ch, :)) > 1.1 * median_arr;
+        tms_time = epoced_dat.time{tt}(tms_samps);
+        npulses = length(tms_time);
+
+        if npulses > 0
+            channel_pulse_count = channel_pulse_count + 1;
+        end
+    end
+
+    if channel_pulse_count > num_channels / 3
+        ptimes(tt) = 1;
+    end
 end
 trls_to_remove                         = unique([trls_to_remove find(ptimes > 0)]);
 
