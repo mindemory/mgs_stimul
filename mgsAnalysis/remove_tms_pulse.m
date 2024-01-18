@@ -7,8 +7,8 @@ cfg.channel                            = {'all', '-LM', '-RM', '-TP9', '-TP10'};
 data                                   = ft_preprocessing(cfg);
 
 % Get samples around the TMS pulse
-cfg.trialdef.prestim                   = -0.03;
-cfg.trialdef.poststim                  = 0.25;
+cfg.trialdef.prestim                   = 0.0;
+cfg.trialdef.poststim                  = 0.3;
 cfg.trialdef.eventtype                 = 'Stimulus';
 cfg.trialdef.eventvalue                = {'S  3'};
 cfg                                    = ft_definetrial(cfg);

@@ -122,7 +122,7 @@ if any(strcmp(steps, 'raweeg'))
         raw_data                      = ft_preprocessing(cfg, raw_data);
         clearvars raw_epoc;
         save(fName.flag_data, 'bad_ch', 'trls_to_remove')
-        save(fName.load, 'raw_data', '-v7.3')
+        %save(fName.load, 'raw_data', '-v7.3')
     else
         if ~exist(fName.raw_cleaned, 'file')
             disp('Raw data exists. Loading existing file.')
@@ -140,7 +140,7 @@ if any(strcmp(steps, 'ica'))
         cfg = []; cfg.method = 'fastica';
         cfg.randomseed = 42;
         ica_comp = ft_componentanalysis(cfg, raw_data);
-        save(fName.ica, 'ica_comp', '-v7.3')
+        %save(fName.ica, 'ica_comp', '-v7.3')
     else
         if ~exist(fName.raw_cleaned, 'file')
             disp('ICA already ran. Loading existing ICA.')
@@ -155,7 +155,7 @@ end
 % Code for ICA visualization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % cfg = [];  cfg.component = 1:length(ica_comp.label); cfg.layout = 'acticap-64_md.mat'; cfg.comment = 'no'; ft_topoplotIC(cfg, ica_comp)
-% cfg = []; cfg.layout = 'acticap-64_md.mat'; cfg.viewmode = 'component'; ft_databrowser(cfg, ica_comp)
+% cfg = []; cfg.layout = 'acticap-64_md.mat'; cfg.viewmode = 'component'; cfg.ylim = [-200, 200]; ft_databrowser(cfg, ica_comp)
 %
 if any(strcmp(steps, 'ica_correct'))
     if ~exist(fName.raw_cleaned, 'file')
@@ -176,7 +176,7 @@ if any(strcmp(steps, 'ica_correct'))
         cfg.senstype            = 'eeg';
         raw_cleaned             = ft_channelrepair(cfg, raw_cleaned);
         clearvars ica_comp raw_data;
-        save(fName.raw_cleaned, 'raw_cleaned', '-v7.3')
+%         save(fName.raw_cleaned, 'raw_cleaned', '-v7.3')
 %         delete(fName.load)
 %         delete(fName.ica)
     else
@@ -200,10 +200,10 @@ if any(strcmp(steps, 'epoch'))
         cfg_new                       = [];
         cfg_new.trl                   = trl_info;
         epoc_cleaned                  = ft_redefinetrial(cfg_new, raw_cleaned);
-        cfg                                  = [];
-        cfg.resamplefs                       = 200;
-        cfg.method                           = 'downsample';
-        epoc_cleaned                           = ft_resampledata(cfg, epoc_cleaned);
+        cfg                           = [];
+        cfg.resamplefs                = 200;
+        cfg.method                    = 'downsample';
+        epoc_cleaned                  = ft_resampledata(cfg, epoc_cleaned);
         
         save(fName.epoc_all, 'epoc_cleaned', '-v7.3')
         % Do trial-rejection if needed here.
@@ -222,15 +222,6 @@ if any(strcmp(steps, 'epoch'))
         load(fName.epoc_all)
     end
 end
-
-% if ~isempty(flg_chans)
-%     orig_len = length(bad_ch);
-%     bad_ch = unique([bad_ch flg_chans]);
-%     if length(bad_ch) > length(orig_len)
-%         disp('here again')
-%         save(fName.flag_data, 'bad_ch', 'trls_to_remove')
-%     end
-% end
 
 %% Repoch by condition
 if any(strcmp(steps, 'reepoch'))
@@ -268,9 +259,10 @@ end
 if any(strcmp(steps, 'tfr_evoked'))
     if ~exist(fName.TFR_evoked, 'file')
         for cc = cond_list
-            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc));
+            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc), 1);
         end
         save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE', '-v7.3');
+        clearvars POW ITC PHASE;
     end
 end
 
@@ -282,7 +274,7 @@ if any(strcmp(steps, 'tfr_induced'))
             for k = 1:numel(epoc.(cc).trial)
                 epoc_minus_erp.trial{k}          = epoc.(cc).trial{k} - ERP.(cc).avg;
             end
-            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc.(cc));
+            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc_minus_erp, 1);
         end
         save(fName.TFR_induced, 'POW', 'ITC', 'PHASE', '-v7.3');
     end

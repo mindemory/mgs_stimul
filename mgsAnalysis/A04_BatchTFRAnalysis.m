@@ -1,9 +1,9 @@
-function A04_BatchTFRAnalysis()
-clearvars; close all; clc;
+function A04_BatchTFRAnalysis(tfr_type)
+clearvars -except tfr_type; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 8 11 12 13 14 15 16 17 18 22 23 24 25 26 27];
-subs                                        = [1];
+subs                                        = [1 3];
 
 days                                        = [1 2 3];
 t_stamp                                     = [0.5 2 3 4.5];
@@ -18,10 +18,18 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    fName.mTFR                                  = '/datc/MD_TMS_EEG/EEGfiles/masterTFR.mat';
+    if strcmp(tfr_type, 'evoked')
+        fName.mTFR                                  = '/datc/MD_TMS_EEG/EEGfiles/masterTFR_evoked.mat';
+    elseif strcmp(tfr_type, 'induced')
+        fName.mTFR                                  = '/datc/MD_TMS_EEG/EEGfiles/masterTFR_induced.mat';
+    end
     fig_path                                    = '/datc/MD_TMS_EEG/Figures';
 else
-    fName.mTFR                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/masterTFR.mat';
+    if strcmp(tfr_type, 'evoked')
+        fName.mTFR                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/masterTFR_evoked.mat';
+    elseif strcmp(tfr_type, 'induced')
+        fName.mTFR                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/masterTFR_induced.mat';
+    end
     fig_path                                    = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/Figures';
 end
 if ~exist(fName.mTFR, 'file')
@@ -54,7 +62,11 @@ if ~exist(fName.mTFR, 'file')
 
     
             %[~, flg_chans]                  = flagged_trls_chans(subjID, day);
-            load(fName.TFR_induced, 'POW');
+            if strcmp(tfr_type, 'induced')
+                load(fName.TFR_induced, 'POW');
+            elseif strcmp(tfr_type, 'evoked')
+                load(fName.TFR_evoked, 'POW');
+            end
     
             tidx_before                     = find((POW.pin.time > t_stamp(1)) ...
                 & (POW.pin.time < t_stamp(2)));
@@ -110,10 +122,10 @@ if ~exist(fName.mTFR, 'file')
             end
         end
     
-        figname.subjTFR_pro                 = [p.figure '/tfrplots/sub' p.subjID '_TFRpro.png'];
-        figname.subjTFR_anti                = [p.figure '/tfrplots/sub' p.subjID '_TFRanti.png'];
-        figname.subjTOPO_pro                = [p.figure '/topoplots/sub' p.subjID '_TOPOpro.png'];
-        figname.subjTOPO_anti               = [p.figure '/topoplots/sub' p.subjID '_TOPOanti.png'];
+        figname.subjTFR_pro                 = [p.figure '/tfrplots/' tfr_type '/sub' p.subjID '_TFRpro.png'];
+        figname.subjTFR_anti                = [p.figure '/tfrplots/' tfr_type '/sub' p.subjID '_TFRanti.png'];
+        figname.subjTOPO_pro                = [p.figure '/topoplots/' tfr_type '/sub' p.subjID '_TOPOpro.png'];
+        figname.subjTOPO_anti               = [p.figure '/topoplots/' tfr_type '/sub' p.subjID '_TOPOanti.png'];
         if ~exist(figname.subjTFR_pro, 'file')
             compare_conds(TFR, tidx, fidx, 'p')
             saveas(gcf, figname.subjTFR_pro, 'png')
