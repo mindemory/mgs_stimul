@@ -86,31 +86,31 @@ elseif subjID == 14
     elseif day == 2
         bad_comps = [4 12 13 17 45 46];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [9 11 12 16 21 42];
     end
 elseif subjID == 15
     if day == 1
-        bad_comps = [];
+        bad_comps = [3 4 16 24 37 41 47];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [1 11 12 13 44 49];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [3 6 17 37 49];
     end
 elseif subjID == 16
     if day == 1
-        bad_comps = [];
+        bad_comps = [12 29 31];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [3 4 10 14 23 35 37];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [1 3 9 12 32 33];
     end
 elseif subjID == 17
     if day == 1
-        bad_comps = [];
+        bad_comps = [2 3 27 32];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [8 14 31 42];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [8 24 33 39];
     end
 elseif subjID == 18
     if day == 1
@@ -122,47 +122,47 @@ elseif subjID == 18
     end
 elseif subjID == 22
     if day == 1
-        bad_comps = [];
+        bad_comps = [31 32];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [11 15 30 32];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [6 13 24];
     end
 elseif subjID == 23
     if day == 1
-        bad_comps = [];
+        bad_comps = [2 3 44 45 47];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [49 52];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [10 23 47 48 50];
     end
 elseif subjID == 24
     if day == 1
-        bad_comps = [];
+        bad_comps = [3 9 28 31 35];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [35 44];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [8 25 33 44];
     end
 elseif subjID == 25
     if day == 1
-        bad_comps = [];
+        bad_comps = [6 27 28 49];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [4 18 21 30 49 54];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [6 12 18 33 50 51];
     end
 elseif subjID == 26
     if day == 1
-        bad_comps = [];
+        bad_comps = [13 27 34 38 40];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [19 23 35 48];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [1 29 35];
     end
 elseif subjID == 27
     if day == 1
-        bad_comps = [];
+        bad_comps = [13 20 30];
     elseif day == 2
         bad_comps = [];
     elseif day == 3
