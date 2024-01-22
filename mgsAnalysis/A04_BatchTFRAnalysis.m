@@ -208,10 +208,10 @@ end
 %     
 % 
 % % Figure names for master plots
-% figname.masterTFR_pro                       = [p.figure '/tfrplots/allsubs_TFRpro.png'];
-% figname.masterTFR_anti                      = [p.figure '/tfrplots/allsubs_TFRanti.png'];
-% figname.masterTOPO_pro                      = [p.figure '/topoplots/allsubs_TOPOpro.png'];
-% figname.masterTOPO_anti                     = [p.figure '/topoplots/allsubs_TOPOanti.png'];
+% figname.masterTFR_pro                       = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRpro.png'];
+% figname.masterTFR_anti                      = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRanti.png'];
+% figname.masterTOPO_pro                      = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOpro.png'];
+% figname.masterTOPO_anti                     = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOanti.png'];
 % 
 % % Master figure plots for TFR and TOPO
 % if ~exist(figname.masterTFR_pro, 'file')
@@ -228,11 +228,11 @@ end
 % end
 
 %% If running for all subjects regardless (temporarily made for SfN (maybe?)
-% for ss = 1:20
-%     NTin_tfr                                         = mTFR.NT.Pin.all;
-%     NTout_tfr                                        = mTFR.NT.Pout.all;
-%     Tin_tfr                                          = mTFR.T.Pin.all;
-%     Tout_tfr                                         = mTFR.T.Pout.all;
+% for ss = 1:length(subs)
+%     NTin_tfr                                         = mTFR.NT.pin.all;
+%     NTout_tfr                                        = mTFR.NT.pout.all;
+%     Tin_tfr                                          = mTFR.T.pin.all;
+%     Tout_tfr                                         = mTFR.T.pout.all;
 %     NTin_tfr.powspctrm                               = squeeze(NTin_tfr.powspctrm(:,:,:,ss));
 %     NTout_tfr.powspctrm                              = squeeze(NTout_tfr.powspctrm(:,:,:,ss));
 %     Tin_tfr.powspctrm                                = squeeze(Tin_tfr.powspctrm(:,:,:,ss));
@@ -268,8 +268,8 @@ end
 %         %disp(p, stats)
 %     end
 % end
-
-% Average all mTFRs for plotting
+% 
+% %Average all mTFRs for plotting
 % for tt = t_types_in
 %     mTFR.NT.(tt).ipsi.powspctrm         = mean(mTFR.NT.(tt).ipsi.powspctrm, 1, 'omitnan');
 %     mTFR.NT.(tt).contra.powspctrm       = mean(mTFR.NT.(tt).contra.powspctrm, 1, 'omitnan');
