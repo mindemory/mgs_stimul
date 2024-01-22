@@ -1,5 +1,5 @@
 function A05_alphalateralization(tfr_type)
-clearvars; close all; clc;
+clearvars -except tfr_type; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 24 25 25 27];

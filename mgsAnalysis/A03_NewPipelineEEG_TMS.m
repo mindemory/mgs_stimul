@@ -220,6 +220,7 @@ if any(strcmp(steps, 'epoch'))
     else
         disp('Epoched all trials already exist. Loading extisting data.')
         load(fName.epoc_all)
+        load(fName.flag_data)
     end
 end
 
