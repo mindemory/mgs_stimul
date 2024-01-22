@@ -49,11 +49,11 @@ elseif subjID == 8
     end
 elseif subjID == 10
     if day == 1
-        bad_comps = [];
+        bad_comps = [16 24];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [5 18 25 40 43 44];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [44 50];
     end
 
 elseif subjID == 11
@@ -164,8 +164,8 @@ elseif subjID == 27
     if day == 1
         bad_comps = [13 20 30];
     elseif day == 2
-        bad_comps = [];
+        bad_comps = [8 16 23 40 49];
     elseif day == 3
-        bad_comps = [];
+        bad_comps = [38 42];
     end
 end

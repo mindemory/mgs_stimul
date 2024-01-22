@@ -3,7 +3,7 @@ clearvars -except tfr_type; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 8 11 12 13 14 15 16 17 18 22 23 24 25 26 27];
-subs                                        = [1 3 5 6 7 12 14 15 16 17 22 23];
+subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 24 25 25 27];
 
 days                                        = [1 2 3];
 t_stamp                                     = [0.5 2 3 4.5];

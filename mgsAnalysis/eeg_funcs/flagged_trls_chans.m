@@ -72,10 +72,10 @@ elseif subjID           == 10
         flg_trls         = [];
         flg_chans        = {};
     elseif day          == 2
-        flg_trls         = [];
+        flg_trls         = [125, 126, 127, 221];
         flg_chans        = {};
     elseif day          == 3
-        flg_trls         = [];
+        flg_trls         = [118, 349, 393, 394];
         flg_chans        = {};
     end
 elseif subjID           == 11
@@ -226,10 +226,10 @@ elseif subjID           == 27
         flg_trls         = [198];
         flg_chans        = {};
     elseif day          == 2
-        flg_trls         = [];
+        flg_trls         = [36, 94, 136, 302];
         flg_chans        = {};
     elseif day          == 3
-        flg_trls         = [];
+        flg_trls         = [5, 13, 35, 76, 101, 159, 270, 314];
         flg_chans        = {};
     end
 
