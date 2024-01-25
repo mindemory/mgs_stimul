@@ -18,9 +18,9 @@ end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
     if strcmp(tfr_type, 'evoked')
-        fName.mALI                                  = '/datc/MD_TMS_EEG/EEGfiles/ALI_evoked.mat';
+        fName.mALI                                  = '/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_evoked.mat';
     elseif strcmp(tfr_type, 'induced')
-        fName.mALI                                  = '/datc/MD_TMS_EEG/EEGfiles/ALI_induced.mat';
+        fName.mALI                                  = '/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_induced.mat';
     end
 else
     if strcmp(tfr_type, 'evoked')
