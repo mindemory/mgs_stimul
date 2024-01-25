@@ -17,19 +17,11 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    if strcmp(tfr_type, 'evoked')
-        fName.mTFR                                  = '/datc/MD_TMS_EEG/EEGfiles/masterTFR_evoked.mat';
-    elseif strcmp(tfr_type, 'induced')
-        fName.mTFR                                  = '/datc/MD_TMS_EEG/EEGfiles/masterTFR_induced.mat';
-    end
-    fig_path                                    = '/datc/MD_TMS_EEG/Figures';
+    fName.mTFR                                  = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '.mat'];
+    fig_path                                    = '/d/DATD/datd/MD_TMS_EEG/Figures/eeg_analysis';
 else
-    if strcmp(tfr_type, 'evoked')
-        fName.mTFR                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/masterTFR_evoked.mat';
-    elseif strcmp(tfr_type, 'induced')
-        fName.mTFR                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/masterTFR_induced.mat';
-    end
-    fig_path                                    = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/Figures';
+    fName.mTFR                                  = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '.mat'];
+    fig_path                                    = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/Figures/eeg_analysis';
 end
 if ~exist(fName.mTFR, 'file')
     for subjID                              = subs
@@ -192,39 +184,39 @@ end
 
 %% If running for all subjects regardless
 % Average all mTFRs for plotting
-% for tt = t_types_in
-%     mTFR.NT.(tt).ipsi.powspctrm         = mean(mTFR.NT.(tt).ipsi.powspctrm, 1, 'omitnan');
-%     mTFR.NT.(tt).contra.powspctrm       = mean(mTFR.NT.(tt).contra.powspctrm, 1, 'omitnan');
-%     mTFR.NT.(tt).all.powspctrm          = mean(mTFR.NT.(tt).all.powspctrm, 4, 'omitnan');
-% end
-% mTFR.NT.pout.all.powspctrm              = mean(mTFR.NT.pout.all.powspctrm, 4, 'omitnan');
-% mTFR.NT.aout.all.powspctrm              = mean(mTFR.NT.aout.all.powspctrm, 4, 'omitnan');
-% for tt = t_types
-%     mTFR.T.(tt).ipsi.powspctrm          = mean(mTFR.T.(tt).ipsi.powspctrm, 1, 'omitnan');
-%     mTFR.T.(tt).contra.powspctrm        = mean(mTFR.T.(tt).contra.powspctrm, 1, 'omitnan');
-%     mTFR.T.(tt).all.powspctrm           = mean(mTFR.T.(tt).all.powspctrm, 4, 'omitnan');
-% end
-%     
-% 
-% % Figure names for master plots
-% figname.masterTFR_pro                       = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRpro.png'];
-% figname.masterTFR_anti                      = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRanti.png'];
-% figname.masterTOPO_pro                      = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOpro.png'];
-% figname.masterTOPO_anti                     = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOanti.png'];
-% 
-% % Master figure plots for TFR and TOPO
-% if ~exist(figname.masterTFR_pro, 'file')
-%     compare_conds(mTFR, tidx, fidx, 'p')
-%     saveas(gcf, figname.masterTFR_pro, 'png')
-%     compare_conds(mTFR, tidx, fidx, 'a')
-%     saveas(gcf, figname.masterTFR_anti, 'png')
-% end
-% if ~exist(figname.masterTOPO_pro, 'file')
-%     create_topo(mTFR, tidx, fidx, 'p', 'alpha')
-%     saveas(gcf, figname.masterTOPO_pro, 'png')
-%     create_topo(mTFR, tidx, fidx, 'a', 'alpha')
-%     saveas(gcf, figname.masterTOPO_anti, 'png')
-% end
+for tt = t_types_in
+    mTFR.NT.(tt).ipsi.powspctrm         = mean(mTFR.NT.(tt).ipsi.powspctrm, 1, 'omitnan');
+    mTFR.NT.(tt).contra.powspctrm       = mean(mTFR.NT.(tt).contra.powspctrm, 1, 'omitnan');
+    mTFR.NT.(tt).all.powspctrm          = mean(mTFR.NT.(tt).all.powspctrm, 4, 'omitnan');
+end
+mTFR.NT.pout.all.powspctrm              = mean(mTFR.NT.pout.all.powspctrm, 4, 'omitnan');
+mTFR.NT.aout.all.powspctrm              = mean(mTFR.NT.aout.all.powspctrm, 4, 'omitnan');
+for tt = t_types
+    mTFR.T.(tt).ipsi.powspctrm          = mean(mTFR.T.(tt).ipsi.powspctrm, 1, 'omitnan');
+    mTFR.T.(tt).contra.powspctrm        = mean(mTFR.T.(tt).contra.powspctrm, 1, 'omitnan');
+    mTFR.T.(tt).all.powspctrm           = mean(mTFR.T.(tt).all.powspctrm, 4, 'omitnan');
+end
+    
+
+% Figure names for master plots
+figname.masterTFR_pro                       = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRpro.png'];
+figname.masterTFR_anti                      = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRanti.png'];
+figname.masterTOPO_pro                      = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOpro.png'];
+figname.masterTOPO_anti                     = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOanti.png'];
+
+% Master figure plots for TFR and TOPO
+if ~exist(figname.masterTFR_pro, 'file')
+    compare_conds(mTFR, tidx, fidx, 'p')
+    saveas(gcf, figname.masterTFR_pro, 'png')
+    compare_conds(mTFR, tidx, fidx, 'a')
+    saveas(gcf, figname.masterTFR_anti, 'png')
+end
+if ~exist(figname.masterTOPO_pro, 'file')
+    create_topo(mTFR, tidx, fidx, 'p', 'alpha')
+    saveas(gcf, figname.masterTOPO_pro, 'png')
+    create_topo(mTFR, tidx, fidx, 'a', 'alpha')
+    saveas(gcf, figname.masterTOPO_anti, 'png')
+end
 
 %% If running for all subjects regardless (temporarily made for SfN (maybe?)
 % for ss = 1:length(subs)
@@ -284,10 +276,10 @@ end
 %     
 % 
 % % Figure names for master plots
-% figname.masterTFR_pro                       = [p.figure '/tfrplots/allsubs_TFRpro.png'];
-% figname.masterTFR_anti                      = [p.figure '/tfrplots/allsubs_TFRanti.png'];
-% figname.masterTOPO_pro                      = [p.figure '/topoplots/allsubs_TOPOpro.png'];
-% figname.masterTOPO_anti                     = [p.figure '/topoplots/allsubs_TOPOanti.png'];
+% figname.masterTFR_pro                       = [p.figure '/tfrplots/' tfr_type 'allsubs_TFRpro.png'];
+% figname.masterTFR_anti                      = [p.figure '/tfrplots/' tfr_type 'allsubs_TFRanti.png'];
+% figname.masterTOPO_pro                      = [p.figure '/topoplots/' tfr_type 'allsubs_TOPOpro.png'];
+% figname.masterTOPO_anti                     = [p.figure '/topoplots/' tfr_type 'allsubs_TOPOanti.png'];
 % 
 % % Master figure plots for TFR and TOPO
 % if ~exist(figname.masterTFR_pro, 'file')
@@ -298,8 +290,8 @@ end
 % end
 % %if ~exist(figname.masterTOPO_pro, 'file')
 %     createtopo_SfN(mTFR, tidx, fidx, 'P', 'alpha')
-%     %saveas(gcf, figname.masterTOPO_pro, 'png')
+%     saveas(gcf, figname.masterTOPO_pro, 'png')
 %     createtopo_SfN(mTFR, tidx, fidx, 'A', 'alpha')
-%     %saveas(gcf, figname.masterTOPO_anti, 'png')
+%     saveas(gcf, figname.masterTOPO_anti, 'png')
 % %end
 end
