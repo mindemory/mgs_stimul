@@ -61,7 +61,8 @@ fName.epoc                      = [fName.general '_epoc.mat'];
 fName.erp                       = [fName.general '_erp.mat'];
 fName.TFR_evoked                = [fName.general '_TFR_evoked.mat'];
 fName.TFR_induced               = [fName.general '_TFR_induced.mat'];
-
+fName.TFR_evoked_basecorr       = [fName.general '_TFR_evoked_basecorr.mat'];
+fName.TFR_induced_basecorr      = [fName.general '_TFR_induced_basecorr.mat'];
 %% Concatenate EEG data
 if any(strcmp(steps, 'concat'))
     if ~exist(fName.concat, 'file')
@@ -260,9 +261,16 @@ end
 if any(strcmp(steps, 'tfr_evoked'))
     if ~exist(fName.TFR_evoked, 'file')
         for cc = cond_list
-            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc), 1);
+            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc), 0);
         end
         save(fName.TFR_evoked, 'POW', 'ITC', 'PHASE', '-v7.3');
+        clearvars POW ITC PHASE;
+    end
+    if ~exist(fName.TFR_evoked_basecorr, 'file')
+        for cc = cond_list
+            [POW.(cc), ITC.(cc), PHASE.(cc)]    = compute_TFRs(epoc.(cc), 1);
+        end
+        save(fName.TFR_evoked_basecorr, 'POW', 'ITC', 'PHASE', '-v7.3');
         clearvars POW ITC PHASE;
     end
 end
@@ -275,57 +283,23 @@ if any(strcmp(steps, 'tfr_induced'))
             for k = 1:numel(epoc.(cc).trial)
                 epoc_minus_erp.trial{k}          = epoc.(cc).trial{k} - ERP.(cc).avg;
             end
-            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc_minus_erp, 1);
+            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc_minus_erp, 0);
         end
         save(fName.TFR_induced, 'POW', 'ITC', 'PHASE', '-v7.3');
+        clearvars POW ITC PHASE;
+    end
+    if ~exist(fName.TFR_induced_basecorr, 'file')
+        for cc = cond_list
+            epoc_minus_erp                       = epoc.(cc);
+            for k = 1:numel(epoc.(cc).trial)
+                epoc_minus_erp.trial{k}          = epoc.(cc).trial{k} - ERP.(cc).avg;
+            end
+            [POW.(cc), ITC.(cc), PHASE.(cc)]     = compute_TFRs(epoc_minus_erp, 1);
+        end
+        save(fName.TFR_induced_basecorr, 'POW', 'ITC', 'PHASE', '-v7.3');
+        clearvars POW ITC PHASE;
     end
 end
 
-% cfg = [];
-% cfg.parameter = 'powspctrm';
-% cfg.avg
-
-% 
-% cfg                                              = [];
-% cfg.operation                                    = '(10^(x1/10) - 10^(x2/10)) / (10^(x1/10) + 10^(x2/10))';
-% cfg.parameter                                    = 'powspctrm';
-% pro_contrast                                       = ft_math(cfg, TFR_proinVF, TFR_prooutVF);
-% 
-% 
-% cfg                                              = []; 
-% cfg.layout                                       = 'acticap-64_md.mat'; 
-% cfg.figure                                       = 'gcf';
-% %cfg.style                                        = 'straight';
-% freqband = 'alpha';
-% if strcmp(freqband, 'alpha')
-%     cfg.ylim                                     = [8 12]; 
-% elseif strcmp(freqband, 'beta')
-%     cfg.ylim                                     = [13 30];
-% elseif strcmp(freqband, 'gamma')
-%     cfg.ylim                                     = [30 50];
-% end
-% cfg.colorbar                                     = 'yes'; 
-% cfg.comment                                      = 'no'; 
-% cfg.colormap                                     = '*RdBu'; 
-% cfg.marker                                       = 'on';
-% %cfg.zlim                                         = [min_pow max_pow];
-% cfg.interpolatenan                               = 'no';
-% 
-% subplot(2, 2, 1)
-% cfg.xlim                                         = [0.5 1.5];
-% cfg.title                                        = [freqband ' @ 0.5:1.5s'];
-% ft_topoplotTFR(cfg, pro_contrast)
-% subplot(2, 2, 2)
-% cfg.xlim                                         = [1.5 2.5];
-% cfg.title                                        = [freqband ' @ 1.5:2.5s'];
-% ft_topoplotTFR(cfg, pro_contrast)
-% subplot(2, 2, 3)
-% cfg.xlim                                         = [3 3.5];
-% cfg.title                                        = [freqband ' @ 2.8:3.3s'];
-% ft_topoplotTFR(cfg, pro_contrast)
-% subplot(2, 2, 4)
-% cfg.xlim                                         = [3.5 4.5];
-% cfg.title                                        = [freqband ' @ 3.5:4.5s'];
-% ft_topoplotTFR(cfg, pro_contrast)
 disp('Woosh! That was a lot of work.')
 end

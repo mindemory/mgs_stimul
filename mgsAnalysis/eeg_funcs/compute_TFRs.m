@@ -25,14 +25,17 @@ TFR_fourier                                    = ft_freqanalysis(cfg, data);
 
 % Power
 TFR_power                                      = TFR_fourier;
-TFR_power.powspctrm                            = 10*log10(abs(TFR_fourier.fourierspctrm).^2);
+TFR_power.powspctrm                            = abs(TFR_fourier.fourierspctrm).^2;
 TFR_power                                      = rmfield(TFR_power, 'fourierspctrm');
 TFR_power                                      = rmfield(TFR_power, 'cumtapcnt');
 if base_corr                                   == 1
     baseline_time_indices                      = find(time_points >= -1 & time_points < 0);
-    baseline_mean                              = mean(TFR_power.powspctrm(:, :, :, baseline_time_indices), 4);
+    baseline_mean                              = mean(TFR_power.powspctrm(:, :, :, baseline_time_indices), 4, 'omitnan');
     baseline_mean_expanded                     = repmat(baseline_mean, [1, 1, 1, size(TFR_power.powspctrm, 4)]);
     TFR_power.powspctrm                        = TFR_power.powspctrm - baseline_mean_expanded;
+    TFR_power.powspctrm                        = 10*log10(TFR_power.powspctrm);
+else
+    TFR_power.powspctrm                        = 10*log10(TFR_power.powspctrm);
 end
 
 % ITC
