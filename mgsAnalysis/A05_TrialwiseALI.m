@@ -1,5 +1,5 @@
-function A05_TrialwiseALI(tfr_type)
-clearvars -except tfr_type; close all; clc;
+function A05_TrialwiseALI(tfr_type, base_corr)
+clearvars -except tfr_type base_corr; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 24 25 26 27];
@@ -17,17 +17,9 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    if strcmp(tfr_type, 'evoked')
-        fName.mALI                                  = '/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_evoked.mat';
-    elseif strcmp(tfr_type, 'induced')
-        fName.mALI                                  = '/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_induced.mat';
-    end
+    fName.ALI                              = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 else
-    if strcmp(tfr_type, 'evoked')
-        fName.mALI                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/ALI_evoked.mat';
-    elseif strcmp(tfr_type, 'induced')
-        fName.mALI                                  = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG/EEGfiles/ALI_induced.mat';
-    end
+    fName.ALI                              = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 end
 
 mALI = [];
@@ -59,12 +51,22 @@ if ~exist(fName.mALI, 'file')
             fName.erp                       = [fName.general '_erp.mat'];
             fName.TFR_evoked                = [fName.general '_TFR_evoked.mat'];
             fName.TFR_induced               = [fName.general '_TFR_induced.mat'];
+            fName.TFR_evoked_basecorr       = [fName.general '_TFR_evoked_basecorr.mat'];
+            fName.TFR_induced_basecorr      = [fName.general '_TFR_induced_basecorr.mat'];
 
             %[~, flg_chans]                  = flagged_trls_chans(subjID, day);
             if strcmp(tfr_type, 'induced')
-                load(fName.TFR_induced, 'POW');
+                if basecorr == 0
+                    load(fName.TFR_induced, 'POW');
+                else
+                    load(fName.TFR_induced_basecorr, 'POW');
+                end
             elseif strcmp(tfr_type, 'evoked')
-                load(fName.TFR_evoked, 'POW');
+                if basecorr == 0
+                    load(fName.TFR_evoked, 'POW');
+                else
+                    load(fName.TFR_evoked_basecorr, 'POW');
+                end
             end
             load(fName.trl_idx);
             load(fName.flag_data);
