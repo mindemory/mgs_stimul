@@ -14,7 +14,7 @@ for ss = 1:length(subs)
 end
 
 
-subs = [1, 3, 5, 6, 7, 10];
+subs = [1, 3, 5, 6, 7, 10, 12, 14, 15, 16, 17, 22, 23, 24, 25, 26, 27];
 days = [1, 2, 3];
 for ss = 1:length(subs)
     disp(['We are running subject' num2str(ss, '%02d')])
