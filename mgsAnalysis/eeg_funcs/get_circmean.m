@@ -1,6 +1,7 @@
 function mean_phase = get_circmean(phase_data)
 % Assuming your 4-D array is called 'phase_data' with dimensions (num_trials x num_channels x num_freqs x num_time_points)
 % You want to calculate the circular mean across dimensions 2 (num_channels) and 3 (num_freqs)
+% Created by Mrugank
 
 % Dimensions of your data
 [num_trials, num_channels, num_freqs, num_time_points] = size(phase_data);

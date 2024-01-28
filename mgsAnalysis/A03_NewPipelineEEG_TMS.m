@@ -36,7 +36,7 @@ trls_to_remove = (block_flag - 1) * 40 + trl_flag;
 
 HemiStimulated = table2cell(meta_data(:, ["HemisphereStimulated"]));
 NoTMSDays = table2array(meta_data(:, ["NoTMSDay"]));
-steps = {'concat', 'raweeg', 'ica', 'ica_correct', 'epoch', 'reepoch', 'erp', 'tfr_evoked', 'tfr_induced'};
+steps = {'concat', 'raweeg', 'ica', 'ica_correct', 'epoch', 'reepoch', 'erp', 'tfr_evoked', 'tfr_induced', 'erp_trialwise'};
 
 cond_list = ["pin", "pout", "ain", "aout"];
 % List of files to be saved
@@ -59,6 +59,7 @@ fName.trl_idx                   = [fName.general '_trl_idx.mat'];
 fName.epoc_all                  = [fName.general '_epoc_all.mat'];
 fName.epoc                      = [fName.general '_epoc.mat'];
 fName.erp                       = [fName.general '_erp.mat'];
+fName.erp_trialwise             = [fName.general '_erp_trialwise.mat'];
 fName.TFR_evoked                = [fName.general '_TFR_evoked.mat'];
 fName.TFR_induced               = [fName.general '_TFR_induced.mat'];
 fName.TFR_evoked_basecorr       = [fName.general '_TFR_evoked_basecorr.mat'];
@@ -301,5 +302,14 @@ if any(strcmp(steps, 'tfr_induced'))
     end
 end
 
+if any(strcmp(steps, 'erp_trialwise'))
+    if ~exist(fName.erp_trialwise, 'file')
+        [ERP.pin, ERP.pout]                     = compute_ERPs(epoc.pin, epoc.pout, 1);
+        [ERP.ain, ERP.aout]                     = compute_ERPs(epoc.ain, epoc.aout, 1);
+        save(fName.erp_trialwise, 'ERP', '-v7.3');
+    else
+        load(fName.erp_trialwise)
+    end
+end
 disp('Woosh! That was a lot of work.')
 end
