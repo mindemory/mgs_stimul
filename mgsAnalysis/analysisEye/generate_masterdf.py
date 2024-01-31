@@ -12,9 +12,9 @@ hostname = socket.gethostname()
 
 p = {}
 if hostname == 'syndrome' or hostname == 'zod.psych.nyu.edu' or hostname == 'zod':
-    p['datc'] =  '/d/DATC/datc/MD_TMS_EEG'
+    p['datc'] =  '/d/DATD/datd/MD_TMS_EEG'
 else:
-    p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datc/MD_TMS_EEG'
+    p['datc'] =  '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG'
 p['data'] = p['datc'] + '/data'
 p['analysis'] = p['datc'] + '/analysis'
 p['meta'] = p['datc'] + '/analysis/meta_analysis'
