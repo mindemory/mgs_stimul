@@ -159,30 +159,53 @@ def get_permutation_tstat(df_in, metric, cond1, cond2):
         tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
         return tstat
 
-def perform_permutation_test(df, pairs_to_test, metric, iter_count):
+def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count, df_type):
     start = time.time()
     n_tests = len(pairs_to_test)
     tstat_permuted = np.zeros((iter_count, n_tests))
     tstat_real = np.zeros((n_tests, ))
     pval_2side = np.zeros((n_tests, ))
     pval_1side = np.zeros((n_tests, ))
-
+    if pro_vs_anti == 'pro':
+        df = df[df['ispro']==1]
+    elif pro_vs_anti == 'anti':
+        df = df[df['ispro']==0]
     df_master = df.copy()[['subjID', 'day', 'ierr', 'ferr', 'isacc_rt', 'istms', 'instimVF']]
 
-    cond_array = [
-        (df_master['istms'] == 0) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
-        (df_master['istms'] == 0) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 4),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 4),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 5),
-        (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 5)
-    ]
-    cond_names = [
-        'notms inVF', 'notms outVF', 'mid inVF', 'mid outVF', 
-        'early inVF', 'early outVF', 'mid dangit inVF', 'mid dangit outVF'
-    ]
+    if df_type == 'all5':
+        cond_array = [
+            (df_master['istms'] == 0) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 0) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 4),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 4),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 5),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 5)
+        ]
+        cond_names = [
+            'notms inVF', 'notms outVF', 'mid inVF', 'mid outVF', 
+            'early inVF', 'early outVF', 'mid dangit inVF', 'mid dangit outVF'
+        ]
+    elif df_type == 'first_three':
+        cond_array = [
+            (df_master['istms'] == 0) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 0) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3]))
+        ]
+        cond_names = [
+            'notms inVF', 'notms outVF', 'TMS inVF', 'TMS outVF'
+        ]
+    elif df_type == 'clubbed':
+        cond_array = [
+            (df_master['istms'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+        ]
+        cond_names = [
+            'notms', 'TMS inVF', 'TMS outVF', 
+        ]
 
     df_master['condition'] = np.select(cond_array, cond_names, default='Other')
 

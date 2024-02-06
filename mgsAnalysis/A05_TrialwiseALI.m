@@ -17,9 +17,9 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    fName.ALI                              = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
+    fName.mALI                              = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_10elecs_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 else
-    fName.ALI                              = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
+    fName.mALI                              = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 end
 
 mALI = [];

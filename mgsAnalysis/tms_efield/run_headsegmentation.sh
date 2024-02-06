@@ -30,10 +30,10 @@ CORENUM=0
 # Loop over the subject numbers
 for sub in "${subs[@]}"; do
     sub_id=$(printf "sub%02d" $sub)
-    work_dir="/d/DATC/datc/MD_TMS_EEG/SIMNIBS_output/${sub_id}/"
-    LOG_FILE="/d/DATC/datc/MD_TMS_EEG/SIMNIBS_output/logs/charm_$sub_id_$DATE.log"
+    work_dir="/d/DATD/datd/MD_TMS_EEG/SIMNIBS_output/${sub_id}/"
+    LOG_FILE="/d/DATD/datd/MD_TMS_EEG/SIMNIBS_output/logs/charm_$sub_id_$DATE.log"
     
-    mkdir -p "/d/DATC/datc/MD_TMS_EEG/SIMNIBS_output/logs"
+    mkdir -p "/d/DATD/datd/MD_TMS_EEG/SIMNIBS_output/logs"
 
     echo "Starting processing for Subject: $sub_id on Core: $CORENUM (Log: $LOG_FILE)"
     
