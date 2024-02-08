@@ -56,13 +56,13 @@ if ~exist(fName.mALI, 'file')
 
             %[~, flg_chans]                  = flagged_trls_chans(subjID, day);
             if strcmp(tfr_type, 'induced')
-                if basecorr == 0
+                if base_corr == 0
                     load(fName.TFR_induced, 'POW');
                 else
                     load(fName.TFR_induced_basecorr, 'POW');
                 end
             elseif strcmp(tfr_type, 'evoked')
-                if basecorr == 0
+                if base_corr == 0
                     load(fName.TFR_evoked, 'POW');
                 else
                     load(fName.TFR_evoked_basecorr, 'POW');
