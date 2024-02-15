@@ -17,7 +17,7 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    fName.mTFR                                  = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '.mat'];
+    fName.mTFR                                  = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '_basecorr0.mat'];
     fig_path                                    = '/d/DATD/datd/MD_TMS_EEG/Figures/eeg_analysis';
 else
     fName.mTFR                                  = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '.mat'];
@@ -212,12 +212,29 @@ if ~exist(figname.masterTFR_pro, 'file')
     saveas(gcf, figname.masterTFR_anti, 'png')
 end
 if ~exist(figname.masterTOPO_pro, 'file')
-    create_topo(mTFR, tidx, fidx, 'p', 'alpha')
+    create_topo(mTFR, tidx, fidx, 'p', 'beta')
     saveas(gcf, figname.masterTOPO_pro, 'png')
     create_topo(mTFR, tidx, fidx, 'a', 'alpha')
     saveas(gcf, figname.masterTOPO_anti, 'png')
 end
 
+%% Temporarily made for plotting for the paper
+figname.masterTFR_pro                       = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRpro.png'];
+figname.masterTFR_anti                      = [p.figure '/tfrplots/' tfr_type '/allsubs_TFRanti.png'];
+figname.masterTOPO_pro                      = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOpro.png'];
+figname.masterTOPO_anti                     = [p.figure '/topoplots/' tfr_type '/allsubs_TOPOanti.png'];
+
+% Master figure plots for TFR and TOPO
+if ~exist(figname.masterTFR_pro, 'file')
+    compareconds_SfN(mTFR, tidx, fidx, 'p')
+    saveas(gcf, figname.masterTFR_pro, 'png')
+    compare_conds(mTFR, tidx, fidx, 'a')
+    saveas(gcf, figname.masterTFR_anti, 'png')
+end
+if ~exist(figname.masterTOPO_pro, 'file')
+    createtopo_SfN(mTFR, tidx, fidx, 'p', 'alpha')
+    createtopo_SfN(mTFR, tidx, fidx, 'p', 'beta')
+end
 %% If running for all subjects regardless (temporarily made for SfN (maybe?)
 % for ss = 1:length(subs)
 %     NTin_tfr                                         = mTFR.NT.pin.all;
