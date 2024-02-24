@@ -3,7 +3,7 @@ import pandas as pd
 from scipy import stats
 import time
 
-def rotate_to_zero(df):
+def old_rotate_to_zero(df):
     TarTheta = np.arctan2(df['TarY'], df['TarX'])
 
     rotated_cols = ['TarX_rotated', 'TarY_rotated', 'isaccX_rotated', 'fsaccX_rotated', 'fsaccY_rotated']
@@ -23,6 +23,45 @@ def rotate_to_zero(df):
         df.at[idx, f'{col_prefix}X_rotated'] = rotated_points[0]
         df.at[idx, f'{col_prefix}Y_rotated'] = rotated_points[1]
     return df
+
+def rotate_to_zero(tX, tY, saccX, saccY):
+    tX = tX.values
+    tY = tY.values
+    saccX = saccX.values
+    saccY = saccY.values
+
+    tX_rot = np.zeros(len(tX),)
+    tY_rot = np.zeros(len(tY),)
+    saccX_rot = np.zeros(len(saccX),)
+    saccY_rot = np.zeros(len(saccY),)
+
+    TarTheta = np.arctan2(tY, tX)
+    TarRadius = np.sqrt(tY**2+tX**2)
+    scale_Radius = np.max(TarRadius)
+    
+    for idx in range(len(tX)):
+        rotation_matrix = np.array(
+            [
+                [np.cos(-TarTheta[idx]), -np.sin(-TarTheta[idx])],
+                [np.sin(-TarTheta[idx]), np.cos(-TarTheta[idx])]
+            ]
+        )
+        scale_factor = (0 - TarRadius[idx]) #/ scale_Radius
+        tX_scaled = tX[idx] + (scale_factor * np.cos(TarTheta[idx]))
+        tY_scaled = tY[idx] + (scale_factor * np.sin(TarTheta[idx]))
+        #original_t = np.array([tX[idx], tY[idx]])
+        original_t = np.array([tX_scaled, tY_scaled])
+        rotate_t = rotation_matrix.dot(original_t)
+        tX_rot[idx] = rotate_t[0] 
+        tY_rot[idx] = rotate_t[1]
+        saccX_scaled = saccX[idx] + (scale_factor * np.cos(TarTheta[idx]))
+        saccY_scaled = saccY[idx] + (scale_factor * np.sin(TarTheta[idx]))
+        # original_sacc = np.array([saccX[idx], saccY[idx]])
+        original_sacc = np.array([saccX_scaled, saccY_scaled])
+        rotate_sacc = rotation_matrix.dot(original_sacc)
+        saccX_rot[idx] = rotate_sacc[0]
+        saccY_rot[idx] = rotate_sacc[1]
+    return tX_rot, tY_rot, saccX_rot, saccY_rot
 
 def compute_angular_range(angle_vals):
     # Created by Mrugank (06/03/2023) while on a 15 hour flight!
@@ -104,7 +143,7 @@ def rotate_to_scale(df):
 
 def calculate_mean_and_se(group, error_metric):
     mean = group[error_metric].mean()
-    se = group[error_metric].sem()
+    se = group[error_metric].std()
     return pd.Series({'mean': mean, 'se': se})
 
 def compute_errors(df, df_all5, sub_list, metric):
@@ -154,9 +193,12 @@ def compute_tcount(df, df_all5, sub_list):
 def get_permutation_tstat(df_in, metric, cond1, cond2):
         data1 = df_in[df_in['condition'] == cond1].reset_index()
         data2 = df_in[df_in['condition'] == cond2].reset_index()
+        
         result1 = data1.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
         result2 = data2.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
-        tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
+
+        #tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
+        tstat, _ = stats.ttest_rel(result1['se'], result2['se'], nan_policy = 'omit', alternative='two-sided')
         return tstat
 
 def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count, df_type):
@@ -170,7 +212,7 @@ def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count,
         df = df[df['ispro']==1]
     elif pro_vs_anti == 'anti':
         df = df[df['ispro']==0]
-    df_master = df.copy()[['subjID', 'day', 'ierr', 'ferr', 'isacc_rt', 'istms', 'instimVF']]
+    df_master = df.copy()#[['subjID', 'day', 'ierr', 'ferr', 'isacc_rt', 'istms', 'instimVF']]
 
     if df_type == 'all5':
         cond_array = [
@@ -192,19 +234,23 @@ def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count,
             (df_master['istms'] == 0) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
             (df_master['istms'] == 0) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
             (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
-            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3]))
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 4),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 4),
         ]
         cond_names = [
-            'notms inVF', 'notms outVF', 'TMS inVF', 'TMS outVF'
+            'notms inVF', 'notms outVF', 'mid inVF', 'mid outVF', 'early inVF', 'early outVF'
         ]
     elif df_type == 'clubbed':
         cond_array = [
             (df_master['istms'] == 0) & (df_master['day'].isin([1, 2, 3])),
             (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'].isin([1, 2, 3])),
             (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 1) & (df_master['day'] == 4),
+            (df_master['istms'] == 1) & (df_master['instimVF'] == 0) & (df_master['day'] == 4),
         ]
         cond_names = [
-            'notms', 'TMS inVF', 'TMS outVF', 
+            'notms', 'mid inVF', 'mid outVF', 'early inVF', 'early outVF'
         ]
 
     df_master['condition'] = np.select(cond_array, cond_names, default='Other')

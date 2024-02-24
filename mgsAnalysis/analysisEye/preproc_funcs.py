@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from helpers import *
 
 def add_metrics(df):
     '''
@@ -144,3 +145,76 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
     print(removed_blocks_df1.reset_index(drop=True))
 
     return df1, df1_all5, df2, df2_all5
+
+def combine_rotated_points(tms_cond, sub_list, df, metric):
+    '''
+    The function rotates targets and scales them to the maximum radius and shifts this location
+    to be at (0, 0).
+    With the same transformation applied to target endpoints, it also transforms the saccade endpoints.
+    Inputs:
+        tms_cond: notms, early, middle
+        sub_list: list of all subjects to run on
+        df: dataframes with all information about subject ID and trial target and saccade locations
+        metric: intial/final for initial/final saccade
+    And rotates the target 
+    '''
+
+    if metric == 'initial':
+        xmetric = 'isaccX'
+        ymetric = 'isaccY'
+    elif metric == 'final':
+        xmetric = 'fsaccX'
+        ymetric = 'fsaccY'
+
+    targXinPF_list = []
+    targYinPF_list = []
+    predXinPF_list = []
+    predYinPF_list = []
+
+    targXoutPF_list = []
+    targYoutPF_list = []
+    predXoutPF_list = []
+    predYoutPF_list = []
+    for ss in sub_list:
+        if tms_cond == 'notms':
+            tdf_inPF = df[(df['subjID']==ss) & (df['istms']==0) & (df['day']<4) & ((df['instimVF']==1))]
+            tdf_outPF = df[(df['subjID']==ss) & (df['istms']==0) & (df['day']<4) & ((df['instimVF']==0))]
+        elif tms_cond == 'early':
+            tdf_inPF = df[(df['subjID']==ss) & (df['istms']==1) & (df['day']==4) & ((df['instimVF']==1))]
+            tdf_outPF = df[(df['subjID']==ss) & (df['istms']==1) & (df['day']==4) & ((df['instimVF']==0))]
+        elif tms_cond == 'middle':
+            tdf_inPF = df[(df['subjID']==ss) & (df['istms']==1) & (df['day']<4) & ((df['instimVF']==1))]
+            tdf_outPF = df[(df['subjID']==ss) & (df['istms']==1) & (df['day']<4) & ((df['instimVF']==0))]
+        XinPF = tdf_inPF['TarX']
+        YinPF = tdf_inPF['TarY']
+        saccXinPF = tdf_inPF[xmetric]
+        saccYinPF = tdf_inPF[ymetric]
+        XinPF, YinPF, saccXinPF, saccYinPF = rotate_to_zero(XinPF, YinPF, saccXinPF, saccYinPF)
+        
+        targXinPF_list.append(XinPF)
+        targYinPF_list.append(YinPF)
+        predXinPF_list.append(saccXinPF)
+        predYinPF_list.append(saccYinPF)
+        
+        XoutPF = tdf_outPF['TarX']
+        YoutPF = tdf_outPF['TarY']
+        saccXoutPF = tdf_outPF[xmetric]
+        saccYoutPF = tdf_outPF[ymetric]
+        XoutPF, YoutPF, saccXoutPF, saccYoutPF = rotate_to_zero(XoutPF, YoutPF, saccXoutPF, saccYoutPF)
+
+        targXoutPF_list.append(XoutPF)
+        targYoutPF_list.append(YoutPF)
+        predXoutPF_list.append(saccXoutPF)
+        predYoutPF_list.append(saccYoutPF)
+
+    targXinPF = np.concatenate(targXinPF_list)
+    targYinPF = np.concatenate(targYinPF_list)
+    predXinPF = np.concatenate(predXinPF_list)
+    predYinPF = np.concatenate(predYinPF_list)
+
+    targXoutPF = np.concatenate(targXoutPF_list)
+    targYoutPF = np.concatenate(targYoutPF_list)
+    predXoutPF = np.concatenate(predXoutPF_list)
+    predYoutPF = np.concatenate(predYoutPF_list)
+
+    return targXinPF, targYinPF, predXinPF, predYinPF, targXoutPF, targYoutPF, predXoutPF, predYoutPF

@@ -290,7 +290,7 @@ def plot_permutation_result(tstat_permuted, tstat_real, pval_2side, pval_1side, 
     x1, x2 = ax.get_xlim()
     y1, y2 = ax.get_ylim()
     ax.text(x1 + (x2-x1) * 0.01, y2 - (y2-y1) * 0.15, 
-            f't-stat = {tstat_real[ii]:.3f}\npval (both) = {pval_2side[ii]:.3f}', 
+            f't-stat = {tstat_real[ii]:.3f}\npval (both) = {pval_1side[ii]:.3f}', 
             fontsize=9, color='black')
     # ax.text(x1 + (x2-x1) * 0.01, y2 - (y2-y1) * 0.15, 
     #         f't-stat = {tstat_real[ii]:.3f}\npval (both) = {pval_2side[ii]:.3f}\npval (greater) = {pval_1side[ii]:.3f}', 

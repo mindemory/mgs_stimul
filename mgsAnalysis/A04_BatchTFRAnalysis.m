@@ -234,6 +234,7 @@ end
 if ~exist(figname.masterTOPO_pro, 'file')
     createtopo_SfN(mTFR, tidx, fidx, 'p', 'alpha')
     createtopo_SfN(mTFR, tidx, fidx, 'p', 'beta')
+    createtopo_SfN(mTFR, tidx, fidx, 'p', 'gamma')
 end
 %% If running for all subjects regardless (temporarily made for SfN (maybe?)
 % for ss = 1:length(subs)
