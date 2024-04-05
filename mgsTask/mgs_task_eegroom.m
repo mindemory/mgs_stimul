@@ -23,6 +23,11 @@ if nargin < 7
     aperture = 0; % 0: full screen mode, 1: stimulus drawn on aperture
 end
 
+port = init_trigger;
+WaitSecs(0.5);
+write(port, 254,"uint8");
+fprintf("port start trigger");
+
 eyetrackfeedback = 0;
 % Check the system running on: currently accepted: syndrome, tmsubuntu
 [ret, hostname] = system('hostname');
@@ -71,7 +76,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     parameters.eyetracker = 1;
     PsychDefaultSetup(1);
 elseif strcmp(hostname, 'visioncore01m.psych.nyu.edu') % Running stimulus code for testing
-    addpath(genpath('/Users/netadmin/Library/Application Support/MathWorks/MATLAB Add-Ons/Toolboxes/Psychtoolbox-3'))
+    addpath(genpath('/Users/michelmannlab/Library/Application Support/MathWorks/MATLAB Add-Ons/Toolboxes/Psychtoolbox-3'))
     parameters.isDemoMode = false; %set to true if you want the screen to be transparent
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     % Relative paths for tmsubuntu
@@ -133,7 +138,9 @@ if parameters.TMS > 0
     TMS('Timing', s);
     TMS('Amplitude', s, TMSamp);
 end
-port = init_trigger;
+
+WaitSecs(0.5);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start Experiment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -830,6 +837,10 @@ end % end of block
 if parameters.TMS
     TMS('Disable', s);
     TMS('Close', s);
+end
+
+if parameters.newEEG
+    write(port, 255,"uint8");
 end
 showprompts(screen, 'EndExperiment');
 ListenChar(1);
