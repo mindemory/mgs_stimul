@@ -33,7 +33,7 @@ parameters.pulseDuration = (parameters.pulseNum-1)/parameters.pulseFrequency; % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parameters.initDuration = 1;
 parameters.sampleDuration = 0.5;
-parameters.delayDuration = 3;
+parameters.delayDuration = 4;
 parameters.delay1Duration = parameters.delayDuration/2;
 parameters.delay2Duration = parameters.delayDuration/2;%-parameters.delay1Duration-parameters.pulseDuration;
 parameters.respDuration = 0.85;

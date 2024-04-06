@@ -47,10 +47,10 @@ switch texture_name
         
         % Draw Fixation cross
         Screen('FillOval', screen.win, screen.black, centeredRect_outer, maxDiameter_outer);
-       % if strcmp(computer, 'GLNXA64')
+        if strcmp(computer, 'GLNXA64')
             Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
                 fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
-        %end
+        end
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
     
@@ -82,16 +82,16 @@ switch texture_name
         
         % Draw Fixation cross
         Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_outer, maxDiameter_outer);
-        %if strcmp(computer, 'GLNXA64')
+        if strcmp(computer, 'GLNXA64')
             Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
                 fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
-       %$ end
+        end
         Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
         
     % Drawing Stimulus
     case 'Stimulus'
-        baseRect = [0 0 dotSize*2 dotSize*2] .* 6;
+        baseRect = [0 0 dotSize*2 dotSize*2];
         maxDiameter = ceil(max(baseRect) * 1.1);
         centeredRect = CenterRectOnPointd(baseRect, dotCenter(1), dotCenter(2));
         Screen('FillOval', screen.win, color, centeredRect, maxDiameter);
