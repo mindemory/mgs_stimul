@@ -124,25 +124,25 @@ def filter_data(df):
     return df, df_all5
 
 def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
-    # def remove_low_trial_blocks(df, sub_rem):
-    #     # Remove specified subjects
-    #     df = df[~df['subjID'].isin(sub_rem)]
-    #     # Remove blocks with trials less than 25
-    #     blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 30)[['subjID', 'day', 'rnum']].drop_duplicates()
-    #     df = df[~df.set_index(['subjID', 'day', 'rnum']).index.isin(blocks_to_remove.set_index(['subjID', 'day', 'rnum']).index)]
-    #     return df, blocks_to_remove
+    def remove_low_trial_blocks(df, sub_rem):
+        # Remove specified subjects
+        df = df[~df['subjID'].isin(sub_rem)]
+        # Remove blocks with trials less than 25
+        blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 30)[['subjID', 'day', 'rnum']].drop_duplicates()
+        df = df[~df.set_index(['subjID', 'day', 'rnum']).index.isin(blocks_to_remove.set_index(['subjID', 'day', 'rnum']).index)]
+        return df, blocks_to_remove
 
 
-    # # Remove blocks with low trial count and update summary
-    # df1, removed_blocks_df1 = remove_low_trial_blocks(df1, sub_rem)
-    # df1_all5, removed_blocks_df1_all5 = remove_low_trial_blocks(df1_all5, sub_rem)
-    # df2, removed_blocks_df2 = remove_low_trial_blocks(df2, sub_rem)
-    # df2_all5, removed_blocks_df2_all5 = remove_low_trial_blocks(df2_all5, sub_rem)
+    # Remove blocks with low trial count and update summary
+    df1, removed_blocks_df1 = remove_low_trial_blocks(df1, sub_rem)
+    df1_all5, removed_blocks_df1_all5 = remove_low_trial_blocks(df1_all5, sub_rem)
+    df2, removed_blocks_df2 = remove_low_trial_blocks(df2, sub_rem)
+    df2_all5, removed_blocks_df2_all5 = remove_low_trial_blocks(df2_all5, sub_rem)
 
-    # # Print a summary of subjects and blocks that have been removed
-    # print(f"Removed subjects: {sub_rem}")
-    # print("Removed blocks df1:")
-    # print(removed_blocks_df1.reset_index(drop=True))
+    # Print a summary of subjects and blocks that have been removed
+    print(f"Removed subjects: {sub_rem}")
+    print("Removed blocks df1:")
+    print(removed_blocks_df1.reset_index(drop=True))
 
     return df1, df1_all5, df2, df2_all5
 

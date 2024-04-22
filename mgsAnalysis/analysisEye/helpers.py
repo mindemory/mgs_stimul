@@ -197,8 +197,8 @@ def get_permutation_tstat(df_in, metric, cond1, cond2):
         result1 = data1.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
         result2 = data2.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
 
-        #tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
-        tstat, _ = stats.ttest_rel(result1['se'], result2['se'], nan_policy = 'omit', alternative='two-sided')
+        tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
+        # tstat, _ = stats.ttest_rel(result1['se'], result2['se'], nan_policy = 'omit', alternative='two-sided')
         return tstat
 
 def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count, df_type):
@@ -251,6 +251,16 @@ def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count,
         ]
         cond_names = [
             'notms', 'mid inVF', 'mid outVF', 'early inVF', 'early outVF'
+        ]
+
+    elif df_type == 'time_split':
+        cond_array = [
+            (df_master['istms'] == 0) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['day'].isin([1, 2, 3])),
+            (df_master['istms'] == 1) & (df_master['day'] == 4),
+        ]
+        cond_names = [
+            'notms', 'mid', 'early'
         ]
 
     df_master['condition'] = np.select(cond_array, cond_names, default='Other')

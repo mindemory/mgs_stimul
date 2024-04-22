@@ -21,7 +21,7 @@ data_ave$hemistimulated.f <- as.factor(data_ave$hemistimulated)
 contrasts(data_ave$hemistimulated.f) <- contr.treatment
 contrasts(data_ave$hemistimulated.f)
 
-aov.ierr.perm <- aovperm(mean_ierr ~ TMS_time.f * instimVF.f +
+aov.ierr.perm <- aovperm(mean_isaccrt ~ TMS_time.f * instimVF.f +
                         Error(subjID/(TMS_time.f * instimVF.f)),
                         data=data_ave, np=10000)
 summary(aov.ierr.perm)
