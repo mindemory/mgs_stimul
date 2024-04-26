@@ -4,10 +4,10 @@
 #Adapted from Nathan Tardiff
 
 MATLAB_PATH='/usr/local/bin/matlab9.6'
-PROJECT_DIR=/datc/MD_TMS_EEG
+PROJECT_DIR=/d/DATD/datd/MD_TMS_EEG
 FILES_DIR=${PROJECT_DIR}/EEGfiles
 RAW_DIR=${PROJECT_DIR}/EEGData
-SUBJ_LIST=(25 26 27)
+SUBJ_LIST=(12 14 15 16 22 23 25 26)
 DAYS=(1 2 3)
 
 LOG_DIR=$FILES_DIR/logs
@@ -41,7 +41,7 @@ for s in ${!SUBJ_LIST[@]}; do
         echo "Date: $DATE"
         printf "Log file: $LOG_FILE\n"
         
-        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_PreprocEEG_TMS($SUBJ, $DAY)" > $LOG_FILE &
+        taskset --cpu-list $CORENUM $MATLAB_PATH -v -r "A03_NativePipelineEEG_TMS($SUBJ, $DAY)" > $LOG_FILE &
         (( CORENUM++ ))
         
     done

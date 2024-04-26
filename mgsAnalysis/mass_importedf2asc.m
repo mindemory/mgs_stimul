@@ -26,14 +26,14 @@ for ss = 1:length(subs)
     clearvars -except subs days ss
 end
 
-subs = [12, 14, 15, 17, 22, 23, 24, 25, 26, 27];
+subs = [1, 3, 5, 6, 7];
 days = [1, 2, 3];
-for ss = 1:length(subs)
+parfor ss = 1:length(subs)
     disp(['We are running subject' num2str(ss, '%02d')])
     this_sub = subs(ss);
     %A01_GetTimeReport(this_sub);
     for dd = days
-        A03_NewPipelineEEG_TMS(this_sub, dd);
+        A03_NativePipelineEEG_TMS(this_sub, dd);
     end
     clearvars -except subs days ss
 end

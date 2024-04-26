@@ -2,13 +2,14 @@ function A05_TrialwiseALI(tfr_type, base_corr)
 clearvars -except tfr_type base_corr; close all; clc;
 warning('off', 'all');
 
-subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 24 25 26 27];
+subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 25 26 27];
 %subs = [1 3];
 days                                        = [1 2 3];
 t_stamp                                     = [0.5 2 3 4.5];
 f_stamp                                     = [8 12];
 conds                                       = ["NT", "T"];
 t_types                                     = ["pin", "pout", "ain", "aout"];
+t_types                                     = ["pin", "pout"];
 t_types_in                                  = ["pin", "ain"];
 locs                                        = ["ipsi", "contra"];
 [ret, hostname] = system('hostname');
@@ -17,7 +18,7 @@ if ret ~= 0
 end
 hostname = strtrim(hostname);
 if strcmp(hostname, 'zod')
-    fName.mALI                              = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_10elecs_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
+    fName.mALI                              = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 else
     fName.mALI                              = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/ALI_' tfr_type '_basecorr' num2str(base_corr) '.mat'];
 end

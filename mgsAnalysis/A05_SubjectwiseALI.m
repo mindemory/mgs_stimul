@@ -3,12 +3,13 @@ clearvars -except tfr_type base_corr; close all; clc;
 warning('off', 'all');
 
 subs                                        = [1 3 5 6 7 10 12 14 15 17 22 23 25 26 27];
-% subs = [1 3];
+% subs                                        = [6];
 days                                        = [1 2 3];
 t_stamp                                     = [0.5 2 3 4.5];
 f_stamp                                     = [8 12];
 conds                                       = ["NT", "T"];
 t_types                                     = ["pin", "pout", "ain", "aout"];
+% t_types                                     = ["pin", "pout"];
 t_types_in                                  = ["pin", "ain"];
 locs                                        = ["ipsi", "contra"];
 [ret, hostname] = system('hostname');
@@ -77,8 +78,8 @@ if ~exist(fName.subjectALI, 'file')
             fidx                            = find((POW.pin.freq > f_stamp(1)) ...
                 & (POW.pin.freq < f_stamp(2)));
             
-            for ii = 1:length(t_types)
-                ttype = t_types(ii);
+            for ii                          = 1:length(t_types)
+                ttype                       = t_types(ii);
                 this_ipsi                   = combineTFRs_ALI(POW.(ttype), this_hemi, 1, fidx);
                 this_contra                 = combineTFRs_ALI(POW.(ttype), this_hemi, 0, fidx);
 %                 cfg                         = [];

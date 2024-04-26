@@ -1,12 +1,12 @@
 function TFR                         = combineTFRs_ALI(freqmat, hemisphere, ...
                                                     is_ipsi, fidx)
 % Left and right occipital electrodes
-% left_elecs                           = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
-% right_elecs                          = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
-left_elecs                           = {'O1', 'PO3', 'PO7', 'P1', 'P3', ...
-                                        'P5', 'P7', 'CP1', 'CP3', 'CP5'};
-right_elecs                          = {'O2', 'PO4', 'PO8', 'P2', 'P4', ...
-                                        'P6', 'P8', 'CP2', 'CP4', 'CP6'};
+left_elecs                           = {'O1', 'PO3', 'PO7', 'P1', 'P3', 'P5', 'P7'};
+right_elecs                          = {'O2', 'PO4', 'PO8', 'P2', 'P4', 'P6', 'P8'};
+% left_elecs                           = {'O1', 'PO3', 'PO7', 'P1', 'P3', ...
+%                                         'P5', 'P7', 'CP1', 'CP3', 'CP5'};
+% right_elecs                          = {'O2', 'PO4', 'PO8', 'P2', 'P4', ...
+%                                         'P6', 'P8', 'CP2', 'CP4', 'CP6'};
 
 TFR                                  = struct();
 

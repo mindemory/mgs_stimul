@@ -2,7 +2,7 @@ function A04_BatchTFRAnalysis(tfr_type)
 clearvars -except tfr_type; close all; clc;
 warning('off', 'all');
 
-subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 24 25 26 27];
+subs                                        = [1 3 5 6 7 10 12 14 15 16 17 22 23 25 26 27];
 
 days                                        = [1 2 3];
 t_stamp                                     = [0.5 2 3 4.5];
@@ -11,11 +11,13 @@ conds                                       = ["NT", "T"];
 t_types                                     = ["pin", "pout", "ain", "aout"];
 t_types_in                                  = ["pin", "ain"];
 locs                                        = ["ipsi", "contra"];
+
 [ret, hostname] = system('hostname');
 if ret ~= 0
     hostname = getenv('HOSTNAME');
 end
 hostname = strtrim(hostname);
+
 if strcmp(hostname, 'zod')
     fName.mTFR                                  = ['/d/DATD/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '_basecorr0.mat'];
     fig_path                                    = '/d/DATD/datd/MD_TMS_EEG/Figures/eeg_analysis';
@@ -23,6 +25,7 @@ else
     fName.mTFR                                  = ['/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/EEGfiles/masterTFR_' tfr_type '.mat'];
     fig_path                                    = '/Users/mrugankdake/Documents/Clayspace/EEG_TMS/datd/MD_TMS_EEG/Figures/eeg_analysis';
 end
+
 if ~exist(fName.mTFR, 'file')
     for subjID                              = subs
         disp(['Running subj = ' num2str(subjID, '%02d')])
