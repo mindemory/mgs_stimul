@@ -26,7 +26,7 @@ diff_notms = diff_notms - repmat(diff_notms_basecorr, 1, size(diff_notms, 2));
 % p2_notms = p2_notms - repmat(base_corr2, 1, size(p2_notms, 2));
 s_nt = surf(t, f, p1_notms);
 s_nt.EdgeColor = 'none';
-colorbar;
+colorbar('*RdBu');
 caxis([5 30])
 xlim([0, 4.5])
 ylim([5 40])
@@ -44,7 +44,7 @@ diff_tms = diff_tms - repmat(diff_tms_basecorr, 1, size(diff_tms, 2));
 % p2_tms = p2_tms - repmat(base_corr2, 1, size(p2_tms, 2));
 s_nt = surf(t, f, p1_tms);
 s_nt.EdgeColor = 'none';
-colorbar;
+colorbar('*RdBu');
 % caxis([-3 3])
 caxis([5 30])
 xlim([0, 4.5])
