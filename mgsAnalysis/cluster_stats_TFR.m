@@ -9,7 +9,7 @@ p_nt.dimord = 'subj_chan_freq_time';
 cfg = [];
 
 cfg.channel          = left_occ_elecs;
-cfg.latency          = [3 4.5];
+cfg.latency          = [0 4.5];
 cfg.frequency        = [5 40];
 cfg.method           = 'montecarlo';
 cfg.statistic        = 'ft_statfun_depsamplesT';
@@ -25,7 +25,7 @@ cfg.numrandomization = 1e3;
 cfg_neighb.method    = 'distance';
 cfg.neighbours       = neighbors;
 
-subj = 15;
+subj = 16;
 design = zeros(2,2*subj);
 for i = 1:subj
   design(1,i) = i;
@@ -58,9 +58,10 @@ xlabel('Time (s)');
 ylabel('Frequency (Hz)');
 xlim([0, 4.5])
 ylim([5, 40])
-caxis([-1, 1])
+caxis([-3, 3])
 hold on;
 t_contour = linspace(-1, 4.5, size(stat.mask, 3));
 f_contour = linspace(5, 40, size(stat.mask, 2));
-contour(stat.time, stat.freq, squeeze(mean(stat.mask, 1)), 1, 'LineColor', 'r', 'LineWidth', 2)
-colorbar();
+contour(stat.time, stat.freq, squeeze(sum(stat.mask, 1)), 1, 'LineColor', 'y', 'LineWidth', 2)
+colormap(cmap)
+colorbar;
