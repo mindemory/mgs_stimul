@@ -1,0 +1,1880 @@
+Year: 1968
+ - Title: Dorsolateral prefrontal cortex network properties are altered in schizophrenia: implications for working memory
+   Authors: ['NC Rogasch', 'TK Rajji', 'LC Tran']
+
+Year: 1994
+ - Title: Hippocampal stimulation of fornical-lesioned rats improves working memory
+   Authors: ['J Turnbull', 'F Jiang', 'R Racine']
+
+Year: 1996
+ - Title: Psychological stress impairs spatial working memory: relevance to electrophysiological studies of hippocampal function.
+   Authors: ['DM Diamond', 'M Fleshner', 'N Ingersoll']
+
+Year: 1998
+ - Title: Effects of repetitive transcranial magnetic stimulation over dorsolateral prefrontal and posterior parietal cortex on memory-guided saccades
+   Authors: ['SA Brandt', 'CJ Ploner', 'BU Meyer', 'S Leistner']
+ - Title: Transcranial magnetic stimulation can measure and modulate learning and memory
+   Authors: ['J Grafman', 'E Wassermann']
+ - Title: Phosphenes and transient scotomas induced by magnetic stimulation of the occipital lobe: their topographic relationship
+   Authors: ['T Kammer']
+
+Year: 2000
+ - Title: Transcranial magnetic stimulation in cognitive neuroscience–virtual lesion, chronometry, and functional connectivity
+   Authors: ['A Pascual-Leone', 'V Walsh', 'J Rothwell']
+ - Title: Transcranial magnetic stimulation studies of cognition: an emerging field
+   Authors: ['M Jahanshahi', 'J Rothwell']
+ - Title: Transcranial magnetic stimulation: applications in basic neuroscience and neuropsychopharmacology
+   Authors: ['SH Lisanby', 'B Luber', 'T Perera']
+ - Title: Synaptic mechanisms and network dynamics underlying spatial working memory in a cortical network model
+   Authors: ['A Compte', 'N Brunel', 'PS Goldman-Rakic']
+ - Title: Imaging and neural modelling in episodic and working memory processes
+   Authors: ['JB Krause', 'JG Taylor', 'D Schmidt', 'H Hautzel']
+ - Title: A model of working memory: bridging the gap between electrophysiology and human brain imaging
+   Authors: ['MA Tagamets', 'B Horwitz']
+
+Year: 2001
+ - Title: Transcranial magnetic stimulation as a tool for cognitive studies
+   Authors: ['CJ Bailey', 'J Karhu', 'RJ Ilmoniemi']
+
+Year: 2002
+ - Title: Segregation of areas related to visual working memory in the prefrontal cortex revealed by rTMS
+   Authors: ['FM Mottaghy', 'M Gangitano', 'R Sparing']
+ - Title: Transient storage of a tactile memory trace in primary somatosensory cortex
+   Authors: ['JA Harris', 'C Miniussi', 'IM Harris']
+ - Title: Early visual cortical processing suggested by transcranial magnetic stimulation
+   Authors: ['E Corthout', 'M Hallett', 'A Cowey']
+ - Title: Transcranial magnetic stimulation: neurophysiological applications and safety
+   Authors: ['S Anand', 'J Hotson']
+
+Year: 2003
+ - Title: Chronometry of parietal and prefrontal activations in verbal working memory revealed by transcranial magnetic stimulation
+   Authors: ['FM Mottaghy', 'M Gangitano', 'BJ Krause']
+ - Title: Disruption of the neural correlates of working memory using high-and low-frequency repetitive transcranial magnetic stimulation: a negative study
+   Authors: ['EA Feredoes', 'PS Sachdev', 'W Wen']
+ - Title: Early 'visual'cortex activation correlates with superior verbal memory performance in the blind
+   Authors: ['A Amedi', 'N Raz', 'P Pianka', 'R Malach', 'E Zohary']
+ - Title: Reasoning and working memory: common and distinct neuronal processes
+   Authors: ['CC Ruff', 'M Knauff', 'T Fangmeier', 'J Spreer']
+ - Title: Combining transcranial magnetic stimulation and functional imaging in cognitive brain research: possibilities and limitations
+   Authors: ['AT Sack', 'DEJ Linden']
+ - Title: Studies in cognition: the problems solved and created by transcranial magnetic stimulation
+   Authors: ['EM Robertson', 'H Theoret']
+ - Title: Persistent activity in the prefrontal cortex during working memory
+   Authors: ['CE Curtis', "M D'Esposito"]
+ - Title: Stimulus specificity and temporal dynamics of working memory for visual motion
+   Authors: ['T Pasternak', 'D Zaksas']
+ - Title: Transcranial magnetic stimulation and the study of cognition
+   Authors: ['H Théoret', 'A Pascual-Leone']
+ - Title: Working memory: Unemployed but still doing day labor
+   Authors: ['DS Ruchkin', 'J Grafman', 'K Cameron']
+ - Title: Fronto-parietal evoked potential synchronization is increased during mental rotation
+   Authors: ['RB Silberstein', 'F Danieli', 'PL Nunez']
+
+Year: 2004
+ - Title: The neural mechanisms of object working memory: what is where in the infant brain?
+   Authors: ['Z Káldy', 'N Sigala']
+ - Title: Neural correlates of change detection and change blindness in a working memory task
+   Authors: ['L Pessoa', 'LG Ungerleider']
+ - Title: Prefrontal broadband noise, working memory, and genetic risk for schizophrenia
+   Authors: ['G Winterer', 'R Coppola', 'TE Goldberg']
+ - Title: Comparison of blind and sighted participants' performance in a letter recognition working memory task
+   Authors: ['I Bliss', 'T Kujala', 'H Hämäläinen']
+ - Title: Persistent LIP activity in memory antisaccades: working memory for a sensorimotor transformation
+   Authors: ['M Zhang', 'S Barash']
+ - Title: Working memory: development, disorders and training
+   Authors: ['H Westerberg']
+
+Year: 2005
+ - Title: Anodal transcranial direct current stimulation of prefrontal cortex enhances working memory
+   Authors: ['F Fregni', 'PS Boggio', 'M Nitsche', 'F Bermpohl']
+ - Title: Working memory in primate sensory systems
+   Authors: ['T Pasternak', 'MW Greenlee']
+ - Title: Processes of working memory in mind and brain
+   Authors: ['J Jonides', 'SC Lacey', 'DE Nee']
+ - Title: The influence of low-frequency left prefrontal repetitive transcranial magnetic stimulation on memory for words but not for faces
+   Authors: ['L Skrdlantova', 'J Horacek', 'C Dockery', 'J Lukavsky']
+ - Title: FROST: A distributed neurocomputational model of working memory maintenance
+   Authors: ['FG Ashby', 'SW Ell', 'VV Valentin']
+ - Title: Working memory maintenance contributes to long-term memory formation: neural and behavioral evidence
+   Authors: ['C Ranganath', 'MX Cohen', 'CJ Brozinsky']
+ - Title: Bifrontal transcranial direct current stimulation slows reaction time in a working memory task
+   Authors: ['L Marshall', 'M Mölle', 'HR Siebner', 'J Born']
+ - Title: Fronto-parietal EEG coherence in theta and upper alpha reflect central executive functions of working memory
+   Authors: ['P Sauseng', 'W Klimesch', 'M Schabus']
+ - Title: The prefrontal cortex shows context-specific changes in effective connectivity to motor or visual cortex during the selection of action or colour
+   Authors: ['JB Rowe', 'KE Stephan', 'K Friston']
+ - Title: Remembering a location makes the eyes curve away
+   Authors: ['J Theeuwes', 'CNL Olivers', 'CL Chizk']
+ - Title: Cerebro-cerebellar contributions to human verbal working memory
+   Authors: ['MP Kirschen']
+
+Year: 2006
+ - Title: Prefrontal and parietal contributions to spatial working memory
+   Authors: ['CE Curtis']
+ - Title: Stimulation of the human frontal eye fields modulates sensitivity of extrastriate visual cortex
+   Authors: ['J Silvanto', 'N Lavie', 'V Walsh']
+ - Title: Enhancement of phonological memory following transcranial magnetic stimulation (TMS)
+   Authors: ['MP Kirschen', 'MS Davis-Ratner', 'TE Jerde']
+ - Title: Effects of transcranial direct current stimulation on working memory in patients with Parkinson's disease
+   Authors: ['PS Boggio', 'R Ferrucci', 'SP Rigonatti', 'P Covre']
+ - Title: Interfering with working memory in humans
+   Authors: ['FM Mottaghy']
+ - Title: Content-and task-specific dissociations of frontal activity during maintenance and manipulation in visual working memory
+   Authors: ['HM Mohr', 'R Goebel', 'DEJ Linden']
+ - Title: Theta oscillations in human cortex during a working-memory task: evidence for local generators
+   Authors: ['S Raghavachari', 'JE Lisman', 'M Tully']
+ - Title: Neural correlates of vibrotactile working memory in the human brain
+   Authors: ['C Preuschhof', 'HR Heekeren', 'B Taskin']
+ - Title: Right parietal cortex plays a critical role in change blindness
+   Authors: ['DM Beck', 'N Muggleton', 'V Walsh', 'N Lavie']
+ - Title: Selection and maintenance of saccade goals in the human frontal eye fields
+   Authors: ['CE Curtis', "M D'Esposito"]
+ - Title: Transcranial magnetic stimulation: the method and application
+   Authors: ['I Griškova', 'J Höppner', 'O Rukšėnas', 'K Dapšys']
+ - Title: Functional brain reorganization in multiple sclerosis: evidence from fMRI studies
+   Authors: ['P Pantano', 'C Mainero', 'F Caramia']
+ - Title: Working memory, imagery and visuo-spatial mechanisms
+   Authors: ['Z Cattaneo', 'MC Fastame', 'T Vecchi']
+
+Year: 2007
+ - Title: The neural correlates of human working memory for haptically explored object orientations
+   Authors: ['AL Kaas', 'H van Mier', 'R Goebel']
+ - Title: Transcranial magnetic stimulation reveals two cortical pathways for visual body processing
+   Authors: ['C Urgesi', 'B Calvo-Merino', 'P Haggard']
+ - Title: Top-down modulation in visual working memory
+   Authors: ['A Gazzaley', "M D'Esposito"]
+ - Title: Dissociation of neural correlates of verbal and non-verbal visual working memory with different delays
+   Authors: ['C Rothmayr', 'O Baumann', 'T Endestad']
+ - Title: Functional MRI of working memory and selective attention in vibrotactile frequency discrimination
+   Authors: ['P Sörös', 'J Marmurek', 'F Tam', 'N Baker', 'WR Staines']
+ - Title: Modulation of gamma and alpha activity during a working memory task engaging the dorsal or ventral stream
+   Authors: ['D Jokisch', 'O Jensen']
+ - Title: Processing of multisensory spatial congruency can be dissociated from working memory and visuo‐spatial attention
+   Authors: ['U Zimmer', 'E Macaluso']
+ - Title: Dorsolateral prefrontal cortex, working memory, and prospective coding for action
+   Authors: ['RB Mars', 'MJ Grol']
+ - Title: Topographic maps in human frontal cortex revealed in memory-guided saccade and spatial working-memory tasks
+   Authors: ['S Kastner', 'K DeSimone', 'CS Konen']
+ - Title: From cognitive to neural models of working memory
+   Authors: ["M D'Esposito"]
+ - Title: Cannabinoid-mediated disinhibition and working memory: dynamical interplay of multiple feedback mechanisms in a continuous attractor model of prefrontal cortex
+   Authors: ['E Carter', 'XJ Wang']
+ - Title: Attentional modulation of object representations in working memory
+   Authors: ['J Lepsien', 'AC Nobre']
+ - Title: The working memory networks of the human brain
+   Authors: ['DEJ Linden']
+ - Title: Transcranial magnetic stimulation: a primer
+   Authors: ['M Hallett']
+ - Title: Localization of load sensitivity of working memory storage: quantitatively and qualitatively discrepant results yielded by single-subject and group-averaged …
+   Authors: ['E Feredoes', 'BR Postle']
+ - Title: The involvement of ipsilateral temporoparietal cortex in tactile pattern working memory as reflected in beta event-related desynchronization
+   Authors: ['YL Hegner', 'W Lutzenberger', 'S Leiberg', 'C Braun']
+ - Title: Neural mechanisms for response selection: comparing selection of responses and items from working memory
+   Authors: ['R Hester', "M D'Esposito", 'MW Cole', 'H Garavan']
+ - Title: Functional interactions between prefrontal and visual association cortex contribute to top-down modulation of visual processing
+   Authors: ['A Gazzaley', 'J Rissman', 'J Cooney', 'A Rutman']
+ - Title: Working memory in n-back tasks: ERP studies
+   Authors: ['YN Chen']
+ - Title: Distinct neural mechanisms for repetition effects of visual objects
+   Authors: ['C Guo', 'AL Lawson', 'Y Jiang']
+
+Year: 2008
+ - Title: Transcranial magnetic stimulation over posterior parietal cortex disrupts transsaccadic memory of multiple objects
+   Authors: ['SL Prime', 'M Vesia', 'JD Crawford']
+ - Title: Perceptual load modulates visual cortex excitability to magnetic stimulation
+   Authors: ['N Muggleton', 'R Lamb', 'V Walsh']
+ - Title: Distinct causal influences of parietal versus frontal areas on human visual cortex: evidence from concurrent TMS–fMRI
+   Authors: ['CC Ruff', 'S Bestmann', 'F Blankenburg']
+ - Title: Neural activities of tactile cross-modal working memory in humans: an event-related potential study
+   Authors: ['S Ohara', 'L Wang', 'Y Ku', 'FA Lenz', 'SS Hsiao', 'B Hong']
+ - Title: Rapid recurrent processing gates awareness in primary visual cortex
+   Authors: ['CN Boehler', 'MA Schoenfeld']
+ - Title: Dynamic adjustments in prefrontal, hippocampal, and inferior temporal interactions with increasing visual working memory load
+   Authors: ['J Rissman', 'A Gazzaley', "M D'Esposito"]
+ - Title: Laminar cortical dynamics of cognitive and motor working memory, sequence learning and performance: toward a unified theory of how the cerebral cortex works.
+   Authors: ['S Grossberg', 'LR Pearson']
+ - Title: Visual and spatial working memory: from boxes to networks
+   Authors: ['HD Zimmer']
+ - Title: Noninvasive brain stimulation with transcranial magnetic or direct current stimulation (TMS/tDCS)—from insights into human memory to therapy of its dysfunction
+   Authors: ['R Sparing', 'FM Mottaghy']
+ - Title: Persistent neural activity during the maintenance of spatial position in working memory
+   Authors: ['R Srimal', 'CE Curtis']
+ - Title: The relationship between attention and working memory
+   Authors: ['D Fougnie']
+ - Title: Working memory
+   Authors: ["M D'Esposito"]
+ - Title: Transcranial direct current stimulation: state of the art 2008
+   Authors: ['MA Nitsche', 'LG Cohen', 'EM Wassermann', 'A Priori']
+ - Title: Kinesthetic working memory and action control within the dorsal stream
+   Authors: ['K Fiehler', 'M Burke', 'A Engel', 'S Bien', 'F Rösler']
+ - Title: Developmental, functional brain imaging and electrophysiological evidence of visual and auditory working memory
+   Authors: ['V Vuontela']
+ - Title: Saccades to a remembered location elicit spatially specific activation in human retinotopic visual cortex
+   Authors: ['JJ Geng', 'CC Ruff', 'J Driver']
+ - Title: Functional neuroimaging insights into how sleep and sleep deprivation affect memory and cognition
+   Authors: ['MWL Chee', 'LYM Chuah']
+ - Title: Trans-saccadic perception
+   Authors: ['D Melcher', 'CL Colby']
+ - Title: Modification of tactile frequency discrimination abilities and investigation of tactile working memory in humans
+   Authors: ['D Dash']
+
+Year: 2009
+ - Title: Contrasting early visual cortical activation states causally involved in visual imagery and short‐term memory
+   Authors: ['Z Cattaneo', 'T Vecchi']
+ - Title: Stimulus-specific delay activity in human primary visual cortex
+   Authors: ['JT Serences', 'EF Ester', 'EK Vogel']
+ - Title: Brain oscillatory substrates of visual short-term memory capacity
+   Authors: ['P Sauseng', 'W Klimesch', 'KF Heise', 'WR Gruber', 'E Holz']
+ - Title: Human dorsolateral prefrontal cortex is involved in visual search for conjunctions but not features: a theta TMS study
+   Authors: ['R Kalla', 'NG Muggleton', 'A Cowey', 'V Walsh']
+ - Title: Potentiation of gamma oscillatory activity through repetitive transcranial magnetic stimulation of the dorsolateral prefrontal cortex
+   Authors: ['MS Barr', 'F Farzan', 'PM Rusjan', 'R Chen']
+ - Title: Implicit visual working memory
+   Authors: ['S Magnussen']
+ - Title: Neural correlates of learning and working memory in the primate posterior parietal cortex
+   Authors: ['JB Rawley', 'C Constantinidis']
+ - Title: Practice-related improvement in working memory is modulated by changes in processing external interference
+   Authors: ['AS Berry', 'TP Zanto', 'AM Rutman']
+ - Title: The noninvasive dissection of the human visual cortex: using FMRI and TMS to study the organization of the visual brain
+   Authors: ['DJ McKeefry', 'A Gouws', 'MP Burton']
+ - Title: Slow oscillation electrical brain stimulation during waking promotes EEG theta activity and memory encoding
+   Authors: ['R Kirov', 'C Weiss', 'HR Siebner']
+ - Title: Some surprising findings on the involvement of the parietal lobe in human memory
+   Authors: ['IR Olson', 'M Berryhill']
+ - Title: State-dependent variability of neuronal responses to transcranial magnetic stimulation of the visual cortex
+   Authors: ['BN Pasley', 'EA Allen', 'RD Freeman']
+ - Title: Theta burst stimulation of the prefrontal cortex: safety and impact on cognition, mood, and resting electroencephalogram
+   Authors: ['N Grossheinrich', 'A Rau', 'O Pogarell', 'K Hennig-Fast']
+ - Title: Neural networks engaged in milliseconds and seconds time processing: evidence from transcranial magnetic stimulation and patients with cortical or subcortical …
+   Authors: ['G Koch', 'M Oliveri']
+ - Title: fMRI activity correlated with auditory hallucinations during performance of a working memory task: data from the FBIRN consortium study
+   Authors: ['CG Wible', 'K Lee', 'I Molina', 'R Hashimoto']
+
+Year: 2010
+ - Title: Transcranial magnetic stimulation reveals the content of visual short-term memory in the visual cortex
+   Authors: ['J Silvanto', 'Z Cattaneo']
+ - Title: Improved discrimination of visual stimuli following repetitive transcranial magnetic stimulation
+   Authors: ['ML Waterston', 'CC Pack']
+ - Title: Neural signatures of stimulus features in visual working memory—A spatiotemporal approach
+   Authors: ['HM Morgan', 'MC Jackson', 'C Klein', 'H Mohr']
+ - Title: TMS over human frontal eye fields disrupts trans-saccadic memory of multiple objects
+   Authors: ['SL Prime', 'M Vesia', 'JD Crawford']
+ - Title: A selective working memory impairment after transcranial direct current stimulation to the right parietal lobe
+   Authors: ['ME Berryhill', 'EB Wencil', 'HB Coslett', 'IR Olson']
+ - Title: Transcranial magnetic stimulation-induced 'visual echoes' are generated in early visual cortex
+   Authors: ['J Jolij', 'VAF Lamme']
+ - Title: Mechanisms of working memory disruption by external interference
+   Authors: ['WC Clapp', 'MT Rubens', 'A Gazzaley']
+ - Title: Expectation-driven changes in cortical functional connectivity influence working memory and long-term memory performance
+   Authors: ['J Bollinger', 'MT Rubens', 'TP Zanto']
+ - Title: Somatosensory working memory performance in humans depends on both engagement and disengagement of regions in a distributed network
+   Authors: ['S Haegens', 'D Osipova', 'R Oostenveld']
+ - Title: Investigating representations of facial identity in human ventral visual cortex with transcranial magnetic stimulation
+   Authors: ['S Gilaie-Dotan', 'J Silvanto', 'DS Schwarzkopf']
+ - Title: Control mechanisms in working memory: a possible function of EEG theta oscillations
+   Authors: ['P Sauseng', 'B Griesmayr', 'R Freunberger']
+ - Title: Functional correlates of distractor suppression during spatial working memory encoding
+   Authors: ['M Toepper', 'H Gebhardt', 'T Beblo', 'C Thomas']
+ - Title: Cannabinoid modulations of resting state EEG theta power and working memory are correlated in humans
+   Authors: ['KBE Böcker', 'CC Hunault', 'J Gerritsen']
+ - Title: Resisting emotional interference: brain regions facilitating working memory performance during negative distraction
+   Authors: ['A Anticevic', 'DM Barch', 'G Repovs']
+ - Title: Updating of context in working memory: an event-related potential study
+   Authors: ['A Lenartowicz', 'R Escobedo-Quiroz']
+ - Title: Event-related rTMS at encoding affects differently deep and shallow memory traces
+   Authors: ['I Innocenti', 'F Giovannelli', 'M Cincotta', 'M Feurra']
+ - Title: … minds: transcranial direct current stimulation (tDCS) and galvanic vestibular stimulation (GVS) as methods of non-invasive brain stimulation in neuropsychology—a …
+   Authors: ['KS Utz', 'V Dimova', 'K Oppenländer', 'G Kerkhoff']
+
+Year: 2011
+ - Title: Magnetic stimulation of the dorsolateral prefrontal cortex dissociates fragile visual short-term memory from visual working memory
+   Authors: ['IG Sligte', 'ME Wokke', 'JP Tesselaar', 'HS Scholte']
+ - Title: Modulation of visual cortical excitability by working memory: effect of luminance contrast of mental imagery
+   Authors: ['Z Cattaneo', 'A Pisoni', 'C Papagno', 'J Silvanto']
+ - Title: Causal role of the prefrontal cortex in top-down modulation of visual processing and working memory
+   Authors: ['TP Zanto', 'MT Rubens', 'A Thangavel', 'A Gazzaley']
+ - Title: Influence of early attentional modulation on working memory
+   Authors: ['A Gazzaley']
+ - Title: Causal evidence for frontal involvement in memory target maintenance by posterior brain areas during distracter interference of visual working memory
+   Authors: ['E Feredoes', 'K Heinen', 'N Weiskopf']
+ - Title: Transcranial direct current stimulation of the prefrontal cortex modulates working memory performance: combined behavioural and electrophysiological evidence
+   Authors: ['T Zaehle', 'P Sandmann', 'JD Thorne', 'L Jäncke']
+ - Title: Evoked potentials in large-scale cortical networks elicited by TMS of the visual cortex
+   Authors: ['JO Garcia', 'ED Grossman']
+ - Title: Activation of the occipital cortex and deactivation of the default mode network during working memory in the early blind
+   Authors: ['HJ Park', 'JW Chun', 'B Park', 'H Park', 'JI Kim']
+ - Title: Transcranial magnetic stimulation intensities in cognitive paradigms
+   Authors: ['JA Kaminski', 'FM Korb', 'A Villringer', 'DVM Ott']
+ - Title: The neural correlates of visual working memory encoding: a time-resolved fMRI study
+   Authors: ['JJ Todd', 'SW Han', 'S Harrison', 'R Marois']
+ - Title: Mental imagery and visual working memory
+   Authors: ['R Keogh', 'J Pearson']
+ - Title: Common neural mechanisms supporting spatial working memory, attention and motor intention
+   Authors: ['A Ikkai', 'CE Curtis']
+ - Title: Investigating the role of current strength in tDCS modulation of working memory performance in healthy controls
+   Authors: ['F Teo', 'KE Hoy', 'ZJ Daskalakis', 'PB Fitzgerald']
+ - Title: Exploring intermediate phenotypes with EEG: working memory dysfunction in schizophrenia
+   Authors: ['C Haenschel', 'D Linden']
+ - Title: Modality-independent role of the primary auditory cortex in time estimation
+   Authors: ['R Kanai', 'H Lloyd', 'D Bueti', 'V Walsh']
+ - Title: Differential coupling of visual cortex with default or frontal-parietal network based on goals
+   Authors: ['JZ Chadick', 'A Gazzaley']
+ - Title: Cortical mechanisms for trans-saccadic memory and integration of multiple object features
+   Authors: ['SL Prime', 'M Vesia', 'JD Crawford']
+ - Title: Behavioural facilitation following brain stimulation: implications for neurorehabilitation
+   Authors: ['G Vallar', 'N Bolognini']
+ - Title: Working memory maintenance of grasp-target information in the human posterior parietal cortex
+   Authors: ['K Fiehler', 'MM Bannert', 'M Bischoff', 'C Blecker', 'R Stark']
+ - Title: Constrained principal component analysis reveals functionally connected load‐dependent networks involved in multiple stages of working memory
+   Authors: ['P Metzak', 'E Feredoes', 'Y Takane', 'L Wang']
+ - Title: Combined effects of feature-based working memory and feature-based attention on the perception of visual motion direction
+   Authors: ['D Mendoza', 'M Schneiderman', 'C Kaul']
+ - Title: The perceptual root of object-based storage: an interactive model of perception and visual working memory.
+   Authors: ['T Gao', 'Z Gao', 'J Li', 'Z Sun', 'M Shen']
+ - Title: Language processing in the occipital cortex of congenitally blind adults
+   Authors: ['M Bedny', 'A Pascual-Leone']
+ - Title: Modulation of Gamma Oscillatory Activity Through Repetitive Transcranial Magnetic Stimulation in Healthy Subjects and Patients with Schizophrenia
+   Authors: ['MS Barr']
+ - Title: Feature integration in visual working memory: parietal gamma activity is related to cognitive coordination
+   Authors: ['HM Morgan', 'SD Muthukumaraswamy']
+ - Title: Are old adults just like low working memory young adults? Filtering efficiency and age differences in visual working memory
+   Authors: ['K Jost', 'RL Bryck', 'EK Vogel', 'U Mayr']
+ - Title: The role of attentional priority and saliency in determining capacity limits in enumeration and visual working memory
+   Authors: ['D Melcher', 'M Piazza']
+ - Title: Blind vision: the neuroscience of visual impairment
+   Authors: ['Z Cattaneo', 'T Vecchi']
+ - Title: White matter microstructure in superior longitudinal fasciculus associated with spatial working memory performance in children
+   Authors: ['M Vestergaard', 'KS Madsen', 'WFC Baaré']
+ - Title: Precision of working memory for visual motion sequences and transparent motion surfaces
+   Authors: ['N Zokaei', 'N Gorgoraptis', 'B Bahrami', 'PM Bays']
+ - Title: Cholinergic modulation of working memory activity in primate prefrontal cortex
+   Authors: ['X Zhou', 'XL Qi', 'K Douglas']
+ - Title: Strategic resource allocation in the human brain supports cognitive coordination of object and spatial working memory
+   Authors: ['MC Jackson', 'HM Morgan', 'KL Shapiro']
+ - Title: Working memory for braille is shaped by experience
+   Authors: ['H Cohen', 'P Scherzer', 'R Viau', 'P Voss']
+ - Title: The low-frequency oscillation model of hallucinations in neurodegenerative disorders and in delirium
+   Authors: ['G Juszczak']
+ - Title: Age effects on retroactive interference during working memory maintenance
+   Authors: ['E Solesio-Jofre', 'L Lorenzo-López', 'R Gutiérrez']
+ - Title: Right prefrontal TMS disrupts interregional anticipatory EEG alpha activity during shifting of visuospatial attention
+   Authors: ['P Sauseng', 'JF Feldheim', 'R Freunberger']
+ - Title: fMRI correlates of working memory: Specific posterior representation sites for motion and position information
+   Authors: ['K Umla-Runge', 'HD Zimmer', 'CM Krick', 'W Reith']
+ - Title: Subthalamic nucleus stimulation selectively improves motor and visual memory performance in Parkinson's disease
+   Authors: ['H Mollion', 'PF Dominey', 'E Broussolle']
+ - Title: Mechanisms underlying age-and performance-related differences in working memory
+   Authors: ['KR Daffner', 'H Chong', 'X Sun', 'EC Tarbi']
+ - Title: Enhancement of episodic memory in young and healthy adults: a paired-pulse TMS study on encoding and retrieval performance
+   Authors: ['G Gagnon', 'C Schneider', 'S Grondin', 'S Blanchet']
+ - Title: Color experience in blindsight?
+   Authors: ['B Brogaard']
+ - Title: The prefrontal cortex modulates category selectivity in human extrastriate cortex
+   Authors: ['BT Miller', 'J Vytlacil', 'D Fegen', 'S Pradhan']
+ - Title: Visual imagery
+   Authors: ['G Ganis', 'HE Schendan']
+ - Title: Visuospatial working memory impairment in current and previous ecstasy/polydrug users
+   Authors: ['JE Fisk', 'C Montgomery']
+
+Year: 2012
+ - Title: Topographic contribution of early visual cortex to short-term memory consolidation: a transcranial magnetic stimulation study
+   Authors: ['V van de Ven', 'C Jacobs', 'AT Sack']
+ - Title: Distinct causal mechanisms of attentional guidance by working memory and repetition priming in early visual cortex
+   Authors: ['D Soto', 'D Llewelyn', 'J Silvanto']
+ - Title: Causal evidence for subliminal percept-to-memory interference in early visual cortex
+   Authors: ['J Silvanto', 'D Soto']
+ - Title: Behavioral and electrophysiological effects of transcranial direct current stimulation of the parietal cortex in a visuo-spatial working memory task
+   Authors: ['K Heimrath', 'P Sandmann', 'A Becke', 'NG Müller']
+ - Title: Mapping brain activation and information during category-specific visual working memory
+   Authors: ['DEJ Linden', 'NN Oosterhof', 'C Klein']
+ - Title: Spike suppression in a local cortical circuit induced by transcranial magnetic stimulation
+   Authors: ['Y Miyawaki', 'T Shinozaki', 'M Okada']
+ - Title: Cross-adaptation combined with TMS reveals a functional overlap between vision and imagery in the early visual cortex
+   Authors: ['Z Cattaneo', 'S Bona', 'J Silvanto']
+ - Title: Persistent neuronal firing in primary somatosensory cortex in the absence of working memory of trial-specific features of the sample stimuli in a haptic working memory …
+   Authors: ['L Wang', 'X Li', 'SS Hsiao', 'M Bodner', 'F Lenz']
+ - Title: Two critical periods in early visual cortex during figure–ground segregation
+   Authors: ['ME Wokke', 'IG Sligte', 'H Steven Scholte']
+ - Title: Visual short-term memory load reduces retinotopic cortex response to contrast
+   Authors: ['N Konstantinou', 'B Bahrami', 'G Rees']
+ - Title: Reading the mind's eye: online detection of visuo-spatial working memory and visual imagery in the inferior temporal lobe
+   Authors: ['CM Hamamé', 'JR Vidal', 'T Ossandón', 'K Jerbi', 'SS Dalal']
+ - Title: Modulation of olfactory perception by visual cortex stimulation
+   Authors: ['JB Jadauji', 'J Djordjevic', 'JN Lundström']
+ - Title: The dynamic nature of top-down signals originating from prefrontal cortex: a combined fMRI–TMS study
+   Authors: ['TG Lee', "M D'Esposito"]
+ - Title: Gamma-band activity in human prefrontal cortex codes for the number of relevant items maintained in working memory
+   Authors: ['F Roux', 'M Wibral', 'HM Mohr', 'W Singer']
+ - Title: Top-down modulation: bridging selective attention and working memory
+   Authors: ['A Gazzaley', 'AC Nobre']
+ - Title: Consciousness and the prefrontal parietal network: insights from attention, working memory, and chunking
+   Authors: ['D Bor', 'AK Seth']
+ - Title: Transcranial direct current stimulation (tDCS) of the left dorsolateral prefrontal cortex modulates declarative memory
+   Authors: ['AH Javadi', 'V Walsh']
+ - Title: EEG-power and-coherence changes in a unimodal and a crossmodal working memory task with visual and kinesthetic stimuli
+   Authors: ['A Seemüller', 'EM Müller', 'F Rösler']
+ - Title: Transcranial magnetic stimulation on the modulation of gamma oscillations in schizophrenia
+   Authors: ['F Farzan', 'MS Barr', 'Y Sun', 'PB Fitzgerald']
+ - Title: Lifespan age differences in working memory: A two-component framework
+   Authors: ['MC Sander', 'U Lindenberger']
+ - Title: Effects of transcranial electrical stimulation on cognition
+   Authors: ['MF Kuo', 'MA Nitsche']
+ - Title: Competition in working memory reduces frontal guidance of visual selection
+   Authors: ['D Soto', 'CM Greene', 'A Chaudhary', 'P Rotshtein']
+ - Title: The functional importance of rhythmic activity in the brain
+   Authors: ['G Thut', 'C Miniussi', 'J Gross']
+ - Title: Frontal GABA levels change during working memory
+   Authors: ['L Michels', 'E Martin', 'P Klaver', 'R Edden', 'F Zelaya']
+ - Title: Retinotopic mapping of categorical and coordinate spatial relation processing in early visual cortex
+   Authors: ['IJM Van Der Ham', 'MJA Duijndam', 'M Raemaekers']
+ - Title: Drawing enhances cross-modal memory plasticity in the human brain: A case study in a totally blind adult
+   Authors: ['LT Likova']
+ - Title: Neuronal effects following working memory training
+   Authors: ['M Buschkuehl', 'SM Jaeggi', 'J Jonides']
+ - Title: Age-related effects in working memory recognition modulated by retroactive interference
+   Authors: ['E Solesio-Jofre', 'L Lorenzo-López']
+ - Title: Parietal contributions to visual working memory depend on task difficulty
+   Authors: ['KT Jones', 'ME Berryhill']
+ - Title: The spatiotopic'visual'cortex of the blind
+   Authors: ['L Likova']
+ - Title: Aging-related changes of neural mechanisms underlying visual-spatial working memory
+   Authors: ['M Piefke', 'ÖA Onur', 'GR Fink']
+ - Title: Time processing in visual cortices: How the visual brain encodes and keeps track of time
+   Authors: ['P Salvioni']
+ - Title: Two critical and functionally distinct stages of face and body perception
+   Authors: ['D Pitcher', 'T Goldhaber', 'B Duchaine']
+ - Title: Modulation of large-scale brain networks by transcranial direct current stimulation evidenced by resting-state functional MRI
+   Authors: ['C Peña-Gómez', 'R Sala-Lonch', 'C Junqué', 'IC Clemente']
+ - Title: The good, the bad, and the ugly of top-down executive control
+   Authors: ['TG Lee']
+ - Title: Effects of age on the structure of functional connectivity networks during episodic and working memory demand
+   Authors: ['F Matthäus', 'JP Schmidt', 'A Banerjee', 'TG Schulze']
+ - Title: The role of the dorsal pathway in word recognition
+   Authors: ['K Pammer', 'J Stein', 'Z Kapoula']
+
+Year: 2013
+ - Title: Transcranial magnetic stimulation of visual cortex in memory: Cortical state, interference and reactivation of visual content in memory
+   Authors: ['V van de Ven', 'AT Sack']
+ - Title: Frontal and parietal theta burst TMS impairs working memory for visual-spatial conjunctions
+   Authors: ['HM Morgan', 'MC Jackson', 'MG van Koningsbruggen']
+ - Title: How visual short-term memory maintenance modulates the encoding of external input: evidence from concurrent visual adaptation and TMS
+   Authors: ['E Saad', 'J Silvanto']
+ - Title: Strengthened effective connectivity underlies transfer of working memory training to tests of short-term memory and attention
+   Authors: ['B Kundu', 'DW Sutterer', 'SM Emrich']
+ - Title: The effects of TMS over dorsolateral prefrontal cortex on multiple visual object memory across fixation and saccades
+   Authors: ['LL Tanaka']
+ - Title: Extended remediation of sleep deprived-induced working memory deficits using fMRI-guided transcranial magnetic stimulation
+   Authors: ['B Luber', 'J Steffener', 'A Tucker', 'C Habeck']
+ - Title: A cross-modal perspective on the relationships between imagery and working memory
+   Authors: ['LT Likova']
+ - Title: Distributed neural networks of tactile working memory
+   Authors: ['L Wang', 'M Bodner', 'YD Zhou']
+ - Title: How the visual brain encodes and keeps track of time
+   Authors: ['P Salvioni', 'MM Murray', 'L Kalmbach']
+ - Title: Unilateral prefrontal direct current stimulation effects are modulated by working memory load and gender
+   Authors: ['O Meiron', 'M Lavidor']
+ - Title: Modulation of Working Memory
+   Authors: ['N Zokaei']
+ - Title: Functional asymmetries in human working memory
+   Authors: ['PJ Fried']
+ - Title: Decoding the contents of visual working memory: evidence for process-based and content-based working memory areas?
+   Authors: ['IG Sligte', 'D van Moorselaar']
+ - Title: Working memory as internal attention: Toward an integrative account of internal and external selection processes
+   Authors: ['A Kiyonaga', 'T Egner']
+ - Title: Acute working memory improvement after tDCS in antidepressant-free patients with major depressive disorder
+   Authors: ['JF Oliveira', 'TA Zanão', 'L Valiengo', 'PA Lotufo']
+ - Title: Potential of pretreatment neural activity in the visual cortex during emotional processing to predict treatment response to scopolamine in major depressive disorder
+   Authors: ['ML Furey', 'WC Drevets', 'EM Hoffman', 'E Frankel']
+ - Title: What's “up”? Working memory contents can bias orientation processing
+   Authors: ['L Scocchia', 'GM Cicchini', 'J Triesch']
+ - Title: Epidural direct current stimulation over the left medial prefrontal cortex facilitates spatial working memory performance in rats
+   Authors: ['JC de Souza Custódio', 'CW Martins', 'MDMV Lugon']
+ - Title: Inhibitory deficits in the dorsolateral prefrontal cortex in psychopathic offenders
+   Authors: ['SS Hoppenbrouwers', 'DR De Jesus', 'T Stirpe']
+ - Title: Differential frontal involvement in shifts of internal and perceptual attention
+   Authors: ['RT Tanoue', 'KT Jones', 'DJ Peterson', 'ME Berryhill']
+ - Title: Flexible frequency control of cortical oscillations enables computations required for working memory
+   Authors: ['M Dipoppa', 'BS Gutkin']
+ - Title: Rapid functional reorganization in human cortex following neural perturbation
+   Authors: ['TP Zanto', 'JZ Chadick', 'G Satris']
+ - Title: Ultra-fast speech comprehension in blind subjects engages primary visual cortex, fusiform gyrus, and pulvinar–a functional magnetic resonance imaging (fMRI) study
+   Authors: ['S Dietrich', 'I Hertrich', 'H Ackermann']
+ - Title: Improved working memory performance through self-regulation of dorsal lateral prefrontal cortex activation using real-time fMRI
+   Authors: ['G Zhang', 'L Yao', 'H Zhang', 'Z Long', 'X Zhao']
+ - Title: The boundary conditions of priming of visual search: From passive viewing through task-relevant working memory load
+   Authors: ['Á Kristjánsson', 'S Saevarsson', 'J Driver']
+ - Title: Probing the frontostriatal loops involved in executive and limbic processing via interleaved TMS and functional MRI at two prefrontal locations: a pilot study
+   Authors: ['CA Hanlon', 'M Canterberry', 'JJ Taylor', 'W DeVries', 'X Li']
+ - Title: NMDA receptors subserve persistent neuronal firing during working memory in dorsolateral prefrontal cortex
+   Authors: ['M Wang', 'Y Yang', 'CJ Wang', 'NJ Gamo', 'LE Jin']
+ - Title: Non-invasive brain stimulation can induce paradoxical facilitation. Are these neuroenhancements transferable and meaningful to security services?
+   Authors: ['J Levasseur-Moreau', 'J Brunelin']
+ - Title: Evolution of working memory
+   Authors: ['P Carruthers']
+ - Title: Visuo–spatial working memory is an important source of domain-general vulnerability in the development of arithmetic cognition
+   Authors: ['S Ashkenazi', 'M Rosenberg-Lee', 'AWS Metcalfe']
+ - Title: Epoch-specific functional networks involved in working memory
+   Authors: ['TS Woodward', 'E Feredoes', 'PD Metzak', 'Y Takane']
+ - Title: Differentiated parietal connectivity of frontal regions for “what” and “where” memory
+   Authors: ['C Rottschy', 'S Caspers', 'C Roski', 'K Reetz']
+ - Title: Working memory and anticipatory set modulate midbrain and putamen activity
+   Authors: ['Y Yu', 'THB FitzGerald', 'KJ Friston']
+ - Title: Learning and memory
+   Authors: ['AK Brem', 'K Ran', 'A Pascual-Leone']
+ - Title: Combined neurostimulation and neuroimaging in cognitive neuroscience: past, present, and future
+   Authors: ['S Bestmann', 'E Feredoes']
+ - Title: Neural pathways conveying novisual information to the visual cortex
+   Authors: ['W Qin', 'C Yu']
+ - Title: Working memory processes are mediated by local and long-range synchronization of alpha oscillations
+   Authors: ['M Crespo-Garcia', 'D Pinal', 'JL Cantero']
+ - Title: State-dependent effects of transcranial oscillatory currents on the motor system: what you think matters
+   Authors: ['M Feurra', 'P Pasqualetti', 'G Bianco']
+ - Title: Temporal orienting of attention is interfered by concurrent working memory updating
+   Authors: ['M Capizzi', 'A Correa', 'D Sanabria']
+ - Title: Inferior frontal gyrus preserves working memory and emotional learning under conditions of impaired noradrenergic signaling
+   Authors: ['B Becker', 'L Androsch', 'RT Jahn', 'T Alich']
+
+Year: 2014
+ - Title: Causal evidence for a privileged working memory state in early visual cortex
+   Authors: ['N Zokaei', 'S Manohar', 'M Husain']
+ - Title: Stimulating occipital cortex enhances visual working memory consolidation
+   Authors: ['T Makovski', 'M Lavidor']
+ - Title: Anticipatory alpha phase influences visual working memory performance
+   Authors: ['TP Zanto', 'JZ Chadick', 'A Gazzaley']
+ - Title: The effects of TMS over dorsolateral prefrontal cortex on trans-saccadic memory of multiple objects
+   Authors: ['LL Tanaka', 'JC Dessing', 'P Malik', 'SL Prime']
+ - Title: TMS-induced neural noise in sensory cortex interferes with short-term memory storage in prefrontal cortex
+   Authors: ['TD Bancroft', 'J Hogeveen', 'WE Hockley']
+ - Title: Working memory improvement with non-invasive brain stimulation of the dorsolateral prefrontal cortex: a systematic review and meta-analysis
+   Authors: ['AR Brunoni', 'MA Vanderhasselt']
+ - Title: Revisiting the role of persistent neural activity during working memory
+   Authors: ['KK Sreenivasan', 'CE Curtis', "M D'Esposito"]
+ - Title: Does stimulus complexity determine whether working memory storage relies on prefrontal or sensory cortex?
+   Authors: ['TD Bancroft', 'WE Hockley', 'P Servos']
+ - Title: Enhancement of human cognitive performance using transcranial magnetic stimulation (TMS)
+   Authors: ['B Luber', 'SH Lisanby']
+ - Title: Motor system contributions to verbal and non-verbal working memory
+   Authors: ['DA Liao', 'SI Kronemer', 'JM Yau', 'JE Desmond']
+ - Title: Time-course of cortical networks involved in working memory
+   Authors: ['P Luu', 'DM Caggiano', 'A Geyer', 'J Lewis']
+ - Title: The sensory strength of voluntary visual imagery predicts visual working memory capacity
+   Authors: ['R Keogh', 'J Pearson']
+ - Title: Flexibility of representational states in working memory
+   Authors: ['N Zokaei', 'S Ning', 'S Manohar', 'E Feredoes']
+ - Title: Distributed and dynamic storage of working memory stimulus information in extrastriate cortex
+   Authors: ['KK Sreenivasan', 'J Vytlacil']
+ - Title: Motor threshold predicts working memory performance in healthy humans
+   Authors: ['N Schicktanz', 'K Schwegler']
+ - Title: Decoding sound and imagery content in early visual cortex
+   Authors: ['P Vetter', 'FW Smith', 'L Muckli']
+ - Title: Working memory and neural oscillations: alpha–gamma versus theta–gamma codes for distinct WM information?
+   Authors: ['F Roux', 'PJ Uhlhaas']
+ - Title: Reappraising the relationship between working memory and conscious awareness
+   Authors: ['D Soto', 'J Silvanto']
+ - Title: Transcranial cerebellar direct current stimulation (tcDCS): motor control, cognition, learning and emotions
+   Authors: ['R Ferrucci', 'A Priori']
+ - Title: Working memory coding of analog stimulus properties in the human prefrontal cortex
+   Authors: ['B Spitzer', 'M Gloel', 'TT Schmidt', 'F Blankenburg']
+ - Title: Evidence for working memory storage operations in perceptual cortex
+   Authors: ['KK Sreenivasan', 'C Gratton', 'J Vytlacil']
+ - Title: Neural correlates of spatial working memory manipulation in a sequential Vernier discrimination task
+   Authors: ['JM Gutiérrez-Garralda', 'CR Hernandez-Castillo']
+ - Title: What underlies the ability to guide action with spatial information that is no longer present in the environment?
+   Authors: ['BR Postle']
+ - Title: Correspondence between stimulus encoding-and maintenance-related neural processes underlies successful working memory
+   Authors: ['JR Cohen', 'KK Sreenivasan', "M D'Esposito"]
+ - Title: Dynamic interactions between visual working memory and saccade target selection
+   Authors: ['S Schneegans', 'JP Spencer', 'G Schöner']
+ - Title: Neural basis of non-conscious visual working memory
+   Authors: ['A Dutta', 'K Shah', 'J Silvanto', 'D Soto']
+ - Title: The cross-functional role of frontoparietal regions in cognition: internal attention as the overarching mechanism
+   Authors: ['HC Lückmann', 'HIL Jacobs', 'AT Sack']
+ - Title: Restoring cognitive functions using non-invasive brain stimulation techniques in patients with cerebellar disorders
+   Authors: ['PA Pope', 'RC Miall']
+ - Title: Medial prefrontal activity during delay period contributes to learning of a working memory task
+   Authors: ['D Liu', 'X Gu', 'J Zhu', 'X Zhang', 'Z Han', 'W Yan', 'Q Cheng']
+ - Title: Non-invasive cerebellar stimulation—a consensus paper
+   Authors: ['G Grimaldi', 'GP Argyropoulos', 'A Boehringer', 'P Celnik']
+ - Title: Dissociable dorsal and ventral frontostriatal working memory circuits: evidence from subthalamic stimulation in Parkinson's disease
+   Authors: ['J Ventre‐Dominey', 'S Bourret', 'H Mollion']
+ - Title: Working memory
+   Authors: ['BR Buchsbaum', "M D'Esposito"]
+ - Title: Accuracy and confidence of visual short-term memory do not go hand-in-hand: behavioral and neural dissociations
+   Authors: ['S Bona', 'J Silvanto']
+ - Title: Direct evidence for attention-dependent influences of the frontal eye-fields on feature-responsive visual cortex
+   Authors: ['K Heinen', 'E Feredoes', 'N Weiskopf', 'CC Ruff']
+ - Title: Object grouping based on real-world regularities facilitates perception by reducing competitive interactions in visual cortex
+   Authors: ['D Kaiser', 'T Stein', 'MV Peelen']
+ - Title: Dynamic brain states for preparatory attention and working memory
+   Authors: ['N Competition']
+ - Title: Contributions of cortical feedback to sensory processing in primary visual cortex
+   Authors: ['LS Petro', 'L Vizioli', 'L Muckli']
+ - Title: A perfect match: noninvasive brain stimulation and psychotherapy
+   Authors: ['M Bajbouj', 'F Padberg']
+ - Title: Reduced prefrontal efficiency for visuospatial working memory in attention-deficit/hyperactivity disorder
+   Authors: ['ACV Bédard', 'JH Newcorn', 'SM Clerkin', 'B Krone']
+ - Title: Compensatory plasticity and cross-modal reorganization following early visual deprivation
+   Authors: ['R Kupers', 'M Ptito']
+ - Title: Occipital alpha activity during stimulus processing gates the information flow to object-selective cortex
+   Authors: ['JM Zumer', 'R Scheeringa', 'JM Schoffelen', 'DG Norris']
+ - Title: Attention and working memory: two basic mechanisms for constructing temporal experiences
+   Authors: ['G Marchetti']
+ - Title: Battery powered thought: enhancement of attention, learning, and memory in healthy adults using transcranial direct current stimulation
+   Authors: ['BA Coffman', 'VP Clark', 'R Parasuraman']
+ - Title: A re-examination of neural basis of language processing: proposal of a dynamic hodotopical model from data provided by brain stimulation mapping during picture …
+   Authors: ['H Duffau', 'S Moritz-Gasser', 'E Mandonnet']
+ - Title: Hand proximity differentially affects visual working memory for color and orientation in a binding task
+   Authors: ['SP Kelly', 'JR Brockmole']
+ - Title: Applications of transcranial direct current stimulation for understanding brain function
+   Authors: ['HL Filmer', 'PE Dux', 'JB Mattingley']
+ - Title: A comparison of the effects of transcranial direct current stimulation and caffeine on vigilance and cognitive performance during extended wakefulness
+   Authors: ['LK McIntire', 'RA McKinley', 'C Goodyear', 'J Nelson']
+ - Title: Intercommunication between prefrontal and posterior brain regions for protecting visual working memory from distractor interference
+   Authors: ['AM Liesefeld', 'HR Liesefeld']
+ - Title: On central cognition
+   Authors: ['P Carruthers']
+ - Title: Differential effects of visual attention and working memory on binocular rivalry
+   Authors: ['L Scocchia', 'M Valsecchi', 'KR Gegenfurtner']
+ - Title: Non-invasive brain stimulation of the right inferior frontal gyrus may improve attention in early Alzheimer's disease: a pilot study
+   Authors: ['I Eliasova', 'L Anderkova', 'R Marecek']
+ - Title: Translating working memory into action: Behavioral and neural evidence for using motor representations in encoding visuo‐spatial sequences
+   Authors: ['R Langner', 'MA Sternkopf', 'TS Kellermann']
+ - Title: Pattern changes of EEG oscillations and BOLD signals associated with temporal lobe epilepsy as revealed by a working memory task
+   Authors: ['HFB Ozelo', 'A Alessio', 'MS Sercheli', 'E Bilevicius']
+ - Title: Spatial information in (visual) working memory
+   Authors: ['HD Zimmer', 'HR Liesefeld']
+ - Title: Trait-like differences in underlying oscillatory state predict individual differences in the TMS-evoked response
+   Authors: ['B Kundu', 'JS Johnson', 'BR Postle']
+ - Title: The selective updating of working memory: a predictive coding account
+   Authors: ['Y Yu']
+ - Title: Use of transcranial direct current stimulation (tDCS) to enhance cognitive training: effect of timing of stimulation
+   Authors: ['DM Martin', 'R Liu', 'A Alonzo', 'M Green']
+ - Title: Differential associations between impulsivity and risk-taking and brain activations underlying working memory in adolescents
+   Authors: ['K Panwar', 'HJV Rutherford', 'WE Mencl', 'CM Lacadie']
+ - Title: Granger causality analysis reveals distinct spatio-temporal connectivity patterns in motor and perceptual visuo-spatial working memory
+   Authors: ['F Protopapa', 'CI Siettos', 'I Evdokimidis']
+
+Year: 2015
+ - Title: … roles of primary somatosensory cortex and posterior parietal cortex in tactile-visual cross-modal working memory: a single-pulse transcranial magnetic stimulation  …
+   Authors: ['Y Ku', 'D Zhao', 'N Hao', 'Y Hu', 'M Bodner', 'YD Zhou']
+ - Title: The effect of disruption of prefrontal cortical function with transcranial magnetic stimulation on visual working memory
+   Authors: ['ES Lorenc', 'TG Lee', 'AJW Chen']
+ - Title: Prefrontal cortex and sensory cortices during working memory: quantity and quality
+   Authors: ['Y Ku', 'M Bodner', 'YD Zhou']
+ - Title: Transcranial direct current stimulation of dorsolateral prefrontal cortex of major depression: improving visual working memory, reducing depressive symptoms
+   Authors: ['MA Salehinejad', 'R Rostami', 'E Ghanavati']
+ - Title: Role of early visual cortex in trans-saccadic memory of object features
+   Authors: ['P Malik', 'JC Dessing', 'JD Crawford']
+ - Title: Electrophysiological evidence for a sensory recruitment model of somatosensory working memory
+   Authors: ['T Katus', 'A Grubert', 'M Eimer']
+ - Title: Enhancing long-term memory with stimulation tunes visual attention in one trial
+   Authors: ['RMG Reinhart', 'GF Woodman']
+ - Title: The role of the occipital cortex in capacity limits and precision of visual working memory
+   Authors: ['A van Lamsweerde', 'J Johnson']
+ - Title: Parietal and frontal cortex encode stimulus-specific mnemonic representations during visual working memory
+   Authors: ['EF Ester', 'TC Sprague', 'JT Serences']
+ - Title: TMS over the right precuneus reduces the bilateral field advantage in visual short term memory capacity
+   Authors: ['A Kraft', 'M Dyrholm', 'S Kehrer', 'C Kaufmann', 'J Bruening']
+ - Title: Interaction between visual perception and mental representations of imagery and memory in the early visual areas
+   Authors: ['E Saad']
+ - Title: Partial dissociation in the neural bases of VSTM and imagery in the early visual cortex
+   Authors: ['E Saad', 'M Wojciechowska', 'J Silvanto']
+ - Title: Transcranial direct current stimulation based metaplasticity protocols in working memory
+   Authors: ['S Carvalho', 'PS Boggio', 'ÓF Gonçalves', 'AR Vigário']
+ - Title: Revealing hidden states in visual working memory using electroencephalography
+   Authors: ['MJ Wolff', 'J Ding', 'NE Myers', 'MG Stokes']
+ - Title: 'Activity-silent'working memory in prefrontal cortex: a dynamic coding framework
+   Authors: ['MG Stokes']
+ - Title: Activity in human visual and parietal cortex reveals object-based attention in working memory
+   Authors: ['B Peters', 'J Kaiser', 'B Rahm']
+ - Title: Neural bases of the short-term retention of visual information
+   Authors: ['BR Postle']
+ - Title: Object-based attention underlies the rehearsal of feature binding in visual working memory.
+   Authors: ['M Shen', 'X Huang', 'Z Gao']
+ - Title: How is working memory content consciously experienced? The 'conscious copy'model of WM introspection
+   Authors: ['C Jacobs', 'J Silvanto']
+ - Title: Temporal dynamics of attention during encoding versus maintenance of working memory: complementary views from event-related potentials and alpha-band …
+   Authors: ['NE Myers', 'L Walther', 'G Wallis', 'MG Stokes']
+ - Title: Intraparietal sulcus activity and functional connectivity supporting spatial working memory manipulation
+   Authors: ['S Bray', 'R Almas', 'AEGF Arnold', 'G Iaria']
+ - Title: The cognitive neuroscience of working memory
+   Authors: ["M D'Esposito", 'BR Postle']
+ - Title: The role of theta and gamma oscillations in working memory
+   Authors: ['A Pahor', 'N Jaušovec']
+ - Title: The brain mechanisms of working memory: an evolving story
+   Authors: ['R Marois']
+ - Title: Electric field estimation in deep transcranial magnetic stimulation
+   Authors: ['V Guadagnin', 'M Parazzini', 'S Fiocchi']
+ - Title: The default mode network and the working memory network are not anti-correlated during all phases of a working memory task
+   Authors: ['T Piccoli', 'G Valente', 'DEJ Linden', 'M Re', 'F Esposito']
+ - Title: Dysfunctional prefrontal gamma-band oscillations reflect working memory and other cognitive deficits in schizophrenia
+   Authors: ['D Senkowski', 'J Gallinat']
+ - Title: Neurocognitive architecture of working memory
+   Authors: ['J Eriksson', 'EK Vogel', 'A Lansner', 'F Bergström']
+ - Title: Longitudinal neurostimulation in older adults improves working memory
+   Authors: ['KT Jones', 'JA Stephens', 'M Alam', 'M Bikson']
+ - Title: Attending and inhibiting stimuli that match the contents of visual working memory: Evidence from eye movements and pupillometry
+   Authors: ['S Mathôt', 'E Van Heusden', 'S Van der Stigchel']
+ - Title: When Working Memory and Attention Compete: Characterizing the Dynamic Interdependence between Our MentalWorkspace and External Environment
+   Authors: ['A Kiyonaga']
+ - Title: Non-invasive human brain stimulation in cognitive neuroscience: a primer
+   Authors: ['BL Parkin', 'H Ekhtiari', 'VF Walsh']
+ - Title: Rehearsing biological motion in working memory: An EEG study
+   Authors: ['Z Gao', 'S Bentin', 'M Shen']
+ - Title: Saccade planning evokes topographically specific activity in the dorsal and ventral streams
+   Authors: ['GT Saber', 'F Pestilli', 'CE Curtis']
+ - Title: The centered mind: What the science of working memory shows us about the nature of human thought
+   Authors: ['P Carruthers']
+ - Title: Mental imagery: functional mechanisms and clinical applications
+   Authors: ['J Pearson', 'T Naselaris', 'EA Holmes']
+ - Title: Brain oscillatory signatures of working memory control processes
+   Authors: ['B Berger']
+ - Title: What are the roles of sensory and parietal activity in visual short-term memory
+   Authors: ['SM Emrich']
+ - Title: Oscillatory multiplexing of neural population codes for interval timing and working memory
+   Authors: ['BM Gu', 'H van Rijn', 'WH Meck']
+ - Title: Intraparietal regions play a material general role in working memory: Evidence supporting an internal attentional role
+   Authors: ['K Killebrew', 'R Mruczek', 'ME Berryhill']
+ - Title: Multi-channel electrocorticography seizure detection method for presurgical evaluation and cortical stimulation
+   Authors: ['SF Liang', 'YH Shih', 'YL Chen']
+ - Title: Contribution of NMDA receptors to dorsolateral prefrontal cortical networks in primates
+   Authors: ['M Wang', 'AFT Arnsten']
+ - Title: Modulating cognition using transcranial direct current stimulation of the cerebellum
+   Authors: ['PA Pope']
+ - Title: The heterogeneity of mental representation: Ending the imagery debate
+   Authors: ['J Pearson', 'SM Kosslyn']
+ - Title: Re-evaluating the relationships among filtering activity, unnecessary storage, and visual working memory capacity
+   Authors: ['SM Emrich', 'MA Busseri']
+ - Title: Auditory dysfunction in schizophrenia: integrating clinical and basic features
+   Authors: ['DC Javitt', 'RA Sweet']
+ - Title: Intrinsic brain indices of verbal working memory capacity in children and adolescents
+   Authors: ['Z Yang', 'DR Jutagir', 'MS Koyama', 'RC Craddock']
+ - Title: Preparatory activity in posterior temporal cortex causally contributes to object detection in scenes
+   Authors: ['RR Reeder', 'F Perini', 'MV Peelen']
+ - Title: The role of cortical oscillations in the control and protection of visual working memory
+   Authors: ['N Myers']
+ - Title: Visual working memory for dynamic objects: Impaired binding between object feature and location
+   Authors: ['J Li', 'Y Zhou', 'R Shui', 'M Shen']
+ - Title: Visual Working Memory Representations Across Eye Movements
+   Authors: ['B Dungan']
+ - Title: Working memory and aging: A review
+   Authors: ['M Fabiani', 'B Zimmerman', 'G Gratton']
+ - Title: “Visual” cortex of congenitally blind adults responds to syntactic movement
+   Authors: ['C Lane', 'S Kanjlia', 'A Omaki', 'M Bedny']
+ - Title: Cognitive enhancement by means of TMS: memory and executive functions
+   Authors: ['M Palaus', 'EM Marrón', 'R Viejo-Sobera']
+ - Title: Phosphene perception relates to visual cortex glutamate levels and covaries with atypical visuospatial awareness
+   Authors: ['DB Terhune', 'E Murray', 'J Near', 'CJ Stagg']
+ - Title: Protracted development of brain systems underlying working memory in adolescence: a longitudinal study
+   Authors: ['DJ Simmonds']
+
+Year: 2016
+ - Title: How Transcranial Magnetic Stimulation over Early Visual Cortex impacts short-term memory precision and guess rate
+   Authors: ['RL Rademaker', 'VG van de Ven', 'F Tong', 'AT Sack']
+ - Title: Different cortical mechanisms for spatial vs. feature-based attentional selection in visual working memory
+   Authors: ['A Heuer', 'A Schubö', 'JD Crawford']
+ - Title: Top–down activation of spatiotopic sensory codes in perceptual and working memory search
+   Authors: ['BC Kuo', 'AC Nobre', 'G Scerif', 'DE Astle']
+ - Title: Cathodal transcranial direct current stimulation over posterior parietal cortex enhances distinct aspects of visual working memory
+   Authors: ['K Heinen', 'L Sagliano', 'M Candini', 'M Husain']
+ - Title: Neural mechanisms of information storage in visual short-term memory
+   Authors: ['JT Serences']
+ - Title: Temporal dynamics of visual working memory
+   Authors: ['M Sobczak-Edmans', 'THB Ng', 'YC Chan', 'E Chew']
+ - Title: The critical role of phase difference in gamma oscillation within the temporoparietal network for binding visual working memory
+   Authors: ['P Tseng', 'YT Chang', 'CF Chang', 'WK Liang', 'CH Juan']
+ - Title: Causes and consequences of limitations in visual working memory
+   Authors: ['SJ Fallon', 'N Zokaei', 'M Husain']
+ - Title: Neural anatomy of primary visual cortex limits visual working memory
+   Authors: ['J Bergmann', 'E Genç', 'A Kohler', 'W Singer']
+ - Title: Top-down control of visual alpha oscillations: sources of control signals and their mechanisms of action
+   Authors: ['C Wang', 'R Rajagovindan', 'SM Han']
+ - Title: Early visual cortex as a multiscale cognitive blackboard
+   Authors: ['PR Roelfsema', 'FP de Lange']
+ - Title: Cross-frequency synchronization connects networks of fast and slow oscillations during visual working memory maintenance
+   Authors: ['F Siebenhühner', 'SH Wang', 'JM Palva', 'S Palva']
+ - Title: What works in auditory working memory? A neural oscillations perspective
+   Authors: ['A Wilsch', 'J Obleser']
+ - Title: Encoding Induced Alpha EEG Activity Reveals Visual Working Memory Representations and their Manipulations
+   Authors: ['J Robitaille']
+ - Title: High working memory load increases intracortical inhibition in primary motor cortex and diminishes the motor affordance effect
+   Authors: ['SM Freeman', 'S Itthipuripat', 'AR Aron']
+ - Title: Using Brain Stimulation to Enhance Working Memory: A Charged Topic
+   Authors: ['MCS Trumbo']
+ - Title: Working memory: maintenance, updating, and the realization of intentions
+   Authors: ['L Nyberg', 'J Eriksson']
+ - Title: The topography of alpha-band activity tracks the content of spatial working memory
+   Authors: ['JJ Foster', 'DW Sutterer', 'JT Serences']
+ - Title: The neuroscience of working memory capacity and training
+   Authors: ['C Constantinidis', 'T Klingberg']
+ - Title: Human parietal cortex lesions impact the precision of spatial working memory
+   Authors: ['WE Mackey', 'O Devinsky', 'WK Doyle']
+ - Title: Holding biological motion in working memory: An fMRI study
+   Authors: ['X Lu', 'J Huang', 'Y Yi', 'M Shen', 'X Weng']
+ - Title: Human dorsolateral prefrontal cortex is not necessary for spatial working memory
+   Authors: ['WE Mackey', 'O Devinsky', 'WK Doyle']
+ - Title: Turning Symbolic: The Representation of Motion Direction in Working Memory
+   Authors: ['T Seidel Malkinson', 'Y Pertzov', 'E Zohary']
+ - Title: Transcranial random-noise stimulation of visual cortex potentiates value-driven attentional capture
+   Authors: ['MG van Koningsbruggen', 'SC Ficarella']
+ - Title: The different oscillation patterns of alpha band in the early and later stages of working memory maintenance
+   Authors: ['Y Xie', 'Z Feng', 'Y Xu', 'C Bian', 'M Li']
+ - Title: Effects of transcranial magnetic stimulation on cognitive function
+   Authors: ['SM Lee', 'JH Chae']
+ - Title: A preliminary study of the effects of working memory training on brain function
+   Authors: ['MC Stevens', 'A Gaynor', 'KL Bessette']
+ - Title: The oscillatory mechanisms of working memory maintenance
+   Authors: ['M Leszczynski']
+ - Title: Comparative overview of visuospatial working memory in monkeys and rats
+   Authors: ['KI Tsutsui', 'K Oyama', 'S Nakamura']
+ - Title: Dissociating perceptual confidence from discrimination accuracy reveals no influence of metacognitive awareness on working memory
+   Authors: ['J Samaha', 'JJ Barrett', 'AD Sheldon']
+ - Title: Auditory short-term memory in the primate auditory cortex
+   Authors: ['BH Scott', 'M Mishkin']
+ - Title: … control of dorsolateral prefrontal cortex neurophysiology with real-time functional magnetic resonance imaging (rt-fMRI) neurofeedback training and working memory …
+   Authors: ['MS Sherwood', 'JH Kane', 'MP Weisend', 'JG Parker']
+ - Title: Controlling working memory operations by selective gating: the roles of oscillations and synchrony
+   Authors: ['M Dipoppa', 'M Szwed', 'BS Gutkin']
+ - Title: Reconstructing representations of dynamic visual objects in early visual cortex
+   Authors: ['E Chong', 'AM Familiar']
+ - Title: Enhancing cognition with theta burst stimulation
+   Authors: ['E Demeter']
+ - Title: … functional connectivity in dorsolateral prefrontal cortical networks in adult macaques with neonatal hippocampal lesions: Relations to visual working memory deficits
+   Authors: ['Y Meng', 'X Hu', 'J Bachevalier', 'X Zhang']
+ - Title: Regional brain activity that determines successful and unsuccessful working memory formation
+   Authors: ['S Teramoto', 'T Inaoka', 'Y Ono']
+ - Title: Modality specificity in the cerebro-cerebellar neurocircuitry during working memory
+   Authors: ['HBT Ng', 'KLC Kao', 'YC Chan', 'E Chew']
+ - Title: Cortical representations of cognitive control and working memory are dependent yet non-interacting
+   Authors: ['IH Harding', 'BJ Harrison', 'M Breakspear']
+ - Title: The association between eye movements and cerebellar activation in a verbal working memory task
+   Authors: ['J Peterburs', 'DT Cheng', 'JE Desmond']
+ - Title: TMS-EEG: A window into the neurophysiological effects of transcranial electrical stimulation in non-motor brain regions
+   Authors: ['AT Hill', 'NC Rogasch', 'PB Fitzgerald', 'KE Hoy']
+
+Year: 2017
+ - Title: Assessing the effect of early visual cortex transcranial magnetic stimulation on working memory consolidation
+   Authors: ['AE van Lamsweerde', 'JS Johnson']
+ - Title: The impact of early visual cortex transcranial magnetic stimulation on visual working memory precision and guess rate
+   Authors: ['RL Rademaker', 'VG van de Ven', 'F Tong', 'AT Sack']
+ - Title: Reevaluating the sensory account of visual working memory storage
+   Authors: ['Y Xu']
+ - Title: Distinct contributions by frontal and parietal cortices support working memory
+   Authors: ['WE Mackey', 'CE Curtis']
+ - Title: Elucidating and modulating the neural correlates of visuospatial working memory via noninvasive brain stimulation
+   Authors: ['CH Juan', 'P Tseng', 'TY Hsu']
+ - Title: No evidence for enhancements to visual working memory with transcranial direct current stimulation to prefrontal or posterior parietal cortices.
+   Authors: ['MK Robison', 'WP McGuirk', 'N Unsworth']
+ - Title: Visual perception is dependent on visuospatial working memory and thus on the posterior parietal cortex
+   Authors: ['L Pisella']
+ - Title: Transcranial magnetic stimulation of early visual cortex suppresses conscious representations in a dichotomous manner without gradually decreasing their precision
+   Authors: ['M Koivisto', 'I Harjuniemi', 'H Railo']
+ - Title: Visual working memory enhances the neural response to matching visual input
+   Authors: ['S Gayet', 'M Guggenmos', 'TB Christophel']
+ - Title: Selective entrainment of theta oscillations in the dorsal stream causally enhances auditory working memory performance
+   Authors: ['P Albouy', 'A Weiss', 'S Baillet', 'RJ Zatorre']
+ - Title: Effects of transcranial direct current stimulation on the auditory mismatch negativity response and working memory performance in schizophrenia: a pilot study
+   Authors: ['D Impey', 'A Baddeley', 'R Nelson', 'A Labelle']
+ - Title: Frontoparietal neurostimulation modulates working memory training benefits and oscillatory synchronization
+   Authors: ['KT Jones', 'DJ Peterson', 'KJ Blacker', 'ME Berryhill']
+ - Title: Supramodal theta, gamma, and sustained fields predict modality-specific modulations of alpha and beta oscillations during visual and tactile working memory
+   Authors: ['F van Ede', 'O Jensen', 'E Maris']
+ - Title: Dissociated roles of the parietal and frontal cortices in the scope and control of attention during visual working memory
+   Authors: ['S Li', 'Y Cai', 'J Liu', 'D Li', 'Z Feng', 'C Chen', 'G Xue']
+ - Title: Effects of acute ketamine infusion on visual working memory: event-related potentials
+   Authors: ['I Koychev', 'JFW Deakin', 'W El-Deredy']
+ - Title: Neural representation of working memory content is modulated by visual attentional demand
+   Authors: ['A Kiyonaga', 'EW Dowd', 'T Egner']
+ - Title: Externally induced frontoparietal synchronization modulates network dynamics and enhances working memory performance
+   Authors: ['IR Violante', 'LM Li', 'DW Carmichael', 'R Lorenz', 'R Leech']
+ - Title: Non-invasive brain stimulation targeting the right fusiform gyrus selectively increases working memory for faces
+   Authors: ['TT Brunyé', 'JM Moran', 'A Holmes', 'CR Mahoney']
+ - Title: Preparatory attention in visual cortex
+   Authors: ['E Battistoni', 'T Stein', 'MV Peelen']
+ - Title: Reply to Coll et al. 'Important methodological issues regarding the use of transcranial magnetic stimulation to investigate interoceptive processing' (2017)
+   Authors: ['O Pollatos', 'T Kammer']
+ - Title: Working memory in the prefrontal cortex
+   Authors: ['S Funahashi']
+ - Title: Working memory maintenance: Sustained firing or synaptic mechanisms?
+   Authors: ['J Silvanto']
+ - Title: Transcranial Magnetic Stimulation as a tool for Memory Enhancement Research
+   Authors: ['A San Agustín', 'JL Pons']
+ - Title: Dynamic hidden states underlying working-memory-guided behavior
+   Authors: ['MJ Wolff', 'J Jochim', 'EG Akyürek', 'MG Stokes']
+ - Title: Serial Dependence in Visual Working Memory: Time Course and Neural Mechanisms
+   Authors: ['D Bliss']
+ - Title: Semantic congruent audiovisual integration during the encoding stage of working memory: An ERP and sLORETA study
+   Authors: ['Y Xie', 'Y Xu', 'C Bian', 'M Li']
+ - Title: … strokes for different folks: A behavioural and neural investigation of mental imagery and individual differences in cognitive strategies used in visual working memory
+   Authors: ['R Keogh']
+ - Title: Seeing in the dark: Phosphene thresholds with eyes open versus closed in the absence of visual inputs
+   Authors: ['TA De Graaf', 'F Duecker', 'Y Stankevich', 'S Ten Oever']
+ - Title: Vagus nerve stimulation improves working memory performance
+   Authors: ['L Sun', 'J Peräkylä', 'K Holm', 'J Haapasalo']
+ - Title: Early and late components of EEG delay activity correlate differently with scene working memory performance
+   Authors: ['TM Ellmore', 'K Ng', 'CP Reichert']
+ - Title: Prioritizing information during working memory: beyond sustained internal attention
+   Authors: ['NE Myers', 'MG Stokes', 'AC Nobre']
+ - Title: Selection within working memory based on a color retro-cue modulates alpha oscillations
+   Authors: ['C Poch', 'A Capilla', 'JA Hinojosa', 'P Campo']
+ - Title: A theory of working memory without consciousness or sustained activity
+   Authors: ['D Trübutschek', 'S Marti', 'A Ojeda', 'JR King', 'Y Mi']
+ - Title: A neural model of working memory
+   Authors: ['SG Manohar', 'N Zokaei', 'SJ Fallon', 'T Vogels', 'M Husain']
+ - Title: No evidential value in samples of transcranial direct current stimulation (tDCS) studies of cognition and working memory in healthy populations
+   Authors: ['J Medina', 'S Cason']
+ - Title: Neural networks for time perception and working memory
+   Authors: ['S Üstün', 'EH Kale', 'M Çiçek']
+ - Title: Thalamic control of functional cortical connectivity
+   Authors: ['M Nakajima', 'MM Halassa']
+ - Title: … the role of the ventrolateral prefrontal cortex in emotional memory using transcranial direct current stimulation & transcranial magnetic stimulation
+   Authors: ['RR Weintraub-Brevda']
+ - Title: Phase-amplitude coupling and long-range phase synchronization reveal frontotemporal interactions during visual working memory
+   Authors: ['J Daume', 'T Gruber', 'AK Engel']
+ - Title: Individual differences shape the content of visual representations
+   Authors: ['RR Reeder']
+ - Title: An interference model of visual working memory.
+   Authors: ['K Oberauer', 'HY Lin']
+ - Title: Neither cholinergic nor dopaminergic enhancement improve spatial working memory precision in humans
+   Authors: ['AN Harewood Smith', 'JA Challa']
+ - Title: Working memory modulation of frontoparietal network connectivity in first-episode schizophrenia
+   Authors: ['JD Nielsen', 'KH Madsen', 'Z Wang', 'Z Liu']
+ - Title: Working memory replay prioritizes weakly attended events
+   Authors: ['A Jafarpour', 'W Penny', 'G Barnes', 'RT Knight', 'E Duzel']
+ - Title: Restoration of fMRI decodability does not imply latent working memory states
+   Authors: ['S Schneegans', 'PM Bays']
+ - Title: EEG correlates of working memory performance in females
+   Authors: ['YG Pavlov', 'B Kotchoubey']
+ - Title: Stable and dynamic coding for working memory in primate prefrontal cortex
+   Authors: ['E Spaak', 'K Watanabe', 'S Funahashi']
+ - Title: The sleep-deprived human brain
+   Authors: ['AJ Krause', 'EB Simon', 'BA Mander', 'SM Greer']
+ - Title: Theta and alpha oscillation impairments in autistic spectrum disorder reflect working memory deficit
+   Authors: ['J Larrain-Valenzuela', 'F Zamorano', 'P Soto-Icaza']
+ - Title: Within-category decoding of information in different attentional states in short-term memory
+   Authors: ['JJ LaRocque', 'AC Riggall', 'SM Emrich']
+ - Title: Spatio-temporal dynamics of working memory maintenance and scanning of verbal information
+   Authors: ['T Kambara', 'EC Brown', 'JW Jeong', 'N Ofen']
+ - Title: The role of working memory for cognitive control in anorexia nervosa versus substance use disorder
+   Authors: ['SJ Brooks', 'SG Funk', 'SY Young', 'HB Schiöth']
+ - Title: GABAergic networks in the prefrontal cortex and working memory
+   Authors: ['C Bañuelos']
+ - Title: Increasing intelligence
+   Authors: ['N Jaušovec', 'A Pahor']
+ - Title: Distributed patterns of occipito-parietal functional connectivity predict the precision of visual working memory
+   Authors: ['EMG Weber', 'T Hahn', 'K Hilger', 'CJ Fiebach']
+ - Title: Working memories are maintained in a stable code
+   Authors: ['J Barbosa']
+ - Title: Guiding transcranial brain stimulation by EEG/MEG to interact with ongoing brain activity and associated functions: a position paper
+   Authors: ['G Thut', 'TO Bergmann', 'F Fröhlich', 'SR Soekadar']
+ - Title: Alpha activity in the ventral and dorsal visual stream controls information flow during working memory
+   Authors: ['M Leszczynski', 'J Fell', 'O Jensen', 'N Axmacher']
+ - Title: THE ROLE OF PLASTICITY IN COGNITION: A TMS-EEG STUDY
+   Authors: ['D Evans']
+ - Title: Noninvasive brain stimulation and neural entrainment enhance athletic performance—a review
+   Authors: ['LS Colzato', 'MA Nitsche', 'A Kibele']
+ - Title: The contribution of the luminance and opponent chromatic post-receptoral mechanisms to visual working memory
+   Authors: ['M Kosilo']
+ - Title: Working memory after traumatic brain injury: the neural basis of improved performance with methylphenidate
+   Authors: ['AE Manktelow', 'DK Menon', 'BJ Sahakian']
+
+Year: 2018
+ - Title: Persistent recruitment of somatosensory cortex during active maintenance of hand images in working memory
+   Authors: ['A Galvez-Pol', 'B Calvo-Merino', 'A Capilla', 'B Forster']
+ - Title: The causal role of the prefrontal cortex and somatosensory cortex in tactile working memory
+   Authors: ['D Zhao', 'YD Zhou', 'M Bodner', 'Y Ku']
+ - Title: Dorsolateral prefrontal cortex bridges bilateral primary somatosensory cortices during cross-modal working memory
+   Authors: ['D Zhao', 'Y Ku']
+ - Title: Reaffirming the sensory recruitment account of working memory
+   Authors: ['JM Scimeca', 'A Kiyonaga', "M D'Esposito"]
+ - Title: The organization of working memory networks is shaped by early sensory experience
+   Authors: ['V Cardin', 'M Rudner', 'RF De Oliveira', 'J Andin']
+ - Title: Modulation of motor cortex activity in a visual working memory task of hand images
+   Authors: ['A Galvez-Pol', 'B Forster', 'B Calvo-Merino']
+ - Title: Visual working memory storage recruits sensory processing areas
+   Authors: ['S Gayet', 'CLE Paffen', 'S Van der Stigchel']
+ - Title: Population dynamics of early visual cortex during working memory
+   Authors: ['M Rahmati', 'GT Saber', 'CE Curtis']
+ - Title: Evaluating the role of the dorsolateral prefrontal cortex and posterior parietal cortex in memory-guided attention with repetitive transcranial magnetic stimulation
+   Authors: ['M Wang', 'P Yang', 'C Wan', 'Z Jin', 'J Zhang']
+ - Title: Unilateral repetitive transcranial magnetic stimulation differentially affects younger and older adults completing a verbal working memory task
+   Authors: ['J Shields', 'J Mock', 'D Devier', 'A Foundas']
+ - Title: Brain regions that retain the spatial layout of tactile stimuli during working memory–A 'tactospatial sketchpad'?
+   Authors: ['TT Schmidt', 'F Blankenburg']
+ - Title: The neural bases of precision and distractor resistance in visual working memory
+   Authors: ['ES Lorenc']
+ - Title: Selective attention on representations in working memory: cognitive and neural mechanisms
+   Authors: ['Y Ku']
+ - Title: TMS over the cerebellum interferes with short-term memory of visual sequences
+   Authors: ['C Ferrari', 'Z Cattaneo', 'V Oldrati', 'L Casiraghi']
+ - Title: Parietal-occipital interactions underlying control-and representation-related processes in working memory for nonspatial visual features
+   Authors: ['O Gosseries', 'Q Yu', 'JJ LaRocque']
+ - Title: Visual working memory load disrupts template-guided attentional selection during visual search
+   Authors: ['N Berggren', 'M Eimer']
+ - Title: Excitatory TMS modulates memory representations
+   Authors: ['WC Wang', 'EA Wing', 'DLK Murphy', 'BM Luber']
+ - Title: The anterior-ventrolateral temporal lobe contributes to boosting visual working memory capacity for items carrying semantic information
+   Authors: ['R Chiou', 'MAL Ralph']
+ - Title: The speed of parietal theta frequency drives visuospatial working memory capacity
+   Authors: ['N Wolinski', 'NR Cooper', 'P Sauseng', 'V Romei']
+ - Title: Cerebellar-stimulation evoked prefrontal electrical synchrony is modulated by GABA
+   Authors: ['X Du', 'LM Rowland', 'A Summerfelt', 'FS Choa']
+ - Title: TMS applied to V1 can facilitate reasoning
+   Authors: ['K Hamburger', 'M Ragni', 'H Karimpur']
+ - Title: Working Memory 2.0
+   Authors: ['EK Miller', 'M Lundqvist', 'AM Bastos']
+ - Title: The critical role of phase difference in theta oscillation between bilateral parietal cortices for visuospatial working memory
+   Authors: ['P Tseng', 'KC Iu', 'CH Juan']
+ - Title: Reassessing the evidence for capacity limits in neural signals related to working memory
+   Authors: ['PM Bays']
+ - Title: The representational basis of working memory
+   Authors: ['DE Nee', "M D'Esposito"]
+ - Title: Mnemonic and attentional roles for states of attenuated alpha oscillations in perceptual working memory: a review
+   Authors: ['F van Ede']
+ - Title: Using transcranial direct current stimulation to improve verbal working memory: A detailed review of the methodology
+   Authors: ['R Hurley', 'L Machado']
+ - Title: Dissociable decoding of spatial attention and working memory from EEG oscillations and sustained potentials
+   Authors: ['GY Bae', 'SJ Luck']
+ - Title: Working memory and consciousness: the current state of play
+   Authors: ['M Persuh', 'E LaRock', 'J Berger']
+ - Title: Eye movement-related confounds in neural decoding of visual working memory representations
+   Authors: ['P Mostert', 'AM Albers', 'L Brinkman', 'L Todorova', 'P Kok']
+ - Title: Dissociating the causal roles of frontal and parietal cortex in working memory capacity 8
+   Authors: ['A Kiyonaga', 'JM Scimeca', "M D'Esposito"]
+ - Title: The Neural Substrates of Non-Conscious Working Memory
+   Authors: ['F Bergstrom']
+ - Title: Behavioral decoding of working memory items inside and outside the focus of attention
+   Authors: ['R Mallett', 'JA Lewis‐Peacock']
+ - Title: Concussion alters the functional brain processes of visual attention and working memory
+   Authors: ['PP Shah-Basak', 'C Urbain', 'S Wong']
+ - Title: Serial representation of items during working memory maintenance at letter-selective cortical sites
+   Authors: ['A Bahramisharif', 'O Jensen', 'J Jacobs', 'J Lisman']
+ - Title: Foraging through multiple target categories reveals the flexibility of visual working memory
+   Authors: ['T Kristjánsson', 'Á Kristjánsson']
+ - Title: A neurocognitive mechanism for precision of visual working memory representations
+   Authors: ['W Xie']
+ - Title: Repetitive Transcranial Magnetic Stimulation changes absolute theta power during cognitive/motor tasks
+   Authors: ['J Di Giacomo', 'M Gongora', 'F Silva', 'R Vicente']
+ - Title: Attentional selection in the perceptual scenes and internal working memory representations: A unitized perspective
+   Authors: ['T LIANG', 'H WU', 'Y ZHANG', 'F LONG']
+ - Title: Studying and modifying brain function with non-invasive brain stimulation
+   Authors: ['R Polanía', 'MA Nitsche', 'CC Ruff']
+ - Title: Structuring of abstract working memory content by fronto-parietal synchrony in primate cortex
+   Authors: ['SN Jacob', 'D Hähnke', 'A Nieder']
+ - Title: Anodal transcranial direct-current stimulation over the right dorsolateral prefrontal cortex influences emotional face perception
+   Authors: ['LC Yang', 'P Ren', 'YY Ma']
+ - Title: Topographic cortico-cerebellar networks revealed by visual attention and working memory
+   Authors: ['JA Brissenden', 'SM Tobyne', 'DE Osher', 'EJ Levin']
+ - Title: Posterior parietal cortex dysfunction is central to working memory storage and broad cognitive deficits in schizophrenia
+   Authors: ['B Hahn', 'BM Robinson', 'CJ Leonard']
+ - Title: Working memory: delay activity, yes! Persistent activity? Maybe not
+   Authors: ['M Lundqvist', 'P Herman', 'EK Miller']
+ - Title: EEG-Based Control of Working Memory Maintenance Using Closed-Loop Binaural Stimulation
+   Authors: ['CE Beauchene']
+ - Title: Neural evidence for non-conscious working memory
+   Authors: ['F Bergström', 'J Eriksson']
+ - Title: Working memory training mostly engages general-purpose large-scale networks for learning
+   Authors: ['J Salmi', 'L Nyberg', 'M Laine']
+ - Title: Triple representation of language, working memory, social and emotion processing in the cerebellum: convergent evidence from task and seed-based resting-state …
+   Authors: ['X Guell', 'JDE Gabrieli', 'JD Schmahmann']
+ - Title: fNIRS measurement of cortical activation and functional connectivity during a visuospatial working memory task
+   Authors: ['JM Baker', 'JL Bruno', 'A Gundran', 'SMH Hosseini']
+ - Title: Intrinsic neuronal dynamics predict distinct functional roles during working memory
+   Authors: ['DF Wasmuht', 'E Spaak', 'TJ Buschman', 'EK Miller']
+ - Title: Visual mental imagery influences attentional guidance in a visual-search task
+   Authors: ['J Moriya']
+ - Title: The neurophysiology of working memory development: From childhood to adolescence and young adulthood
+   Authors: ['CM Gómez', 'CI Barriga-Paulino']
+ - Title: Single session low frequency left dorsolateral prefrontal transcranial magnetic stimulation changes neurometabolite relationships in healthy humans
+   Authors: ['NR Bridges', 'RA McKinley', 'D Boeke']
+ - Title: Spatially selective alpha oscillations reveal moment-by-moment trade-offs between working memory and attention
+   Authors: ['D van Moorselaar', 'JJ Foster', 'DW Sutterer']
+ - Title: The visual cortex and visual cognition in Huntington's disease: an overview of current literature
+   Authors: ['EM Coppen', 'J van der Grond', 'EP Hart']
+ - Title: Comparing effects of reward anticipation on working memory in younger and older adults
+   Authors: ['F Thurm', 'N Zink', 'SC Li']
+ - Title: Investigating the effects of perceptual processing on visual working memory in individuals with autism spectrum disorder: an event-related potential study
+   Authors: ['YP Chan']
+ - Title: Dynamic population coding and its relationship to working memory
+   Authors: ['EM Meyers']
+ - Title: The many characters of visual alpha oscillations
+   Authors: ['MS Clayton', 'N Yeung']
+ - Title: Excitatory TMS Boosts Memory Representations
+   Authors: ['WC Wang', 'EA Wing', 'DLK Murphy', 'BM Luber']
+ - Title: Brain stimulation and brain computer interfacing
+   Authors: ['MA Roula', 'S Ramaraju']
+ - Title: Carrying the past to the future: Distinct brain networks underlie individual differences in human spatial working memory capacity
+   Authors: ['S Liu', 'JH Poh', 'HL Koh', 'KK Ng', 'YM Loke', 'JKW Lim']
+ - Title: Aging-related changes of EEG synchronization during a visual working memory task
+   Authors: ['C Teng', 'Y Cheng', 'C Wang', 'Y Ren', 'W Xu', 'J Xu']
+ - Title: The offline stream of conscious representations
+   Authors: ['C Sergent']
+ - Title: Physiology of transcranial direct current stimulation
+   Authors: ['CJ Stagg', 'A Antal', 'MA Nitsche']
+
+Year: 2019
+ - Title: Right hemisphere occipital rTMS impairs working memory in visualizers but not in verbalizers
+   Authors: ['S Hilbert', 'M McAssey', 'M Bühner', 'P Schwaferts']
+ - Title: Working memory training integrates visual cortex into beta-band networks in congenitally blind individuals
+   Authors: ['JM Rimmele', 'H Gudi-Mindermann', 'G Nolte', 'B Röder']
+ - Title: Visual working memory directly alters perception
+   Authors: ['C Teng', 'DJ Kravitz']
+ - Title: Coexisting representations of sensory and mnemonic information in human visual cortex
+   Authors: ['RL Rademaker', 'C Chunharas', 'JT Serences']
+ - Title: How can transcranial magnetic stimulation be used to causally manipulate memory representations in the human brain?
+   Authors: ['ML Widhalm', 'NS Rose']
+ - Title: Reduced visual and frontal cortex activation during visual working memory in grapheme-color synaesthetes relative to young and older adults
+   Authors: ['G Pfeifer', 'J Ward', 'N Sigala']
+ - Title: Assessing the role of the left dorsal frontal cortex in working memory guidance: Attentional or Mnemonic? A neurostimulation study
+   Authors: ['J Bourbon-Teles', 'D Soto']
+ - Title: Modulation of the pupillary response by the content of visual working memory
+   Authors: ['N Zokaei', 'AG Board', 'SG Manohar']
+ - Title: Anodal transcranial direct current stimulation induces high gamma-band activity in the left dorsolateral prefrontal cortex during a working memory task: a double-blind …
+   Authors: ['T Ikeda', 'T Takahashi', 'H Hiraishi', 'DN Saito']
+ - Title: Selection of visual objects in perception and working memory one at a time
+   Authors: ['N Thigpen', 'NM Petro', 'J Oschwald']
+ - Title: Working memory revived in older adults by synchronizing rhythmic brain circuits
+   Authors: ['RMG Reinhart', 'JA Nguyen']
+ - Title: Redefining visual working memory: A cognitive-strategy, brain-region approach
+   Authors: ['J Pearson', 'R Keogh']
+ - Title: Working memory as persistent neural activity
+   Authors: ['JJ Foster', 'EK Vogel', 'E Awh']
+ - Title: Functional dissociation of anterior cingulate cortex and intraparietal sulcus in visual working memory
+   Authors: ['GM Duma', 'G Mento', 'S Cutini', 'P Sessa', 'S Baillet']
+ - Title: … high-definition transcranial direct current stimulation (HD-tDCS) of the intraparietal sulcus and dorsolateral prefrontal cortex on working memory and divided attention
+   Authors: ['S Nikolin', 'S Lauf', 'CK Loo', 'D Martin']
+ - Title: Assessing cTBS virtual lesioning effects on parietal cortices and its ability to shift spatial attention
+   Authors: ['A Thomas', 'M Bellgrove', 'M Rogers']
+ - Title: How the motor system integrates with working memory
+   Authors: ['CL Marvel', 'OP Morgan', 'SI Kronemer']
+ - Title: Adjusting the aperture of the mind's eye: modulation of the pupillary response by the content of visual working memory
+   Authors: ['N Zokaei', 'AG Board', 'SG Manohar']
+ - Title: Investigating a Shared Representation between Working Memory and Perception
+   Authors: ['C Teng']
+ - Title: Neuronal correlates of tactile working memory in prefrontal and vibrissal somatosensory cortex
+   Authors: ['V Esmaeili', 'ME Diamond']
+ - Title: Network-targeted, multi-site direct cortical stimulation enhances working memory by modulating phase lag of low-frequency oscillations
+   Authors: ['S Alagapan', 'J Riddle', 'WA Huang', 'E Hadar', 'HW Shin']
+ - Title: Interplay between persistent activity and activity-silent dynamics in prefrontal cortex during working memory
+   Authors: ['J Barbosa', 'H Stein', 'R Martinez', 'A Galan', 'K Adam', 'S Li']
+ - Title: The interdependence of attention, working memory and gaze control: behavior and neural circuitry
+   Authors: ['D Jonikaitis', 'T Moore']
+ - Title: Modulating Working Memory Capacity with Visual Entrainment
+   Authors: ['I Pileckyte', 'G Chatzopoulos', 'S Soto-Faraco']
+ - Title: Impulse responses reveal unimodal and bimodal access to visual and auditory working memory
+   Authors: ['MJ Wolff', 'G Kandemir', 'MG Stokes', 'EG Akyürek']
+ - Title: Visual cortex recruitment during language processing in blind individuals is explained by Hebbian learning
+   Authors: ['R Tomasello', 'T Wennekers', 'M Garagnani']
+ - Title: A privileged working memory state and potential top-down modulation for faces, not scenes
+   Authors: ['H Lin', 'W Li', 'S Carlson']
+ - Title: Working memory load-related theta power decreases in dorsolateral prefrontal cortex predict individual differences in performance
+   Authors: ['A Brzezicka', 'J Kamiński', 'CM Reed']
+ - Title: Neural Population Dynamics During Working Memory
+   Authors: ['M Rahmati']
+ - Title: Expression of transcripts selective for GABA neuron subpopulations across the cortical visuospatial working memory network in the healthy state and schizophrenia
+   Authors: ['M Tsubomoto', 'R Kawabata', 'X Zhu', 'Y Minabe']
+ - Title: The pupillary light response reflects visual working memory content.
+   Authors: ['C Hustá', 'E Dalmaijer', 'A Belopolsky']
+ - Title: Layer-dependent activity in human prefrontal cortex during working memory
+   Authors: ['ES Finn', 'L Huber', 'DC Jangraw', 'PJ Molfese']
+ - Title: Working memory prioritization impacts neural recovery from distraction
+   Authors: ['R Mallett', 'JA Lewis-Peacock']
+ - Title: Adverse events associated with repeated sessions of tDCS: a systematic review and meta-analysis
+   Authors: ['S Nikolin', 'C Huggins', 'D Martin']
+ - Title: Differential brain mechanisms of selection and maintenance of information during working memory
+   Authors: ['R Quentin', 'JR King', 'E Sallard', 'N Fishman']
+ - Title: Not-so-working memory: Drift in functional magnetic resonance imaging pattern representations during maintenance predicts errors in a visual working memory task
+   Authors: ['PC Lim', 'EJ Ward', 'TJ Vickery']
+ - Title: Working memory training and transcranial direct current stimulation
+   Authors: ['J Au', 'M Buschkuehl', 'SM Jaeggi']
+ - Title: Working memory and attention–A conceptual analysis and review
+   Authors: ['K Oberauer']
+ - Title: Impaired prefrontal functional connectivity associated with working memory task performance and disorganization despite intact activations in schizophrenia
+   Authors: ['S Chari', 'MJ Minzenberg', 'M Solomon']
+ - Title: Neural network mechanisms of working memory interference
+   Authors: ['JM Barbosa']
+ - Title: Selective modulation of early visual cortical activity by movement intention
+   Authors: ['JP Gallivan', 'CS Chapman', 'DJ Gale']
+ - Title: New approach for brain stimulation
+   Authors: ['E Vaschillo', 'B Vaschillo', 'J Buckman']
+ - Title: The neural basis of complex audiovisual objects maintenances in working memory
+   Authors: ['YJ Xie', 'YY Li', 'B Xie', 'YY Xu', 'L Peng']
+ - Title: Neural Effects of Transcranial Direct Current Stimulation Paired with Cognitive Training on Working Memory
+   Authors: ['NR Nissim']
+ - Title: The human imagination: the cognitive neuroscience of visual mental imagery
+   Authors: ['J Pearson']
+ - Title: Sensorimotor, language, and working memory representation within the human cerebellum
+   Authors: ['R Ashida', 'NL Cerminara', 'RJ Edwards']
+ - Title: Item-specific delay activity demonstrates concurrent storage of multiple active neural representations in working memory
+   Authors: ['DW Sutterer', 'JJ Foster', 'KCS Adam', 'EK Vogel']
+ - Title: Temporal-order-based attentional priority modulates mnemonic representations in parietal and frontal cortices
+   Authors: ['Q Yu', 'WM Shim']
+ - Title: Parametric Working Memory of Abstract Quantities on Multiple Modalities and Formats: from Frequency to Numerosity
+   Authors: ['I Uluc']
+ - Title: Reactivation of previous experiences in a working memory task
+   Authors: ['GY Bae', 'SJ Luck']
+ - Title: The Role Of Gamma Oscillations And Cortical Inhibition In The Development Of Working Memory In Adolescence
+   Authors: ['CP Walker']
+ - Title: Alpha modulation during working memory encoding predicts neurocognitive impairment in ADHD
+   Authors: ['A Lenartowicz', 'H Truong', 'GC Salgari']
+ - Title: Circuit mechanisms for the maintenance and manipulation of information in working memory
+   Authors: ['NY Masse', 'GR Yang', 'HF Song', 'XJ Wang']
+ - Title: Dynamic network coding of working-memory domains and working-memory processes
+   Authors: ['E Soreq', 'R Leech', 'A Hampshire']
+ - Title: Effects of online repetitive transcranial magnetic stimulation (rTMS) on cognitive processing: a meta-analysis and recommendations for future studies
+   Authors: ['L Beynel', 'LG Appelbaum', 'B Luber', 'CA Crowell']
+ - Title: Pharmacological stress impairs working memory performance and attenuates dorsolateral prefrontal cortex glutamate modulation
+   Authors: ['EA Woodcock', 'MK Greenwald', 'D Khatib', 'VA Diwadkar']
+ - Title: Modulation of fronto-striatal functional connectivity using transcranial magnetic stimulation
+   Authors: ['I Alkhasli', 'K Sakreida', 'FM Mottaghy']
+ - Title: Frontoparietal networks mediate the behavioral impact of alpha inhibition in visual cortex
+   Authors: ['AI Wiesman', 'BR Groff', 'TW Wilson']
+ - Title: Probing the limits of activity-silent non-conscious working memory
+   Authors: ['D Trübutschek', 'S Marti']
+ - Title: Interleaved Transcranial Magnetic Stimulation and Functional Magnetic Resonance Imaging: A Translational Tool.
+   Authors: ['F Vila‐Rodriguez', 'R Ge', 'D Long']
+ - Title: Cerebellar contributions to visual attention and working memory
+   Authors: ['JA Brissenden']
+ - Title: Post-training TMS abolishes performance improvement and releases future learning from interference
+   Authors: ['JW Bang', 'D Milton', 'Y Sasaki', 'T Watanabe']
+ - Title: Modulating human memory via entrainment of brain oscillations
+   Authors: ['S Hanslmayr', 'N Axmacher', 'CS Inman']
+ - Title: Transcranial direct-current stimulation in ultra-treatment-resistant schizophrenia
+   Authors: ['JP Lindenmayer', 'MKC Kulsa', 'T Sultana', 'A Kaur']
+ - Title: The dynamic duo: combining noninvasive brain stimulation with cognitive interventions
+   Authors: ['AV Sathappan', 'BM Luber', 'SH Lisanby']
+ - Title: The time course of encoding and maintenance of task-relevant versus irrelevant object features in working memory
+   Authors: ['A Bocincova', 'JS Johnson']
+ - Title: Effector-dependent modulation of working memory maintenance in posterior parietal cortex
+   Authors: ['A Pilacinski', 'MS Höller-Wallscheid', 'A Lindner']
+ - Title: Contribution of FEF to attentional periodicity during visual search: A TMS study
+   Authors: ['L Dugué', 'AA Beck', 'P Marque', 'R VanRullen']
+ - Title: A Philosophical Examination of Working Memory
+   Authors: ['MH Beninger']
+ - Title: After-effects of 10 Hz tACS over the prefrontal cortex on phonological word decisions
+   Authors: ['V Moliadze', 'L Sierau', 'E Lyzhko', 'T Stenner']
+
+Year: 2020
+ - Title: Cross-modal involvement of the primary somatosensory cortex in visual working memory: A repetitive TMS study
+   Authors: ['G Guidali', 'C Roncoroni', 'C Papagno']
+ - Title: Revisit once more the sensory storage account of visual working memory
+   Authors: ['Y Xu']
+ - Title: Different states of priority recruit different neural representations in visual working memory
+   Authors: ['Q Yu', 'C Teng', 'BR Postle']
+ - Title: Causal evidence for a role of theta and alpha oscillations in the control of working memory
+   Authors: ['J Riddle', 'JM Scimeca', 'D Cellier', 'S Dhanani']
+ - Title: Unimodal and bimodal access to sensory working memories by auditory and visual impulses
+   Authors: ['MJ Wolff', 'G Kandemir', 'MG Stokes']
+ - Title: Interplay between persistent activity and activity-silent dynamics in the prefrontal cortex underlies serial biases in working memory
+   Authors: ['J Barbosa', 'H Stein', 'RL Martinez', 'A Galan-Gadea']
+ - Title: Neural correlates underlying the precision of visual working memory
+   Authors: ['Y Zhao', 'S Kuai', 'TP Zanto', 'Y Ku']
+ - Title: The dynamic-processing model of working memory
+   Authors: ['NS Rose']
+ - Title: Reduced dorsal visual oscillatory activity during working memory maintenance in the first-episode schizophrenia spectrum
+   Authors: ['BA Coffman', 'G Haas', 'C Olson', 'R Cho']
+ - Title: Tracking stimulus representation across a 2-back visual working memory task
+   Authors: ['Q Wan', 'Y Cai', 'J Samaha']
+ - Title: Experience-dependent alteration of mnemonic representation in early visual cortex and intraparietal sulcus
+   Authors: ['K Jia', 'Y Li', 'M Gong', 'H Huang', 'Y Wang', 'S Li']
+ - Title: Application of long-interval paired-pulse transcranial magnetic stimulation to motion-sensitive visual cortex does not lead to changes in motion discrimination
+   Authors: ['OL Gamboa', 'A Brito', 'Z Abzug', "T D'Arbeloff", 'L Beynel']
+ - Title: Multielectrode transcranial electrical stimulation of the left and right prefrontal cortices differentially impacts verbal working memory neural circuitry
+   Authors: ['SM Koshy', 'AI Wiesman', 'RK Spooner', 'C Embury']
+ - Title: Cognitive control, not time, determines the status of items in working memory
+   Authors: ['JM Fulvio', 'BR Postle']
+ - Title: Dissociable neural mechanisms underlie currently-relevant, future-relevant, and discarded working memory representations
+   Authors: ['ES Lorenc', 'ARE Vandenbroucke', 'DE Nee']
+ - Title: Oscillatory control over representational states in working memory
+   Authors: ['IEJ de Vries', 'HA Slagter', 'CNL Olivers']
+ - Title: A TMS-EEG Exploration of Latent Working Memory
+   Authors: ['ML Widhalm']
+ - Title: Reevaluating the role of persistent neural activity in short-term memory
+   Authors: ['NY Masse', 'MC Rosen', 'DJ Freedman']
+ - Title: Memory for action: A functional view of selection in visual working memory
+   Authors: ['A Heuer', 'S Ohl', 'M Rolfs']
+ - Title: Internal Noise and Visual Working Memory Deficits in Schizophrenia
+   Authors: ['M Ichinose']
+ - Title: Cerebral cortex activation during the Sternberg verbal working memory task
+   Authors: ['IS Bakulin', 'Z Ah', 'K Pn', 'S Do', 'P Ag', 'F Mv']
+ - Title: 28 The Role of Alpha Oscillations for Attention and Working Memory
+   Authors: ['O Jensen', 'S Hanslmayr']
+ - Title: Effects of load and emotional state on EEG alpha-band power and inter-site synchrony during a visual working memory task
+   Authors: ['JSB Figueira', 'IPA David', 'I Lobo', 'LB Pacheco']
+ - Title: Competition and Control during Working Memory
+   Authors: ['A Kiyonaga', "M D'Esposito"]
+ - Title: Phase-dependent amplification of working memory content and performance
+   Authors: ['S Ten Oever', 'P De Weerd', 'AT Sack']
+ - Title: Theoretical distinction between functional states in working memory and their corresponding neural states
+   Authors: ['MG Stokes', 'PS Muhle-Karbe', 'NE Myers']
+ - Title: Between persistently active and activity‐silent frameworks: novel vistas on the cellular basis of working memory
+   Authors: ['J Kamiński', 'U Rutishauser']
+ - Title: Limitations of concurrently representing objects within view and in visual working memory
+   Authors: ['T Liang', 'Z Cheng', 'W Hu', 'C Ye', 'J Zhang', 'Q Liu']
+ - Title: Prefrontal-subthalamic pathway supports action selection in a spatial working memory task
+   Authors: ['C Heikenfeld', 'S Mederos', 'C Chen', 'T Korotkova']
+ - Title: The effect of working memory on corticospinal excitability
+   Authors: ['M Lenizky']
+ - Title: Machine learning and individual variability in electric field characteristics predict tDCS treatment response
+   Authors: ['A Albizu', 'R Fang', 'A Indahlastari', "A O'Shea", 'SE Stolte']
+ - Title: Neural patterns in linguistic cortices discriminate the content of verbal working memory
+   Authors: ['B Kowialiewski', 'L Van Calster', 'L Attout']
+ - Title: Spatially specific working memory activity in the human superior colliculus
+   Authors: ['M Rahmati', 'K DeSimone', 'CE Curtis']
+ - Title: Patients with anxiety disorders rely on bilateral dlPFC activation during verbal working memory
+   Authors: ['NL Balderston', 'E Flook', 'A Hsiung', 'J Liu']
+ - Title: Complex naturalistic stimuli capture attention automatically when maintained in working memory
+   Authors: ['N Rutkowska', 'Ł Doradzińska', 'M Bola']
+ - Title: Oculomotor capture reveals trial-by-trial neural correlates of attentional guidance by contents of visual working memory
+   Authors: ['VM Beck', 'TJ Vickery']
+ - Title: Visual working memory enhances target discrimination accuracy with single-item displays
+   Authors: ['Y Pan', 'X Zhang']
+ - Title: Flexibility of brain regions during working memory curtails cognitive consequences to lack of sleep
+   Authors: ['N Lauharatanahirun', 'K Bansal', 'SM Thurman']
+ - Title: Complex naturalistic stimuli are prioritized by attention when maintained in visual working memory
+   Authors: ['N Rutkowska', 'Ł Doradzińska', 'M Bola']
+ - Title: Gray matter volume in different cortical structures dissociably relates to individual differences in capacity and precision of visual working memory
+   Authors: ['MG Machizawa', 'J Driver', 'T Watanabe']
+ - Title: Unified visual working memory without the anterior Corpus callosum
+   Authors: ['Y Pinto', 'EHF de Haan', 'MC Villa', 'S Siliquini', 'G Polonara']
+ - Title: A causal role for the cerebellum in semantic integration: a transcranial magnetic stimulation study
+   Authors: ['D Gatti', 'F Van Vugt', 'T Vecchi']
+ - Title: Effects of transcranial direct current stimulation on working memory performance in older adults: Potential moderators
+   Authors: ['AM Bryant']
+ - Title: Vestibular pathology and spatial working memory
+   Authors: ['G Guidetti', 'R Guidetti', 'M Manfredi']
+ - Title: A randomized controlled trial of transcranial direct-current stimulation and cognitive training in children with fetal alcohol spectrum disorder
+   Authors: ['E Boroda', 'AM Krueger', 'P Bansal', 'MJ Schumacher']
+ - Title: The effect of transcranial direct current stimulation (tDCS) on working memory in schizophrenia
+   Authors: ['TU Schwippel']
+ - Title: Prior expectations evoke stimulus-specific activity in the deep layers of the primary visual cortex
+   Authors: ['F Aitken', 'G Menelaou', 'O Warrington', 'RS Koolschijn']
+ - Title: Remember how to use it: Effector-dependent modulation of spatial working memory activity in posterior parietal cortex
+   Authors: ['A Pilacinski', 'MS Höller-Wallscheid', 'A Lindner']
+ - Title: Neuropeptide Y in PTSD, MDD and Chronic Stress: A Systemic Review and Meta-Analysis
+   Authors: ['U Tural', 'DV Iosifescu']
+ - Title: Hemifield-specific control of spatial attention and working memory: Evidence from hemifield crossover costs
+   Authors: ['RW Strong', 'GA Alvarez']
+ - Title: The neural consequences of attentional prioritization of internal representations in visual working memory
+   Authors: ['MI Sahan', 'AD Sheldon', 'BR Postle']
+ - Title: The CRUNCH model does not account for load-dependent changes in visuospatial working memory in older adults
+   Authors: ['SD Jamadar']
+ - Title: Multidimensional degrees of consciousness: Qualities of experiences during wakeful perception, working memory tasks, mental imagery, mind wandering and …
+   Authors: ['P Fazekas', 'G Nemeth']
+ - Title: Enhanced performance on a sentence comprehension task in congenitally blind adults
+   Authors: ['R Loiotile', 'C Lane', 'A Omaki']
+ - Title: Targeting brain functions from the scalp: Transcranial brain atlas based on large-scale fMRI data synthesis
+   Authors: ['Y Jiang', 'Z Li', 'Y Zhao', 'X Xiao', 'W Zhang', 'P Sun', 'Y Yang']
+ - Title: The human intraparietal sulcus modulates task-evoked functional connectivity
+   Authors: ['K Hwang', 'JM Shine', 'D Cellier', "M D'Esposito"]
+ - Title: Neural mechanisms of feature binding
+   Authors: ['Y Zhang', 'YY Zhang', 'F Fang']
+ - Title: Prioritization in visual working memory enhances memory retention and speeds up processing in a comparison task
+   Authors: ['CH Poth']
+ - Title: The spatial orienting of the focus of attention in working memory makes use of inhibition: Evidence by hemispheric asymmetries in posterior alpha oscillations
+   Authors: ['M Rösner', 'S Arnau', 'I Skiba', 'E Wascher', 'D Schneider']
+ - Title: Visual working memory modulates the temporal resolution of visual perception
+   Authors: ['Y Pan']
+ - Title: Understanding time perception through non-invasive brain stimulation techniques: A review of studies
+   Authors: ['G Mioni', 'S Grondin', 'L Bardi', 'F Stablum']
+ - Title: Smartphones and attention, curse or blessing?-A review on the effects of smartphone usage on attention, inhibition, and working memory
+   Authors: ['M Liebherr', 'P Schubert', 'S Antons', 'C Montag']
+
+Year: 2021
+ - Title: Neural mechanism of repeated transcranial magnetic stimulation to enhance visual working memory in elderly individuals with subjective cognitive decline
+   Authors: ['M Liu', 'ZY Nie', 'RR Li', 'W Zhang', 'LH Huang']
+ - Title: Towards a better understanding of information storage in visual working memory
+   Authors: ['Y Xu']
+ - Title: Neural substrate and underlying mechanisms of working memory: insights from brain stimulation studies
+   Authors: ['ZZ Haque', 'R Samandra']
+ - Title: Dynamic and flexible transformation and reallocation of visual working memory representations
+   Authors: ['S Chota', 'S Van der Stigchel']
+ - Title: Perceptual learning beyond perception: mnemonic representation in early visual cortex and intraparietal sulcus
+   Authors: ['K Jia', 'Y Li', 'M Gong', 'H Huang', 'Y Wang']
+ - Title: Transient modulation of working memory performance and event-related potentials by transcranial static magnetic field stimulation over the dorsolateral prefrontal …
+   Authors: ['X Chen', 'T Watanabe', 'N Kubo', 'K Yunoki', 'T Matsumoto']
+ - Title: Cognitive neuroscience of visual working memory
+   Authors: ['BR Postle']
+ - Title: Pinging the brain with visual impulses reveals electrically active, not activity-silent, working memories
+   Authors: ['J Barbosa', 'D Lozano-Soldevilla', 'A Compte']
+ - Title: Phase synchronized 6 Hz transcranial electric and magnetic stimulation boosts frontal theta activity and enhances working memory
+   Authors: ['T Hosseinian', 'F Yavari', 'MF Kuo', 'MA Nitsche', 'A Jamil']
+ - Title: Visual working memory impairs visual detection: A function of working memory load or sensory load?
+   Authors: ['Y Guo', 'J Liang', 'N Yao', 'M Shen']
+ - Title: Working memory representations in visual cortex mediate distraction effects
+   Authors: ['GE Hallenbeck', 'TC Sprague', 'M Rahmati']
+ - Title: Persistent activity during working memory from front to back
+   Authors: ['CE Curtis', 'TC Sprague']
+ - Title: The Persistence of Working Memory
+   Authors: ['GE Hallenbeck']
+ - Title: Stimulus-specific visual working memory representations in human cerebellar lobule VIIb/VIIIa
+   Authors: ['JA Brissenden', 'SM Tobyne', 'MA Halko']
+ - Title: Hemisphere-specific parietal contributions to the interplay between working memory and attention
+   Authors: ['A Kiyonaga', 'JP Powers', 'YC Chiu']
+ - Title: Is activity silent working memory simply episodic memory?
+   Authors: ['AO Beukers', 'TJ Buschman', 'JD Cohen']
+ - Title: Reframing the debate: The distributed systems view of working memory
+   Authors: ['ES Lorenc', 'KK Sreenivasan']
+ - Title: Sensory acquisition functions of the cerebellum in verbal working memory
+   Authors: ['J Peterburs', 'Y Liang', 'DT Cheng']
+ - Title: Working memory and cross-frequency coupling of neuronal oscillations
+   Authors: ['M Abubaker', 'W Al Qasem', 'E Kvašňák']
+ - Title: Content or status: Frontal and posterior cortical representations of object category and upcoming task goals in working memory
+   Authors: ['K Olmos-Solis', 'AM van Loon', 'CNL Olivers']
+ - Title: Working memory representations in visual cortex mediate the effects of distraction
+   Authors: ['GE Hallenbeck', 'TC Sprague', 'M Rahmati']
+ - Title: Decoding verbal working memory representations of Chinese characters from Broca's area
+   Authors: ['C Yan', 'TB Christophel', 'C Allefeld', 'JD Haynes']
+ - Title: Are Irrelevant Items Actively Deleted from Visual Working Memory?: No Evidence from Repulsion Effects in Dual-Retrocue Tasks
+   Authors: ['J Rhilinger']
+ - Title: The causal role of auditory cortex in auditory working memory
+   Authors: ['L Yu', 'J Hu', 'C Shi', 'L Zhou', 'M Tian', 'J Zhang', 'J Xu']
+ - Title: Ventromedial prefrontal cortex drives the prioritization of self-associated stimuli in working memory
+   Authors: ['S Yin', 'T Bi', 'A Chen', 'T Egner']
+ - Title: Augmenting frontal dopamine tone enhances maintenance over gating processes in working memory
+   Authors: ['DJ Furman', 'Z Zhang', 'CH Chatham', 'M Good']
+ - Title: Pinging reveals active, not silent, working memories
+   Authors: ['J Barbosa', 'DL Soldevilla', 'A Compte']
+ - Title: The neural mechanisms of active removal from working memory
+   Authors: ['J Shan', 'BR Postle']
+ - Title: The effect of non-invasive brain stimulation on executive functioning in healthy controls: a systematic review and meta-analysis
+   Authors: ['NS de Boer', 'RS Schluter', 'JG Daams']
+ - Title: Why does the neocortex need the cerebellum for working memory?
+   Authors: ['H Stein']
+ - Title: Decoding spatial versus non-spatial processing in auditory working memory
+   Authors: ['M Erhart', 'S Czoschke', 'C Fischer', 'C Bledowski']
+ - Title: Spatial working memory representations in human cortex are robust to a task-irrelevant interrupting stimulus
+   Authors: ['K Vu-Cheung', 'EF Ester', 'TC Sprague']
+ - Title: Working memory: from neural activity to the sentient mind
+   Authors: ['RJ Jaffe', 'C Constantinidis']
+ - Title: No evidence for changes in GABA concentration, functional connectivity, or working memory following continuous theta burst stimulation over dorsolateral prefrontal …
+   Authors: ['T Thapa', 'J Hendrikse', 'S Thompson', 'C Suo']
+ - Title: A dopamine gradient controls access to distributed working memory in the large-scale monkey cortex
+   Authors: ['S Froudist-Walsh', 'DP Bliss', 'X Ding', 'L Rapan', 'M Niu']
+ - Title: Finger representations in primary somatosensory cortex are modulated by a vibrotactile working memory task
+   Authors: ['F Rabe', 'S Kikkert', 'N Wenderoth']
+ - Title: Exploring individual differences in neuropsychological and visuospatial working memory task performance in aphantasia
+   Authors: ['Z Pounder', 'J Jacob', 'AF Eardley']
+ - Title: The Activation of Working Memory Brain Areas During Watching First-Person Shooting Games
+   Authors: ['L Jianga', 'R Cuia', 'WM Diankun Gonga']
+ - Title: Transcutaneous auricular vagus nerve stimulation improves spatial working memory in healthy young adults
+   Authors: ['JB Sun', 'C Cheng', 'QQ Tian', 'H Yuan', 'XJ Yang']
+ - Title: … magnetic resonance imaging-based neuronavigation for the treatment of depression by individualized repetitive transcranial magnetic stimulation of the visual cortex
+   Authors: ['Z Zhang', 'H Zhang', 'CM Xie', 'M Zhang', 'Y Shi']
+ - Title: Aphantasia: The science of visual imagery extremes
+   Authors: ['R Keogh', 'J Pearson', 'A Zeman']
+ - Title: Unattended short-term memories are maintained in active neural representations
+   Authors: ['J Barbosa', 'DL Soldevilla', 'A Compte']
+ - Title: Theta-rhythmic oscillation of working memory performance
+   Authors: ['U Pomper', 'U Ansorge']
+ - Title: A review of working memory training in the management of attention deficit hyperactivity disorder
+   Authors: ['MSH Al-Saad', 'B Al-Jabri']
+ - Title: Disrupting short-term memory in premotor but not visual cortex affects serial dependence in visuomotor integration
+   Authors: ['RM de Azevedo Neto', 'A Bartels']
+ - Title: Dynamic functional connectome predicts individual working memory performance across diagnostic categories
+   Authors: ['J Zhu', 'Y Li', 'Q Fang', 'Y Shen', 'Y Qian', 'H Cai', 'Y Yu']
+ - Title: Synchronization patterns reveal neuronal coding of working memory content
+   Authors: ['F Mamashli', 'S Khan', 'M Hämäläinen', 'M Jas', 'T Raij']
+ - Title: What is the functional role of delay-related alpha oscillations during working memory?
+   Authors: ['MJ Wolff', 'E Akyurek', 'MG Stokes']
+ - Title: Visual mental imagery engages the left fusiform gyrus, but not the early visual cortex: A meta-analysis of neuroimaging evidence
+   Authors: ['A Spagna', 'D Hajhajate', 'J Liu', 'P Bartolomeo']
+ - Title: Induction of specific brain oscillations may restore neural circuits and be used for the treatment of Alzheimer's disease
+   Authors: ['D Chan', 'HJ Suk', 'B Jackson', 'NP Milman']
+ - Title: Mapping cognitive brain functions at scale
+   Authors: ['PP Balasubramani', 'A Ojeda', 'G Grennan', 'V Maric', 'H Le']
+ - Title: Transcranial magnetic stimulation and the understanding of behavior
+   Authors: ['D Pitcher', 'B Parkin', 'V Walsh']
+ - Title: Transcranial magnetic stimulation for the treatment of concussion: a systematic review
+   Authors: ['A Mollica', 'F Safavifar', 'M Fralick', 'P Giacobbe']
+ - Title: Phase–amplitude coupling, mental health and cognition: implications for adolescence
+   Authors: ['DD Sacks', 'PE Schwenn', 'LT McLoughlin']
+ - Title: How is information in working memory selected and prioritised for action?
+   Authors: ['FAB Printzlau']
+ - Title: Effects of Frontoparietal Theta tACS on Verbal Working Memory: Behavioral and Neurophysiological Analysis
+   Authors: ['Z Hu', 'IBH Samuel', 'S Meyyappan', 'KBC Rana', 'M Ding']
+ - Title: Combined effects of theta-burst stimulation with transcranial direct current stimulation of the prefrontal cortex: study protocol of a randomized, double-blinded, sham …
+   Authors: ['LB Razza', 'CA Buchpiguel', 'S De Smet']
+ - Title: Working memory task induced neural activation: A simultaneous PET/fMRI study
+   Authors: ['I Ripp', 'LA Wallenwein', 'Q Wu', 'M Emch', 'K Koch']
+ - Title: Making the rich richer: Frontoparietal tDCS enhances transfer effects of a single-session distractor inhibition training on working memory in high capacity individuals …
+   Authors: ['M Schmicker', 'I Menze', 'C Schneider', 'M Taubert']
+ - Title: Effects of working memory load on tacit coordination and interbrain synchrony
+   Authors: ['AK Christodoulou']
+ - Title: Differences in verbal and spatial working memory in patients with bipolar II and unipolar depression: an MSI study
+   Authors: ['Z Li', 'J Chen', 'Y Feng', 'S Zhong', 'S Tian', 'Z Dai', 'Q Lu']
+ - Title: Biophysical mechanism of the interaction between default mode network and working memory network
+   Authors: ['Y Yuan', 'X Pan', 'R Wang']
+ - Title: A hierarchy of functional states in working memory
+   Authors: ['PS Muhle-Karbe', 'NE Myers']
+ - Title: The neural architecture of working memory: anatomical and functional studies of prefrontal cortex
+   Authors: ['JA Miller']
+
+Year: 2022
+ - Title: Sensory recruitment in visual short-term memory: A systematic review and meta-analysis of sensory visual cortex interference using transcranial magnetic stimulation
+   Authors: ['P Phylactou', 'A Traikapi', 'M Papadatou-Pastou']
+ - Title: Evidence for, and challenges to, sensory recruitment models of visual working memory
+   Authors: ['KCS Adam', 'RL Rademaker', 'JT Serences']
+ - Title: Sensory recruitment revisited: ipsilateral V1 involved in visual working memory
+   Authors: ['YJ Zhao', 'KN Kay', 'Y Tian', 'Y Ku']
+ - Title: Supramodality of neural entrainment: Rhythmic visual stimulation causally enhances auditory working memory performance
+   Authors: ['P Albouy', 'ZE Martinez-Moreno', 'RS Hoyer']
+ - Title: DLPFC stimulation alters working memory related activations and performance: An interleaved TMS-fMRI study
+   Authors: ['RD Webler', 'J Fox', 'LM McTeague', 'PC Burton', 'L Dowdle']
+ - Title: Dependence of working memory on coordinated activity across brain areas
+   Authors: ['E Rezayat', 'K Clark', 'MRA Dehaqani']
+ - Title: Recognition and processing of visual information after neuronavigated transcranial magnetic stimulation session
+   Authors: ['W Kasprzycka', 'ML Naurecka', 'BM Sierakowski', 'P Putko']
+ - Title: Extended frontal networks for visual and auditory working memory
+   Authors: ['AL Noyce', 'RW Lefco', 'JA Brissenden']
+ - Title: Intermittent theta burst stimulation improved visual-spatial working memory in treatment-resistant schizophrenia: A pilot study
+   Authors: ['L Wang', 'Q Li', 'Y Wu', 'G Ji', 'X Wu', 'G Xiao', 'B Qiu']
+ - Title: Oscillatory brain activity and maintenance of verbal and visual working memory: A systematic review
+   Authors: ['YG Pavlov', 'B Kotchoubey']
+ - Title: State-dependent effects of neural stimulation on brain function and cognition
+   Authors: ['C Bradley', 'AS Nydam', 'PE Dux']
+ - Title: Priority-based transformations of stimulus representation in visual working memory
+   Authors: ['Q Wan', 'JA Menendez', 'BR Postle']
+ - Title: Working memory biases early object discrimination and parietal activity during attentional selection
+   Authors: ['M Wang', 'P Yang', 'T Zhang', 'W Li', 'J Zhang', 'Z Jin', 'L Li']
+ - Title: Phonological working memory representations in the left inferior parietal lobe in the face of distraction and neural stimulation
+   Authors: ['Q Yue', 'RC Martin']
+ - Title: Working memory and transcranial-alternating current stimulation—state of the art: findings, missing, and challenges
+   Authors: ['W Al Qasem', 'M Abubaker', 'E Kvašňák']
+ - Title: The benefits of simultaneous tDCS and working memory training on transfer outcomes: A systematic review and meta-analysis
+   Authors: ['V Pergher', 'J Au', 'MA Shalchy', 'E Santarnecchi', 'A Seitz']
+ - Title: Working memory
+   Authors: ['BR Postle', 'K Oberauer']
+ - Title: Working memory swap errors have identifiable neural representations
+   Authors: ['R Mallett', 'ES Lorenc', 'JA Lewis-Peacock']
+ - Title: Behavioral prioritization enhances working memory precision and neural population gain
+   Authors: ['AH Yoo', 'A Bolaños', 'GE Hallenbeck']
+ - Title: Flexible utilization of spatial-and motor-based codes for the storage of visuo-spatial information
+   Authors: ['MM Henderson', 'RL Rademaker', 'JT Serences']
+ - Title: Effects of perceptual and working memory load on brain responses to task-irrelevant stimuli: Review and implications for future research
+   Authors: ['L Brockhoff', 'S Schindler', 'M Bruchmann']
+ - Title: Shared resources between visual attention and visual working memory are allocated through rhythmic sampling
+   Authors: ['E Balestrieri', 'L Ronconi']
+ - Title: Examining the relationship between working memory consolidation and long-term consolidation
+   Authors: ['K Cotton', 'TJ Ricker']
+ - Title: Visual Working Memory Adapts to the Nature of Anticipated Interference
+   Authors: ['B Wang', 'T Knapen', 'CNL Olivers']
+ - Title: Modulating working memory related-oscillation via entrainment of neural oscillation
+   Authors: ['X WANG', 'X QIU', 'X WENG']
+ - Title: Unconsciously registered items reduce working memory capacity
+   Authors: ['AU Barton', 'F Valle-Inclán', 'N Cowan']
+ - Title: Representation and computation in working memory
+   Authors: ['P Bays', 'S Schneegans', 'WJ Ma', 'T Brady']
+ - Title: Working memory is complex and dynamic, like your thoughts
+   Authors: ['TJ Buschman', 'EK Miller']
+ - Title: Attentional Prioritization of Complex, Naturalistic Stimuli Maintained in Working-Memory–A Dot-Probe Event-Related Potentials Study
+   Authors: ['N Rutkowska', 'Ł Doradzińska', 'M Bola']
+ - Title: Fronto-medial theta coordinates posterior maintenance of working memory content
+   Authors: ['O Ratcliffe', 'K Shapiro', 'BP Staresina']
+ - Title: Effects of multisession prefrontal transcranial direct current stimulation on long-term memory and working memory in older adults
+   Authors: ['J Au', 'RN Smith-Peirce', 'E Carbone', 'A Moon']
+ - Title: The role of foveal cortex in discriminating peripheral stimuli: The sketchpad hypothesis
+   Authors: ['CM Oletto', 'G Contemori', 'M Bertamini', 'L Battaglini']
+ - Title: Intermittent theta-burst stimulation increases the working memory capacity of methamphetamine addicts
+   Authors: ['Y Sun', 'H Wang', 'Y Ku']
+ - Title: Long-lasting, dissociable improvements in working memory and long-term memory in older adults with repetitive neuromodulation
+   Authors: ['S Grover', 'W Wen', 'V Viswanathan', 'CT Gill']
+ - Title: Non-invasive brain stimulation modulates GABAergic activity in Neurofibromatosis 1
+   Authors: ['S Garg', 'S Williams', 'JY Jung', 'G Pobric', 'T Nandi']
+ - Title: Focal neural perturbations reshape low-dimensional trajectories of brain activity supporting cognitive performance
+   Authors: ['KK Iyer', 'K Hwang', 'LJ Hearne', 'E Muller']
+ - Title: Prefrontal theta phase-dependent rTMS-induced plasticity of cortical and behavioral responses in human cortex
+   Authors: ['PC Gordon', 'P Belardinelli', 'M Stenroos', 'U Ziemann']
+ - Title: Cortical feedback loops bind distributed representations of working memory
+   Authors: ['I Voitov', 'TD Mrsic-Flogel']
+ - Title: Reconstruction of EEG alpha band sources during a working memory task
+   Authors: ['A Ferrer Raventós']
+ - Title: Cerebral Organization of Working Memory in Delayed Copying of Broken Lines: Analysis of Potentials Associated with the Go Signal
+   Authors: ['AV Kurgansky', 'DI Lomakin', 'AA Korneev']
+ - Title: The functional role of visual working memory: A storage buffer for non-automated cognitive operations
+   Authors: ['O Papaioannou', 'SJ Luck']
+ - Title: Music, Math, and Working Memory: Magnetoencephalography Mapping of Brain Activation in Musicians
+   Authors: ['CI Lu', 'M Greenwald', 'YY Lin']
+ - Title: Active working memory and simple cognitive operations
+   Authors: ['J Kreither', 'O Papaioannou', 'SJ Luck']
+ - Title: Pruning recurrent neural networks replicates adolescent changes in working memory and reinforcement learning
+   Authors: ['BB Averbeck']
+ - Title: Developments in transcranial magnetic stimulation to study human cognition
+   Authors: ['E Feredoes']
+ - Title: The Effects of Anodal tDCS Combined with a Selected Balance Exercise Program on Balance Performance and Working Memory in Older Adults
+   Authors: ['M Mehrdadian', 'E Saemi', 'M Doustan', 'T Yamaguchi']
+ - Title: Is there an activity-silent working memory?
+   Authors: ['K Oberauer', 'E Awh']
+ - Title: Neurodynamic correlates for the cross-frequency coupled transcranial alternating current stimulation during working memory performance
+   Authors: ['SE Kim', 'HS Kim', 'Y Kwak', 'MH Ahn', 'KM Choi']
+ - Title: Low-Intensity Focused Ultrasound Stimulation Ameliorates Working Memory Dysfunctions in Vascular Dementia Rats via Improving Neuronal Environment
+   Authors: ['F Wang', 'Q Wang', 'L Wang', 'J Ren', 'X Song']
+ - Title: A model of working memory for latent representations
+   Authors: ['S Hedayati', "RE O'Donnell", 'B Wyble']
+ - Title: Neural evidence for different types of position coding strategies in spatial working memory
+   Authors: ['N Purg', 'M Starc', 'A Slana Ozimič', 'A Kraljič']
+ - Title: Working Memory Training in children with attention deficit hyperactivity disorder: A systematic review
+   Authors: ['D Landínez-Martínez', 'C Quintero-López']
+ - Title: The effect of 40 Hz binaural beats on working memory
+   Authors: ['L Wang', 'W Zhang', 'X Li', 'S Yang']
+ - Title: Concurrent maintenance of both veridical and transformed working memory representations
+   Authors: ['G Kandemir', 'MJ Wolff', 'A Karabay', 'MG Stokes']
+ - Title: Attention and memory
+   Authors: ['B Sherman', 'N Turk-Browne']
+ - Title: Task-related changes in aperiodic activity are related to visual working memory capacity independent of event-related potentials and alpha oscillations
+   Authors: ['S Virtue-Griffiths', 'A Fornito', 'S Thompson', 'M Biabani']
+ - Title: Stereotype threat effect on a simple motor task: an investigation of the visuo-spatial working memory
+   Authors: ['R Laurin', 'M Renard-Moulard']
+ - Title: Effect of Audiovisual Cross-Modal Conflict during Working Memory Tasks: A Near-Infrared Spectroscopy Study
+   Authors: ['J Cui', 'D Sawamura', 'S Sakuraba', 'R Saito', 'Y Tanabe']
+ - Title: Neuromodulation treatments for mild traumatic brain injury and post-concussive symptoms
+   Authors: ['A Mollica', 'R Greben', 'C Oriuwa', 'SH Siddiqi']
+ - Title: Overlapping neural representations for dynamic visual imagery and stationary storage in spatial working memory
+   Authors: ['E Günseli', 'JJ Foster', 'DW Sutterer', 'L Todorova']
+ - Title: Cyclic reactivation of distinct feature dimensions in human visual working memory
+   Authors: ['RR Schmid', 'U Pomper', 'U Ansorge']
+ - Title: Aftereffects of frontoparietal theta tACS on verbal working memory: Behavioral and neurophysiological analysis
+   Authors: ['Z Hu', 'IBH Samuel', 'S Meyyappan', 'K Bo', 'C Rana']
+ - Title: Dissociable causal roles of the frontal and parietal cortices in the effect of object location on object identity detection: a TMS study
+   Authors: ['P Yang', 'M Wang', 'C Luo', 'X Ni', 'L Li']
+ - Title: Causal evidence for the higher-order origin of serial dependence suggests a multi-area account
+   Authors: ['M Tschiersch']
+ - Title: 10 Minutes Frontal 40 Hz tACS—Effects on Working Memory Tested by Luck-Vogel Task
+   Authors: ['E Kvašňák', 'E Magyarová', 'M Domankuš', 'M Tesař']
+ - Title: Electrophysiological evidence for a common magnitude representation of spatiotemporal information in working memory
+   Authors: ['M Cui', 'C Peng', 'M Huang', 'Y Chen']
+ - Title: The Neural Mechanism Underlying Visual Working Memory Training and Its Limited Transfer Effect
+   Authors: ['Y Cai', 'C Yang', 'S Wang', 'G Xue']
+ - Title: Cognitive functioning as predictor and marker of response to repetitive transcranial magnetic stimulation in depressive disorders: A systematic review
+   Authors: ['T Toffanin', 'F Folesani', 'M Ferrara', 'MB Murri']
+ - Title: Overflow of Working Memory from an Easily Accessible Active State
+   Authors: ['T Ideriha', 'J Ushiyama']
+ - Title: Flexible top-down control in the interaction between working memory and perception
+   Authors: ['C Teng', 'JM Fulvio', 'J Jiang', 'BR Postle']
+ - Title: Causal evidence for a role of cerebellar lobulus simplex in prefrontal-hippocampal interaction in spatial working memory decision-making
+   Authors: ['Y Liu', 'SS McAfee', 'ME Van Der Heijden', 'M Dhamala']
+ - Title: Geometry of visual working memory information in human gaze patterns
+   Authors: ['J Linde-Domingo', 'B Spitzer']
+ - Title: The architecture of interaction between visual working memory and visual attention
+   Authors: ['A Hollingworth']
+
+Year: 2023
+ - Title: Cerebellar transcranial magnetic stimulation (TMS) impairs visual working memory
+   Authors: ['N Viñas-Guasch', 'THB Ng', 'JG Heng', 'YC Chan', 'E Chew']
+ - Title: Causal evidence for the role of the sensory visual cortex in visual short-term memory maintenance
+   Authors: ['P Phylactou', 'A Shimi']
+ - Title: Can visual cortex non-invasive brain stimulation improve normal visual function? A systematic review and meta-analysis
+   Authors: ['UM Bello', 'J Wang', 'ASY Park', 'KWS Tan']
+ - Title: Improving visual working memory with cholinergic deep brain stimulation
+   Authors: ['JM Bava', 'Z Wang', 'SK Bick', 'DJ Englot', 'C Constantinidis']
+ - Title: Targeted visual cortex stimulation (TVCS): a novel neuro-navigated repetitive transcranial magnetic stimulation mode for improving cognitive function in bipolar …
+   Authors: ['D Wang', 'L Tang', 'C Xi', 'D Luo', 'Y Liang', 'Q Huang']
+ - Title: Differential effects of transcranial static magnetic stimulation over left and right dorsolateral prefrontal cortex on brain oscillatory responses during a working memory …
+   Authors: ['T Watanabe', 'X Chen', 'K Yunoki', 'T Matsumoto']
+ - Title: One in four people fail to perceive phosphenes during early visual cortex transcranial magnetic stimulation
+   Authors: ['P Phylactou', 'A Traikapi']
+ - Title: Multiple and dissociable effects of sensory history on working-memory performance
+   Authors: ['JE Hajonides', 'F van Ede', 'MG Stokes']
+ - Title: Dissociable roles of human frontal eye fields and early visual cortex in presaccadic attention–evidence from TMS
+   Authors: ['NM Hanning', 'A Fernández', 'M Carrasco']
+ - Title: Assessing the interaction between working memory and perception through time
+   Authors: ['C Teng', 'SM Kaplan', 'S Shomstein', 'DJ Kravitz']
+ - Title: Transcranial direct current stimulation versus intermittent theta-burst stimulation for the improvement of working memory performance
+   Authors: ['LB Razza', 'MS Luethi', 'T Zanão', 'S De Smet']
+ - Title: Working memory signals in early visual cortex do not depend on visual imagery
+   Authors: ['S Weber', 'T Christophel', 'K Görgen', 'J Soch', 'JD Haynes']
+ - Title: Emergence of distributed working memory in a human brain network model
+   Authors: ['M Feng', 'A Bandyopadhyay', 'JF Mejias']
+ - Title: Working memory and sensory memory in subclinical high schizotypy: An avenue for understanding schizophrenia?
+   Authors: ['SM Haigh', 'ME Berryhill']
+ - Title: Effects of high-frequency transcranial magnetic stimulation on theta-gamma oscillations and coupling in the prefrontal cortex of rats during working memory task
+   Authors: ['M Guo', 'T Wang', 'T Zhang', 'H Zhai', 'G Xu']
+ - Title: Maintaining Auditory Working Memory Representations beyond Sensory Cortices Makes Working Memory Work
+   Authors: ['Q Yue']
+ - Title: Are irrelevant items actively deleted from visual working memory?: no evidence from repulsion and attraction effects in dual-retrocue tasks
+   Authors: ['JP Rhilinger', 'C Xu', 'NS Rose']
+ - Title: Trying harder: how cognitive effort sculpts neural representations during working memory
+   Authors: ['SL Master', 'S Li', 'CE Curtis']
+ - Title: The neural basis of serial biases in spatial working memory
+   Authors: ['L Doreste Cabrera']
+ - Title: Working Memory: A Neurocognitive Perspective
+   Authors: ['AD Iordan', 'K Xie']
+ - Title: Distractors induce space-specific neural biases in visual working memory
+   Authors: ['S Gupta', 'D Sridharan']
+ - Title: General discussion: Functional and neural states of working memory
+   Authors: ['G Kandemir']
+ - Title: Neural Mechanisms of Prioritization in Working Memory
+   Authors: ['Q Wan']
+ - Title: Understanding cerebellar cognitive and social functions: methodological challenges and new directions for future transcranial magnetic stimulation studies
+   Authors: ['D Gatti', 'L Rinaldi', 'T Vecchi', 'C Ferrari']
+ - Title: Bend but don't break: Prioritization protects working memory from displacement but leaves it vulnerable to distortion from distraction
+   Authors: ['Z Zhang', 'JA Lewis-Peacock']
+ - Title: Behaviorally irrelevant feature matching increases neural and behavioral working memory readout: Support for activity-silent working memory
+   Authors: ['A Karabay', 'MJ Wolff', 'V Ruuskanen', 'EG Akyürek']
+ - Title: MULTISENSORY WORKING MEMORY: INFLUENCE OF AMBIGUOUS SOUNDS ON MASKED VISUAL RECOGNITION TASK
+   Authors: ['L De Laere']
+ - Title: Controlling brain dynamics: Landscape and transition path for working memory
+   Authors: ['L Ye', 'J Feng', 'C Li']
+ - Title: Turning attention inside out: How working memory serves behavior
+   Authors: ['F Van Ede', 'AC Nobre']
+ - Title: Spectrotemporal content of human auditory working memory represented in functional connectivity patterns
+   Authors: ['J Ahveninen', 'I Uluç', 'T Raij', 'A Nummenmaa']
+ - Title: Gating by alpha band inhibition revised: a case for a secondary control mechanism
+   Authors: ['O Jensen']
+ - Title: A matter of load: prior history effects scale with visual working memory load
+   Authors: ['Y Markov', 'N Tiurina', 'D Pascucci']
+ - Title: Prioritization sharpens working memories but does not protect them from distraction.
+   Authors: ['Z Zhang', 'JA Lewis-Peacock']
+ - Title: Personalized precision paradigms for enhancing target engagement for the treatment of depression with non-invasive brain stimulation
+   Authors: ['F Fröhlich']
+ - Title: An fMRI analysis of verbal and non-verbal working memory in people with a past history of opioid dependence
+   Authors: ['JG Berenbaum', 'PA Nadkarni', 'CL Marvel']
+ - Title: Repeated photobiomodulation induced reduction of bilateral cortical hemodynamic activation during a working memory task in healthy older adults
+   Authors: ['Z Hu', 'X Qu', 'L Li', 'X Zhou', 'Q Yang']
+ - Title: Brain-wide human oscillatory LFP activity during visual working memory
+   Authors: ['B Singh', 'Z Wang', 'LM Madiah', 'SE Gatti', 'JN Fulton']
+ - Title: The spectral profile of cortical activation during a visuospatial mental rotation task and its correlation with working memory
+   Authors: ['RF Anomal', 'DS Brandão', 'RFL Souza']
+ - Title: The impact of gamma transcranial alternating current stimulation (tACS) on cognitive and memory processes in patients with mild cognitive impairment or Alzheimer's …
+   Authors: ['NR Nissim', 'DVH Pham', 'T Poddar', 'E Blutt', 'RH Hamilton']
+ - Title: Top-Down Effects Within a Distributed System: Investigations and Implications
+   Authors: ['S Kaplan']
+ - Title: Spatial Attention in Visual Working Memory Strengthens Feature-Location Binding
+   Authors: ['J Joe', 'MS Kim']
+ - Title: The entorhinal-DG/CA3 pathway in the medial temporal lobe retains visual working memory of a simple surface feature
+   Authors: ['W Xie', 'M Cappiello', 'MA Yassa', 'E Ester', 'KA Zaghloul']
+ - Title: Comparing Neural Correlates of Memory Encoding and Maintenance for Foveal and Peripheral Stimuli
+   Authors: ['G Kandemir', 'CNL Olivers']
+ - Title: Repetitive transcranial magnetic stimulation improves depression-like behavior in rats by promoting neural stem cell proliferation and differentiation
+   Authors: ['C Jiang', 'S Zheng', 'T Chen', 'W Li', 'C Zhang', 'S Gu', 'H Ren']
+ - Title: Individual response to transcranial direct current stimulation as a function of working memory capacity and electrode montage
+   Authors: ['I Menze', 'NG Mueller', 'T Zaehle']
+ - Title: Different forms of plasticity interact in adult humans
+   Authors: ['İD Sarı', 'C Lunghi']
+ - Title: 4 Imagery and Working Memory Processes in the Blind
+   Authors: ['MND Shakespeare']
+ - Title: Cortical and white matter substrates supporting visuospatial working memory
+   Authors: ['E Asano', 'R Ueda', 'K Sakakura', 'T Mitsuhashi', 'M Sonoda']
+ - Title: Assessing the mechanisms of brain plasticity by transcranial magnetic stimulation
+   Authors: ['A Jannati', 'LM Oberman', 'A Rotenberg']
+ - Title: A domain-general frontoparietal network interacts with domain-preferential intermediate pathways to support working memory task
+   Authors: ['H Zhou', 'C Su', 'J Wu', 'J Li', 'X Lu', 'L Gong', 'F Geng']
+ - Title: A Review on Examination Methods of Types of Working Memory and Cerebral Cortex in EEG Signals
+   Authors: ['M Emadi', 'M Karimi', 'F Davoudi']
+ - Title: A Tale about the Frontal Lobes as Told by a Neurologist
+   Authors: ["M D'Esposito"]
+ - Title: Thalamocortical contributions to working memory processes during the n-back task
+   Authors: ['X Chen', 'E Sorenson', 'K Hwang']
+ - Title: Visual working memory representations bias attention more when they are the target of an action plan
+   Authors: ['C Trentin', 'HA Slagter', 'CNL Olivers']
+ - Title: Decoding auditory working memory content from intracranial high frequency activity in humans
+   Authors: ['I Uluc', 'N Peled', 'AC Paulk', 'A Bush', 'V Gumenyuk']
+ - Title: Target engagement and brain state dependence of transcranial magnetic stimulation: implications for clinical practice
+   Authors: ['AT Sack', 'J Paneva', 'T Küthe', 'E Dijkstra']
+ - Title: Prioritizing flexible working memory representations through retrospective attentional strengthening
+   Authors: ['D Li', 'Y Hu', 'M Qi', 'C Zhao', 'O Jensen', 'J Huang', 'Y Song']
+ - Title: The role of middle frontal gyrus in working memory retrieval by the effect of target detection tasks: a simultaneous EEG-fMRI study
+   Authors: ['P Xu', 'M Wang', 'T Zhang', 'J Zhang', 'Z Jin', 'L Li']
+ - Title: Prefrontal and somatosensory-motor cortex effective connectivity in humans
+   Authors: ['ET Rolls', 'G Deco', 'CC Huang', 'J Feng']
+ - Title: Neural and behavioral evidence supporting the relationship between habitual exercise and working memory precision in healthy young adults
+   Authors: ['X Yuan', 'D Li', 'Y Hu', 'M Qi', 'Y Kong', 'C Zhao']
+ - Title: Reactivating and reorganizing activity-silent working memory: two distinct mechanisms underlying pinging the brain
+   Authors: ['C Yang', 'X He', 'Y Cai']
+
+Year: 2024
+ - Title: Repetitive Transcranial Magnetic Stimulation for Working Memory Deficits in Schizophrenia: A Systematic Review of Randomized Controlled Trials
+   Authors: ['L Li', 'C Liu', 'W Pan', 'W Wang', 'W Jin']
+ - Title: Decoding auditory working memory content from EEG aftereffects of auditory-cortical TMS
+   Authors: ['I Uluç', 'M Daneshzand', 'M Jas', 'P Kotlarz', 'K Lankinen']
+ - Title: Working memory signals in early visual cortex are present in weak and strong imagers
+   Authors: ['S Weber', 'T Christophel', 'K Görgen', 'J Soch']
+ - Title: … by Frontoparietal Theta Connectivity and Suppressed by alpha Oscillation Dynamics: Evidence from Concurrent Transcranial Magnetic Stimulation EEG and Invasive …
+   Authors: ['J Riddle', 'T McPherson', 'A Sheikh', 'H Shin']
+ - Title: Crossmodal Associations and Working Memory in the Brain
+   Authors: ['Y Ku', 'Y Zhou']
+ - Title: Causal functional maps of brain rhythms in working memory
+   Authors: ['M Wischnewski', 'TA Berger', 'A Opitz']
+ - Title: Noninvasive brain stimulations modulated brain modular interactions to ameliorate working memory in community-dwelling older adults
+   Authors: ['D Fan', 'X Che', 'Y Jiang', 'Q He', 'J Yu', 'H Zhao']
+ - Title: Dynamic fading memory and expectancy effects in the monkey primary visual cortex
+   Authors: ['Y Yiling', 'J Klon-Lipok', 'K Shapcott']
+ - Title: Prioritizing of working memory resources depends on prefrontal cortex
+   Authors: ['GE Hallenbeck', 'N Tardiff', 'TC Sprague', 'CE Curtis']
+ - Title: Dynamic aspects of visual working memory storage; toward a complete account of representational changes in visual working memory over time.
+   Authors: ['F Ruijs']
+ - Title: Effective connectivity of working memory performance: a DCM study of MEG data
+   Authors: ['A Santo-Angles', 'A Temudo', 'V Babushkin']
+ - Title: How BDNF affects working memory in acute sleep deprivation: The mediating role of spontaneous brain activity
+   Authors: ['Y Ning', 'S Feng', 'S Zheng', 'Z Wu', 'X Liu', 'L Dong', 'H Jia']
+ - Title: Representing context and priority in working memory
+   Authors: ['Q Wan', 'A Ardalan', 'JM Fulvio', 'BR Postle']
+ - Title: Neural mechanisms of resource allocation in working memory
+   Authors: ['HH Li', 'TC Sprague', 'A Yoo', 'WJ Ma', 'CE Curtis']
+ - Title: The impact of early and late blindness on language and verbal working memory: A brain-constrained neural model
+   Authors: ['R Tomasello', 'M Carriere', 'F Pulvermüller']
+ - Title: Traveling waves link human visual and frontal cortex during working memory-guided behavior
+   Authors: ['C Luo', 'EF Ester']
+ - Title: No effects of the theta-frequency transcranial electrical stimulation for recall, attention control, and relation integration in working memory
+   Authors: ['M Ociepka', 'SR Chinta', 'P Basoń']
+ - Title: Steady-state Visual Evoked Potentials Reveal Dynamic (Re) allocation of Spatial Attention during Maintenance and Utilization of Visual Working Memory
+   Authors: ['S Chota', 'AT Bruat', 'S Van der Stigchel']
+ - Title: Linking cognitive integrity to working memory dynamics in the aging human brain
+   Authors: ['G Monov', 'H Stein', 'L Klock', 'J Gallinat']
+ - Title: Intermittent stimulation of the basal forebrain improves working memory in aged nonhuman primates.
+   Authors: ['Z Wang', 'KR Pennington', 'L Debs', 'S Chung', 'JM Bava']
+ - Title: Concurrent maintenance of both veridical and transformed working memory representations within unique coding schemes
+   Authors: ['G Kandemir', 'MJ Wolff', 'A Karabay', 'MG Stokes']
+ - Title: Geometry of visuospatial working memory information in miniature gaze patterns
+   Authors: ['J Linde-Domingo', 'B Spitzer']
+ - Title: The causal role of early visual cortex in vividness of visual imagery
+   Authors: ['J Silvanto', 'S Bona', 'Z Cattaneo']
+ - Title: Lateral Prefrontal Stimulation of Active Cortex With Theta Burst Transcranial Magnetic Stimulation Affects Subsequent Engagement of the Frontoparietal Network
+   Authors: ['SF Taylor', 'P Gu', 'M Simmonite', 'C Lasagna']
+ - Title: Sensory modality and information domain contribute jointly to dual-task interference between working memory and perceptual processing
+   Authors: ['JT Fleming', 'JM Njoroge', 'AL Noyce']
+ - Title: Better with age: Developmental changes in oscillatory activity during verbal working memory encoding and maintenance
+   Authors: ['AD Killanin', 'TW Ward', 'CM Embury', 'VD Calhoun']
+ - Title: Cortical and white matter substrates supporting visuospatial working memory
+   Authors: ['R Ueda', 'K Sakakura', 'T Mitsuhashi', 'M Sonoda']
+ - Title: Working Memory Maintenance of Visual and Auditory Spatial Information Relies on Supramodal Neural Codes in the Dorsal Frontoparietal Cortex
+   Authors: ['A Rizza', 'T Pedale', 'S Mastroberardino']
+ - Title: The effect of bipolar bihemispheric tDCS on executive function and working memory abilities
+   Authors: ['AJ Toth', 'C Harvey', 'H Gullane', 'N Kelly', 'A Bruton']
+ - Title: Electrophysiological hallmarks for event relations and event roles in working memory
+   Authors: ['X Yu', 'J Li', 'H Zhu', 'X Tian', 'E Lau']
+ - Title: A direct neural signature of serial dependence in working memory
+   Authors: ['C Fischer', 'J Kaiser', 'C Bledowski']
+
+Year: NA
+ - Title: Excitability of Human Visual Cortex Examined with Transcranial Magnetic Stimulation
+   Authors: ['B Boroojerdi', 'LG Cohen']
+ - Title: Short-Term and Working Memory
+   Authors: ['N Tardiff', 'CE Curtis']
+ - Title: SOURCE (OR PART OF THE FOLLOWING SOURCE): Type PhD thesis Title A new definition of visual short-term memory
+   Authors: ['IG Sligte']
+ - Title: ORCID: 0000-0002-1037-2735 and Haynes, JD.(2021). Decoding verbal working memory representations of Chinese characters from Broca's area
+   Authors: ['C Yan', 'TB Christophel', 'C Allefeld']
+ - Title: Structural controllability predicts functional patterns and neuromodulatory benefits associated with working memory
+   Authors: ['L Beynel', 'L Deng', 'CA Crowell', 'M Dannhauer', 'H Palmer']
+ - Title: Coregistration of ERP, fMRI, and TMS in a finite-element volume conductivity head model constructed from the struc-tural MRI
+   Authors: ['GF Potts', 'ME Shenton', 'CG Wible', 'DM Weinstein']
+ - Title: Topics for Master's Theses
+   Authors: ['H Home', 'T Team']
+ - Title: Neural Bases of the Short-Term Retention of Visual Information Bradley R. Postle Depts. of Psychology and Psychiatry, University of Wisconsin-Madison
+   Authors: ['MT Jolicoeur', 'E Lefebvre']
+ - Title: 3. Rationale: A. The relation between neuroimaging signal and neuronal activity
+   Authors: ['A Alexander']
+ - Title: LC UG06
+   Authors: ['D Cruse']
+ - Title: Author's (Authors') Name (Names)
+   Authors: ['ZZ Haque', 'R Samandra', 'FA Mansouri', 'FA Mansouri']
+ - Title: Deep brain stimulation increases motor cortical 1/f noise and decouples high gamma amplitude from beta phase
+   Authors: ['SR Cole', 'EJ Peterson', 'C de Hemptinne', 'PA Starr']
+ - Title: Time processing in visual cortices
+   Authors: ['P Salvioni']
+ - Title: Interacting with Brain Oscillations
+   Authors: ['IM Stanford', 'N Axmacher', 'L Marshall']
+ - Title: NEUROTECHNOLOGY WITH POTENTIAL FOR COGNITIVE ENHANCEMENT: INSIGHTS INTO BRAIN STIMULATION
+   Authors: ['A MELINTE']
+
