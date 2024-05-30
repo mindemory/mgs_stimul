@@ -1,0 +1,58 @@
+Articles for: TMS to EVC and WM
+
+Year: 2009
+  - Title: Contrasting early visual cortical activation states causally involved in visual imagery and short‐term memory
+   Authors: ['Z Cattaneo', 'T Vecchi']
+   TMS results: Impairment at encoding, enhancement at retrieval
+
+Year: 2010
+ - Title: Transcranial magnetic stimulation reveals the content of visual short-term memory in the visual cortex
+   Authors: ['J Silvanto', 'Z Cattaneo']
+   TMS results: TMS to V5/MT+ impacted visual perception of phosphenes depending on stimuli held in WM
+
+Year: 2011
+ - Title: Modulation of visual cortical excitability by working memory: effect of luminance contrast of mental imagery
+   Authors: ['Z Cattaneo', 'A Pisoni', 'C Papagno', 'J Silvanto']
+
+Year: 2012
+ - Title: Distinct Causal Mechanisms of Attentional Guidance by Working Memory and Repetition Priming in Early Visual Cortex
+   Authors: [‘D Soto’, ‘D Llewelyn’, ‘J Silvanto’]
+ - Title: Causal evidence for subliminal percept-to-memory interference in early visual cortex
+   Authors: ['J Silvanto', 'D Soto'] 
+ - Title: Topographic Contribution of Early Visual Cortex to Short-Term Memory Consolidation: A Transcranial Magnetic Stimulation Study
+   Authors: ['V van de Ven’, ‘C Jacobs’, ‘A Sack’'] 
+
+Year: 2013
+ - Title: How visual short-term memory maintenance modulates the encoding of external input: evidence from concurrent visual adaptation and TMS
+   Authors: ['E Saad', 'J Silvanto']
+
+Year: 2014
+ - Title: Causal Evidence for a Privileged Working Memory State in Early Visual Cortex
+   Authors: ['N Zokaei’, ‘S Manohar’, ‘M Husain’, ‘E Feredoes’']
+
+Year: 2015
+ - Title: Partial dissociation in the neural bases of VSTM and imagery in the early visual cortex
+   Authors: ['E Saad', 'M Wojciechowska', 'J Silvanto'] 
+   TMS Result: Slow RT but no impact on performance
+
+Year: 2017
+ - Title: The impact of early visual cortex transcranial magnetic stimulation on visual working memory precision and guess rate
+   Authors: ['RL Rademaker', 'VG van de Ven', 'F Tong', 'AT Sack'] 
+ - Title: Assessing the effect of early visual cortex transcranial magnetic stimulation on working memory consolidation
+   Authors: ['AE van Lamsweerde', 'JS Johnson'] 
+- Title: Transcranial magnetic stimulation of early visual cortex suppresses conscious representations in a dichotomous manner without gradually decreasing their precision
+   Authors: ['M Koivisto’, ‘I Harjuniemi’, ‘H Railo’, ‘N Salminen-Vaparanta’, ‘A Revonsuo’'] 
+
+Year: 2020
+ - Title: Causal evidence for a role of theta and alpha oscillations in the control of working memory
+   Authors: ['J Riddle', 'JM Scimeca', 'D Cellier', 'S Dhanani'] 
+
+Year: 2021
+ - Title: Perceptual learning beyond perception: mnemonic representation in early visual cortex and intraparietal sulcus
+   Authors: ['K Jia', 'Y Li', 'M Gong', 'H Huang', 'Y Wang']
+
+Year: 2023
+ - Title: Causal evidence for the role of the sensory visual cortex in visual short-term memory maintenance
+   Authors: ['P Phylactou', 'A Shimi']
+ - Title: The causal involvement of the visual cortex in visual working memory remains unclear: a comment on Phylactou et al., 2023
+   Authors: ['PR Grassi', 'M Bannert', 'A Bartels'] 

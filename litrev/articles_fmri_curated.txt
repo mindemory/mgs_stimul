@@ -1,0 +1,106 @@
+Articles for: EVC fMRI WM
+
+Year: 2009
+ - Title: Spatially global representations in human primary visual cortex during working memory maintenance
+   Authors: ['EF Ester', 'JT Serences', 'E Awh']
+ - Title: Global mechanisms of sensory recruitment during working memory maintenance
+   Authors: ['E Ester', 'J Serences', 'E Awh']
+ - Title: Stimulus-specific delay activity in human primary visual cortex
+   Authors: ['JT Serences', 'EF Ester', 'EK Vogel']
+- Title: Decoding reveals the contents of visual working memory in early visual areas
+   Authors: ['SA Harrison', ‘F Tong']
+
+Year: 2010
+ - Title: Low-level memory mechanisms in vision: an fMRI-study
+   Authors: ['D Alnæs']
+
+Year: 2011
+ - Title: Neural Mechanisms of Mnemonic Precision
+   Authors: ['EF Ester']
+ - Title: Modulation of activity in human visual area V1 during memory masking
+   Authors: ['MH Sneve', 'D Alnæs', 'T Endestad', 'MW Greenlee']
+
+Year: 2012
+ - Title: Visual short-term memory load reduces retinotopic cortex response to contrast
+   Authors: ['N Konstantinou', 'B Bahrami', 'G Rees'] 
+- Title: Visual short-term memory: Activity supporting encoding and maintenance in retinotopic visual cortex
+   Authors: ['MH Sneve', 'D Alnæs', 'T Endestad', 'MW Greenlee']
+
+Year: 2013
+ - Title: A neural measure of precision in visual working memory
+   Authors: ['EF Ester', 'DE Anderson', 'JT Serences'] 
+ - Title: Effects of Saccade Planning on Topographic Activity in Early Visual Cortex
+   Authors: ['GT Saber']
+
+Year: 2014
+ - Title: Spatial specificity of working memory representations in the early visual cortex
+   Authors: ['MS Pratte', 'F Tong'] 
+ - Title: The role of early visual areas in human working memory
+   Authors: ['Y Xing'] 
+ - Title: The Neural Underpinnings of Short-term Memory for Visual Motion
+   Authors: ['AC Riggall'] 
+ - Title: Exploring neural representations in short-term memory and visual awareness
+   Authors: ['JJ LaRocque']
+
+Year: 2015
+ - Title: Saccade planning evokes topographically specific activity in the dorsal and ventral streams
+   Authors: ['GT Saber', 'F Pestilli', 'CE Curtis']
+
+Year: 2016
+ - Title: Effects of distractors on visual working memory representations
+   Authors: ['E Lorenc', 'K Sreenivasan', 'A Vandenbroucke'] 
+
+Year: 2017
+  - Title: Within-category decoding of information in different attentional states in short-term memory
+   Authors: ['JJ LaRocque', 'AC Riggall', 'SM Emrich']
+
+Year: 2018
+ - Title: Flexible coding of visual working memory representations during distraction
+   Authors: ['ES Lorenc', 'KK Sreenivasan', 'DE Nee'] 
+ - Title: The neural bases of precision and distractor resistance in visual working memory
+   Authors: ['ES Lorenc'] 
+ - Title: The role of task-irrelevant space in non-spatial working memory
+   Authors: ['M Rahmati', 'T Sprague', 'C Curtis'] 
+ - Title: A neurocognitive mechanism for precision of visual working memory representations
+   Authors: ['W Xie'] 
+ - Title: Population dynamics of early visual cortex during working memory
+   Authors: ['M Rahmati', 'GT Saber', 'CE Curtis'] 
+
+Year: 2019
+ - Title: Coexisting representations of sensory and mnemonic information in human visual cortex
+   Authors: ['RL Rademaker', 'C Chunharas', 'JT Serences'] 
+ - Title: The effects of cognitive state on visual encoding properties in human cortex
+   Authors: ['VA Vo'] 
+
+Year: 2021
+ - Title: Working memory representations in visual cortex mediate distraction effects
+   Authors: ['GE Hallenbeck', 'TC Sprague', 'M Rahmati']
+ - Title: Perceptual learning beyond perception: mnemonic representation in early visual cortex and intraparietal sulcus
+   Authors: ['K Jia', 'Y Li', 'M Gong', 'H Huang', 'Y Wang']
+ - Title: Spatial working memory representations in human cortex are robust to a task-irrelevant interrupting stimulus
+   Authors: ['K Vu-Cheung', 'EF Ester', 'TC Sprague']
+ - Title: Shared long-term and short-term memory representational formats in occipital and parietal cortex
+   Authors: ['VA Vo', 'DW Sutterer', 'JJ Foster', 'TC Sprague', 'E Awh']
+
+Year: 2022
+- Title: Sensory recruitment revisited: ipsilateral V1 involved in visual working memory
+   Authors: ['YJ Zhao', 'KN Kay', 'Y Tian', 'Y Ku'] 
+ - Title: Shared representational formats for information maintained in working memory and information retrieved from long-term memory
+   Authors: ['VA Vo', 'DW Sutterer', 'JJ Foster', 'TC Sprague']
+ - Title: Flexible utilization of spatial-and motor-based codes for the storage of visuo-spatial information
+   Authors: ['MM Henderson', 'RL Rademaker', 'JT Serences']
+- Title: Behavioral prioritization enhances working memory precision and neural population gain
+   Authors: ['AH Yoo', 'A Bolaños', 'GE Hallenbeck']
+- Title: Unveiling the abstract format of mnemonic representations
+   Authors: ['Y Kwak', 'CE Curtis']
+
+
+Year: 2023
+ - Title: Working memory signals in early visual cortex do not depend on visual imagery
+   Authors: ['S Weber', 'T Christophel', 'K Görgen', 'J Soch', 'JD Haynes']
+ - Title: Visual working memories are abstractions of percepts
+   Authors: ['Z Duan', 'CE Curtis']
+ - Title: A gradual transition from veridical to categorical representations along the visual hierarchy during working memory, but not perception
+   Authors: ['C Chunharas', 'MD Hettwer', 'MJ Wolff', 'RL Rademaker']
+ - Title: Encoding of continuous perceptual choices in human early visual cortex
+   Authors: ['R Barbieri', 'FM Töpfer', 'J Soch', 'C Bogler']
