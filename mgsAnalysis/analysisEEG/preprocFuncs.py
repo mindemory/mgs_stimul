@@ -288,7 +288,7 @@ def runTGA(epochData, elecs, freq_band, pow_or_phase, typeCond):
     elif typeCond == 'byPF_respin':
         X = X[(y == 11) | (y == 14), :, :]
         y = y[(y == 11) | (y == 14)]
-        y__ = np.array([1 if y == 12 else 0 for y in y])
+        y__ = np.array([1 if y == 11 else 0 for y in y])
     elif typeCond == 'byTrlType':
         y__ = np.array([1 if y == 11 or y == 12 else 0 for y in y])
     
@@ -350,13 +350,13 @@ def runTGA_TMS(epochData1, epochData2, elecs, freq_band, pow_or_phase, typeCond)
     elif typeCond == 'byPF_stimin':
         X = X[(y == 11) | (y == 13), :, :]
         y = y[(y == 11) | (y == 13)]
-        y__ = np.array([1 if y == 11 else 0 for y in y])
+        y__ = np.array([1 if y == 11 else 0 for y in y]) # 1 for pro, 0 for anti
     elif typeCond == 'byPF_respin':
         X = X[(y == 11) | (y == 14), :, :]
         y = y[(y == 11) | (y == 14)]
-        y__ = np.array([1 if y == 12 else 0 for y in y])
+        y__ = np.array([1 if y == 11 else 0 for y in y]) # 1 for pro, 0 for anti
     elif typeCond == 'byTrlType':
-        y__ = np.array([1 if y == 11 or y == 12 else 0 for y in y])
+        y__ = np.array([1 if y == 11 or y == 12 else 0 for y in y]) # 1 for pro, 0 for anti
     
     # Downsample the data and then smooth it
     X_down, t_down  = X[:, :, down_wsize:-down_wsize:down_wsize], t_array[down_wsize:-down_wsize:down_wsize]

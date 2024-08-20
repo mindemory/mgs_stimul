@@ -38,7 +38,7 @@ for s in ${!SUBJ_LIST[@]}; do
     echo "Date: $DATE"
     printf "Log file: $LOG_FILE\n"
     
-    taskset --cpu-list $CORENUM bash -c "source activate eegmne; python mneEEG_tms.py $SUBJ > $LOG_FILE" &
+    taskset --cpu-list $CORENUM bash -c "source activate eegmne; python mneEEG_notms.py $SUBJ > $LOG_FILE" &
     
     (( CORENUM++ ))
         

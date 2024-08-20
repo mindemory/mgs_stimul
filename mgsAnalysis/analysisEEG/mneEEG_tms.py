@@ -76,7 +76,8 @@ def main():
     # POWPHASE = ['pow', 'phase']
     # TYPECOND = ['byPF_pro', 'byPF_anti', 'byPF_stimin', 'byPF_respin', 'byTrlType']
     POWPHASE = ['pow']
-    TYPECOND = ['byPF_pro']
+    # TYPECOND = ['byPF_pro', 'byPF_anti']
+    TYPECOND = ['byPF_stimin', 'byPF_respin', 'byTrlType']
 
     for pow_or_phase, typeCond in product(POWPHASE, TYPECOND):
         scores_mean, t_down = runTGA_TMS(epochData1, epochData2, elecs, freq_band, pow_or_phase, typeCond)
