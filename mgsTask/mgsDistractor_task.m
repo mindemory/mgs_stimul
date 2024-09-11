@@ -71,11 +71,34 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     end
     parameters.eyetracker = 1;
     PsychDefaultSetup(1);
+elseif strcmp(hostname, 'bizarro') % Running stimulus code for testing
+    addpath(genpath('/Applications/Psychtoolbox/'))
+    parameters.isDemoMode = false; %set to true if you want the screen to be transparent
+    parameters.TMS = 0; % set to 0 if there is no TMS stimulation
+    % Absolute paths for bizzaro
+    master_dir = '/Users/CurtisLab/Desktop/Mrugank';
+    phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
+    % Path to MarkStim
+    trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
+    addpath(genpath(trigger_path));
+    trigger_path_EEG = [trigger_path '/EEG'];
+    if prac_status == 1
+        parameters.EEG = 0; % set to 0 if there is no EEG recording
+        end_block = 6; % 6 blocks for practice session
+        mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
+    else
+        parameters.EEG = 0;
+        end_block = 10; % 10 blocks for main sessions
+        mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
+    end
+    parameters.eyetracker = 1;
+%     PsychDefaultSetup(1);
+    Screen('Preference','SkipSyncTests', 1)
 else
     disp('Running on unknown device. Psychtoolbox might not be added correctly!')
     return;
 end
-
+parameters.hostname = hostname;
 % Adding 15 blocks for day06
 if day == 6
     end_block = 10;
@@ -385,8 +408,8 @@ for block = start_block:end_block
 %         dd = GetSecs();
         for i=1:3
             trlIdx = randi(ntrls);
-            noiseTex = squeeze(noiseTex(1, :, :));
-            nT = Screen('MakeTexture', screen.win, noiseTex);
+            noiseTexNow = squeeze(noiseTex(trlIdx, :, :));
+            nT = Screen('MakeTexture', screen.win, noiseTexNow);
             Screen('DrawTexture', screen.win, nT, []);
 %             drawNoisePhosphene(parameters, screen, TF)
             drawTextures(parameters, screen, 'FixationCross');
