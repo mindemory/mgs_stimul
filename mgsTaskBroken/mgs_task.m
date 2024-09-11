@@ -1,7 +1,7 @@
-function mgsDistractor_task(subjID, day, start_block, TMSamp, prac_status, anti_type, aperture)
+function mgs_task(subjID, day, start_block, TMSamp, prac_status, anti_type, aperture)
 clearvars -except subjID day start_block TMSamp prac_status anti_type aperture;
 close all; clc;
-% Created by Mrugank Dake, Curtis Lab, NYU (09/09/2024)
+% Created by Mrugank Dake, Curtis Lab, NYU (10/11/2022)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,10 +42,10 @@ if strcmp(hostname, 'syndrome') || strcmp(hostname, 'zod') || strcmp(hostname, '
     Screen('Preference','SkipSyncTests', 1)
     if prac_status == 1
         end_block = 2; % 2 blocks for practice session
-        mgs_data_path = ['/datd/MD_TMS_EEG/data/mgs_practice_data/sub' subjID];
+        mgs_data_path = ['/datc/MD_TMS_EEG/data/mgs_practice_data/sub' subjID];
     else
         end_block = 10; % 10 blocks for main sessions
-        mgs_data_path = ['/datd/MD_TMS_EEG/data/mgs_data/sub' subjID];
+        mgs_data_path = ['/datc/MD_TMS_EEG/data/mgs_data/sub' subjID];
     end
 elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     addpath(genpath('/usr/share/psychtoolbox-3'))
@@ -53,8 +53,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     % Relative paths for tmsubuntu
     curr_dir = pwd; filesepinds = strfind(curr_dir,filesep);
-%     master_dir = curr_dir(1:(filesepinds(end-1)-1));
-    master_dir = '/home/curtislab/Desktop/md_data/MD_TMS_EEG';
+    master_dir = curr_dir(1:(filesepinds(end-1)-1));
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
     trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
@@ -65,7 +64,7 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
         end_block = 6; % 6 blocks for practice session
         mgs_data_path = [master_dir '/data/mgs_practice_data/sub' subjID];
     else
-        parameters.EEG = 0;
+        parameters.EEG = 1;
         end_block = 10; % 10 blocks for main sessions
         mgs_data_path = [master_dir '/data/mgs_data/sub' subjID];
     end
@@ -76,10 +75,13 @@ else
     return;
 end
 
-% Adding 15 blocks for day06
-if day == 6
-    end_block = 10;
-    D1 = 2;
+% Adding 15 blocks for day04
+if day == 4
+    end_block = 8;
+    D1 = 0;
+elseif day == 5
+    end_block = 8;
+    D1 = 3.7;
 end
 
 % Initialize data paths
@@ -145,7 +147,6 @@ for block = start_block:end_block
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         tMap = taskMap(1, block);
     end
-    [noiseTexIn, noiseTexOut] = makeNoisePhosphene(parameters, screen, tMap.TFin, tMap.TFout);
     
     % Get a count of trials (it should be 40 for this experiment).
     trialNum = length(tMap.stimLocpix);
@@ -250,7 +251,39 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'Aperture');
         end
         drawTextures(parameters, screen, 'FixationCross');
+        
+        if eyetrackfeedback == 1
+            % Check for blinks during fixation window
+            gxold = screen.xCenter;
+            gyold = screen.yCenter;
+            fixbreaks = 0;
+            while GetSecs-initStartTime < parameters.initDuration * 0.9
+                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                    evt = Eyelink('NewestFloatSample');
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
+                    end
 
+                    % see if there was a fixation break
+                    if (gx~=gxold || gy~=gyold)
+                        va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                        if va_now > parameters.fixbreakthresh
+                            fixbreaks = fixbreaks+1;
+                        end
+                    end
+                    gxold = gx;
+                    gyold = gy;
+                end
+            end
+            eyetrack_errors.fixation(trial) = fixbreaks;
+            clearvars gx gy gxold gyold evt fixbreaks
+        end
+        
         if GetSecs - initStartTime < parameters.initDuration
             WaitSecs(parameters.initDuration - (GetSecs-initStartTime));
         end
@@ -299,6 +332,38 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'Stimulus', screen.white, dotSize, dotCenter);
         drawTextures(parameters, screen, 'FixationCross');
         
+        if eyetrackfeedback == 1
+            % Check for blinks during sample window
+            gxold = screen.xCenter;
+            gyold = screen.yCenter;
+            fixbreaks = 0;
+            while GetSecs-sampleStartTime < parameters.sampleDuration * 0.9
+                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                    evt = Eyelink('NewestFloatSample');
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
+                    end
+
+                    % see if there was a fixation break
+                    if (gx~=gxold || gy~=gyold)
+                        va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                        if va_now > parameters.fixbreakthresh
+                            fixbreaks = fixbreaks + 1;
+                        end
+                    end
+                    gxold = gx;
+                    gyold = gy;
+                end
+            end
+            eyetrack_errors.sample(trial) = fixbreaks;
+            clearvars gx gy gxold gyold evt fixbreaks
+        end
+        
         if GetSecs - sampleStartTime < parameters.sampleDuration
             WaitSecs(parameters.sampleDuration - (GetSecs-sampleStartTime));
         end
@@ -335,7 +400,41 @@ for block = start_block:end_block
             else
                 d1_dur = parameters.delay1Duration;
             end
-            
+
+            if eyetrackfeedback == 1
+                % Check for blinks during delay1 window
+                gxold = screen.xCenter;
+                gyold = screen.yCenter;
+                fixbreaks = 0;
+
+                while GetSecs-delay1StartTime < d1_dur * 0.9
+                    if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                        evt = Eyelink('NewestFloatSample');
+                        gx = evt.gx(el.eye_used+1);
+                        gy = evt.gy(el.eye_used+1);
+                        % In case of blinks or something, make gx and gy back
+                        % to center, crude fix
+                        if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                            gx = screen.xCenter;
+                            gy = screen.yCenter;
+                        end
+
+                        % see if there was a fixation break
+                        if (gx~=gxold || gy~=gyold)
+                            va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                            if va_now > parameters.fixbreakthresh
+                                fixbreaks = fixbreaks + 1;
+                            end
+                        end
+                        gxold = gx;
+                        gyold = gy;
+                    end
+                end
+
+                eyetrack_errors.delay1(trial) = fixbreaks;
+                clearvars gx gy gxold gyold evt fixbreaks
+            end
+
             if GetSecs - delay1StartTime < d1_dur
                 WaitSecs(d1_dur - (GetSecs-delay1StartTime));
             end
@@ -369,50 +468,6 @@ for block = start_block:end_block
         if aperture == 1
             drawTextures(parameters, screen, 'Aperture');
         end
-
-        % Find distractor hemi
-%         WaitSecs(2);
-%         dTemp = GetSecs();
-        distractorHemi = tMap.distractorHemi(trial);
-        if distractorHemi
-            noiseTex = noiseTexOut;
-        else
-            noiseTex = noiseTexIn;
-        end
-        ntrls = size(noiseTex, 1);
-        
-%         WaitSecs(5);
-%         dd = GetSecs();
-        for i=1:3
-            trlIdx = randi(ntrls);
-            noiseTex = squeeze(noiseTex(1, :, :));
-            nT = Screen('MakeTexture', screen.win, noiseTex);
-            Screen('DrawTexture', screen.win, nT, []);
-%             drawNoisePhosphene(parameters, screen, TF)
-            drawTextures(parameters, screen, 'FixationCross');
-            WaitSecs(0.02);
-            drawTextures(parameters, screen, 'FixationCross');
-
-        end
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         drawNoisePhosphene(parameters, screen, TF)
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         drawNoisePhosphene(parameters, screen, TF)
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         dd1 = GetSecs();
-%         dd1 - dd
-        
-        % Show Noise flicker for 150 ms 
-%         while GetSecs - delay2StartTime < 0.15
-% %         while GetSecs - dTemp < 0.25
-%             drawNoisePhosphene(parameters, screen, TF)
-%             drawTextures(parameters, screen, 'FixationCross');
-% %             WaitSecs(0.02);
-% %             drawTextures(parameters, screen, 'FixationCross');
-%         end
         drawTextures(parameters, screen, 'FixationCross');
 
         % Get the second delay duration, dependent on day
@@ -422,6 +477,37 @@ for block = start_block:end_block
             d2_dur = parameters.delayDuration - d1_dur;
         else
             d2_dur = parameters.delayDuration;
+        end
+        if eyetrackfeedback == 1
+            % Check for blinks during delay1 window
+            gxold = screen.xCenter;
+            gyold = screen.yCenter;
+            fixbreaks = 0;
+            while GetSecs-delay2StartTime < d2_dur * 0.9
+                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                    evt = Eyelink('NewestFloatSample');
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
+                    end
+
+                    % see if there was a fixation break
+                    if (gx~=gxold || gy~=gyold)
+                        va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                        if va_now > parameters.fixbreakthresh
+                            fixbreaks = fixbreaks + 1;
+                        end
+                    end
+                    gxold = gx;
+                    gyold = gy;
+                end
+            end
+            eyetrack_errors.delay2(trial) = fixbreaks;
+            clearvars gx gy gxold gyold evt fixbreaks
         end
         
         if GetSecs - delay2StartTime < d2_dur
@@ -454,6 +540,39 @@ for block = start_block:end_block
             drawTextures(parameters, screen, 'Aperture');
         end
         drawTextures(parameters, screen, 'FixationCross', parameters.cuecolor);
+        
+        if eyetrackfeedback == 1
+            % Check for blinks during delay1 window
+            gxold = screen.xCenter;
+            gyold = screen.yCenter;
+            saccOnset = parameters.respDuration; % in case no saccade was made
+            while GetSecs-respStartTime < parameters.respDuration * 0.9
+                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                    evt = Eyelink('NewestFloatSample');
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
+                    end
+
+                    % see if there was a fixation break
+                    if (gx~=gxold || gy~=gyold)
+                        va_now = pixel2va(gx, gy, screen.xCenter, screen.yCenter, parameters, screen);
+                        if va_now > parameters.fixbreakthresh
+                            saccOnset = GetSecs - respStartTime;
+                            break;
+                        end
+                    end
+                    gxold = gx;
+                    gyold = gy;
+                end
+            end
+            eyetrack_errors.response(trial) = saccOnset;
+            clearvars gx gy gxold gyold evt saccOnset
+        end
         
         if GetSecs - respStartTime < parameters.respDuration
             WaitSecs(parameters.respDuration - (GetSecs - respStartTime));
@@ -490,6 +609,46 @@ for block = start_block:end_block
         drawTextures(parameters, screen, 'Stimulus', parameters.feebackcolor, dotSize, dotCenter);
         drawTextures(parameters, screen, 'FixationCross');
         
+        if eyetrackfeedback == 1
+            % Check for blinks during delay1 window
+            gxold = screen.xCenter;
+            gyold = screen.yCenter;
+            sacc_errs = [];
+            while GetSecs-feedbackStartTime < parameters.feedbackDuration * 0.9
+                if parameters.eyetracker && el.eye_used~=-1 && Eyelink('NewFloatSampleAvailable') > 0 
+                    evt = Eyelink('NewestFloatSample');
+                    gx = evt.gx(el.eye_used+1);
+                    gy = evt.gy(el.eye_used+1);
+                    % In case of blinks or something, make gx and gy back
+                    % to center, crude fix
+                    if gx==el.MISSING_DATA || gy==el.MISSING_DATA || evt.pa(el.eye_used+1)<=0
+                        gx = screen.xCenter;
+                        gy = screen.yCenter;
+                    end
+
+                    % see if there was a fixation break
+                    if (gx~=gxold || gy~=gyold)
+                        va_now = pixel2va(gx, gy, saccLoc(1), saccLoc(2), parameters, screen);
+                        sacc_errs = [sacc_errs va_now];
+                    end
+                    gxold = gx;
+                    gyold = gy;
+                end
+            end
+            if ~isempty(sacc_errs)
+                eyetrack_errors.feedback_min(trial) = min(sacc_errs);
+                eyetrack_errors.feedback_max(trial) = max(sacc_errs);
+                eyetrack_errors.feedback_avg(trial) = mean(sacc_errs);
+                eyetrack_errors.feedback_first(trial) = sacc_errs(1);
+            else
+                eyetrack_errors.feedback_min(trial) = NaN;
+                eyetrack_errors.feedback_max(trial) = NaN;
+                eyetrack_errors.feedback_avg(trial) = NaN;
+                eyetrack_errors.feedback_first(trial) = NaN;
+            end
+            clearvars gx gy gxold gyold evt sacc_errs ctr
+        end
+
         if GetSecs - feedbackStartTime < parameters.feedbackDuration
             WaitSecs(parameters.feedbackDuration - (GetSecs - feedbackStartTime));
         end

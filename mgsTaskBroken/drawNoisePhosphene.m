@@ -38,13 +38,8 @@ end
 % Create noiseMat by multiplying mask with logical
 noiseMat = screen.grey + thisPhosphIn .* noiseMask;
 
+
 noiseTex = Screen('MakeTexture', screen.win, noiseMat);
-% Screen('DrawTexture', screen.win, noiseTex, []);
-tN = GetSecs();
-for i = 1:5
-    Screen('DrawTexture', screen.win, noiseTex, []);
-end
-tend = GetSecs();
-tend-tN
+Screen('DrawTexture', screen.win, noiseTex, []);
 
 end

@@ -145,7 +145,6 @@ for block = start_block:end_block
         parameters = initFiles(parameters, screen, datapath, kbx, block);
         tMap = taskMap(1, block);
     end
-    [noiseTexIn, noiseTexOut] = makeNoisePhosphene(parameters, screen, tMap.TFin, tMap.TFout);
     
     % Get a count of trials (it should be 40 for this experiment).
     trialNum = length(tMap.stimLocpix);
@@ -372,47 +371,22 @@ for block = start_block:end_block
 
         % Find distractor hemi
 %         WaitSecs(2);
-%         dTemp = GetSecs();
+        dTemp = GetSecs();
         distractorHemi = tMap.distractorHemi(trial);
         if distractorHemi
-            noiseTex = noiseTexOut;
+            TF = tMap.TFout;
         else
-            noiseTex = noiseTexIn;
+            TF = tMap.TFin;
         end
-        ntrls = size(noiseTex, 1);
-        
-%         WaitSecs(5);
-%         dd = GetSecs();
-        for i=1:3
-            trlIdx = randi(ntrls);
-            noiseTex = squeeze(noiseTex(1, :, :));
-            nT = Screen('MakeTexture', screen.win, noiseTex);
-            Screen('DrawTexture', screen.win, nT, []);
-%             drawNoisePhosphene(parameters, screen, TF)
-            drawTextures(parameters, screen, 'FixationCross');
-            WaitSecs(0.02);
-            drawTextures(parameters, screen, 'FixationCross');
-
-        end
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         drawNoisePhosphene(parameters, screen, TF)
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         drawNoisePhosphene(parameters, screen, TF)
-%         drawTextures(parameters, screen, 'FixationCross');
-%         WaitSecs(0.5);
-%         dd1 = GetSecs();
-%         dd1 - dd
         
         % Show Noise flicker for 150 ms 
-%         while GetSecs - delay2StartTime < 0.15
-% %         while GetSecs - dTemp < 0.25
-%             drawNoisePhosphene(parameters, screen, TF)
+        while GetSecs - delay2StartTime < 0.15
+%         while GetSecs - dTemp < 0.25
+            drawNoisePhosphene(parameters, screen, TF)
+            drawTextures(parameters, screen, 'FixationCross');
+%             WaitSecs(0.02);
 %             drawTextures(parameters, screen, 'FixationCross');
-% %             WaitSecs(0.02);
-% %             drawTextures(parameters, screen, 'FixationCross');
-%         end
+        end
         drawTextures(parameters, screen, 'FixationCross');
 
         % Get the second delay duration, dependent on day
