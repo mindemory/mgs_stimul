@@ -53,7 +53,8 @@ elseif strcmp(hostname, 'tmsubuntu') % Running stimulus code for testing
     parameters.TMS = 0; % set to 0 if there is no TMS stimulation
     % Relative paths for tmsubuntu
     curr_dir = pwd; filesepinds = strfind(curr_dir,filesep);
-    master_dir = curr_dir(1:(filesepinds(end-1)-1));
+%     master_dir = curr_dir(1:(filesepinds(end-1)-1));
+    master_dir = '/home/curtislab/Desktop/md_data/MD_TMS_EEG';
     phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
     % Path to MarkStim
     trigger_path = [master_dir '/mgs_stimul/EEG_TMS_triggers'];
@@ -369,18 +370,24 @@ for block = start_block:end_block
         end
 
         % Find distractor hemi
+%         WaitSecs(2);
+        dTemp = GetSecs();
         distractorHemi = tMap.distractorHemi(trial);
         if distractorHemi
-            TF = tMap.TFin;
-        else
             TF = tMap.TFout;
+        else
+            TF = tMap.TFin;
         end
         
         % Show Noise flicker for 150 ms 
         while GetSecs - delay2StartTime < 0.15
+%         while GetSecs - dTemp < 0.25
             drawNoisePhosphene(parameters, screen, TF)
             drawTextures(parameters, screen, 'FixationCross');
+%             WaitSecs(0.02);
+%             drawTextures(parameters, screen, 'FixationCross');
         end
+        drawTextures(parameters, screen, 'FixationCross');
 
         % Get the second delay duration, dependent on day
         if ~exist('D1', 'var') % Run this only if delay 1 exists (aka days 1-3) or if delay is greater than 0
