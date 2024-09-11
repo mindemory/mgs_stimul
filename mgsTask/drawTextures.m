@@ -95,4 +95,6 @@ switch texture_name
         maxDiameter = ceil(max(baseRect) * 1.1);
         centeredRect = CenterRectOnPointd(baseRect, dotCenter(1), dotCenter(2));
         Screen('FillOval', screen.win, color, centeredRect, maxDiameter);
+
+
 end
