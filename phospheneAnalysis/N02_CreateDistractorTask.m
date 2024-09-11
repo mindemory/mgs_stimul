@@ -19,8 +19,34 @@ end
 phosphene_data_path = [master_dir '/data/phosphene_data/sub' subjID];
 addpath(genpath(phosphene_data_path));
 
-
 load([phosphene_data_path '/tmsRtnTpy_sub' subjID '_sess01.mat']);
+if strcmp(subjID, num2str(1,'%02d'))
+    locSelected = 1;
+elseif strcmp(subjID, num2str(5,'%02d'))
+    locSelected = 8;
+elseif strcmp(subjID, num2str(6,'%02d'))
+    locSelected = 3;
+elseif strcmp(subjID, num2str(7,'%02d'))
+    locSelected = 4;
+elseif strcmp(subjID, num2str(10,'%02d'))
+    locSelected = 6;
+elseif strcmp(subjID, num2str(12, '%02d'))
+    locSelected = 4;
+elseif strcmp(subjID, num2str(14, '%02d'))
+    locSelected = 6;
+elseif strcmp(subjID, num2str(15, '%02d'))
+    locSelected = 5;
+elseif strcmp(subjID, num2str(17, '%02d'))
+    locSelected = 2;
+elseif strcmp(subjID, num2str(22, '%02d'))
+    locSelected = 6;
+elseif strcmp(subjID, num2str(23, '%02d'))
+    locSelected = 3;
+elseif strcmp(subjID, num2str(25, '%02d'))
+    locSelected = 4;
+elseif strcmp(subjID, num2str(26, '%02d'))
+    locSelected = 1;
+end
 
 % Compute all possible points on the screen
 xMax = tmsRtnTpy.Params.screen.screenXpixels;
@@ -32,9 +58,7 @@ XY = [repelem(XX(:), numel(YY), 1) ...
 % remove invalid trials and corresponding coil locations
 tmsRtnTpy = remove_invalid_trials(tmsRtnTpy);
 
-if strcmp(subjID, num2str(1,'%02d'))
-    locSelected = 1;
-end
+
 
 phsphTrials = find(tmsRtnTpy.Response.CoilLocation == locSelected & tmsRtnTpy.Response.Detection == 1);
 TFin = NaN(length(phsphTrials), yMax, xMax);
