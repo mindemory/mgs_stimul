@@ -16,6 +16,7 @@ if parameters.eyetracker
     el.msgfontcolour = BlackIndex(el.window);
     el.imgtitlecolour = WhiteIndex(el.window);
     el.targetbeep = 0;
+    el.feedbackbeep = 0;
     EyelinkUpdateDefaults(el);
     
     %Initialization of the connection with the Eyelink Gazetracker.

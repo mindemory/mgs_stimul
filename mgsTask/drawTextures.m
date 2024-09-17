@@ -50,6 +50,11 @@ switch texture_name
         if strcmp(computer, 'GLNXA64')
             Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
                 fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        else
+            if strcmp(parameters.hostname, 'bizarro')
+                Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter]); % 2 is for smoothing
+            end
         end
         Screen('FillOval', screen.win, screen.black, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
@@ -85,6 +90,11 @@ switch texture_name
         if strcmp(computer, 'GLNXA64')
             Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
                 fixcolor, [screen.xCenter screen.yCenter], 2); % 2 is for smoothing
+        else
+            if strcmp(parameters.hostname, 'bizarro')
+                Screen('DrawLines', screen.win, allCoords, round(r_pix_inner*1.5), ...
+                fixcolor, [screen.xCenter screen.yCenter]); % 2 is for smoothing
+            end
         end
         Screen('FillOval', screen.win, (screen.black + screen.grey)/2, centeredRect_inner, maxDiameter_inner);
         Screen('Flip', screen.win);
@@ -95,6 +105,4 @@ switch texture_name
         maxDiameter = ceil(max(baseRect) * 1.1);
         centeredRect = CenterRectOnPointd(baseRect, dotCenter(1), dotCenter(2));
         Screen('FillOval', screen.win, color, centeredRect, maxDiameter);
-
-
 end

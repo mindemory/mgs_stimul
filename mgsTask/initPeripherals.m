@@ -11,7 +11,12 @@ KbName('UnifyKeyNames');
 if strcmp(computer, 'MACI64')
     % get keyboard and mouse pointers for the current setup
     devices = PsychHID('Devices');
-    devIdx(1) = find([devices(:).usageValue] == 6);      
+    if strcmp(parameters.hostname, 'bizarro')
+        dtemp = find([devices(:).usageValue] == 6);
+        devIdx(1) = dtemp(1);      
+    else
+        devIdx(1) = find([devices(:).usageValue] == 6);
+    end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ubuntu Optimized
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
