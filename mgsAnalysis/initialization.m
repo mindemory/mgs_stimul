@@ -58,7 +58,8 @@ end
 
 % Add toolbox to path (either iEye or fieldtrip)
 if strcmp(analysis_type, 'eye')
-    p.iEye = [p.master '/iEye'];
+%     p.iEye = [p.master '/iEye'];
+    p.iEye = '/d/DATA/hyper/experiments/Mrugank/iEye';
     addpath(genpath(p.iEye));
 elseif strcmp(analysis_type, 'eeg')
     p.saveEEG = [p.datc '/EEGfiles'];

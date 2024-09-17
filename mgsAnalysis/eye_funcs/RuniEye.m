@@ -71,8 +71,8 @@ for block = 1:end_block
     preproc_fn = edfFile(1:end-4);
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'calibration'});
-    %[ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, []);
+%     [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, [], {'calibration'});
+    [ii_data, ii_cfg, ii_sacc] = run_iipreproc(edfFile, ifgFile, preproc_fn, ii_params, []);
     
 %     ii_data.XDAT(ii_data.XDAT == 4) = 5;
 %     ii_sacc.epoch_start(ii_sacc.epoch_start == 4) = 5;

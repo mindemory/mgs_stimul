@@ -29,8 +29,13 @@ def add_metrics(df):
     df['fgain'] = (np.sqrt(df['fsaccX']**2+df['fsaccY']**2))/(np.sqrt(df['TarX']**2+df['TarY']**2))
     df['eccentricity'] = np.sqrt(df['TarX']**2+df['TarY']**2)
     df['polang'] = np.arctan2(df['TarY'], df['TarX'])
-    df['ipea'] = (df['ierr'] - df['eccentricity'])/df['eccentricity'] # percentage error in amplitude (Muri et al. 1996)
-    df['fpea'] = (df['ferr'] - df['eccentricity'])/df['eccentricity'] # percentage error in amplitude (Muri et al. 1996)
+    # df['ipea'] = (df['ierr'] - df['eccentricity'])/df['eccentricity'] # percentage error in amplitude (Muri et al. 1996)
+    # df['fpea'] = (df['ferr'] - df['eccentricity'])/df['eccentricity'] # percentage error in amplitude (Muri et al. 1996)
+    df['isaccAmp'] = np.sqrt(df['isaccX']**2 + df['isaccY']**2)
+    df['fsaccAmp'] = np.sqrt(df['fsaccX']**2 + df['fsaccY']**2)
+    df['ipea'] = np.abs(df['isaccAmp'] - df['eccentricity'])/df['eccentricity'] * 100 # percentage error in amplitude (Muri et al. 1996)
+    df['fpea'] = np.abs(df['fsaccAmp'] - df['eccentricity'])/df['eccentricity'] * 100 # percentage error in amplitude (Muri et al. 1996)
+    
 
     # Angular error
     df['iang'] = np.arctan2(df['isaccY'], df['isaccX']) - np.arctan2(df['TarY'], df['TarX'])
@@ -123,6 +128,53 @@ def filter_data(df):
     df_all5 = df[df['subjID'].isin(valid_subjects)  & (df['ispro'] == 1)]
     return df, df_all5
 
+def filter_data_controlTask(df):
+    # Replace more than one race to white
+    df.loc[df['race'] == 'More than one', 'race'] = 'White'
+    conds = [
+        (df['day'].isin([1, 2, 3]) & (df['istms']==0)), 
+        (df['day'].isin([1, 2, 3]) & (df['istms']==1)), 
+        df['day'] == 4,             
+        df['day'] == 5              
+    ]
+    choices = ['notms', 'middle', 'early', 'middle_dangit']
+    df['TMS_time'] = np.select(conds, choices, default='unknown')
+
+    original_shape = df.shape
+    # df = df[conditions]
+    timing_shape = df.shape
+
+    # Remove trials that have no saccades detected
+    df = df.dropna(subset=['ierr', 'ferr'])
+    missingsaccade_shape = df.shape
+
+    # Also remove trials with reaction times that are too small or too big
+    df = df[(df['isacc_rt'] > 0.15) & (df['isacc_rt'] < 1.0) & (df['fsacc_rt'] < 1.0)]
+    reactiontime_shape = df.shape
+
+    gstats_initial = df.groupby('subjID')['ierr'].agg(['mean', 'std'])
+    gstats_final = df.groupby('subjID')['ferr'].agg(['mean', 'std'])
+    gstats_initial['ierr_threshold'] = gstats_initial.apply(lambda x: min(x['mean'] + 3 * x['std'], 6), axis=1)
+    gstats_final['ferr_threshold'] = gstats_final.apply(lambda x: min(x['mean'] + 3 * x['std'], 6), axis=1)
+
+    df = df.merge(gstats_initial['ierr_threshold'], left_on='subjID', right_index=True)
+    df = df.merge(gstats_final['ferr_threshold'], left_on='subjID', right_index=True)
+    df = df[(df['ierr'] <= df['ierr_threshold']) & (df['ferr'] <= df['ferr_threshold'])]
+
+    # Removing columns that will not be needed from here on:
+    df = df.drop(columns = ['bad_drift_correct', 'bad_calibration', 'breakfix',
+        'no_prim_sacc', 'small_sacc', 'large_error', 'rejtrials', 'initdur', 'sampledur',
+        'delay1dur', 'delay2dur', 'respdur', 'feedbackdur', 'isacc_err', 'fsacc_err'])
+    filtered_shape = df.shape
+    print(f'Trials removed = {original_shape[0] - filtered_shape[0]} = {round((original_shape[0] - filtered_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Timing issues = {original_shape[0] - timing_shape[0]} = {round((original_shape[0] - timing_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'No saccades detected issues = {timing_shape[0] - missingsaccade_shape[0]} = {round((timing_shape[0] - missingsaccade_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Reaction time issues = {missingsaccade_shape[0] - reactiontime_shape[0]} = {round((missingsaccade_shape[0]-reactiontime_shape[0])*100/original_shape[0], 2)}% ')
+    print(f'Large errors = {reactiontime_shape[0] - filtered_shape[0]} = {round((reactiontime_shape[0]-filtered_shape[0])*100/original_shape[0], 2)}% ')
+    print()
+
+    return df
+
 def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
     def remove_low_trial_blocks(df, sub_rem):
         # Remove specified subjects
@@ -145,6 +197,27 @@ def elim_subs_blocks(df1, df1_all5, df2, df2_all5, sub_rem):
     print(removed_blocks_df1.reset_index(drop=True))
 
     return df1, df1_all5, df2, df2_all5
+
+def elim_subs_blocks_control(df1, sub_rem):
+    def remove_low_trial_blocks(df, sub_rem):
+        # Remove specified subjects
+        df = df[~df['subjID'].isin(sub_rem)]
+        # Remove blocks with trials less than 25
+        blocks_to_remove = df.groupby(['subjID', 'day', 'rnum']).filter(lambda x: x['tnum'].count() <= 30)[['subjID', 'day', 'rnum']].drop_duplicates()
+        df = df[~df.set_index(['subjID', 'day', 'rnum']).index.isin(blocks_to_remove.set_index(['subjID', 'day', 'rnum']).index)]
+        return df, blocks_to_remove
+
+
+    # Remove blocks with low trial count and update summary
+    df1, removed_blocks_df1 = remove_low_trial_blocks(df1, sub_rem)
+
+
+    # Print a summary of subjects and blocks that have been removed
+    print(f"Removed subjects: {sub_rem}")
+    print("Removed blocks df1:")
+    print(removed_blocks_df1.reset_index(drop=True))
+
+    return df1
 
 def combine_rotated_points(tms_cond, sub_list, df, metric):
     '''
