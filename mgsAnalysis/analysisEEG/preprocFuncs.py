@@ -245,6 +245,40 @@ def RunRSA(data, behav_df, freqband, cond, typeElecs, trange=[0,4.5], baseCorr=T
             # data{}
 
 
+def runALI(epochData, inElecs, outElecs, freq_band, trlIdx_good, trlIdx_bad):
+
+    if freq_band == 'alpha':
+        lf, hf = 8, 14
+    elif freq_band == 'beta':
+        lf, hf = 14, 20
+    elif freq_band == 'theta':
+        lf, hf = 4, 8
+
+    tempData = epochData.get_data(copy=True)
+
+    # tempData = (tempData - tempData.mean(axis=0)) / tempData.std(axis=0)
+    X = mne.filter.filter_data(tempData, sfreq=epochData.info['sfreq'], l_freq=lf, h_freq=hf, verbose=False, n_jobs=-1)
+    X = np.abs(hilbert(X)) ** 2
+
+    y = epochData.events[:, 2].copy()
+
+    InElecsIdx = [epochData.ch_names.index(elec) for elec in inElecs]
+    OutElecsIdx = [epochData.ch_names.index(elec) for elec in outElecs]
+
+    Xin = X[:, InElecsIdx, :].mean(axis=1)
+    Xout = X[:, OutElecsIdx, :].mean(axis=1)
+
+    trlIdx_good = y == 11
+    trlIdx_bad = y == 12
+
+    ALI_good = (Xin[trlIdx_good, :].mean(axis=0) - Xout[trlIdx_good, :].mean(axis=0)) / (Xin[trlIdx_good, :].mean(axis=0) + Xout[trlIdx_good, :].mean(axis=0))
+    ALI_bad = (Xin[trlIdx_bad, :].mean(axis=0) - Xout[trlIdx_bad, :].mean(axis=0)) / (Xin[trlIdx_bad, :].mean(axis=0) + Xout[trlIdx_bad, :].mean(axis=0))
+
+    # ALI_good = gaussian_smooth_1d(ALI_good, sigma=w_size)
+    # ALI_bad = gaussian_smooth_1d(ALI_bad, sigma=w_size)
+
+    return ALI_good, ALI_bad
+
 def runTGA(epochData, elecs, freq_band, pow_or_phase, typeCond):
     w_size = 1.5
     down_wsize = 50

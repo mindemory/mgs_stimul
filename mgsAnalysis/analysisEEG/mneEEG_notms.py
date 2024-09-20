@@ -69,9 +69,9 @@ def main():
     # TYPECOND = ['byPF_pro', 'byPF_anti']
     TYPECOND = ['byTrlType']
 
-    for pow_or_phase, typeCond in product(POWPHASE, TYPECOND):
-        scores_mean, t_down = runTGA(epochData, elecs, freq_band, pow_or_phase, typeCond)
-        np.savez(f"{p['EEGroot']}_{pow_or_phase}_{typeCond}.npy", scores_mean=scores_mean, t_array_down=t_down)
+    # for pow_or_phase, typeCond in product(POWPHASE, TYPECOND):
+    #     scores_mean, t_down = runTGA(epochData, elecs, freq_band, pow_or_phase, typeCond)
+    #     np.savez(f"{p['EEGroot']}_{pow_or_phase}_{typeCond}.npy", scores_mean=scores_mean, t_array_down=t_down)
 
 if __name__ == '__main__':
     main()
