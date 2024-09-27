@@ -41,7 +41,7 @@ print('Creating a new dataframe.')
 # Find subjects and days that have been run so far
 sub_dirs = [d for d in os.listdir(os.path.join(p['analysis'], proc_type)) if d.startswith("sub")]
 # subjIDs = sorted([int(ss[-2:]) for ss in sub_dirs])
-subjIDs = [1, 5, 10, 12, 14, 15, 23, 25, 26]
+subjIDs = [1, 5, 7, 10, 12, 14, 15, 23, 25, 26]
 print(f"We have {len(subjIDs)} subjects so far: {subjIDs}")
 print()
 
@@ -146,9 +146,6 @@ for ss in subjIDs:
             'trialdur': trdur[~np.isnan(trdur)].flatten(),
         }
         session_dfs.append(pd.DataFrame(sess_data))
-
-        
-        
         this_sess_df = pd.DataFrame(sess_data)
 master_df = pd.concat(session_dfs, ignore_index=True)
 

@@ -198,14 +198,25 @@ def get_permutation_tstat(df_in, metric, cond1, cond2):
         result2 = data2.groupby(['subjID']).apply(calculate_mean_and_se, error_metric=metric)
 
         tstat, _ = stats.ttest_rel(result1['mean'], result2['mean'], nan_policy = 'omit', alternative='two-sided')
+        cohens_d = calculate_cohens_d(result1, result2)
         # tstat, _ = stats.ttest_rel(result1['se'], result2['se'], nan_policy = 'omit', alternative='two-sided')
-        return tstat
+        return tstat, cohens_d
+
+def calculate_cohens_d(result1, result2):
+    mean_diff = np.mean(result1['mean'] - result2['mean'])
+    std_diff = np.std(result1['mean'] - result2['mean'], ddof=1)
+    d = mean_diff / std_diff
+    return d
 
 def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count, df_type):
     start = time.time()
     n_tests = len(pairs_to_test)
     tstat_permuted = np.zeros((iter_count, n_tests))
     tstat_real = np.zeros((n_tests, ))
+
+    cohens_d_real = np.zeros((n_tests,))
+    cohens_d_permuted = np.zeros((iter_count, n_tests))
+
     pval_2side = np.zeros((n_tests, ))
     pval_1side = np.zeros((n_tests, ))
     if pro_vs_anti == 'pro':
@@ -269,11 +280,11 @@ def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count,
         cond1 = pairs_to_test[jj][0]
         cond2 = pairs_to_test[jj][1]
         df_temp = df_master[(df_master['condition'] == cond1) | (df_master['condition'] == cond2)]
-        tstat_real[jj] = get_permutation_tstat(df_temp, metric, cond1, cond2)
+        tstat_real[jj], cohens_d_real[jj] = get_permutation_tstat(df_temp, metric, cond1, cond2)
         for ii in range(iter_count):
             df_shuffle = df_temp.copy()
             df_shuffle['condition'] = np.random.permutation(df_shuffle['condition'])
-            tstat_permuted[ii, jj] = get_permutation_tstat(df_shuffle, metric, cond1, cond2)
+            tstat_permuted[ii, jj], cohens_d_permuted[ii, jj] = get_permutation_tstat(df_shuffle, metric, cond1, cond2)
         # Compute pvalue of the real statistic given the tstat_permuted
         if tstat_real[jj] >= 0:
             samps_bothside = sum(tstat_permuted[:, jj] >= tstat_real[jj]) + sum(tstat_permuted[:, jj] < -tstat_real[jj])
@@ -285,4 +296,4 @@ def perform_permutation_test(df, pro_vs_anti, pairs_to_test, metric, iter_count,
 
     print(f"Total time taken for running {iter_count} permutations: {round(time.time()-start, 3)} s")
 
-    return tstat_real, tstat_permuted, pval_1side, pval_2side
+    return tstat_real, tstat_permuted, pval_1side, pval_2side,  cohens_d_real, cohens_d_permuted
