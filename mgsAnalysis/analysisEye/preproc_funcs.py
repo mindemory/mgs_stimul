@@ -52,11 +52,18 @@ def add_metrics(df):
     df['iradial'] = df['ierr'] * np.cos(itheta)
     df['itangential'] = df['ierr'] * np.sin(itheta)
 
+    # df['iradial'] = (((df['isaccX'] - df['TarX']) * df['TarX']) + ((df['isaccY'] - df['TarY']) * df['TarY'])) / df['eccentricity']
+    # df['itangential'] = (((df['isaccX'] - df['TarX']) * (-df['TarY'])) + ((df['isaccY'] - df['TarY']) * df['TarX'])) / df['eccentricity']
+
     ftheta = np.arctan2(df['ferrY'], df['ferrX']) - df['polang']
     ftheta = np.arctan2(np.sin(ftheta), np.cos(ftheta))
     df['ftheta'] = np.rad2deg(ftheta)
     df['fradial'] = df['ferr'] * np.cos(ftheta)
     df['ftangential'] = df['ferr'] * np.sin(ftheta)
+
+
+    # rotateMat = np.array([[np.cos(df['polang']), -np.sin(df['polang'])], [np.sin(df['polang']), np.cos(df['polang'])]])
+    # df['isaccX_rot'] = rotateMat[:, 0] * df['isaccX'] + 
     return df
 
 
